@@ -1,0 +1,25 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:tkd_app/util/style.dart';
+
+getLoader(bool loading){
+  return  loading ? Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Loading....",style: Style.heading,),
+          SizedBox(height: 10,),
+          SpinKitCircle(
+            color: Colors.grey,
+           // size: 50.0,
+          )
+         /* LinearProgressIndicator(
+            minHeight: 10,
+            backgroundColor: Colors.blue,
+            color: Colors.indigo,
+          ),*/
+        ],
+      )
+  ) : SizedBox.shrink();
+}
