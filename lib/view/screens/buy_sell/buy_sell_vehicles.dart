@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:intl/intl.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
@@ -289,9 +290,9 @@ class _BuyCardState extends State<BuyCard> {
                                               style: Style.vehicleData):CustomText(
                                               ': ${model.buyVehicleList[index].makerName.toString()}',
                                               style: Style.vehicleData),
-                                          langCode == 'en' ? Text(': ${model.buyVehicleList[index].estPrice.toString()}',
+                                          langCode == 'en' ? Text(': ${priceText(model.buyVehicleList[index].estPrice.toString())}',
                                               style: Style.vehicleData):CustomText(
-                                              ': ${model.buyVehicleList[index].estPrice.toString()}',
+                                              ': ${priceText(model.buyVehicleList[index].estPrice.toString())}',
                                               style: Style.vehicleData),
                                         ],
                                       ),
@@ -447,6 +448,19 @@ class _BuyCardState extends State<BuyCard> {
       ),
     );
   }
+
+  String priceText(String price){
+    price = '${formNum(
+      price.replaceAll(',', ''),
+    )}';
+    return price;
+  }
+
+  String formNum(String s) {
+    return NumberFormat.decimalPattern().format(
+      int.parse(s),
+    );
+  }
 }
 
 class SellCard extends StatefulWidget {
@@ -596,7 +610,7 @@ class _SellCardState extends State<SellCard> {
                                               ': ${model.sellVehicleList[index].makerName.toString()}',
                                               style: Style.vehicleData),
                                           CustomText(
-                                              ': ${model.sellVehicleList[index].estPrice.toString()}',
+                                              ': ${priceText(model.sellVehicleList[index].estPrice.toString())}',
                                               style: Style.vehicleData),
                                         ],
                                       ),
@@ -754,4 +768,18 @@ class _SellCardState extends State<SellCard> {
       ),
     );
   }
+
+  String priceText(String price){
+    price = '${formNum(
+      price.replaceAll(',', ''),
+    )}';
+    return price;
+  }
+
+  String formNum(String s) {
+    return NumberFormat.decimalPattern().format(
+      int.parse(s),
+    );
+  }
+
 }

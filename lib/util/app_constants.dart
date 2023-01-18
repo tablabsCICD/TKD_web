@@ -4,8 +4,8 @@ import 'package:tkd_app/model/language_model.dart';
 
 class AppConstants {
 
-  //static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
-  static String BASE_URL = "http://13.233.64.33:8080/tkd2/api/"; //Test Url
+  static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
+ // static String BASE_URL = "http://13.233.64.33:8080/tkd2/api/"; //Test Url
   static String LOGIN = BASE_URL + "authLogin/emailId";
   static String REGISTRATION = BASE_URL + "companyRegistration";
   static String GENERIC_DATA = BASE_URL + "/get/allCards";
@@ -54,7 +54,7 @@ class AppConstants {
   static String POST_TRANSCATION = BASE_URL + "transactions";
 
   //-------New Api ---------
-  static String FULL_LOAD_ALL_CARD = BASE_URL + "allcards/fullLoad";
+  static String FULL_LOAD_ALL_CARD = BASE_URL + "allcards/fullLoad3";
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
   static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";

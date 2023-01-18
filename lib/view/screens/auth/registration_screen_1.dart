@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,10 +51,18 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
   Uint8List? imageBytes;
   String? fileName;
   List<String> itemList = <String>[
-    'Shipper/Manufacturer/Distributor',
     'Transporter',
-    'Agent',
-    'Packer/Mover',
+    'Agent/Broker',
+    'Packers and Movers',
+    'Manufacturer/Distributor/Trade',
+
+  ];
+
+  var _current = 0;
+  List<ImageCarousel> carouselImages = [
+    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
+    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your own business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
+    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your tkd business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
   ];
 
   @override
@@ -84,10 +93,19 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage('assets/images/truck.png'),
-                      ),
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.5, 0.5],
+                            colors: [Colors.white, ColorResources.HOME_BG])
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Image.asset(
+                      'assets/images/tkd.png',
+                      height: 150,
+                      width: 250,
                     ),
                   ),
                   Align(
@@ -301,120 +319,227 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
     );
   }
 
-  getDetails() {
+  // getDetails() {
+  //   return Container(
+  //     height: 500,
+  //     width: MediaQuery.of(context).size.width / 2,
+  //     margin: ResponsiveWidget.isMobile(context)
+  //         ? EdgeInsets.all(0)
+  //         : ResponsiveWidget.isDesktop(context)
+  //             ? EdgeInsets.only(right: MediaQuery.of(context).size.width / 19)
+  //             : EdgeInsets.only(right: MediaQuery.of(context).size.width / 21),
+  //     // margin: EdgeInsets.only(right: MediaQuery.of(context).size.width / 10),
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text("Your transport\nsearch ends here",
+  //             style: TextStyle(
+  //               fontFamily: 'PlayfairDisplay',
+  //               color: Color(0xff202020),
+  //               fontSize: 58,
+  //               fontWeight: FontWeight.w900,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: 0,
+  //             )),
+  //         SizedBox(
+  //           height: 50,
+  //         ),
+  //         new Text("* Suspendisse dapibus dui et leo rutrum",
+  //             style: TextStyle(
+  //               fontFamily: 'Roboto',
+  //               color: Color(0xff000000),
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w300,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: -0.3,
+  //             )),
+  //         SizedBox(
+  //           height: 16,
+  //         ),
+  //         new Text("* Lorem ipsum dolor sit amet",
+  //             style: TextStyle(
+  //               fontFamily: 'Roboto',
+  //               color: Color(0xff000000),
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w300,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: -0.3,
+  //             )),
+  //         SizedBox(
+  //           height: 16,
+  //         ),
+  //         new Text("* Quisque nec dui eleifend, tincidunt lectsectetur",
+  //             style: TextStyle(
+  //               fontFamily: 'Roboto',
+  //               color: Color(0xff000000),
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w300,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: -0.3,
+  //             )),
+  //         SizedBox(
+  //           height: 16,
+  //         ),
+  //         new Text("* Nunc non posuere sapien",
+  //             style: TextStyle(
+  //               fontFamily: 'Roboto',
+  //               color: Color(0xff000000),
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w300,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: -0.3,
+  //             )),
+  //         SizedBox(
+  //           height: 16,
+  //         ),
+  //         new Text("* Donec tincidunt odio in augue ornare",
+  //             style: TextStyle(
+  //               fontFamily: 'Roboto',
+  //               color: Color(0xff000000),
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w300,
+  //               fontStyle: FontStyle.normal,
+  //               letterSpacing: -0.3,
+  //             )),
+  //         SizedBox(
+  //           height: 50,
+  //         ),
+  //         Column(
+  //           children: [
+  //             Text("Android App Available On",
+  //                 style: TextStyle(
+  //                   fontFamily: 'RobotoSlab',
+  //                   color: Colors.black,
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeight.w400,
+  //                   fontStyle: FontStyle.normal,
+  //                 )),
+  //             SizedBox(
+  //               width: 20,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 openUrl();
+  //               },
+  //               child: Image.asset(
+  //                 'assets/images/bitmap.png',
+  //                 height: 50,
+  //                 width: 100,
+  //               ),
+  //             )
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  int index = -1;
+  getDetails(){
     return Container(
-      height: 500,
-      width: MediaQuery.of(context).size.width / 2,
-      margin: ResponsiveWidget.isMobile(context)
-          ? EdgeInsets.all(0)
-          : ResponsiveWidget.isDesktop(context)
-              ? EdgeInsets.only(right: MediaQuery.of(context).size.width / 19)
-              : EdgeInsets.only(right: MediaQuery.of(context).size.width / 21),
-      // margin: EdgeInsets.only(right: MediaQuery.of(context).size.width / 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      height: 400,
+      width: MediaQuery.of(context).size.width / 3,
+      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width / 10),
+      child: Stack(
         children: [
-          Text("Your transport\nsearch ends here",
-              style: TextStyle(
-                fontFamily: 'PlayfairDisplay',
-                color: Color(0xff202020),
-                fontSize: 58,
-                fontWeight: FontWeight.w900,
-                fontStyle: FontStyle.normal,
-                letterSpacing: 0,
-              )),
-          SizedBox(
-            height: 50,
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 500.0,
+              aspectRatio: 16/9,
+              enlargeCenterPage: false,
+              viewportFraction: 1.0,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              reverse: false,
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 3),
+              autoPlayAnimationDuration: Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              scrollDirection: Axis.horizontal,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _current = index;
+                });
+              },
+            ),
+            items: carouselImages.map((i){
+              index++;
+              return Builder(
+                  builder:(BuildContext context){
+                    return Container(
+                        height: MediaQuery.of(context).size.height*0.30,
+                        width: MediaQuery.of(context).size.width,
+                        child: index < 3?Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                    height: 500,
+                                    width: MediaQuery.of(context).size.width / 4,
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 20.0),
+                                      child: Image.asset(
+                                        carouselImages[index].image2,
+                                        height: 72,
+                                        width: 222,
+                                      ),
+                                    )),
+                              ),
+                              Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      carouselImages[index].image1,
+                                      height: 234,
+                                      width: 120,
+                                    ),
+                                    Text(carouselImages[index].title,
+                                        style: Style.splashheading),
+                                    new Text(
+                                      carouselImages[index].subTitle,
+                                      style: Style.splashContent,textAlign: TextAlign.center,),
+                                  ],
+                                ),
+                              ),
+                            ]):getWidget()
+                    );
+                  }
+              );
+            }).toList(),
           ),
-          new Text("* Suspendisse dapibus dui et leo rutrum",
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                color: Color(0xff000000),
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.normal,
-                letterSpacing: -0.3,
-              )),
-          SizedBox(
-            height: 16,
-          ),
-          new Text("* Lorem ipsum dolor sit amet",
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                color: Color(0xff000000),
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.normal,
-                letterSpacing: -0.3,
-              )),
-          SizedBox(
-            height: 16,
-          ),
-          new Text("* Quisque nec dui eleifend, tincidunt lectsectetur",
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                color: Color(0xff000000),
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.normal,
-                letterSpacing: -0.3,
-              )),
-          SizedBox(
-            height: 16,
-          ),
-          new Text("* Nunc non posuere sapien",
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                color: Color(0xff000000),
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.normal,
-                letterSpacing: -0.3,
-              )),
-          SizedBox(
-            height: 16,
-          ),
-          new Text("* Donec tincidunt odio in augue ornare",
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                color: Color(0xff000000),
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.normal,
-                letterSpacing: -0.3,
-              )),
-          SizedBox(
-            height: 50,
-          ),
-          Column(
-            children: [
-              Text("Android App Available On",
-                  style: TextStyle(
-                    fontFamily: 'RobotoSlab',
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.normal,
-                  )),
-              SizedBox(
-                width: 20,
-              ),
-              InkWell(
-                onTap: () {
-                  openUrl();
-                },
-                child: Image.asset(
-                  'assets/images/bitmap.png',
-                  height: 50,
-                  width: 100,
-                ),
-              )
-            ],
-          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: carouselImages.map((i) {
+                int index = carouselImages.indexOf(i);
+                return Container(
+                  width: 6.0,
+                  height: 6.0,
+                  margin: EdgeInsets.symmetric(
+                      vertical: 6.0, horizontal: 4.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _current == index
+                        ? ColorResources.PRIMARY_COLOR
+                        : ColorResources.DOT_COLOR,
+                  ),
+                );
+              }).toList(),
+            ),
+          )
         ],
       ),
     );
+
+  }
+  getWidget() {
+    index=0;
+    return SizedBox.shrink();
   }
 
   PlatformFile? objFile;
