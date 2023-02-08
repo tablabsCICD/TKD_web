@@ -9,6 +9,9 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 
+import '../screens/discussion/discussion_dashboard.dart';
+import '../screens/transport/transport_search_screen.dart';
+
 typedef StringValue = Function(String);
 const Dashboard = 'Board';
 const Markets = 'Markets';
@@ -26,6 +29,7 @@ const Feedback = 'Feedback';
 const My_Bids = 'My_Bids';
 const My_Plans = 'Plans';
 const Company = 'Company';
+const Discussion = 'Discussion';
 const Fleets = 'Fleets';
 const Chat = 'Chats';
 const Received_Bids = 'Received Bids';
@@ -83,6 +87,7 @@ class DrawerMenu extends StatefulWidget {
            // getDivider(),
             if (authProvider.userDetailList[0].transporterOrAgent == 2 || authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Fleet', (selectedTab == Fleets)),
+            getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),
             getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),
            // authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink():getDivider(),
            // getTile('assets/images/navigation_image/icn_bullet_01.png', My_Plans, context, 'Plan', (selectedTab == My_Plans)),
@@ -112,10 +117,20 @@ class DrawerMenu extends StatefulWidget {
       color: isSelected ? ColorResources.SELECTED_MENU : Colors.white,
       child: InkWell(
         onTap: (){
-          widget.callBack(value);
-          setState(() {
-                selectedTab = value;
-          });
+      if(value==Discussion){
+        setState(() {
+
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DiscussionDashboard()),
+        );}else{
+        widget.callBack(value);
+        setState(() {
+          selectedTab = value;
+        });
+      }
+
         },
         child: Row(
           children: [

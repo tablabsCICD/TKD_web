@@ -15,16 +15,20 @@ class Style{
  static TextStyle menuArrowHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xff525252));
  static TextStyle selectedArrowMenuHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoSlab-Bold',fontWeight: FontWeight.bold,color: Color(0xff010101));
  static TextStyle sponsered = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xffffffff));
+ static TextStyle appheading = TextStyle(fontSize: 18,fontFamily: 'RobotoSlabBold',color: Color(0xff010101),fontWeight: FontWeight.bold);
+ static TextStyle appsubtitle = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold);
 
  static TextStyle splashheading = TextStyle(fontSize: 30,fontFamily: 'RobotoSlabRegular',fontWeight: FontWeight.bold,color: Color(0xff010101));
  static TextStyle splashContent = TextStyle(fontSize: 16,fontFamily: 'RobotoSlabLight',color: Color(0xff010101));
  static TextStyle loginHeading = TextStyle(fontSize: 20,fontFamily: 'RobotoSlabRegular',color: Color(0xff010101));
  static TextStyle newheading = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabLight',color: Color(0xff010101));
  static TextStyle aleaready = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular',color: Color(0xffea6935),decoration: TextDecoration.underline,);
+ static TextStyle newheadingappbar = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular',color: Color(0xffea6935),decoration: TextDecoration.underline,);
 
  static TextStyle appbarheading = TextStyle(fontSize: 22,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xffffffff));
  static TextStyle heading = TextStyle(fontSize: 20,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold);
  static TextStyle heading1 = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xff010101));
+
  static TextStyle okButton = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular',color: Color(0xff6ea106));
  static TextStyle cancelButton = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular',color: Color(0xffea6935));
 
@@ -39,6 +43,8 @@ class Style{
  static TextStyle contentHeading = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold);
  static TextStyle cityHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoRegular',color: Color(0xff000000));
  static TextStyle bottomHeading = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular',decoration: TextDecoration.underline,color: ColorResources.PRIMARY_COLOR);
+ static TextStyle callHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Colors.black);
+
  static TextStyle transportSearchHeading = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabRegular');
  static TextStyle vehicleLable = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold);
  static TextStyle vehicleData = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xff010101));
@@ -49,10 +55,14 @@ class Style{
  static TextStyle button = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
  static TextStyle buttonType2 = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',color: Color(0xff000000));
  static TextStyle boardButton = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
+ static TextStyle boardButton1= TextStyle(fontSize: 8,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
 
  static TextStyle planTitle = TextStyle(fontSize: 16,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xffffffff));
  static TextStyle planSubtitle = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xfff3f0f0));
  static TextStyle price = TextStyle(fontSize: 24,fontFamily: 'PingFangSC-Regular',fontWeight: FontWeight.bold,color: Color(0xffffffff));
 
  static TextStyle filterHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoBold',fontWeight: FontWeight.bold,color: Color(0xff262626));
+
+ static TextStyle tabText = TextStyle(fontSize: 12,fontFamily: 'RobotoRegular',color: Color(0xff000000));
+
 }
