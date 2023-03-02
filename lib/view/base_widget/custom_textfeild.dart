@@ -22,6 +22,7 @@ class CustomTextField extends StatelessWidget {
   final bool? readOnly;
   final String? validatorMsg;
   Function? onTap;
+  Function? onValueChange;
 
   CustomTextField(
       {required this.controller,
@@ -38,7 +39,8 @@ class CustomTextField extends StatelessWidget {
       this.iconData,
       this.obsecure,
       this.readOnly,
-      this.onTap});
+      this.onTap,
+      this.onValueChange});
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,9 @@ class CustomTextField extends StatelessWidget {
       child: TextFormField(
         onTap: () {
           onTap!();
+        },
+        onChanged: (vale){
+          onValueChange;
         },
         controller: controller,
         inputFormatters: [

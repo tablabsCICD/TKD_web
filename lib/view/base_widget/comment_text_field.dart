@@ -23,17 +23,17 @@ class CommentTextField extends StatelessWidget {
 
   CommentTextField(
       {required this.controller,
-        required this.hintText,
-        required this.textInputType,
-        this.maxLine = 1,
-        this.validatorMsg,
-        this.capitalization = TextCapitalization.none,
-        this.iconData,
-        this.obsecure,
-        this.readOnly,
-        this.onTap,
-        this.onValueChange,
-        this.isFocused});
+      required this.hintText,
+      required this.textInputType,
+      this.maxLine = 1,
+      this.validatorMsg,
+      this.capitalization = TextCapitalization.none,
+      this.iconData,
+      this.obsecure,
+      this.readOnly,
+      this.onTap,
+      this.onValueChange,
+      this.isFocused});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -203,35 +203,38 @@ class _MyProfileState extends State<MyProfile> {
                       SizedBox(
                         width: 20,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            ': ${model.userDetailList[0].emailId.toString()}',
-                            style:
-                                TextStyle(color: ColorResources.PRIMARY_COLOR),
-                          ),
-                          CustomText(
-                            ': ${model.userDetailList[0].mobileNumber.toString()}',
-                            style:
-                                TextStyle(color: ColorResources.PRIMARY_COLOR),
-                          ),
-                          CustomText(
-                            ': ${model.userDetailList[0].alternativeNumber.toString()}',
-                            style:
-                                TextStyle(color: ColorResources.PRIMARY_COLOR),
-                          ),
-                          CustomText(
-                            ': ${model.userDetailList[0].companyAddress.toString()}',
-                            style:
-                                TextStyle(color: ColorResources.PRIMARY_COLOR),
-                          ),
-                          /* Text(
-                              ': ${userDetailList.city.toString()}',
-                              style: TextStyle(
-                                  color: ColorResources.PRIMARY_COLOR),
-                            ),*/
-                        ],
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           CustomText(
+                              ': ${model.userDetailList[0].emailId.toString()}',
+
+                              style:
+                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
+                            ),
+                            CustomText(
+                              ': ${model.userDetailList[0].mobileNumber.toString()}',
+                              style:
+                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
+                            ),
+                            CustomText(
+                              ': ${model.userDetailList[0].alternativeNumber.toString()}',
+                              style:
+                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
+                            ),
+                            CustomText(
+                              ': ${model.userDetailList[0].companyAddress.toString()}',
+                              style:
+                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
+                            ),
+                            /* Text(
+                                ': ${userDetailList.city.toString()}',
+                                style: TextStyle(
+                                    color: ColorResources.PRIMARY_COLOR),
+                              ),*/
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -484,6 +487,8 @@ class _MyProfileState extends State<MyProfile> {
                 CustomText(
                   getTranslated(plan, context)!,
                   style: Style.planTitle,
+
+
                 ),
               ],
             ),

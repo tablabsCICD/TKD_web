@@ -15,6 +15,7 @@ class TransportProvider extends ChangeNotifier{
   bool isLoadingForName = false;
   bool isLoadingForLoc = false;
   bool isLoadingForRoutes = false;
+  bool isExpand=false;
 
   getAllData({int currentPage = 0}) async {
     isLoading = true;
@@ -44,6 +45,11 @@ class TransportProvider extends ChangeNotifier{
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
     transportSearchList = type.content;
+    if(type.content.length >0){
+      isExpand=false;
+    }else {
+      isExpand=true;
+    }
     notifyListeners();
   }
 
@@ -52,12 +58,35 @@ class TransportProvider extends ChangeNotifier{
     notifyListeners();
     transportSearchList.clear();
     String myUrl = AppConstants.DIRECTORY +'?companyName=${name}';
-    print(myUrl);
+    print("Api Call"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
     transportSearchList = type.content;
+    if(type.content.length >0){
+      isExpand=false;
+    }else {
+      isExpand=true;
+    }
+    notifyListeners();
+  }
+  getBySearchData(String name) async {
+    isLoading = true;
+    notifyListeners();
+    transportSearchList.clear();
+    String myUrl = AppConstants.DIRECTORY +'?search=${name}';
+    print("Api Call"+myUrl);
+    var req = await http.get(Uri.parse(myUrl));
+    isLoading = false;
+    response = json.decode(req.body);
+    var type = TransportSearchModel.fromJson(response);
+    transportSearchList = type.content;
+    if(type.content.length >0){
+      isExpand=false;
+    }else {
+      isExpand=true;
+    }
     notifyListeners();
   }
 
@@ -72,6 +101,20 @@ class TransportProvider extends ChangeNotifier{
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
     transportSearchList = type.content;
+    if(type.content.length >0){
+      isExpand=false;
+    }else {
+      isExpand=true;
+    }
+    notifyListeners();
+  }
+  selectRoutes(){
+
+  notifyListeners();
+}
+
+  getMenuItem(bool isExpanded){
+    isExpand =isExpanded;
     notifyListeners();
   }
 

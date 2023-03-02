@@ -20,6 +20,7 @@ import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/rating_star.dart';
+import 'package:share/share.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   Job job;
@@ -341,6 +342,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   ),
                   InkWell(
                     onTap: () async {
+
                       var shareData = {
                         "title": widget.job.nameOfPerson,
                         "text": widget.job.mobileNumber,

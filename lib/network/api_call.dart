@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/model/api_response.dart';
 class APIHelper {
   ApiGetData(String URL) async{
-    print('url is $URL');
     var req = await http.get(Uri.parse(URL));
+
     var response = json.decode(req.body);
-    print('response $response');
+    print('$URL response ${response}');
     return response;
   }
 
@@ -29,7 +30,7 @@ class APIHelper {
   ApiDeleteData(String URL) async{
     var req = await http.delete(Uri.parse(URL));
     var response = json.decode(req.body);
-    return response;
+    return req.statusCode;
   }
 
 
@@ -41,6 +42,15 @@ class APIHelper {
     return response.statusCode;
   }
 
+
+  Future<ApiResponseHelper> ApiAddPostDataMapRequestCall(String url,Map<String,dynamic>data) async{
+    var body = json.encode(data);
+    final request = await http.post(Uri.parse(url),headers: {"Content-Type": "application/json"}, body: body);
+    var response = json.decode(request.body);
+    print('the status code is ${request.statusCode}');
+    ApiResponseHelper apiResponseHelper = ApiResponseHelper(request.statusCode, response);
+    return apiResponseHelper;
+  }
 
 
 

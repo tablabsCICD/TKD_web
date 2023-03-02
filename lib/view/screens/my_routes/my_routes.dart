@@ -198,11 +198,11 @@ class _MyRoutesState extends State<MyRoutes> {
                         child: ListTile(
                           title: Row(
                             children: [
-                              CustomText('${model.routeList[index].routeSource}'),
+                           Text('${model.routeList[index].routeSource}'),
                               SizedBox(width: 10,),
                               Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
                               SizedBox(width: 10,),
-                              CustomText('${model.routeList[index].routeDestination}'),
+                            Text('${model.routeList[index].routeDestination}'),
                             ],
                           ),//Text('${model.routeList[index].routeSource} To ${model.routeList[index].routeDestination}',style: Style.cityHeading,),
                           trailing: ElevatedButton(

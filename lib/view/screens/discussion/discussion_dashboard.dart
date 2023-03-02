@@ -55,9 +55,8 @@ class _DiscussionDashboardState extends State<DiscussionDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    double screenSize = MediaQuery.of(context).size.width;
+    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-
       backgroundColor: ColorResources.HOME_BG,
       appBar: AppBarCommon(context, title: "Discussions").appBarWithNewButton(() async {
        int result=await Navigator.push(
@@ -74,7 +73,6 @@ class _DiscussionDashboardState extends State<DiscussionDashboard> {
        }
       }),
       body: Container(
-
         margin: EdgeInsets.all(10),
         child: Column(
           children: [

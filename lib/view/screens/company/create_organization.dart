@@ -222,7 +222,7 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                                             CustomTextField(
                                               hintText: 'Company Name',
                                               controller: companyController,
-                                              textInputType: TextInputType.number,
+                                              textInputType: TextInputType.text,
                                             ),
                                             CustomTextField(
                                               hintText: 'Enter Official Email_id',

@@ -33,9 +33,10 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
   final _multiKey = GlobalKey<DropdownSearchState<String>>();
 
   List<RadioModel> sampleData = <RadioModel>[
-    RadioModel(true, 'Show to only your preferred Transporters'),
-    RadioModel(false, 'Show to only verified Transporters'),
-    RadioModel(false, 'Show to All')
+    RadioModel(true, 'Show to All'),
+    RadioModel(false, 'Show to only your preferred Transporters'),
+    RadioModel(false, 'Show to only verified Transporters')
+
   ];
 
   List<String> allVerifiedUserList = [];
@@ -95,7 +96,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   },
                 ),
               ),
-              sampleData[2].isSelected==true ? SizedBox.shrink()
+              sampleData[0].isSelected==true ? SizedBox.shrink()
               :DropdownSearch<String>.multiSelection(
                 key: _multiKey,
                 dropdownSearchDecoration: InputDecoration(
@@ -116,9 +117,9 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                     ),
                   ),
                 ),
-                items: sampleData[1].isSelected == true ? model.allVerifiedUserList : model.allUserNameList,
+                items: sampleData[2].isSelected == true ? model.allVerifiedUserList : model.allUserNameList,
                 popupProps: const PopupPropsMultiSelection.menu(
-                  title: Center(child: Text("Serach here")),
+                  title: Center(child: Text("Search here")),
                   searchFieldProps: TextFieldProps(),
                   showSelectedItems: true,
                   showSearchBox: true,
@@ -150,19 +151,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                 "Ok",
               ),
               onPressed: () {
-                print(model.allUserList.length);
-                print(widget.selectedItems.length);
-
                 model.getSelectedUserId(widget.selectedItems);
-
-
-
-            /*    for(var i = 0; i < model.allUserList.length; i++){
-                  if(widget.selectedItems[i] == "${model.allUserList[i].firstName} ${model.allUserList[i].lastName}"){
-                    model.selectedUserList.add(model.allUserList[i].id!);
-                    print(model.selectedUserList.length);
-                  }
-                }*/
                 Navigator.of(context).pop(widget.selectedItems);
               },
             ),
@@ -186,32 +175,5 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
       return true;
     }
     return false;
-
-  }
-
-  Widget _getMultiSelectedWidget(String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        border: Border.all(),
-      ),
-      child: Wrap(
-        children: [
-          Text(
-            value?? '',
-            style: const TextStyle(fontSize: 14),
-          ),
-          InkWell(
-              onTap: () {
-                _multiKey.currentState!.removeItem(value);
-              },
-              child: const Icon(
-                Icons.close,
-                size: 18,
-              ))
-        ],
-      ),
-    );
   }
 }

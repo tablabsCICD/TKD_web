@@ -14,12 +14,7 @@ getLoader(bool loading){
             color: Colors.grey,
            // size: 50.0,
           )
-         /* LinearProgressIndicator(
-            minHeight: 10,
-            backgroundColor: Colors.blue,
-            color: Colors.indigo,
-          ),*/
-        ],
+         ],
       )
   ) : SizedBox.shrink();
 }

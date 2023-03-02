@@ -1,11 +1,17 @@
 
 
+import 'package:flutter/material.dart';
 import 'package:tkd_app/model/language_model.dart';
+
+import '../model/auth_api.dart';
 
 class AppConstants {
 
+  static final String APP_VERSION="2.0.6";
   static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
- // static String BASE_URL = "http://13.233.64.33:8080/tkd2/api/"; //Test Url
+  //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Production Url
+
+  //static String BASE_URL = "http://13.233.64.33:8080/tkd2/api/"; //Test Url
   static String LOGIN = BASE_URL + "authLogin/emailId";
   static String REGISTRATION = BASE_URL + "companyRegistration";
   static String GENERIC_DATA = BASE_URL + "/get/allCards";
@@ -54,7 +60,7 @@ class AppConstants {
   static String POST_TRANSCATION = BASE_URL + "transactions";
 
   //-------New Api ---------
-  static String FULL_LOAD_ALL_CARD = BASE_URL + "allcards/fullLoad3";
+  static String FULL_LOAD_ALL_CARD = BASE_URL + "allcards/fullLoad/andquery";
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
   static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";
@@ -64,21 +70,21 @@ class AppConstants {
 
  static String IMG_UPLOAD = BASE_URL +"uploadImages";
  static String COMPANY = BASE_URL + "CompanyDetails";
+ static String GET_CURRENT_VERSION=BASE_URL+'GetLatestVaersion';
+
+ static const String COUNTRY_CODE = 'country_code';
+ static const String LANGUAGE_CODE = 'language_code';
+
+ static  String GROUP=BASE_URL+'groups';
+ static String GROUP_MEMBER_BULK=BASE_URL+'groupMembers/bulk';
+ static String GROUP_BY_USER=BASE_URL+"groups/forUser/";
+ static String GROUP_CHAT_MASSAGE=BASE_URL+'groups/chat/';
+ static String SEND_GROUP_CHAT_MEASSAGE=BASE_URL+'save/chat';
+ static String GROUP_MEMBER_LIST=BASE_URL+'groupMembers/byGroupId/';
+ static String GROUP_MEMBER_DELETE=BASE_URL+'groupMembers?id=';
+ static User USER_OBJECT=User();
 
 
-  /*String BuildType() {
-  if (BuildConfig.BUILD_TYPE.toString().equalsIgnoreCase("release")) {
-  return"http://tkd-elb-1179596561.ap-south-1.elb.amazonaws.com:8080/tkd2/api/";//Production
-  // return "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test
-  } else {
-  return "http://tkd-elb-1179596561.ap-south-1.elb.amazonaws.com:8080/tkd2/api/";//Production
-  //return "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test
-  }
-  }
-*/
-
-  static const String COUNTRY_CODE = 'country_code';
-  static const String LANGUAGE_CODE = 'language_code';
 
 
   static List<LanguageModel> languages = [

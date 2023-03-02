@@ -46,48 +46,48 @@ Future shareSocialMedia(TruckLoad loadTypeList, SocialMedia socialMedia) async {
 
   switch(socialMedia){
     case SocialMedia.facebook :
-      if(await canLaunch('https://www.facebook.com/sharer.php?u=$urlShare&t=$text')){
-        await launch('https://www.facebook.com/sharer.php?u=$urlShare');
+      if(await canLaunchUrl(Uri.parse('https://www.facebook.com/sharer.php?u=$urlShare&t=$text'))){
+        launchUrl(Uri.parse('https://www.facebook.com/sharer.php?u=$urlShare'));
       }
       break;
     case SocialMedia.whatsapp :
-      if(await canLaunch('https://api.whatsapp.com/send?text=${text}')){
-        await launch('https://api.whatsapp.com/send?text=${text}');
+      if(await canLaunchUrl(Uri.parse('https://api.whatsapp.com/send?text=${text}'))){
+        await launchUrl(Uri.parse('https://api.whatsapp.com/send?text=${text}'));
       }
       break;
     case SocialMedia.linkedin :
-      if(await canLaunch('https://www.linkedin.com/shareArticle?url=$urlShare&title=$text')){
-        await launch('https://www.linkedin.com/shareArticle?url=$urlShare&title=$text');
+      if(await canLaunchUrl(Uri.parse('https://www.linkedin.com/shareArticle?url=$urlShare&title=$text'))){
+        await launchUrl(Uri.parse('https://www.linkedin.com/shareArticle?url=$urlShare&title=$text'));
       }
       break;
     case SocialMedia.email :
-      if(await canLaunch('mailto:?subject=$subject&body=$text')){
-        await launch('mailto:?subject=$subject&body=$text');
+      if(await canLaunchUrl(Uri.parse('mailto:?subject=$subject&body=$text'))){
+        await launchUrl(Uri.parse('mailto:?subject=$subject&body=$text'));
       }
       break;
     case SocialMedia.twitter :
-      if(await canLaunch('https://twitter.com/share?url=$urlShare&text=$text&via=$urlShare&hashtags=$subject')){
-        await launch('https://twitter.com/share?url=$urlShare&text=$text&via=$urlShare&hashtags=$subject');
+      if(await canLaunchUrl(Uri.parse('https://twitter.com/share?url=$urlShare&text=$text&via=$urlShare&hashtags=$subject'))){
+        await launchUrl(Uri.parse('https://twitter.com/share?url=$urlShare&text=$text&via=$urlShare&hashtags=$subject'));
       }
       break;
     case SocialMedia.pintrest :
-      if(await canLaunch('https://pinterest.com/pin/create/bookmarklet/?media=$text&url=$urlShare&idescription=$text')){
-        await launch('https://pinterest.com/pin/create/bookmarklet/?media=$text&url=$urlShare&idescription=$text');
+      if(await canLaunchUrl(Uri.parse('https://pinterest.com/pin/create/bookmarklet/?media=$text&url=$urlShare&idescription=$text'))){
+        await launchUrl(Uri.parse('https://pinterest.com/pin/create/bookmarklet/?media=$text&url=$urlShare&idescription=$text'));
       }
       break;
     case SocialMedia.google :
-      if(await canLaunch('https://plus.google.com/share?url=$urlShare')){
-        await launch('https://plus.google.com/share?url=$urlShare');
+      if(await canLaunchUrl(Uri.parse('https://plus.google.com/share?url=$urlShare'))){
+        await launchUrl(Uri.parse('https://plus.google.com/share?url=$urlShare'));
       }
       break;
     case SocialMedia.evernote :
-      if(await canLaunch('https://www.evernote.com/clip.action?url=$urlShare&title=$text')){
-        await launch('https://www.evernote.com/clip.action?url=$urlShare&title=$text');
+      if(await canLaunchUrl(Uri.parse('https://www.evernote.com/clip.action?url=$urlShare&title=$text'))){
+        await launchUrl(Uri.parse('https://www.evernote.com/clip.action?url=$urlShare&title=$text'));
       }
       break;
     case SocialMedia.buffer :
-      if(await canLaunch('https://bufferapp.com/add?text=$text&url=$urlShare')){
-        await launch('https://bufferapp.com/add?text=$text&url=$urlShare');
+      if(await canLaunchUrl(Uri.parse('https://bufferapp.com/add?text=$text&url=$urlShare'))){
+        await launchUrl(Uri.parse('https://bufferapp.com/add?text=$text&url=$urlShare'));
       }
       break;
   }

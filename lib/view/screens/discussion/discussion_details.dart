@@ -68,33 +68,33 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
       body: Center(
         child: Container(
           width: screenSize<600?screenSize:screenSize/3,
-          color: ColorResources.HOME_BG,
-        //  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Column(
-            children: [
+        color: ColorResources.HOME_BG,
+      //  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Column(
+          children: [
               AppBarCommon(context, title: "Discussions").appBar(),
-              Container(
-                color: ColorResources.WHITE,
-                child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: discussionCard(),
-                ),
+            Container(
+              color: ColorResources.WHITE,
+              child: Padding(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: discussionCard(),
               ),
-              Container(
-                color: ColorResources.WHITE,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(25, 0, 20, 0),
-                  child: getComment(),
-                ),
+            ),
+            Container(
+              color: ColorResources.WHITE,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(25, 0, 20, 0),
+                child: getComment(),
               ),
-              Container(
-                color: ColorResources.WHITE,
-                  child: callButton()),
-              commentBox(),
-              commentList()
-            ],
-          ),
+            ),
+            Container(
+              color: ColorResources.WHITE,
+                child: callButton()),
+            commentBox(),
+            commentList()
+          ],
         ),
+      ),
       ),
       bottomNavigationBar: reportThisCard(screenSize),
     );

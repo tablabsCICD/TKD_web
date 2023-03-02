@@ -7,6 +7,7 @@ import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/company/company_menu_page.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
+import 'package:tkd_app/widgets/common/centre_logo.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({Key? key}) : super(key: key);
@@ -30,25 +31,26 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
     try {
       loginOrHome();
-      companyLoginOrHome();
+
     } catch (e) {
       e.toString();
     }
   }
-
-  loginOrHome() async{
+  loginOrHome() async {
     visitingFlag = (await authProvider.getVisitingFlag())!;
-    if(visitingFlag == true){
+    if (visitingFlag == true) {
       int? empid = await authProvider.getEmpId();
-      if(empid != null){
+      if (empid != null) {
         userDetailList = await authProvider.getUserDetails(empid);
-        Navigator.push(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userDetailList)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) =>
+                    MenuPage(userDetailList: userDetailList)));
       }
+    }  else {
+    companyLoginOrHome();
     }
-    else
-      {
-        Navigator.push(context, MaterialPageRoute(builder: (builder)=>Login_Screen()));
-      }
   }
 
   companyLoginOrHome() async{
@@ -73,7 +75,7 @@ class _LoadingPageState extends State<LoadingPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Colors.white,
         ),
         child: Center(
           child: Column(
@@ -81,10 +83,7 @@ class _LoadingPageState extends State<LoadingPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-             /* SvgPicture.asset(
-                'assets/svg/path_130788.svg',
-                width: 60,
-              ),*/
+              LogoTkd().getLogo(),
               const SizedBox(height: 50),
               CircularProgressIndicator(
                 valueColor:

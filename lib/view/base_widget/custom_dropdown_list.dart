@@ -37,7 +37,8 @@ class CustomDropdownList extends StatelessWidget {
       this.obsecure,
       this.readOnly,
       this.onTap,
-      required this.onChange});
+      required this.onChange}
+      );
 
   @override
   Widget build(BuildContext context) {

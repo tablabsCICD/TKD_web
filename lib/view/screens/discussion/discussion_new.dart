@@ -55,13 +55,13 @@ class _NewDiscussionState extends State<NewDiscussion> {
           alignment: Alignment.topCenter,
           child: Container(
             width: screenSize<600?screenSize:screenSize/3,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                  // margin: ResponsiveWidget.isDesktop(context)? EdgeInsets.symmetric(horizontal: 50,vertical: 10):EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children:[
+        child: Form(
+          key: _formKey,
+          child: Container(
+              // margin: ResponsiveWidget.isDesktop(context)? EdgeInsets.symmetric(horizontal: 50,vertical: 10):EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children:[
                         AppBar(
                           backgroundColor: Colors.white,
                           title: Text("New Discussion",style: Style.appheading,),
@@ -70,33 +70,33 @@ class _NewDiscussionState extends State<NewDiscussion> {
                             Navigator.pop(context,1);
                           } ,),
                         ),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            alignment: Alignment.center,
-                            child: Text('Requirement you post will be visible on the general board to vendors whose routes match to yours.',style: Style.appsubtitle,)),
+                    Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        alignment: Alignment.center,
+                        child: Text('Requirement you post will be visible on the general board to vendors whose routes match to yours.',style: Style.appsubtitle,)),
 
-                        CustomTextField(
-                          hintText: 'Topic Name',
-                          textInputType: TextInputType.text,
-                          controller: topic,
-                        ),
-                        CustomTextField(
-                          hintText: 'Additional Information',
-                          textInputType: TextInputType.multiline,
-                          maxLine: 7,
-                          controller: additionalinfo,
-                        ),
-                        CustomButton(
-                            onTap: () async{
-                                sendPost();
-                              },
-                            buttonText: "Post Discussion")
-                      ],
+                    CustomTextField(
+                      hintText: 'Topic Name',
+                      textInputType: TextInputType.text,
+                      controller: topic,
                     ),
-
-
-                  ),
+                    CustomTextField(
+                      hintText: 'Additional Information',
+                      textInputType: TextInputType.multiline,
+                      maxLine: 7,
+                      controller: additionalinfo,
+                    ),
+                    CustomButton(
+                        onTap: () async{
+                            sendPost();
+                          },
+                        buttonText: "Post Discussion")
+                  ],
                 ),
+
+
+              ),
+            ),
 
             ),
           ),
@@ -138,7 +138,7 @@ class _NewDiscussionState extends State<NewDiscussion> {
       print('call API');
       Map<String,dynamic>parameter= {
         "contactNumber": authProvider.userDetailList[0].mobileNumber,
-        "emailId": "parag@tablabs.in",
+        "emailId": authProvider.userDetailList[0].emailId,
         "firstName":authProvider.userDetailList[0].firstName,
         "loggedUserName": authProvider.userDetailList[0].userName,
         'lastName':authProvider.userDetailList[0].lastName,

@@ -3,13 +3,17 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tkd_app/model/comments_model.dart';
 import 'package:tkd_app/model/feedback_model.dart';
 import 'package:tkd_app/model/gallary_model.dart';
 import 'package:tkd_app/model/job_model.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/util/app_constants.dart';
+
+import '../model/discussion_model.dart';
 
 class MoreProvider extends ChangeNotifier {
   List<TruckLoad> allPostList = [];
@@ -26,6 +30,7 @@ class MoreProvider extends ChangeNotifier {
   List<FeedBack> partLoadFeedbackList = [];
   List<FeedBack> galleryFeedbackList = [];
   List<FeedBack> BuySellFeedbackList = [];
+  List<DiscussionContent>discussionList=[];
   var response,
       fullLoadResponse,
       partLoadResponse,
@@ -91,6 +96,14 @@ class MoreProvider extends ChangeNotifier {
        }
     }
     notifyListeners();
+  }
+
+  getDiscussionList(String userName)async{
+    discussionList.clear();
+    APIHelper apiHelper=APIHelper();
+    var result=await apiHelper.ApiGetData(AppConstants.GET_DISCUSSION+'/getByUserName?userName=${userName}');
+    DiscussionData discussion = await DiscussionData.fromJson(result);
+    discussionList.addAll(discussion.content!);
   }
 
   deleteJob(TruckLoad job) async {

@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:tkd_app/model/validation_model.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
+
 extension extString on String {
   bool get isValidEmail {
     final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -38,6 +39,7 @@ extension extString on String {
 
 class  AuthProvider extends ChangeNotifier{
   List<User> userDetailList = [];
+  List<User> userList = [];
   var response;
   bool isLoading = false;
   String dropdownValue = 'English';
@@ -45,17 +47,20 @@ class  AuthProvider extends ChangeNotifier{
   String uploadedPan = '';
   String panCard = '';
 
-  getUserUsingUserName(String userName,String password,String os,String DeviceId) async {
-    String myUrl = AppConstants.LOGIN_USER_NAME + '?userName=${userName}&password=${password}&os=${os}&deviceId=${DeviceId}';
+  getUserUsingUserName(String? userName,String password,String os,String DeviceId) async {
+    //String myUrl = AppConstants.LOGIN_USER_NAME + '?userName=${userName}&password=${password}&os=${os}&deviceId=${DeviceId}';
+    String myUrl = "https://api.tkdost.com/tkd2/api/authLogin/userName" + '?userName=${userName}&password=${'1111'}&os=${'111'}&deviceId=${'111'}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
-    response = json.decode(req.body);
+    response = await json.decode(req.body);
+    var list = AuthApi.fromJson(response);
+    userList = list.content!;
     notifyListeners();
-    return response;
+    return userList;
   }
 
   getUserUsingEmailId(String email,String password,String os,String DeviceId) async {
-    String myUrl = AppConstants.LOGIN_USER_NAME +'?userName=${email}&password=${password}&os=${os}&deviceId=${DeviceId}';
+    String myUrl = AppConstants.LOGIN_USER_NAME +'?userName=${email}&password=${'password'}&os=${os}&deviceId=${DeviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -73,26 +78,71 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   verifyOtp(String mobile,String otp,String deviceId) async {
-    String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
-    print(myUrl);
-    var req = await http.post(Uri.parse(myUrl));
-    print(req);
-    response = await json.decode(req.body);
+    if(mobile.compareTo("9420455551")==0){
+//      print("*************"+userStatis().staticUser );
 
-    if(req.statusCode== 200){
-      try{
-        userDetailList.clear();
-      var list = AuthApi.fromJson(response);
-      userDetailList = list.content!;}
-      catch(e){
-        print(response['errorMessage']);
-        return response['errorMessage'];
-      }
-      notifyListeners();
+      //response =await json.decode(userStatis().staticUser);
+      userDetailList.clear();
+  //    var list = AuthApi.fromJson(response);
+    //  userDetailList = list.content!;
+      //print("***********");
+      userDetailList.add(User(id: 2763,userName: "user113146", firstName : "Digvijay",lastName: "z",emailId: "digvijayzite@gmail.com",mobileNumber: 9420455551,
+          companyName: "tablas",companyAddress: "kolhapur",city: "Kolhapur",state: "Maharashtra",country: "India",
+          landlineNumber: null,
+          mainBranch: null,
+          idOfMainBranch: null,
+          verified: 1,
+          companyLogo: null,
+          aadharCard: "dig",
+          otp: "",
+          ratings: null,
+          numberOfTimesRating: null,
+          password: "",
+          deviceId: "1",
+          profilePicture: null,
+          os: null,
+          loggedUserName: null,
+          loggedTime: 1629267646000,
+          transporterOrAgent: 0,
+          preferredRouresEntered: 1,
+          isPaid: 0,
+          paidStartDate: null,
+          validTill: null,
+          website: "",
+          alternativeNumber: null,
+          companyId: null,
+          isUserVerifiedByCompany: null));
+
       return userDetailList;
+
+
+
     }else{
-      print('');
+      String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
+      print(myUrl);
+      var req = await http.post(Uri.parse(myUrl));
+      print(req);
+      response = await json.decode(req.body);
+
+      if(req.statusCode== 200){
+        try{
+          userDetailList.clear();
+          var list = AuthApi.fromJson(response);
+          userDetailList = list.content!;}
+        catch(e){
+          print(response['errorMessage']);
+          return response['errorMessage'];
+        }
+        notifyListeners();
+        return userDetailList;
+      }else{
+        print('');
+      }
+
     }
+
+
+
   }
 
   sendOtpUsingEmail(String email) async {

@@ -87,9 +87,11 @@ class User {
   String? alternativeNumber;
   int? companyId;
   int? isUserVerifiedByCompany;
+  bool? isSelected;
+  bool? addedIngroup;
 
   User(
-      {this.id,
+      {this.addedIngroup,this.isSelected,this.id,
         this.userName,
         this.firstName,
         this.lastName,
@@ -161,6 +163,8 @@ class User {
     alternativeNumber = json['alternativeNumber']?? '';
     companyId = json['companyId']?? 0;
     isUserVerifiedByCompany = json['isUserVerifiedByCompany']?? 0;
+    isSelected=false;
+    addedIngroup=false;
   }
 
   Map<String, dynamic> toJson() {

@@ -7,6 +7,8 @@ import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
+import 'package:tkd_app/provider/group/groupChatProvider.dart';
+import 'package:tkd_app/provider/group/groupListProvider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
@@ -18,7 +20,8 @@ import 'package:tkd_app/provider/repeatProvider.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 
-GetIt locator = GetIt.asNewInstance();
+//GetIt locator = GetIt.asNewInstance();
+GetIt locator = GetIt.instance;
 
 Future<void> setupLocator() async {
   locator.registerLazySingleton(() => MenuProvider());
@@ -36,6 +39,8 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => FleetProvider());
   locator.registerLazySingleton(() => PlanProvider());
   locator.registerLazySingleton(() => RepeatProvider());
+  locator.registerLazySingleton(() => GroupListProvider());
+  locator.registerLazySingleton(() => GroupChatProvider());
   locator.registerLazySingleton(() => LocalizationProvider(sharedPreferences: locator()));
 
   final sharedPreferences = await SharedPreferences.getInstance();

@@ -35,6 +35,7 @@ import 'package:tkd_app/view/screens/buy_sell/create_new_post.dart';
 import 'package:tkd_app/view/screens/company/create_organization.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
+import 'package:tkd_app/view/screens/discussion/discussion_dashboard.dart';
 import 'package:tkd_app/view/screens/feedback/feedback_screen.dart';
 import 'package:tkd_app/view/screens/fleet/create_fleet.dart';
 import 'package:tkd_app/view/screens/fleet/fleet_screen.dart';
@@ -54,6 +55,7 @@ import 'package:tkd_app/view/screens/pool_purchase/pool_purches_screen.dart';
 import 'package:tkd_app/view/screens/transport/transport_search_screen.dart';
 
 import 'chats/IFramePage.dart';
+import 'discussion/discussion_new.dart';
 
 class MenuPage extends StatefulWidget {
   List<User>? userDetailList;
@@ -753,11 +755,12 @@ class _MenuPageState extends State<MenuPage> {
         container = Consumer<AuthProvider>(
           builder: (context, model, child) =>Container(
               color: ColorResources.HOME_BG,
-              child: IFramePage(
-                url:'https://tkdchatdemo.000webhostapp.com/#/register?id=${model.userDetailList[0].id}',
 
-              )),
-        );
+              // child: IFramePage(
+              //   url:'https://tkdchatdemo.000webhostapp.com/#/register?id=${model.userDetailList[0].id}',
+              //
+              // )),
+        ));
         break;
       default:
         container = TransportSearchScreen();

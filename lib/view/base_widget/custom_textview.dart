@@ -24,6 +24,7 @@ class CustomText extends StatelessWidget {
   final TextHeightBehavior? textHeightBehavior;
 
 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LocalizationProvider>(
@@ -44,6 +45,7 @@ class CustomText extends StatelessWidget {
             semanticsLabel: semanticsLabel,
             textWidthBasis: textWidthBasis,
             textHeightBehavior: textHeightBehavior,
+
           )
               : const Text('')),
     );

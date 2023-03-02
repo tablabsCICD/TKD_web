@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
  import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/app_constants.dart';
@@ -64,7 +65,7 @@ class DashboardProvider extends ChangeNotifier{
       allUserList.addAll(type.content!);
       allUserList.forEach((element) {
         allUserNameList.add('${element.firstName} ${element.lastName}');
-        if(element.isUserVerifiedByCompany == 1) {
+        if(element.isPaid != 0) {
           allVerifiedUserList.add('${element.firstName} ${element.lastName}');
         }
       });
@@ -134,6 +135,18 @@ class DashboardProvider extends ChangeNotifier{
     print(dataObj);
     truckLoadTypeList.add(dataObj);
     notifyListeners();
+  }
+
+  SharedPostModel? truckLoad;
+  getRequirementDetails(int id) async {
+    String myUrl = AppConstants.BASE_URL +'fullTruckLoad/${id}';
+    print(myUrl);
+    var req = await http.get(Uri.parse(myUrl));
+    response = await json.decode(req.body);
+    var list = SharedPost.fromJson(response);
+    truckLoad = list.content[0];
+    notifyListeners();
+    return truckLoad;
   }
 
   getSearchByNameList(String name,String source,String dest) async {

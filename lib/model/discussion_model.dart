@@ -61,7 +61,7 @@ class DiscussionData {
 
   DiscussionData(
       {this.content,
-      });
+       });
 
   DiscussionData.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {

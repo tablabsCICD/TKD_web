@@ -10,6 +10,7 @@ import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 
 import '../screens/discussion/discussion_dashboard.dart';
+import '../screens/group/groupListScreen.dart';
 import '../screens/transport/transport_search_screen.dart';
 
 typedef StringValue = Function(String);
@@ -33,6 +34,9 @@ const Discussion = 'Discussion';
 const Fleets = 'Fleets';
 const Chat = 'Chats';
 const Received_Bids = 'Received Bids';
+const Logout = 'Logout';
+const Call="Call";
+const Group="Group";
 // ignore: must_be_immutable
 class DrawerMenu extends StatefulWidget {
   StringValue callBack;
@@ -43,7 +47,7 @@ class DrawerMenu extends StatefulWidget {
 }
   class _DrawerMenuState extends State<DrawerMenu>{
   final authProvider = locator<AuthProvider>();
-  var selectedTab = 'Board';
+  static String selectedTab = 'Board';
 
   @override
   Widget build(BuildContext context) {
@@ -58,23 +62,11 @@ class DrawerMenu extends StatefulWidget {
             getDivider(),
             getTile('assets/images/navigation_image/icn_directory_off.png', Transport, context, 'Transport Directory', (selectedTab == Transport)),
             getDivider(),
-            if (authProvider.userDetailList[0].transporterOrAgent == 2 || authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+            if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_vehicles_off.png',Buy_Sell_Vehicles, context, 'Buy/Sell Vehicles', (selectedTab == Buy_Sell_Vehicles)),
-            authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink(): getDivider(),
-           /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_board_off.png', "Insurance_Finance", context, 'insurance_finance', (selectedTab == Insurance_Finance)),*/
-          //  authProvider.userDetailList[0].transporterOrAgent == 3?SizedBox.shrink():getDivider(),
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_announce_off.png',Announcement , context, 'Broadcast', (selectedTab == Announcement)),
             authProvider.userDetailList[0].transporterOrAgent == 3?SizedBox.shrink(): getDivider(),
-            //if (authProvider.userDetailList[0].transporterOrAgent == 2 || authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            //else getTile('assets/images/navigation_image/icn_pool_off.png', Pool_Purchase, context, 'Pool Purchase', (selectedTab == Pool_Purchase)),
-          //  authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink(): getDivider(),
-           /* if (authProvider.userDetailList[0].transporterOrAgent == 2 || authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/jobs.png', "Job_Page", context, 'jobs', (selectedTab == Job_Page)),*/
-            //authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink():getDivider(),
-            //getTile('assets/images/navigation_image/icn_discussion_off.png', Chat, context, 'Chat', (selectedTab == Chat)),
-            //getDivider(),
             getTile('assets/images/navigation_image/icn_account_off.png', My_Account, context, 'My Profile', (selectedTab == My_Account)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', My_Post, context, 'My Post', (selectedTab == My_Post)),
             getTile('assets/images/navigation_image/icn_bullet_01.png',My_Routes , context, 'My Route', (selectedTab == My_Routes)),
@@ -82,19 +74,19 @@ class DrawerMenu extends StatefulWidget {
             else getTile('assets/images/navigation_image/icn_bullet_01.png', My_Bids, context, 'My Bids', (selectedTab == My_Bids)),
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Received_Bids, context, 'Received Bids', (selectedTab == Received_Bids)),
-           // authProvider.userDetailList[0].transporterOrAgent == 3?SizedBox.shrink(): getDivider(),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Company, context, 'Company', (selectedTab == Company)),
-           // getDivider(),
-            if (authProvider.userDetailList[0].transporterOrAgent == 2 || authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Fleet', (selectedTab == Fleets)),
+            if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+            else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Owner Data', (selectedTab == Fleets)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),
+            getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
+
             getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),
-           // authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink():getDivider(),
-           // getTile('assets/images/navigation_image/icn_bullet_01.png', My_Plans, context, 'Plan', (selectedTab == My_Plans)),
-           // getDivider(),
-           /* authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent ==2 ?SizedBox.shrink():getDivider(),
-            getTile('assets/images/navigation_image/directory.png', "Chats", context, 'chat', (selectedTab == Chat)),*/
+
+
             getDivider(),
+            getTile('assets/images/call.png',Call , context, 'Call To Support', (selectedTab == Call)),
+            getDivider(),
+            getTile('assets/images/navigation_image/icn_board_on.png',Logout , context, 'Logout', (selectedTab == Logout)),
 
           ],
         ),
@@ -117,20 +109,48 @@ class DrawerMenu extends StatefulWidget {
       color: isSelected ? ColorResources.SELECTED_MENU : Colors.white,
       child: InkWell(
         onTap: (){
-      if(value==Discussion){
-        setState(() {
+          if(value== Call){
 
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DiscussionDashboard()),
-        );}else{
-        widget.callBack(value);
-        setState(() {
-          selectedTab = value;
-        });
-      }
+          }else {
+            if(value==Discussion){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DiscussionDashboard()),
+              );
+            }else if(value==Transport){
+              setState(() {
 
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TransportSearchScreen()),
+              );
+
+            }else if(value==Group){
+              setState(() {
+
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GroupList()),
+              );
+
+            }
+            else{
+              widget.callBack(value);
+
+            }
+
+          }
+
+
+          setState(() {
+            if(value== Call){
+            calltoSupport(context);
+            }
+                selectedTab = value;
+
+          });
         },
         child: Row(
           children: [
@@ -159,6 +179,47 @@ class DrawerMenu extends StatefulWidget {
         ),
       ),
     );
+  }
+
+  calltoSupport(context){
+    showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+              'Contact Number : 8123004666 and 8123006888',
+              style: TextStyle(
+                  color:
+                  ColorResources
+                      .BOTTOM_HEADING,
+                  fontSize: 18,
+                  fontWeight:
+                  FontWeight
+                      .bold)),
+          actions: <Widget>[
+            TextButton(
+              child: Padding(
+                padding:
+                const EdgeInsets
+                    .all(10.0),
+                child: Text(
+                    'OK',
+                    style: TextStyle(
+                        color:
+                        ColorResources
+                            .GREEN,
+                        fontSize:
+                        18)),
+              ),
+              onPressed: () {
+                widget.callBack("Back");
+                setState(() {
+
+                });
+              },
+            ),
+          ],
+        ));
   }
 }
 

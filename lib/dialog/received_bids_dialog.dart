@@ -64,7 +64,8 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
               Consumer<BidProvider>(
                 builder: (context, model, child) => SizedBox(
                   height: 250,
-                  child: ListView.builder(
+                  child: model.receivedBidingList.length>0?Container(
+                    child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: model.receivedBidingList.length,
                     itemBuilder: (context,index){
@@ -74,34 +75,36 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                         child: Container(
                           padding: EdgeInsets.all(9),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(model.receivedBidingList[index].loggedUserName.toString(),style: Style.selectedMenuHeading,),
-                              Text(model.receivedBidingList[index].mobileNumber.toString(),style: Style.selectedMenuHeading,),
-                              Row(
-                                children: [
-                                  CustomText('Bid Amount Is : ',
-                                      style: TextStyle(
-                                          color: ColorResources
-                                              .PRIMARY_COLOR,
-                                          fontWeight: FontWeight.bold)),
-                                  CustomText(
-                                      model.receivedBidingList[index].amount
-                                          .toString(),
-                                      style: TextStyle(
-                                          color: ColorResources
-                                              .PRIMARY_COLOR,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              Text(model.receivedBidingList[index].description.toString(),style: Style.selectedMenuHeading,),
-
-                            ],
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(model.receivedBidingList[index].loggedUserName.toString(),style: Style.selectedMenuHeading,),
+                                Text(model.receivedBidingList[index].mobileNumber.toString(),style: Style.selectedMenuHeading,),
+                                Row(
+                                  children: [
+                                    CustomText('Bid Amount Is : ',
+                                        style: TextStyle(
+                                            color: ColorResources
+                                                .PRIMARY_COLOR,
+                                            fontWeight: FontWeight.bold)),
+                                    CustomText(
+                                        model.receivedBidingList[index].amount
+                                            .toString(),
+                                        style: TextStyle(
+                                            color: ColorResources
+                                                .PRIMARY_COLOR,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                Text(model.receivedBidingList[index].description.toString(),style: Style.selectedMenuHeading,),
+                              ]
                           ),
+
                         ),
                       );
                     },
-                  ),
+                  )
+
+                  ):Center(child: Text("No Bids!")),
                 ),
               ),
               Align(

@@ -103,7 +103,8 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                   child: Row(
                     children: [
                       CustomText(' Company Name : ',style: Style.title,),
-                      CustomText('${widget.transportList.companyName}',style: Style.subtitle,),
+                      Expanded(child: CustomText('${widget.transportList.companyName}',style: Style.subtitle,softWrap: true,
+                        maxLines: 2,)),
                     ],
                   ),
                 )),
@@ -117,7 +118,9 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                   child: Row(
                     children: [
                       CustomText(' Company Address : ',style: Style.title,),
-                      CustomText('${widget.transportList.companyAddress}',style: Style.subtitle,),
+                      Expanded(child: Text('${widget.transportList.companyAddress}',style: Style.subtitle,softWrap: true,
+                        maxLines: 3,)
+                      ),
                     ],
                   ),
                 )),
@@ -169,13 +172,14 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 SizedBox(height: 5,),
                 CustomText('${widget.transportList.companyAddress}',style: Style.subtitle,textAlign: TextAlign.center,),
                 SizedBox(height: 20,),
-                model.routeList.length != 0? CustomText('Operating Routes',style: Style.contentHeading):SizedBox.shrink(),
-                model.routeList.length != 0 ? Container(
-                  height:  model.routeList.length <= 3 ? 200 : 200,
+
+                widget.transportList.listOfPreferredRoutes.length != 0? CustomText('Operating Routes',style: Style.contentHeading):SizedBox.shrink(),
+                widget.transportList.listOfPreferredRoutes.length != 0 ? Container(
+                  height:  widget.transportList.listOfPreferredRoutes.length <= 3 ? 200 : 200,
                   margin: EdgeInsets.symmetric(vertical: 15),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: model.routeList.length,
+                    itemCount: widget.transportList.listOfPreferredRoutes.length,
                     itemBuilder: (contex,index){
                       return Container(
                         height: 50,
@@ -196,17 +200,17 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            CustomText('${model.routeList[index].routeSource}',style: Style.cityHeading,),
+                            Text('${widget.transportList.listOfPreferredRoutes[index].routeSource}',style: Style.cityHeading,),
                             SizedBox(width: 5,),
                             Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
                             SizedBox(width: 5,),
-                            CustomText('${model.routeList[index].routeDestination}',style: Style.cityHeading,),
+                            Text('${widget.transportList.listOfPreferredRoutes[index].routeDestination}',style: Style.cityHeading,),
                           ],
                         )
                       );
                     },
                   ),
-                ):SizedBox.shrink(),
+                ):Text("No Data Found!"),SizedBox.shrink(),
                 SizedBox(height: 22,),
                 Align(
                   alignment: Alignment.bottomRight,

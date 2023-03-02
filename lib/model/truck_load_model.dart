@@ -127,6 +127,7 @@ class TruckLoad {
  late final String? typeOfCargo;
  late final String? otherDetails;
 
+
   TruckLoad.fromJson(Map<String, dynamic> json){
     id = json['id']?? 0;
     userId = json['userId']?? 0;

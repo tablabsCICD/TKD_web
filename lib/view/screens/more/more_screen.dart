@@ -18,6 +18,7 @@ import 'package:tkd_app/model/job_model.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/multi_select.dart';
+import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
@@ -31,6 +32,7 @@ import 'package:tkd_app/provider/more_provider.dart';
 import 'package:tkd_app/provider/pool_purchase_provider.dart';
 import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
+import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/custom_text_style.dart';
@@ -58,6 +60,8 @@ import 'package:tkd_app/view/screens/pool_purchase/pool_purchase_detail_screen.d
 import 'package:tkd_app/view/screens/pool_purchase/pool_purches_screen.dart';
 import 'package:universal_html/html.dart' as html;
 
+import '../../../model/discussion_model.dart';
+
 class MoreScreen extends StatefulWidget {
   final moreProvider = locator<MoreProvider>();
   final authProvider = locator<AuthProvider>();
@@ -68,6 +72,8 @@ class MoreScreen extends StatefulWidget {
     moreProvider.getPoolPurchaseList(
         authProvider.userDetailList[0].userName.toString());
     moreProvider.getGalleryList(authProvider.userDetailList[0].id.toString());
+    moreProvider
+        .getDiscussionList(authProvider.userDetailList[0].userName.toString());
   }
 
   @override
@@ -75,8 +81,6 @@ class MoreScreen extends StatefulWidget {
 }
 
 class _MoreScreenState extends State<MoreScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -84,138 +88,6 @@ class _MoreScreenState extends State<MoreScreen> {
       length: 5,
       child: Scaffold(
           backgroundColor: ColorResources.HOME_BG,
-          /* appBar: AppBar(
-          toolbarHeight: 10,
-          backgroundColor: ColorResources.APPBAR_COLOR,
-          bottom: TabBar(
-            labelColor: Colors.deepOrangeAccent,
-            labelStyle: Style.tabHeading,
-            unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.deepOrangeAccent,
-            indicatorWeight: 4,
-            tabs: [
-              Tab(
-                text: getTranslated('full_load',context)!,height: 60,
-              ),
-              Tab(
-                text: getTranslated('part_load',context)!,height: 60,
-              ),
-              */ /*if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-              else Tab(
-                text: getTranslated('jobs',context)!,height: 60,
-              ),*/ /*
-              if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-              else Tab(
-                text: getTranslated('buy_sell_vehicles',context)!,height: 60,
-              ),
-              if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-              else Tab(
-                text: getTranslated('pool_purchase',context)!,height: 60,
-              ),
-              if (widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-              else Tab(
-                text: getTranslated('broadcast',context)!,height: 60,
-              ),
-            ],
-          ),
-        ),
-         body: Consumer<MoreProvider>(
-          builder: (context, model, child) => TabBarView(
-                  children: [
-                    Container(
-                      color: ColorResources.HOME_BG,
-                      child:model.myFullLoadTypeList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ):ResponsiveWidget(
-                        desktop: MyRequirementCard(model.myFullLoadTypeList),
-                        mobile: MyRequirementCard(model.myFullLoadTypeList),
-                        tablet: MyRequirementCard(model.myFullLoadTypeList),
-                      ),
-                    ),
-                    Container(
-                      color: ColorResources.HOME_BG,
-                      child:model.myPartLoadTypeList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ): ResponsiveWidget(
-                        desktop: MyRequirementCard(model.myPartLoadTypeList),
-                        mobile: MyRequirementCard(model.myPartLoadTypeList),
-                        tablet: MyRequirementCard(model.myPartLoadTypeList),
-                      ),
-                    ),
-                  */ /*  if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-                    else Container(
-                      color: ColorResources.HOME_BG,
-                      child: model.myJobList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ):ResponsiveWidget(
-                        desktop: MyJobCard(model.myJobList),
-                        mobile: MyJobCard(model.myJobList),
-                        tablet: MyJobCard(model.myJobList),
-                      ),
-                    ),*/ /*
-                    if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-                    else Container(
-                      color: ColorResources.HOME_BG,
-                      child: model.myBuyVehicleList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ):ResponsiveWidget(
-                        desktop: MyBuySellCard(model.myBuyVehicleList),
-                        mobile: MyBuySellCard(model.myBuyVehicleList),
-                        tablet: MyBuySellCard(model.myBuyVehicleList),
-                      ),
-                    ),
-                    if (widget.authProvider.userDetailList[0].transporterOrAgent == 2 || widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-                    else Container(
-                      color: ColorResources.HOME_BG,
-                      child: model.myPoolPurchaseList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ):ResponsiveWidget(
-                        desktop: MyPoolPurchaseCard(
-                            model.myPoolPurchaseList),
-                        mobile: MyPoolPurchaseCard(
-                            model.myPoolPurchaseList),
-                        tablet: MyPoolPurchaseCard(
-                            model.myPoolPurchaseList),
-                      ),
-                    ),
-                    if (widget.authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-                    else Container(
-                      color: ColorResources.HOME_BG,
-                      child: model.myGalleryList.isEmpty
-                          ? Container(
-                          alignment: Alignment.center,
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          child: Text(getTranslated('no_post',context)!,style: Style.heading)
-                      ):ResponsiveWidget(
-                        desktop: MyGallaryCard(model.myGalleryList),
-                        mobile: MyGallaryCard(model.myGalleryList),
-                        tablet: MyGallaryCard(model.myGalleryList),
-                      ),
-                    ),
-                  ],
-                ),
-        ),*/
           body: Consumer<MoreProvider>(
             builder: (context, model, child) => Container(
               child: Column(
@@ -245,21 +117,14 @@ class _MoreScreenState extends State<MoreScreen> {
                               ? SizedBox.shrink()
                               : getCircularContainer("Buy/Sell Vehicles",
                                   (selectedTab == "Buy/Sell Vehicles")),
-                         /* widget.authProvider.userDetailList[0]
-                                          .transporterOrAgent ==
-                                      2 ||
-                                  widget.authProvider.userDetailList[0]
-                                          .transporterOrAgent ==
-                                      3
-                              ? SizedBox.shrink()
-                              : getCircularContainer("Pool Purchase",
-                                  (selectedTab == "Pool Purchase")),*/
                           widget.authProvider.userDetailList[0]
                                       .transporterOrAgent ==
                                   3
                               ? SizedBox.shrink()
                               : getCircularContainer("Announcement",
                                   (selectedTab == "Announcement")),
+                          getCircularContainer(
+                              "Discussion", (selectedTab == "Discussion"))
                         ],
                       ),
                     ),
@@ -354,28 +219,57 @@ class _MoreScreenState extends State<MoreScreen> {
                                               ),
                                       ),
                                     )
-                                  : Expanded(
-                                      child: Container(
-                                        color: ColorResources.HOME_BG,
-                                        child: model.myGalleryList.isEmpty
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: screenSize.height,
-                                                width: screenSize.width,
-                                                child: CustomText(
-                                                    getTranslated(
-                                                        'no_post', context)!,
-                                                    style: Style.heading))
-                                            : ResponsiveWidget(
-                                                desktop: MyGallaryCard(
-                                                    model.myGalleryList),
-                                                mobile: MyGallaryCard(
-                                                    model.myGalleryList),
-                                                tablet: MyGallaryCard(
-                                                    model.myGalleryList),
-                                              ),
-                                      ),
-                                    ),
+                                  : selectedTab == "Announcement"
+                                      ? Expanded(
+                                          child: Container(
+                                            color: ColorResources.HOME_BG,
+                                            child: model.myGalleryList.isEmpty
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    height: screenSize.height,
+                                                    width: screenSize.width,
+                                                    child: CustomText(
+                                                        getTranslated('no_post',
+                                                            context)!,
+                                                        style: Style.heading))
+                                                : ResponsiveWidget(
+                                                    desktop: MyGallaryCard(
+                                                        model.myGalleryList),
+                                                    mobile: MyGallaryCard(
+                                                        model.myGalleryList),
+                                                    tablet: MyGallaryCard(
+                                                        model.myGalleryList),
+                                                  ),
+                                          ),
+                                        )
+                                      : Expanded(
+                                          child: Container(
+                                            color: ColorResources.HOME_BG,
+                                            child: model.discussionList.isEmpty
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    height: screenSize.height,
+                                                    width: screenSize.width,
+                                                    child: Text(
+                                                        getTranslated('no_post',
+                                                            context)!,
+                                                        style: Style.heading))
+                                                : ResponsiveWidget(
+                                                    desktop: MyDiscussionCard(
+                                                      listComment:
+                                                          model.discussionList,moreProvider: model,
+                                                    ),
+                                                    mobile: MyDiscussionCard(
+                                                      listComment:
+                                                          model.discussionList,moreProvider: model,
+                                                    ),
+                                                    tablet: MyDiscussionCard(
+                                                      listComment:
+                                                          model.discussionList,moreProvider: model,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
                 ],
               ),
             ),
@@ -425,8 +319,6 @@ class _MoreScreenState extends State<MoreScreen> {
   }
 }
 
-
-
 class MyBuySellCard extends StatefulWidget {
   List<TruckLoad> buySellList;
 
@@ -447,15 +339,14 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
     super.initState();
     langCode = langProvider.selectedlangCode;
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MoreProvider>(
       builder: (context, model, child) => Container(
-        margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-            horizontal: 35,vertical: 10
-        ):EdgeInsets.symmetric(
-            horizontal: 10,vertical: 10
-        ),
+        margin: ResponsiveWidget.isDesktop(context)
+            ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+            : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
             /*Row(
@@ -478,86 +369,110 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
                     ),
                   ],
                 ),*/
-             widget.buySellList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):
-            Expanded(
-                child: StaggeredGridView.countBuilder(
-              crossAxisCount: ResponsiveWidget.isDesktop(context)
-                  ? 3
-                  : ResponsiveWidget.isMobile(context)
-                      ? 1
-                      : 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 12,
-              itemCount: widget.buySellList.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (builder) => BuySellDetailsScreen(
-                                widget.buySellList[index])));
-                  },
-                  child: Card(
-                    elevation: 5,
-                    child: Container(
-                      //padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
-                            horizontalTitleGap: 5,
-                            minVerticalPadding: 0,
-                            leading: getImage(widget
-                                .buySellList[index].companyLogo
-                                .toString()),
-                            title: langCode == 'en' ? Text(widget.buySellList[index].nameOfPerson
-                                .toString(),
-                                style: Style.title):CustomText(
-                                widget.buySellList[index].nameOfPerson
-                                    .toString(),
-                                style: Style.title),
-                            subtitle: Column(
+            widget.buySellList.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                  )
+                : Expanded(
+                    child: StaggeredGridView.countBuilder(
+                    crossAxisCount: ResponsiveWidget.isDesktop(context)
+                        ? 3
+                        : ResponsiveWidget.isMobile(context)
+                            ? 1
+                            : 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 12,
+                    itemCount: widget.buySellList.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => BuySellDetailsScreen(
+                                      widget.buySellList[index])));
+                        },
+                        child: Card(
+                          elevation: 5,
+                          child: Container(
+                            //padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                langCode == 'en' ? Text(widget.buySellList[index].companyName
-                                    .toString(),
-                                    style: Style.subtitle):CustomText(
-                                    widget.buySellList[index].companyName
-                                        .toString(),
-                                    style: Style.subtitle),
-                                StarDisplay(
-                                    value: widget.buySellList[index].ratings!
-                                        .toInt()),
-                              ],
-                            ),
-                            trailing: ConvertStringToDate(widget
-                                .buySellList[index].postingTime
-                                .toString()),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10),
-                            child: langCode == 'en' ? Text(widget.buySellList[index].topicName.toString(),
-                                style: Style.contentHeading):CustomText(
-                                widget.buySellList[index].topicName.toString(),
-                                style: Style.contentHeading),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, bottom: 10, right: 10),
-                            child: langCode == 'en' ? Text( widget.buySellList[index].content.toString(),
-                              style: Style.content,):CustomText(
-                              widget.buySellList[index].content.toString(),
-                              style: Style.content,
-                            ),
-                          ),
-                          /*Padding(
+                                ListTile(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  horizontalTitleGap: 5,
+                                  minVerticalPadding: 0,
+                                  leading: getImage(widget
+                                      .buySellList[index].companyLogo
+                                      .toString()),
+                                  title: langCode == 'en'
+                                      ? Text(
+                                          widget.buySellList[index].nameOfPerson
+                                              .toString(),
+                                          style: Style.title)
+                                      : CustomText(
+                                          widget.buySellList[index].nameOfPerson
+                                              .toString(),
+                                          style: Style.title),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      langCode == 'en'
+                                          ? Text(
+                                              widget.buySellList[index]
+                                                  .companyName
+                                                  .toString(),
+                                              style: Style.subtitle)
+                                          : CustomText(
+                                              widget.buySellList[index]
+                                                  .companyName
+                                                  .toString(),
+                                              style: Style.subtitle),
+                                      StarDisplay(
+                                          value: widget
+                                              .buySellList[index].ratings!
+                                              .toInt()),
+                                    ],
+                                  ),
+                                  trailing: ConvertStringToDate(widget
+                                      .buySellList[index].postingTime
+                                      .toString()),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 10),
+                                  child: langCode == 'en'
+                                      ? Text(
+                                          widget.buySellList[index].topicName
+                                              .toString(),
+                                          style: Style.contentHeading)
+                                      : CustomText(
+                                          widget.buySellList[index].topicName
+                                              .toString(),
+                                          style: Style.contentHeading),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, bottom: 10, right: 10),
+                                  child: langCode == 'en'
+                                      ? Text(
+                                          widget.buySellList[index].content
+                                              .toString(),
+                                          style: Style.content,
+                                        )
+                                      : CustomText(
+                                          widget.buySellList[index].content
+                                              .toString(),
+                                          style: Style.content,
+                                        ),
+                                ),
+                                /*Padding(
                                     padding: const EdgeInsets.only(
                                         left: 10.0, bottom: 10, right: 10),
                                     child: Row(
@@ -600,16 +515,17 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
                                       ],
                                     ),
                                   ),*/
-                          Divider(
-                            height: 1.5,
-                            thickness: 1.5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                               /* InkWell(
+                                Divider(
+                                  height: 1.5,
+                                  thickness: 1.5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      /* InkWell(
                                   onTap: () async {
                                     share_data(widget.buySellList[index]);
                                   },
@@ -634,36 +550,39 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
                                   height: 30,
                                   color: Colors.grey,
                                 ),*/
-                                InkWell(
-                                  onTap: () {
-                                    openwhatsapp(
-                                        context,
-                                        widget.buySellList[index].mobileNumber
-                                            .toString(),
-                                        'please contact for more details');
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/chat.png',
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        height: 14,
-                                        width: 14,
+                                      InkWell(
+                                        onTap: () {
+                                          openwhatsapp(
+                                              context,
+                                              widget.buySellList[index]
+                                                  .mobileNumber
+                                                  .toString(),
+                                              'please contact for more details');
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/chat.png',
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              height: 14,
+                                              width: 14,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                                getTranslated('chat', context)!,
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 10,
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
                                       ),
-                                      Text(getTranslated('chat', context)!,
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                               /* InkWell(
+                                      /* InkWell(
                                   onTap: () {
                                     showDialog(
                                         context: context,
@@ -690,116 +609,130 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
                                   height: 30,
                                   color: Colors.grey,
                                 ),*/
-                                InkWell(
-                                  onTap: () {
-                                    _showMultiSelect(context,widget.buySellList[index]);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.feedback,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
+                                      InkWell(
+                                        onTap: () {
+                                          _showMultiSelect(context,
+                                              widget.buySellList[index]);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.feedback,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text('Feedback',
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 10,
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
                                       ),
-                                      Text('Feedback',
-                                          style: Style.bottomHeading)
+                                      InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  new CupertinoAlertDialog(
+                                                    title: CustomText(
+                                                        'Are you sure want to deleted your post?',
+                                                        style: Style.heading),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: CustomText(
+                                                            getTranslated('yes',
+                                                                context)!,
+                                                            style:
+                                                                Style.okButton),
+                                                        onPressed: () {
+                                                          model
+                                                              .deleteBuySell(
+                                                                  widget.buySellList[
+                                                                      index])
+                                                              .then((value) => {
+                                                                    showAnimatedDialog(
+                                                                        context,
+                                                                        MyDialog(
+                                                                          icon:
+                                                                              Icons.check,
+                                                                          title:
+                                                                              'Post Delete',
+                                                                          description:
+                                                                              'Your post deleted successfully',
+                                                                          isFailed:
+                                                                              false,
+                                                                        ),
+                                                                        dismissible:
+                                                                            false,
+                                                                        isFlip:
+                                                                            false)
+                                                                  });
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: CustomText(
+                                                          getTranslated(
+                                                              'no', context)!,
+                                                          style: Style
+                                                              .cancelButton,
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ));
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            CustomText(
+                                                getTranslated(
+                                                    'delete', context)!,
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                            new CupertinoAlertDialog(
-                                              title: CustomText(
-                                                  'Are you sure want to deleted your post?',
-                                                  style: Style.heading),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: CustomText(
-                                                      getTranslated(
-                                                          'yes', context)!,
-                                                      style: Style.okButton),
-                                                  onPressed: () {
-                                                    model
-                                                        .deleteBuySell(widget
-                                                            .buySellList[index])
-                                                        .then((value) => {
-                                                              showAnimatedDialog(
-                                                                  context,
-                                                                  MyDialog(
-                                                                    icon: Icons
-                                                                        .check,
-                                                                    title:
-                                                                        'Post Delete',
-                                                                    description:
-                                                                        'Your post deleted successfully',
-                                                                    isFailed:
-                                                                        false,
-                                                                  ),
-                                                                  dismissible:
-                                                                      false,
-                                                                  isFlip: false)
-                                                            });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: CustomText(
-                                                    getTranslated(
-                                                        'no', context)!,
-                                                    style: Style.cancelButton,
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      CustomText(getTranslated('delete', context)!,
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                )
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-              //  physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-            )),
+                        ),
+                      );
+                    },
+                    //  physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                  )),
           ],
         ),
       ),
     );
   }
-  Set<int>? selectedValues = [1,].toSet();
+
+  Set<int>? selectedValues = [
+    1,
+  ].toSet();
 
   void _showMultiSelect(BuildContext context, TruckLoad object) async {
     final items = <MultiSelectDialogItem<int>>[
@@ -823,11 +756,11 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
     print(selectedValues!.length);
     print(selectedValues);
   }
-
 }
 
 class MyRequirementCard extends StatefulWidget {
   List<TruckLoad> loadTypeList;
+
   MyRequirementCard(this.loadTypeList);
 
   @override
@@ -846,45 +779,50 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
   TextEditingController destinationController = TextEditingController();
   TextEditingController filterController = TextEditingController();
 
-  void repeatPostEvent(){
-    Future.delayed(Duration(seconds: 5),(){
-      var result = dashboardProvider.savePost(
-          mobile: authProvider.userDetailList[0].mobileNumber ,
-          destination: moreProvider.myFullLoadTypeList[0].destination,
-          dnd: 0,
-          email: authProvider.userDetailList[0].emailId,
-          fullLoadChoice: moreProvider.myFullLoadTypeList[0].type,
-          id: 0,
-          instruction: moreProvider.myFullLoadTypeList[0].content,
-          loadWeight: moreProvider.myFullLoadTypeList[0].vehicleSize,
-          name: authProvider.userDetailList[0].userName,
-          mainTag: moreProvider.myFullLoadTypeList[0].mainTag,
-          os: '',
-          otherDetails: moreProvider.myFullLoadTypeList[0].content,
-          source: moreProvider.myFullLoadTypeList[0].source,
-          partLoad: moreProvider.myFullLoadTypeList[0].type == 'Part Load' ? 1 : 0,
-          privatePost: moreProvider.myFullLoadTypeList[0].privatePost == true ? 1 : 0,
-          rating: 5,
-          customerName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
-          type: moreProvider.myFullLoadTypeList[0].type,
-          typeOfCargo: moreProvider.myFullLoadTypeList[0].topicName,
-          typeOfPayment: moreProvider.myFullLoadTypeList[0].typeOfPayment,
-          vehicleSize: moreProvider.myFullLoadTypeList[0].vehicleSize,
-          userId: authProvider.userDetailList[0].id
-      ).then((value) => {
-        showAnimatedDialog(
-            context,
-            MyDialog(
-              icon: Icons.check,
-              title:
-              'New Post',
-              description:
-              'Your post submitted successfully',
-              isFailed: false,
-            ),
-            dismissible: false,
-            isFlip: false),
-      });
+  void repeatPostEvent() {
+    Future.delayed(Duration(seconds: 5), () {
+      var result = dashboardProvider
+          .savePost(
+              mobile: authProvider.userDetailList[0].mobileNumber,
+              destination: moreProvider.myFullLoadTypeList[0].destination,
+              dnd: 0,
+              email: authProvider.userDetailList[0].emailId,
+              fullLoadChoice: moreProvider.myFullLoadTypeList[0].type,
+              id: 0,
+              instruction: moreProvider.myFullLoadTypeList[0].content,
+              loadWeight: moreProvider.myFullLoadTypeList[0].vehicleSize,
+              name: authProvider.userDetailList[0].userName,
+              mainTag: moreProvider.myFullLoadTypeList[0].mainTag,
+              os: '',
+              otherDetails: moreProvider.myFullLoadTypeList[0].content,
+              source: moreProvider.myFullLoadTypeList[0].source,
+              partLoad: moreProvider.myFullLoadTypeList[0].type == 'Part Load'
+                  ? 1
+                  : 0,
+              privatePost:
+                  moreProvider.myFullLoadTypeList[0].privatePost == true
+                      ? 1
+                      : 0,
+              rating: 5,
+              customerName:
+                  '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
+              type: moreProvider.myFullLoadTypeList[0].type,
+              typeOfCargo: moreProvider.myFullLoadTypeList[0].topicName,
+              typeOfPayment: moreProvider.myFullLoadTypeList[0].typeOfPayment,
+              vehicleSize: moreProvider.myFullLoadTypeList[0].vehicleSize,
+              userId: authProvider.userDetailList[0].id)
+          .then((value) => {
+                showAnimatedDialog(
+                    context,
+                    MyDialog(
+                      icon: Icons.check,
+                      title: 'New Post',
+                      description: 'Your post submitted successfully',
+                      isFailed: false,
+                    ),
+                    dismissible: false,
+                    isFlip: false),
+              });
     });
   }
 
@@ -895,7 +833,7 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
   void initState() {
     super.initState();
     langCode = langProvider.selectedlangCode;
-   // repeatPostEvent();
+    // repeatPostEvent();
   }
 
   @override
@@ -903,677 +841,452 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
     final screenSize = MediaQuery.of(context).size;
     return Consumer<MoreProvider>(
       builder: (context, model, child) => Container(
-        margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-          horizontal: 35,vertical: 10
-        ):EdgeInsets.symmetric(
-          horizontal: 10,vertical: 10
-        ),
+        margin: ResponsiveWidget.isDesktop(context)
+            ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+            : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
-            /* Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  width: MediaQuery.of(context).size.width / 6,
-                  child: model.fullLoadFlag == false ?CustomButton(
-                      onTap: (){
-                        model.setFullLoadFlag(true);
-                      },
-                      buttonText: getTranslated('edit', context)):
-                  CustomButton(
-                      onTap: (){
-                        model.setFullLoadFlag(false);
-                      },
-                      buttonText: getTranslated('cancel', context))
-                  ,
-                ),
-              ],
-            ),*/
-            widget.loadTypeList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):
-            Expanded(
-                child: StaggeredGridView.countBuilder(
-              crossAxisCount: ResponsiveWidget.isDesktop(context)
-                  ? 3
-                  : ResponsiveWidget.isMobile(context)
-                      ? 1
-                      : 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 12,
-              itemCount: widget.loadTypeList.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (builder) => RequirementDetails(
-                                widget.loadTypeList[index])));
-                  },
-                  child: Card(
-                    elevation: 5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 140,
-                                height: 20,
-                                alignment: Alignment.center,
-                                decoration: new BoxDecoration(
-                                    color: widget.loadTypeList[index].mainTag ==
-                                            "Full load required"
-                                        ? ColorResources.FULL_LOAD_REQUIRED
-                                        : widget.loadTypeList[index].mainTag ==
-                                                "Part load required"
-                                            ? ColorResources.PART_LOAD_REQUIRED
-                                            : widget.loadTypeList[index]
-                                                        .mainTag ==
-                                                    "Full load available"
-                                                ? ColorResources
-                                                    .FULL_LOAD_AVAILABLE
-                                                : ColorResources
-                                                    .PART_LOAD_AVAILABLE,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(5),
-                                        bottomRight: Radius.circular(10))),
-                                child: CustomText(
-                                    widget.loadTypeList[index].mainTag
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'RobotoMedium',
-                                        color: widget.loadTypeList[index]
-                                                    .mainTag ==
-                                                "Full load required"
-                                            ? ColorResources.FLR_TEXT
-                                            : widget.loadTypeList[index]
-                                                        .mainTag ==
-                                                    "Part load required"
-                                                ? ColorResources.PLR_TEXT
-                                                : widget.loadTypeList[index]
-                                                            .mainTag ==
-                                                        "Full load available"
-                                                    ? ColorResources.FLA_TEXT
-                                                    : ColorResources.PLA_TEXT)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: Column(
+            widget.loadTypeList.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                  )
+                : Expanded(
+                    child: StaggeredGridView.countBuilder(
+                    crossAxisCount: ResponsiveWidget.isDesktop(context)
+                        ? 3
+                        : ResponsiveWidget.isMobile(context)
+                            ? 1
+                            : 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 12,
+                    itemCount: widget.loadTypeList.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => RequirementDetails(
+                                      widget.loadTypeList[index])));
+                        },
+                        child: Card(
+                          elevation: 5,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      height: 5,
+                                    Container(
+                                      width: 140,
+                                      height: 20,
+                                      alignment: Alignment.center,
+                                      decoration: new BoxDecoration(
+                                          color: widget.loadTypeList[index]
+                                                      .mainTag ==
+                                                  "Full load required"
+                                              ? ColorResources
+                                                  .FULL_LOAD_REQUIRED
+                                              : widget.loadTypeList[index]
+                                                          .mainTag ==
+                                                      "Part load required"
+                                                  ? ColorResources
+                                                      .PART_LOAD_REQUIRED
+                                                  : widget.loadTypeList[index]
+                                                              .mainTag ==
+                                                          "Full load available"
+                                                      ? ColorResources
+                                                          .FULL_LOAD_AVAILABLE
+                                                      : ColorResources
+                                                          .PART_LOAD_AVAILABLE,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(5),
+                                              bottomRight:
+                                                  Radius.circular(10))),
+                                      child: CustomText(
+                                          widget.loadTypeList[index].mainTag
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'RobotoMedium',
+                                              color: widget.loadTypeList[index]
+                                                          .mainTag ==
+                                                      "Full load required"
+                                                  ? ColorResources.FLR_TEXT
+                                                  : widget.loadTypeList[index]
+                                                              .mainTag ==
+                                                          "Part load required"
+                                                      ? ColorResources.PLR_TEXT
+                                                      : widget
+                                                                  .loadTypeList[
+                                                                      index]
+                                                                  .mainTag ==
+                                                              "Full load available"
+                                                          ? ColorResources
+                                                              .FLA_TEXT
+                                                          : ColorResources
+                                                              .PLA_TEXT)),
                                     ),
-                                    ConvertStringToDate(widget
-                                        .loadTypeList[index].postingTime
-                                        .toString()),
-                                    SizedBox(
-                                      height: 5,
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          ConvertStringToDate(widget
+                                              .loadTypeList[index].postingTime
+                                              .toString()),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          StarDisplay(
+                                              value: widget
+                                                  .loadTypeList[index].ratings!
+                                                  .toInt()),
+                                        ],
+                                      ),
                                     ),
-                                    StarDisplay(
-                                        value: widget
-                                            .loadTypeList[index].ratings!
-                                            .toInt()),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
-                            horizontalTitleGap: 5,
-                            minVerticalPadding: 0,
-                            leading: Stack(
-                              children: [
-                                getImage(widget.loadTypeList[index].companyLogo
-                                    .toString()),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Image.asset(
-                                    widget.loadTypeList[index].isPaid == 30
-                                        ? 'assets/images/diamond.png'
-                                        : widget.loadTypeList[index].isPaid ==
-                                                20
-                                            ? 'assets/images/gold_badge.png'
-                                            : 'assets/images/ruby_badge.png',
-                                    width: 15,
-                                    height: 20,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Row(
-                              children: [
-                                CustomText(
-                                    widget.loadTypeList[index].nameOfPerson
-                                        .toString(),
-                                    style: Style.title),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                widget.loadTypeList[index]
-                                            .isVerifiedByCompany ==
-                                        null
-                                    ? Image.asset(
-                                        'assets/images/membership.png',
-                                        width: 15,
-                                        height: 15,
-                                      )
-                                    : Image.asset(
-                                        'assets/images/membership.png',
-                                        width: 15,
-                                        height: 15,
-                                      )
-                              ],
-                            ),
-                            subtitle: CustomText(
-                                widget.loadTypeList[index].companyName
-                                    .toString(),
-                                style: Style.subtitle),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.symmetric(horizontal: 45),
-                            height: 30,
-                            decoration: new BoxDecoration(
-                                color: Color(0xfff0f0f0),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CustomText(
-                                    widget.loadTypeList[index].source
-                                        .toString(),
-                                    style: Style.cityHeading),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                CustomText(
-                                    widget.loadTypeList[index].destination
-                                        .toString(),
-                                    style: Style.cityHeading),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 7),
-                            child: langCode == 'en'?Text(widget.loadTypeList[index].topicName.toString(),
-                                style: Style.contentHeading)
-                                :CustomText(
-                                widget.loadTypeList[index].topicName.toString(),
-                                style: Style.contentHeading),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, bottom: 10, right: 10),
-                            child: langCode == 'en'?Text(widget.loadTypeList[index].content.toString(),
-                              style: Style.content,)
-                                :CustomText(
-                              widget.loadTypeList[index].content.toString(),
-                              style: Style.content,
-                            ),
-                          ),
-                          Divider(
-                            height: 1.5,
-                            thickness: 1.5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    openwhatsapp(
-                                        context,
-                                        widget
-                                            .loadTypeList[index]
-                                            .mobileNumber
-                                            .toString(),
-                                        'please contact for more details');
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                ListTile(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  horizontalTitleGap: 5,
+                                  minVerticalPadding: 0,
+                                  leading: Stack(
                                     children: [
-                                       Image.asset(
-                                        'assets/images/chat.png',
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        height: 15,
-                                        width: 15,
-                                      ),
-                                      SizedBox(
-                                        width: ResponsiveWidget.isDesktop(context)? 10 : 5,
-                                      ),
-                                      Text(getTranslated('chat', context)!,
-                                        style: Style.bottomHeading,
+                                      getImage(widget
+                                          .loadTypeList[index].companyLogo
+                                          .toString()),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Image.asset(
+                                          widget.loadTypeList[index].isPaid ==
+                                                  30
+                                              ? 'assets/images/diamond.png'
+                                              : widget.loadTypeList[index]
+                                                          .isPaid ==
+                                                      20
+                                                  ? 'assets/images/gold_badge.png'
+                                                  : 'assets/images/ruby_badge.png',
+                                          width: 15,
+                                          height: 20,
+                                        ),
                                       )
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                        new RepeatDialogBox(widget.loadTypeList[index]));
-                                  },
-                                  child: Row(
+                                  title: Row(
                                     children: [
-                                      Icon(
-                                        Icons.repeat_one,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
-                                      ),
+                                      CustomText(
+                                          widget
+                                              .loadTypeList[index].nameOfPerson
+                                              .toString(),
+                                          style: Style.title),
                                       SizedBox(
-                                        width: ResponsiveWidget.isDesktop(context)? 10 : 5,                                      ),
-                                      Text('Repeat Post',
-                                          style: Style.bottomHeading)
+                                        width: 10,
+                                      ),
+                                      widget.loadTypeList[index]
+                                                  .isVerifiedByCompany ==
+                                              null
+                                          ? Image.asset(
+                                              'assets/images/membership.png',
+                                              width: 15,
+                                              height: 15,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/membership.png',
+                                              width: 15,
+                                              height: 15,
+                                            )
                                     ],
                                   ),
+                                  subtitle: CustomText(
+                                      widget.loadTypeList[index].companyName
+                                          .toString(),
+                                      style: Style.subtitle),
                                 ),
                                 Container(
-                                  width: 1.5,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.symmetric(horizontal: 45),
                                   height: 30,
-                                  color: Colors.grey,
-                                ),
-                               InkWell(
-                                  onTap: () {
-                                    _showMultiSelect(context,widget.loadTypeList[index]);
-                                  },
+                                  decoration: new BoxDecoration(
+                                      color: Color(0xfff0f0f0),
+                                      borderRadius: BorderRadius.circular(5)),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(
-                                        Icons.feedback,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
+                                      CustomText(
+                                          widget.loadTypeList[index].source
+                                              .toString(),
+                                          style: Style.cityHeading),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Image.asset(
+                                        'assets/images/two_way_arrow.png',
+                                        height: 15,
+                                        width: 25,
                                       ),
                                       SizedBox(
-                                        width: ResponsiveWidget.isDesktop(context)? 10 : 5,
-                                      ),
-                                      Text('Feedback',
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    //share_data(widget.loadTypeList[index]);
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                        new CupertinoAlertDialog(
-                                          title: CustomText(
-                                            'Are you sure want to deleted your post?',
-                                            style: Style.heading,
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text(
-                                                  getTranslated(
-                                                      'yes', context)!,
-                                                  style: Style.okButton),
-                                              onPressed: () {
-                                                model
-                                                    .deleteFullLoad(
-                                                    widget.loadTypeList[
-                                                    index])
-                                                    .then((value) => {
-                                                  showAnimatedDialog(
-                                                      context,
-                                                      MyDialog(
-                                                        icon: Icons
-                                                            .check,
-                                                        title:
-                                                        'Post Delete',
-                                                        description:
-                                                        'Your post deleted successfully',
-                                                        isFailed:
-                                                        false,
-                                                      ),
-                                                      dismissible:
-                                                      false,
-                                                      isFlip: false)
-                                                });
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text(
-                                                  getTranslated(
-                                                      'no', context)!,
-                                                  style:
-                                                  Style.cancelButton),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        ));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: ResponsiveWidget.isDesktop(context)? 10 : 5,
+                                        width: 10,
                                       ),
                                       CustomText(
-                                        "Delete",
-                                        style: Style.bottomHeading,
-                                      )
+                                          widget.loadTypeList[index].destination
+                                              .toString(),
+                                          style: Style.cityHeading),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        /*  Divider(
-                            height: 1.5,
-                            thickness: 1.5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    showAnimatedDialog(
-                                        context,
-                                        Dialog(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Container(
-                                            height: 350,
-                                            width: 300,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(16),
-                                              child: Column(children: [
-                                                Text(
-                                                    getTranslated(
-                                                        'place_your_bid',
-                                                        context)!,
-                                                    style: Style.heading),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                CustomTextField(
-                                                    controller:
-                                                        TextEditingController(
-                                                            text: widget
-                                                                .loadTypeList[
-                                                                    index]
-                                                                .type),
-                                                    hintText: "Type of Payment",
-                                                    readOnly: true,
-                                                    textInputType:
-                                                        TextInputType.text),
-                                                CustomTextField(
-                                                    controller:
-                                                        bidAmtController,
-                                                    hintText: getTranslated(
-                                                        'enter_bid_amount',
-                                                        context)!,
-                                                    textInputType:
-                                                        TextInputType.number),
-                                                CustomTextField(
-                                                    controller:
-                                                        descriptionController,
-                                                    hintText: getTranslated(
-                                                        'description',
-                                                        context)!,
-                                                    textInputType:
-                                                        TextInputType.number),
-                                                CustomButton(
-                                                  onTap: () {
-                                                    bidProvider.generateBid(
-                                                        mobile: widget
-                                                            .loadTypeList[index]
-                                                            .mobileNumber,
-                                                        description:
-                                                            descriptionController
-                                                                .text,
-                                                        id: 0,
-                                                        email: authProvider
-                                                            .userDetailList[0]
-                                                            .emailId,
-                                                        amount: bidAmtController
-                                                            .text,
-                                                        idOfPost: widget
-                                                            .loadTypeList[index]
-                                                            .userId,
-                                                        bidderUserName: widget
-                                                            .loadTypeList[index]
-                                                            .nameOfPerson,
-                                                        userName: authProvider
-                                                            .userDetailList[0]
-                                                            .userName,
-                                                        type: 'Bid',
-                                                        loggedUserName:
-                                                            authProvider
-                                                                .userDetailList[
-                                                                    0]
-                                                                .userName);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  buttonText: getTranslated(
-                                                      'submit', context)!,
-                                                )
-                                              ]),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 7),
+                                  child: langCode == 'en'
+                                      ? Text(
+                                          widget.loadTypeList[index].topicName
+                                              .toString(),
+                                          style: Style.contentHeading)
+                                      : CustomText(
+                                          widget.loadTypeList[index].topicName
+                                              .toString(),
+                                          style: Style.contentHeading),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, bottom: 10, right: 10),
+                                  child: langCode == 'en'
+                                      ? Text(
+                                          widget.loadTypeList[index].content
+                                              .toString(),
+                                          style: Style.content,
+                                        )
+                                      : CustomText(
+                                          widget.loadTypeList[index].content
+                                              .toString(),
+                                          style: Style.content,
+                                        ),
+                                ),
+                                Divider(
+                                  height: 1.5,
+                                  thickness: 1.5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          openwhatsapp(
+                                              context,
+                                              widget.loadTypeList[index]
+                                                  .mobileNumber
+                                                  .toString(),
+                                              'please contact for more details');
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/chat.png',
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              height: 15,
+                                              width: 15,
                                             ),
-                                          ),
-                                        ));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/bid.png',
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        width: 15,
-                                        height: 15,
+                                            SizedBox(
+                                              width: ResponsiveWidget.isDesktop(
+                                                      context)
+                                                  ? 10
+                                                  : 5,
+                                            ),
+                                            Text(
+                                              getTranslated('chat', context)!,
+                                              style: Style.bottomHeading,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 10,
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
                                       ),
-                                      Text(getTranslated('bid', context)!,
-                                          style: Style.bottomHeading)
+                                      InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  new RepeatDialogBox(widget
+                                                      .loadTypeList[index]));
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.repeat_one,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: ResponsiveWidget.isDesktop(
+                                                      context)
+                                                  ? 10
+                                                  : 5,
+                                            ),
+                                            Text('Repeat Post',
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          _showMultiSelect(context,
+                                              widget.loadTypeList[index]);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.feedback,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: ResponsiveWidget.isDesktop(
+                                                      context)
+                                                  ? 10
+                                                  : 5,
+                                            ),
+                                            Text('Feedback',
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          //share_data(widget.loadTypeList[index]);
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  new CupertinoAlertDialog(
+                                                    title: CustomText(
+                                                      'Are you sure want to deleted your post?',
+                                                      style: Style.heading,
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: Text(
+                                                            getTranslated('yes',
+                                                                context)!,
+                                                            style:
+                                                                Style.okButton),
+                                                        onPressed: () {
+                                                          model
+                                                              .deleteFullLoad(
+                                                                  widget.loadTypeList[
+                                                                      index])
+                                                              .then((value) => {
+                                                                    showAnimatedDialog(
+                                                                        context,
+                                                                        MyDialog(
+                                                                          icon:
+                                                                              Icons.check,
+                                                                          title:
+                                                                              'Post Delete',
+                                                                          description:
+                                                                              'Your post deleted successfully',
+                                                                          isFailed:
+                                                                              false,
+                                                                        ),
+                                                                        dismissible:
+                                                                            false,
+                                                                        isFlip:
+                                                                            false)
+                                                                  });
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: Text(
+                                                            getTranslated(
+                                                                'no', context)!,
+                                                            style: Style
+                                                                .cancelButton),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ));
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: ResponsiveWidget.isDesktop(
+                                                      context)
+                                                  ? 10
+                                                  : 5,
+                                            ),
+                                            CustomText(
+                                              "Delete",
+                                              style: Style.bottomHeading,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    share_data(widget.loadTypeList[index]);
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/share.png',
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(getTranslated('share', context)!,
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                            new CupertinoAlertDialog(
-                                              title: CustomText(
-                                                'Are you sure want to deleted your post?',
-                                                style: Style.heading,
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'yes', context)!,
-                                                      style: Style.okButton),
-                                                  onPressed: () {
-                                                    model
-                                                        .deleteFullLoad(
-                                                            widget.loadTypeList[
-                                                                index])
-                                                        .then((value) => {
-                                                              showAnimatedDialog(
-                                                                  context,
-                                                                  MyDialog(
-                                                                    icon: Icons
-                                                                        .check,
-                                                                    title:
-                                                                        'Post Delete',
-                                                                    description:
-                                                                        'Your post deleted successfully',
-                                                                    isFailed:
-                                                                        false,
-                                                                  ),
-                                                                  dismissible:
-                                                                      false,
-                                                                  isFlip: false)
-                                                            });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'no', context)!,
-                                                      style:
-                                                          Style.cancelButton),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        getTranslated('delete', context)!,
-                                        style: Style.bottomHeading,
-                                      )
-                                    ],
-                                  ),
-                                )
                               ],
                             ),
-                          ),*/
-                          /* Divider(
-                                height: 1.5,
-                                thickness: 1.5,
-                              ),
-                              Center(
-                                child: CustomButton(
-                                  onTap: (){
-                                    showDialog(context: context, builder: (_) => new CupertinoAlertDialog(
-                                      title: Text('Are you sure want to deleted your post?',style: Style.heading,),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text(getTranslated('yes', context)!,style: Style.okButton),
-                                          onPressed: (){
-                                            model.deleteFullLoad(widget.loadTypeList[index])
-                                                .then((value) => {
-                                              showAnimatedDialog(
-                                                  context,
-                                                  MyDialog(
-                                                    icon: Icons.check,
-                                                    title: 'Post Delete',
-                                                    description: 'Your post deleted successfully',
-                                                    isFailed: false,
-                                                  ),
-                                                  dismissible: false,
-                                                  isFlip: true)
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text('no',style: Style.cancelButton),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    ));
-                                  },
-                                  buttonText: getTranslated("delete",context),
-                                ),
-                              )*/
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-              //physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-            )),
+                          ),
+                        ),
+                      );
+                    },
+                    //physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                  )),
           ],
         ),
       ),
     );
   }
-  Set<int>? selectedValues = [1,].toSet();
+
+  Set<int>? selectedValues = [
+    1,
+  ].toSet();
 
   void _showMultiSelect(BuildContext context, TruckLoad object) async {
     final items = <MultiSelectDialogItem<int>>[
@@ -1597,12 +1310,13 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
     print(selectedValues!.length);
     print(selectedValues);
   }
-
 }
 
 class MyGallaryCard extends StatefulWidget {
   List<Gallery> gallaryList;
+
   MyGallaryCard(this.gallaryList);
+
   @override
   _MyGallaryCardState createState() => _MyGallaryCardState();
 }
@@ -1619,101 +1333,117 @@ class _MyGallaryCardState extends State<MyGallaryCard> {
 
   @override
   Widget build(BuildContext context) {
-   return Consumer<MoreProvider>(
+    return Consumer<MoreProvider>(
       builder: (context, model, child) => Container(
-        margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-            horizontal: 35,vertical: 10
-        ):EdgeInsets.symmetric(
-            horizontal: 10,vertical: 10
-        ),
+        margin: ResponsiveWidget.isDesktop(context)
+            ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+            : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
-            widget.gallaryList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):
-            Expanded(
-              child: StaggeredGridView.countBuilder(
-                crossAxisCount: ResponsiveWidget.isDesktop(context)
-                    ? 3
-                    : ResponsiveWidget.isMobile(context)
-                        ? 1
-                        : 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 12,
-                itemCount: widget.gallaryList.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
-                            horizontalTitleGap: 5,
-                            minVerticalPadding: 0,
-                            leading: getImage(widget
-                                .gallaryList[index].profilePicture
-                                .toString()),
-                            title: langCode == 'en'?Text( widget.gallaryList[index].firstName.toString(),
-                                style: Style.title)
-                                :CustomText(
-                                widget.gallaryList[index].firstName.toString(),
-                                style: Style.title),
-                            subtitle: langCode == 'en'?Text( widget.gallaryList[index].topicName.toString(),
-                                style: Style.subtitle)
-                                :CustomText(
-                                widget.gallaryList[index].topicName.toString(),
-                                style: Style.subtitle),
-                            trailing: ConvertStringToDate(
-                                widget.gallaryList[index].date.toString()),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10),
-                            child: InkWell(
-                              onTap: () async {
-                                await showDialog(
-                                    context: context,
-                                    builder: (_) => ImageDialog(
-                                        widget.gallaryList[index].image!));
-                              },
-                              child: Container(
-                                height: 100,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    //  fit: BoxFit.fill,
-                                    image: NetworkImage(
-                                        '${widget.gallaryList[index].image}'),
+            widget.gallaryList.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                  )
+                : Expanded(
+                    child: StaggeredGridView.countBuilder(
+                      crossAxisCount: ResponsiveWidget.isDesktop(context)
+                          ? 3
+                          : ResponsiveWidget.isMobile(context)
+                              ? 1
+                              : 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 12,
+                      itemCount: widget.gallaryList.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 5,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 5),
+                                  horizontalTitleGap: 5,
+                                  minVerticalPadding: 0,
+                                  leading: getImage(widget
+                                      .gallaryList[index].profilePicture
+                                      .toString()),
+                                  title: langCode == 'en'
+                                      ? Text(
+                                          widget.gallaryList[index].firstName
+                                              .toString(),
+                                          style: Style.title)
+                                      : CustomText(
+                                          widget.gallaryList[index].firstName
+                                              .toString(),
+                                          style: Style.title),
+                                  subtitle: langCode == 'en'
+                                      ? Text(
+                                          widget.gallaryList[index].topicName
+                                              .toString(),
+                                          style: Style.subtitle)
+                                      : CustomText(
+                                          widget.gallaryList[index].topicName
+                                              .toString(),
+                                          style: Style.subtitle),
+                                  trailing: ConvertStringToDate(widget
+                                      .gallaryList[index].date
+                                      .toString()),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 10),
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await showDialog(
+                                          context: context,
+                                          builder: (_) => ImageDialog(widget
+                                              .gallaryList[index].image!));
+                                    },
+                                    child: Container(
+                                      height: 100,
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          //  fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              '${widget.gallaryList[index].image}'),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, bottom: 10, right: 10),
-                            child: langCode == 'en'?Text( widget.gallaryList[index].description.toString(),
-                              style: Style.content,)
-                                :CustomText(
-                              widget.gallaryList[index].description.toString(),
-                              style: Style.content,
-                            ),
-                          ),
-                          Divider(
-                            height: 1.5,
-                            thickness: 1.5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                              /* InkWell(
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, bottom: 10, right: 10),
+                                  child: langCode == 'en'
+                                      ? Text(
+                                          widget.gallaryList[index].description
+                                              .toString(),
+                                          style: Style.content,
+                                        )
+                                      : CustomText(
+                                          widget.gallaryList[index].description
+                                              .toString(),
+                                          style: Style.content,
+                                        ),
+                                ),
+                                Divider(
+                                  height: 1.5,
+                                  thickness: 1.5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      /* InkWell(
                                   onTap: () {
                                     showDialog(
                                         context: context,
@@ -1874,112 +1604,127 @@ class _MyGallaryCardState extends State<MyGallaryCard> {
                                   height: 30,
                                   color: Colors.grey,
                                 ),*/
-                                InkWell(
-                                  onTap: () {
-                                    _showMultiSelect(context,widget.gallaryList[index]);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.feedback,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      CustomText('Feedback',
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) => new CupertinoAlertDialog(
-                                          title: CustomText(
-                                            'Are you sure want to deleted your post?',
-                                            style: Style.heading,
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: CustomText(
-                                                  getTranslated(
-                                                      'yes', context)!,
-                                                  style: Style.okButton),
-                                              onPressed: () {
-                                                model
-                                                    .deleteGallery(widget
-                                                    .gallaryList[index])
-                                                    .then((value) => {
-                                                  showAnimatedDialog(
-                                                      context,
-                                                      MyDialog(
-                                                        icon:
-                                                        Icons.check,
-                                                        title:
-                                                        'Post Delete',
-                                                        description:
-                                                        'Your post deleted successfully',
-                                                        isFailed: false,
-                                                      ),
-                                                      dismissible:
-                                                      false,
-                                                      isFlip: false)
-                                                });
-                                                Navigator.of(context).pop();
-                                              },
+                                      InkWell(
+                                        onTap: () {
+                                          _showMultiSelect(context,
+                                              widget.gallaryList[index]);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.feedback,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
                                             ),
-                                            TextButton(
-                                              child: CustomText('no',
-                                                  style: Style.cancelButton),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
+                                            SizedBox(
+                                              width: 10,
                                             ),
+                                            CustomText('Feedback',
+                                                style: Style.bottomHeading)
                                           ],
-                                        ));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 10,
+                                      Container(
+                                        width: 1.5,
+                                        height: 30,
+                                        color: Colors.grey,
                                       ),
-                                      CustomText(getTranslated('delete', context)!,
-                                          style: Style.bottomHeading)
+                                      InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  new CupertinoAlertDialog(
+                                                    title: CustomText(
+                                                      'Are you sure want to deleted your post?',
+                                                      style: Style.heading,
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: CustomText(
+                                                            getTranslated('yes',
+                                                                context)!,
+                                                            style:
+                                                                Style.okButton),
+                                                        onPressed: () {
+                                                          model
+                                                              .deleteGallery(
+                                                                  widget.gallaryList[
+                                                                      index])
+                                                              .then((value) => {
+                                                                    showAnimatedDialog(
+                                                                        context,
+                                                                        MyDialog(
+                                                                          icon:
+                                                                              Icons.check,
+                                                                          title:
+                                                                              'Post Delete',
+                                                                          description:
+                                                                              'Your post deleted successfully',
+                                                                          isFailed:
+                                                                              false,
+                                                                        ),
+                                                                        dismissible:
+                                                                            false,
+                                                                        isFlip:
+                                                                            false)
+                                                                  });
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: CustomText('no',
+                                                            style: Style
+                                                                .cancelButton),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ));
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color:
+                                                  ColorResources.PRIMARY_COLOR,
+                                              size: 16,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            CustomText(
+                                                getTranslated(
+                                                    'delete', context)!,
+                                                style: Style.bottomHeading)
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
+                      shrinkWrap: true,
+                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
                     ),
-                  );
-                },
-                shrinkWrap: true,
-                staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-              ),
-            ),
+                  ),
           ],
         ),
       ),
     );
   }
 
-  Set<int>? selectedValues = [1,].toSet();
+  Set<int>? selectedValues = [
+    1,
+  ].toSet();
 
   void _showMultiSelect(BuildContext context, Gallery object) async {
     final items = <GallaryFeedbackDialogItem<int>>[
@@ -2005,45 +1750,6 @@ class _MyGallaryCardState extends State<MyGallaryCard> {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class MyPoolPurchaseCard extends StatefulWidget {
   List<PoolPurchase> myPoolPurchaseList;
 
@@ -2062,11 +1768,9 @@ class _MyPoolPurchaseCardState extends State<MyPoolPurchaseCard> {
       backgroundColor: ColorResources.HOME_BG,
       body: Consumer<MoreProvider>(
         builder: (context, model, child) => Container(
-          margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-              horizontal: 35,vertical: 10
-          ):EdgeInsets.symmetric(
-              horizontal: 10,vertical: 10
-          ),
+          margin: ResponsiveWidget.isDesktop(context)
+              ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+              : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             children: [
               /*Row(
@@ -2089,203 +1793,222 @@ class _MyPoolPurchaseCardState extends State<MyPoolPurchaseCard> {
                       ),
                     ],
                   ),*/
-              widget.myPoolPurchaseList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):
-              Expanded(
-                  child: StaggeredGridView.countBuilder(
-                crossAxisCount: ResponsiveWidget.isDesktop(context)
-                    ? 3
-                    : ResponsiveWidget.isMobile(context)
-                        ? 1
-                        : 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 12,
-                itemCount: widget.myPoolPurchaseList.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: (){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (builder) =>
-                                  PoolPurchaseDetailsScreen(widget.myPoolPurchaseList[index])));
-                    },
-                    child: Card(
-                      elevation: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 7),
-                              child: CustomText(
-                                  widget.myPoolPurchaseList[index].purchaseItem
-                                      .toString(),
-                                  style: Style.title),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, bottom: 10, right: 10),
-                              child: CustomText(
-                                widget.myPoolPurchaseList[index].description
-                                    .toString(),
-                                style: Style.subtitle,
-                              ),
-                            ),
-                            Divider(
-                              height: 1.5,
-                              thickness: 1.5,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              widget.myPoolPurchaseList.isEmpty
+                  ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2.5,
+                    )
+                  : Expanded(
+                      child: StaggeredGridView.countBuilder(
+                      crossAxisCount: ResponsiveWidget.isDesktop(context)
+                          ? 3
+                          : ResponsiveWidget.isMobile(context)
+                              ? 1
+                              : 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 12,
+                      itemCount: widget.myPoolPurchaseList.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) =>
+                                        PoolPurchaseDetailsScreen(
+                                            widget.myPoolPurchaseList[index])));
+                          },
+                          child: Card(
+                            elevation: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  InkWell(
-                                    onTap: () async {
-                                      var shareData = {
-                                        "title": widget
-                                            .myPoolPurchaseList[index].agentName,
-                                        "text": widget.myPoolPurchaseList[index]
-                                            .mobileNumber,
-                                        "url": 'link',
-                                      };
-                                      try {
-                                        await html.window.navigator
-                                            .share(shareData);
-                                      } catch (e) {
-                                        print(e);
-                                      }
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/share.png',
-                                          color: ColorResources.PRIMARY_COLOR,
-                                          height: 14,
-                                          width: 14,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(getTranslated('share', context)!,
-                                            style: Style.bottomHeading)
-                                      ],
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 7),
+                                    child: CustomText(
+                                        widget.myPoolPurchaseList[index]
+                                            .purchaseItem
+                                            .toString(),
+                                        style: Style.title),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, bottom: 10, right: 10),
+                                    child: CustomText(
+                                      widget
+                                          .myPoolPurchaseList[index].description
+                                          .toString(),
+                                      style: Style.subtitle,
                                     ),
                                   ),
-                                  Container(
-                                    width: 1.5,
-                                    height: 30,
-                                    color: Colors.grey,
+                                  Divider(
+                                    height: 1.5,
+                                    thickness: 1.5,
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      openwhatsapp(
-                                          context,
-                                          widget.myPoolPurchaseList[index]
-                                              .mobileNumber
-                                              .toString(),
-                                          'please contact for more details');
-                                    },
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
                                     child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
-                                        Image.asset(
-                                          'assets/images/chat.png',
-                                          color: ColorResources.PRIMARY_COLOR,
-                                          height: 14,
-                                          width: 14,
+                                        InkWell(
+                                          onTap: () async {
+                                            var shareData = {
+                                              "title": widget
+                                                  .myPoolPurchaseList[index]
+                                                  .agentName,
+                                              "text": widget
+                                                  .myPoolPurchaseList[index]
+                                                  .mobileNumber,
+                                              "url": 'link',
+                                            };
+                                            try {
+                                              await html.window.navigator
+                                                  .share(shareData);
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/share.png',
+                                                color: ColorResources
+                                                    .PRIMARY_COLOR,
+                                                height: 14,
+                                                width: 14,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                  getTranslated(
+                                                      'share', context)!,
+                                                  style: Style.bottomHeading)
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(
-                                          width: 10,
+                                        Container(
+                                          width: 1.5,
+                                          height: 30,
+                                          color: Colors.grey,
                                         ),
-                                        Text(getTranslated('chat', context)!,
-                                            style: Style.bottomHeading)
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 1.5,
-                                    height: 30,
-                                    color: Colors.grey,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (_) =>
-                                              new CupertinoAlertDialog(
-                                                title: CustomText(
-                                                  'Are you sure want to deleted your post?',
-                                                  style: Style.heading,
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: CustomText(
-                                                        getTranslated(
-                                                            'yes', context)!,
-                                                        style: Style.okButton),
-                                                    onPressed: () {
-                                                      model
-                                                          .deletePoolPurchase(
-                                                              widget.myPoolPurchaseList[
-                                                                  index])
-                                                          .then((value) => {
-                                                                showAnimatedDialog(
-                                                                    context,
-                                                                    MyDialog(
-                                                                      icon: Icons
-                                                                          .check,
-                                                                      title:
-                                                                          'Post Delete',
-                                                                      description:
-                                                                          'Your post deleted successfully',
-                                                                      isFailed:
-                                                                          false,
-                                                                    ),
-                                                                    dismissible:
-                                                                        false,
-                                                                    isFlip: false)
-                                                              });
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: CustomText(
-                                                        getTranslated(
-                                                            'no', context)!,
-                                                        style:
-                                                            Style.cancelButton),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              ));
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.delete,
-                                          color: ColorResources.PRIMARY_COLOR,
-                                          size: 16,
+                                        InkWell(
+                                          onTap: () {
+                                            openwhatsapp(
+                                                context,
+                                                widget.myPoolPurchaseList[index]
+                                                    .mobileNumber
+                                                    .toString(),
+                                                'please contact for more details');
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/chat.png',
+                                                color: ColorResources
+                                                    .PRIMARY_COLOR,
+                                                height: 14,
+                                                width: 14,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                  getTranslated(
+                                                      'chat', context)!,
+                                                  style: Style.bottomHeading)
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(
-                                          width: 10,
+                                        Container(
+                                          width: 1.5,
+                                          height: 30,
+                                          color: Colors.grey,
                                         ),
-                                        CustomText(
-                                          "Delete",
-                                          style: Style.bottomHeading,
+                                        InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (_) =>
+                                                    new CupertinoAlertDialog(
+                                                      title: CustomText(
+                                                        'Are you sure want to deleted your post?',
+                                                        style: Style.heading,
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: CustomText(
+                                                              getTranslated(
+                                                                  'yes',
+                                                                  context)!,
+                                                              style: Style
+                                                                  .okButton),
+                                                          onPressed: () {
+                                                            model
+                                                                .deletePoolPurchase(
+                                                                    widget.myPoolPurchaseList[
+                                                                        index])
+                                                                .then(
+                                                                    (value) => {
+                                                                          showAnimatedDialog(
+                                                                              context,
+                                                                              MyDialog(
+                                                                                icon: Icons.check,
+                                                                                title: 'Post Delete',
+                                                                                description: 'Your post deleted successfully',
+                                                                                isFailed: false,
+                                                                              ),
+                                                                              dismissible: false,
+                                                                              isFlip: false)
+                                                                        });
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: CustomText(
+                                                              getTranslated(
+                                                                  'no',
+                                                                  context)!,
+                                                              style: Style
+                                                                  .cancelButton),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ));
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.delete,
+                                                color: ColorResources
+                                                    .PRIMARY_COLOR,
+                                                size: 16,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              CustomText(
+                                                "Delete",
+                                                style: Style.bottomHeading,
+                                              )
+                                            ],
+                                          ),
                                         )
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            /*  Divider(
+                                  ),
+                                  /*  Divider(
                                       height: 1.5,
                                       thickness: 1.5,
                                     ),
@@ -2326,16 +2049,16 @@ class _MyPoolPurchaseCardState extends State<MyPoolPurchaseCard> {
                                         buttonText: getTranslated("delete",context),
                                       ),
                                     )*/
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                //  physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-              )),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      //  physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                    )),
             ],
           ),
         ),
@@ -2358,11 +2081,9 @@ class _MyJobCardState extends State<MyJobCard> {
   Widget build(BuildContext context) {
     return Consumer<MoreProvider>(
       builder: (context, model, child) => Container(
-        margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-            horizontal: 35,vertical: 10
-        ):EdgeInsets.symmetric(
-            horizontal: 10,vertical: 10
-        ),
+        margin: ResponsiveWidget.isDesktop(context)
+            ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+            : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
             /* Row(
@@ -2391,8 +2112,8 @@ class _MyJobCardState extends State<MyJobCard> {
                 crossAxisCount: ResponsiveWidget.isDesktop(context)
                     ? 3
                     : ResponsiveWidget.isMobile(context)
-                    ? 1
-                    : 2,
+                        ? 1
+                        : 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 12,
                 itemCount: widget.jobList.length,
@@ -2461,13 +2182,12 @@ class _MyJobCardState extends State<MyJobCard> {
                               children: [
                                 InkWell(
                                   onTap: () async {
-                                    showDialog(context: context,
-                                        builder: (BuildContext context){
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
                                           return ShareDialogBox(
-                                              widget.jobList[index]
-                                          );
-                                        }
-                                    );
+                                              widget.jobList[index]);
+                                        });
                                   },
                                   child: Row(
                                     children: [
@@ -2516,53 +2236,53 @@ class _MyJobCardState extends State<MyJobCard> {
                                     showDialog(
                                         context: context,
                                         builder: (_) =>
-                                        new CupertinoAlertDialog(
-                                          title: CustomText(
-                                            'Are you sure want to deleted your post?',
-                                            style: Style.heading,
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text(
-                                                  getTranslated(
-                                                      'yes', context)!,
-                                                  style: Style.okButton),
-                                              onPressed: () {
-                                                model
-                                                    .deleteJob(widget
-                                                    .jobList[index])
-                                                    .then((value) => {
-                                                  showAnimatedDialog(
-                                                      context,
-                                                      MyDialog(
-                                                        icon: Icons
-                                                            .check,
-                                                        title:
-                                                        'Post Delete',
-                                                        description:
-                                                        'Your post deleted successfully',
-                                                        isFailed:
-                                                        false,
-                                                      ),
-                                                      dismissible:
-                                                      false,
-                                                      isFlip: false)
-                                                });
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text(
-                                                  getTranslated(
-                                                      'no', context)!,
-                                                  style:
-                                                  Style.cancelButton),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        ));
+                                            new CupertinoAlertDialog(
+                                              title: CustomText(
+                                                'Are you sure want to deleted your post?',
+                                                style: Style.heading,
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text(
+                                                      getTranslated(
+                                                          'yes', context)!,
+                                                      style: Style.okButton),
+                                                  onPressed: () {
+                                                    model
+                                                        .deleteJob(widget
+                                                            .jobList[index])
+                                                        .then((value) => {
+                                                              showAnimatedDialog(
+                                                                  context,
+                                                                  MyDialog(
+                                                                    icon: Icons
+                                                                        .check,
+                                                                    title:
+                                                                        'Post Delete',
+                                                                    description:
+                                                                        'Your post deleted successfully',
+                                                                    isFailed:
+                                                                        false,
+                                                                  ),
+                                                                  dismissible:
+                                                                      false,
+                                                                  isFlip: false)
+                                                            });
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text(
+                                                      getTranslated(
+                                                          'no', context)!,
+                                                      style:
+                                                          Style.cancelButton),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            ));
                                   },
                                   child: Row(
                                     children: [
@@ -2598,5 +2318,221 @@ class _MyJobCardState extends State<MyJobCard> {
         ),
       ),
     );
+  }
+}
+
+class MyDiscussionCard extends StatefulWidget {
+  final List<DiscussionContent> listComment;
+  final MoreProvider moreProvider;
+
+  const MyDiscussionCard({Key? key, required this.listComment,required this.moreProvider})
+      : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return MyDiscussionState(listComment,moreProvider);
+  }
+}
+
+class MyDiscussionState extends State<MyDiscussionCard> {
+  List<DiscussionContent> discussionList;
+  MoreProvider moreProvider;
+
+  MyDiscussionState(this.discussionList,this.moreProvider);
+
+  @override
+  void initState() {}
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: StaggeredGridView.countBuilder(
+      // controller: _scrollController,
+      physics: ScrollPhysics(),
+      crossAxisCount: ResponsiveWidget.isDesktop(context)
+          ? 3
+          : ResponsiveWidget.isMobile(context)
+              ? 1
+              : 2,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 12,
+      itemCount: discussionList.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {},
+          child: Card(
+            elevation: 5,
+            child: listCard(index),
+          ),
+        );
+      },
+      //  physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+    ));
+  }
+
+  Widget listCard(int index) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: getImage(discussionList[index].profilePicture.toString()),
+            title: CustomText(
+                '${discussionList[index].firstName.toString()} ${discussionList[index].lastName.toString()}',
+                style: Style.title),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(discussionList[index].companyName.toString(),
+                    style: Style.subtitle),
+              ],
+            ),
+            trailing: Text(
+              discussionList[index].loggedTime.toString(),
+              style: Style.date,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            child: Text(
+              discussionList[index].topic.toString(),
+              style: Style.title,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+              maxLines: 2,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 20.0, bottom: 10, right: 20, top: 5),
+            child: Text(
+              discussionList[index].description.toString(),
+              maxLines: 4,
+              style: Style.content,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          cardDivider(),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: () {
+                    showDeleteDialog(context,index);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.delete,
+                        color: ColorResources.PRIMARY_COLOR,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(getTranslated("delete", context)!,
+                          style: Style.cancelButton)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          cardDivider(),
+          SizedBox(
+            height: 14,
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Text(
+              "${discussionList[index].totalComments} Comment",
+              style: Style.date,
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget cardDivider() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: Divider(
+        height: 1.5,
+        thickness: 1.5,
+      ),
+    );
+  }
+
+  showDeleteDialog(context,index) {
+    showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to deleted your post?',
+                style: Style.heading,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    // model
+                    //     .deleteFullLoad(
+                    //     widget.loadTypeList[
+                    //     index])
+                    //     .then((value) => {
+                    //   showAnimatedDialog(
+                    //       context,
+                    //       MyDialog(
+                    //         icon: Icons
+                    //             .check,
+                    //         title:
+                    //         'Post Delete',
+                    //         description:
+                    //         'Your post deleted successfully',
+                    //         isFailed:
+                    //         false,
+                    //       ),
+                    //       dismissible:
+                    //       false,
+                    //       isFlip: false)
+                    // });
+                    // Navigator.of(context).pop();
+                    callDelete(index);
+                  },
+                ),
+                TextButton(
+                  child: Text(getTranslated('no', context)!,
+                      style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  void callDelete(index) async {
+    APIHelper apiHelper=APIHelper();
+    int status=await apiHelper.ApiDeleteData(AppConstants.GET_DISCUSSION+"?id=${discussionList[index].id}");
+    if(status==200){
+
+      discussionList.removeAt(index);
+      Navigator.pop(context);
+      setState(() {
+
+      });
+      moreProvider.discussionList.removeAt(index);
+    }
   }
 }

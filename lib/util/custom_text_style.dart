@@ -12,18 +12,20 @@ const appbarTextStyle = TextStyle(
 const titleTextStyle = TextStyle(
   fontFamily: 'TitilliumWeb',
   fontSize: 15,
+  color: Colors.black,
   fontWeight: FontWeight.w700,
 );
 
 const subTitleTextStyle = TextStyle(
   fontFamily: 'TitilliumWeb',
-  fontSize: 12,
+  fontSize: 12,color: Colors.black,
   fontWeight: FontWeight.w700,
 );
 
 const regularTextStyle = TextStyle(
   fontFamily: 'TitilliumWeb',
   fontSize: Dimensions.FONT_SIZE_DEFAULT,
+    color: Colors.black
 );
 
 const containerTextStyle = TextStyle(

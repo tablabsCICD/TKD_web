@@ -12,4 +12,8 @@ class MenuProvider extends ChangeNotifier{
       _scaffoldKey.currentState!.openDrawer();
     }
   }
+
+  void changeTitle(){
+    notifyListeners();
+  }
 }

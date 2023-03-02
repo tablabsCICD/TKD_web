@@ -1,14 +1,21 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:tkd_app/loading_page.dart';
+import 'package:http/http.dart' as http;
+import 'package:tkd_app/entry_screen.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
+import 'package:tkd_app/provider/group/groupChatProvider.dart';
+import 'package:tkd_app/provider/group/groupListProvider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
@@ -21,15 +28,18 @@ import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/localization/app_localization.dart';
+import 'model/auth_api.dart';
 import 'view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'locator.dart';
 
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await setupLocator();
   setupLocator();
+
+ // await initUniLinks();
   runApp(OverlaySupport.global(
       child: MultiProvider(
       providers: [
@@ -49,10 +59,17 @@ void main() {
         ChangeNotifierProvider(create: (_) => locator<LocalizationProvider>()),
         ChangeNotifierProvider(create: (_) => locator<PlanProvider>()),
         ChangeNotifierProvider(create: (_) => locator<RepeatProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<GroupListProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
       ],
       child: MyApp(),
   )));
+
+
+
 }
+
+
 
 class MyApp extends StatelessWidget {
 
@@ -63,6 +80,8 @@ class MyApp extends StatelessWidget {
     AppConstants.languages.forEach((language) {
       _locals.add(Locale(language.languageCode!, language.countryCode));
     });
+
+
     return MaterialApp(
           title: 'TKDost',
           debugShowCheckedModeBanner: false,
@@ -77,10 +96,15 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: LoadingPage()
+          home:Login_Screen()
+      // home: UpgradeAlert(
+      //   upgrader: Upgrader(showIgnore: false,showLater: false),
+      //     child: EntryScreen(),
+      //     ),
     );
-
-
   }
+
+//export PATH=/Users/paragkumbhar/SDK/flutter/bin:$PATH
+
 }
 

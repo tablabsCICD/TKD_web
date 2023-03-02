@@ -55,7 +55,7 @@ class RepeatProvider extends ChangeNotifier {
   final dashboardProvider = locator<DashboardProvider>();
   final authProvider = locator<AuthProvider>();
 
-  checkRepeatTime() async {
+  checkRepeatTim() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? allRepeatePostList = await prefs.getString('AllRepeatPostList');
     final List<RepeatModel> repeat = RepeatModel.decode(allRepeatePostList!);
@@ -111,7 +111,7 @@ class RepeatProvider extends ChangeNotifier {
   startTimer(){
     if(timer== null) {
       timer = Timer.periodic(Duration(minutes: 1), (timer) {
-        checkRepeatTime();
+        //checkRepeatTime();
       });
     }
   }

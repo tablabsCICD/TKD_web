@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:ui';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/transport_serach_model.dart';
 import 'package:tkd_app/provider/route_provider.dart';
+import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/style.dart';
 
 class CustomCityListDialog extends StatefulWidget {
@@ -66,46 +66,48 @@ class _CustomCityListDialogState extends State<CustomCityListDialog> {
       title: Text('Select City'),
       content: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              onChanged: (value) => _runFilter(value),
-              decoration: const InputDecoration(
-                  labelText: 'Search', suffixIcon: Icon(Icons.search)),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 500,
-              width: 300,
-              child: foundCity.isNotEmpty
-                  ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: foundCity.length,
-                itemBuilder: (context, index) =>
-                    Column(
-                      children: [
-                        ListTile(
-                          onTap: () {
-                           // Navigator.pop(context,[foundCity[index].toString(),foundCity[index].toString()]);
-                            widget.onTap(foundCity[index].toString());
-                            Navigator.of(context).pop();
-                          },
-                           title: Text(foundCity[index]),
-                        ),
-                        Divider(),
-                      ],
-                    ),
-
-              )
-                  : const Text(
-                'No results found',
-                style: TextStyle(fontSize: 18),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
+                    labelText: 'Search', suffixIcon: Icon(Icons.search)),
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: ResponsiveWidget.isDesktop(context)?500:400,
+                width: 300,
+                child: foundCity.isNotEmpty
+                    ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: foundCity.length,
+                  itemBuilder: (context, index) =>
+                      Column(
+                        children: [
+                          ListTile(
+                            onTap: () {
+                             // Navigator.pop(context,[foundCity[index].toString(),foundCity[index].toString()]);
+                              widget.onTap(foundCity[index].toString());
+                              Navigator.of(context).pop();
+                            },
+                             title: Text(foundCity[index]),
+                          ),
+                          Divider(),
+                        ],
+                      ),
+
+                )
+                    : const Text(
+                  'No results found',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
