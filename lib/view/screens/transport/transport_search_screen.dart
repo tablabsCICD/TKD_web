@@ -155,7 +155,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                           //height: MediaQuery.of(context).size.height - 200,
                           child: Center(
                               child: Text(
-                      getTranslated('no_post', context)!,
+                      "No Search Found",
                       style: Style.heading,
                     ))))
                   : model.transportSearchList.isEmpty && model.isLoading

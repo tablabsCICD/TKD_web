@@ -204,7 +204,9 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                 textInputType: TextInputType.number,
                 isValidator: true,
               ),
-              CustomTextField(
+              Visibility(
+                visible: false,
+                child: CustomTextField(
                 hintText: 'Click to upload Aadhar Card',
                 controller: aadharController,
                 textInputType: TextInputType.text,
@@ -216,7 +218,10 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                   });
                 },
               ),
-              CustomTextField(
+              ),
+              Visibility(
+                visible: false,
+                child: CustomTextField(
                 hintText: 'Click to upload Pan Card',
                 controller: panController,
                 textInputType: TextInputType.text,
@@ -227,7 +232,7 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                     print(value);
                   });
                 },
-              ),
+              )),
               CustomDropdownList(
                 hintText: "Select Type",
                 items: itemList,

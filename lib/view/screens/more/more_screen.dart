@@ -43,6 +43,7 @@ import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
+import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_details_screen.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_vehicles.dart';
@@ -90,7 +91,7 @@ class _MoreScreenState extends State<MoreScreen> {
           backgroundColor: ColorResources.HOME_BG,
           body: Consumer<MoreProvider>(
             builder: (context, model, child) => Container(
-              child: Column(
+              child:model.isMoreLoading?getLoader(true): Column(
                 children: [
                   Container(
                     height: 60,

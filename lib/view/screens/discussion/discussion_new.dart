@@ -152,9 +152,26 @@ class _NewDiscussionState extends State<NewDiscussion> {
       APIHelper apiHelper=APIHelper();
       var result=await apiHelper.ApiAddPostDataMapRequest(AppConstants.GET_DISCUSSION, parameter);
       if(result == 200){
-        SnackBar snackBar=SnackBar(content: Text("Discussion post Successfully"),duration: Duration(seconds: 2),);
-        await ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pop(1);
+        topic.clear();
+        additionalinfo.clear();
+        setState(() {
+
+        });
+        //SnackBar snackBar=SnackBar(content: Text("Discussion post Successfully"),duration: Duration(seconds: 2),);
+        //await ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        showAnimatedDialog(
+            context,
+            MyDialog(
+              icon: Icons.check,
+              title:
+              'New Discussion',
+              description:
+              'Your discussion submitted successfully',
+              isFailed: false,
+            ),
+            dismissible: true,
+            isFlip: false);
+
       }else{
         SnackBar snackBar=SnackBar(content: Text("Discussion post failed"),duration: Duration(seconds: 2),);
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
