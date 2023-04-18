@@ -44,6 +44,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
   TextEditingController otpController = new TextEditingController();
   var onTapRecognizer;
   final orgProvider = locator<OrgProvider>();
+  final authProvider = locator<AuthProvider>();
   String? _deviceId;
 
   Future<void> initPlatformState() async {

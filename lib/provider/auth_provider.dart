@@ -175,6 +175,7 @@ class  AuthProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+
   setEmpId(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setInt("id", id );

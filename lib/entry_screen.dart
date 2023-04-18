@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,8 @@ import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/auth/registration_screen_1.dart';
+import 'package:tkd_app/view/screens/company/company_drawer_menu.dart';
+import 'package:tkd_app/view/screens/company/company_menu/company_dashboard.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
@@ -29,6 +33,7 @@ import 'locator.dart';
 import 'model/auth_api.dart';
 import 'model/organization_model.dart';
 import 'network/api_call.dart';
+import 'view/screens/company/company_menu_page.dart';
 
 class EntryScreen extends StatefulWidget {
   @override
@@ -53,12 +58,15 @@ class EntryState extends State<EntryScreen> {
     // TODO: implement initState
     //super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_){
-      //loginOrHome();
-      if(isDebug==true){
-        versionControllApi();
+      if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS){
+        if(isDebug==true){
+          versionControllApi();
+        }else {
+          //loginOrHome();
+          initUniLinks();
+        }
       }else {
-        //loginOrHome();
-        initUniLinks();
+        loginOrHome();
       }
     });
   }
@@ -75,8 +83,48 @@ class EntryState extends State<EntryScreen> {
       upDateDailog();
     }
   }
+
+
   loginOrHome() async {
     visitingFlag = (await authProvider.getVisitingFlag())!;
+    bool companyVisitingFlag = (await orgProvider.getCompanyVisitingFlag())!;
+    if (visitingFlag == true) {
+      int? empid = await authProvider.getEmpId();
+
+        if (empid != null) {
+        userDetailList = await authProvider.getUserDetails(empid);
+        AppConstants.USER_OBJECT=authProvider.userDetailList[0];
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) =>
+                    MenuPage(userDetailList: userDetailList)));
+      }else{
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) =>
+                    Login_Screen()));
+      }
+    }
+    else if( companyVisitingFlag == true){
+      int? OrgId = await orgProvider.getCompanyOrgId();
+      List<Organization> organization = await orgProvider.getCompanyDetails(OrgId!);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (builder) =>
+                  CompanyMenuPage(organization[0])));
+    }
+    else{
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (builder) =>
+                  Login_Screen()));
+    }
+
+   /* visitingFlag = (await authProvider.getVisitingFlag())!;
     if (visitingFlag == true) {
       int? empid = await authProvider.getEmpId();
 
@@ -101,7 +149,7 @@ class EntryState extends State<EntryScreen> {
           MaterialPageRoute(
               builder: (builder) =>
                   Login_Screen()));
-    }
+    }*/
   }
 
   SharedPostModel? truckLoad;

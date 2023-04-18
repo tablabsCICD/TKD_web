@@ -37,7 +37,7 @@ import 'locator.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
-  setupLocator();
+  //setupLocator();
 
  // await initUniLinks();
   runApp(OverlaySupport.global(
@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home:Login_Screen()
+          home:EntryScreen()
       // home: UpgradeAlert(
       //   upgrader: Upgrader(showIgnore: false,showLater: false),
       //     child: EntryScreen(),
