@@ -15,6 +15,8 @@ class BuySellProvider extends ChangeNotifier{
   int totalPages = 0;
   bool isLoadingForBuyVehicles = false;
   bool isLoadingForSellVehicles = false;
+  bool isLoding=true;
+  late TruckLoad truckLoadNotification;
 
   Future<TruckLoadType> getBuyVehicles({int currentPage = 0}) async {
     isLoadingForBuyVehicles = true;
@@ -41,6 +43,23 @@ class BuySellProvider extends ChangeNotifier{
     var req = await http.get(Uri.parse(myUrl));
     isLoadingForSellVehicles = false;
     response1 = json.decode(req.body);
+    var type1 = TruckLoadType.fromJson(response1);
+
+    print('the id is ${truckLoadNotification.id}');
+    notifyListeners();
+    return type1;
+  }
+
+  Future<TruckLoadType> getSellVehiclesNotification(int id) async {
+    isLoadingForSellVehicles = true;
+    notifyListeners();
+    sellVehicleList.clear();
+    String myUrl = AppConstants.BUY_SELL_SINGLE_CARD +'${id}';
+    var req = await http.get(Uri.parse(myUrl));
+    print('req $myUrl');
+    isLoadingForSellVehicles = false;
+    response1 = json.decode(req.body);
+    print('${response1}');
     var type1 = TruckLoadType.fromJson(response1);
     sellVehicleList.addAll(type1.content);
     notifyListeners();

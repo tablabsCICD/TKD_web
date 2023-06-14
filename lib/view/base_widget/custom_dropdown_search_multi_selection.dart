@@ -118,6 +118,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   ),
                 ),
                 items: sampleData[2].isSelected == true ? model.allVerifiedUserList : model.allUserNameList,
+
                 popupProps: const PopupPropsMultiSelection.menu(
                   title: Center(child: Text("Search here")),
                   searchFieldProps: TextFieldProps(),

@@ -4,6 +4,11 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
+
+import '../locator.dart';
+import '../model/auth_api.dart';
+import '../provider/auth_provider.dart';
 
 class MyDialog extends StatelessWidget {
   final bool isFailed;
@@ -11,7 +16,10 @@ class MyDialog extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
-  MyDialog({this.isFailed = false, this.rotateAngle = 0, required this.icon, required this.title, required this.description});
+  final bool isFromPost;
+  final authProvider = locator<AuthProvider>();
+
+  MyDialog({this.isFailed = false, this.rotateAngle = 0,this.isFromPost=false,required this.icon, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +51,15 @@ class MyDialog extends StatelessWidget {
               SizedBox(height: 20),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: CustomButton(buttonText: 'Ok', onTap: () => Navigator.pop(context)),
+                child: CustomButton(buttonText: 'Ok', onTap: () =>{
+                   if(isFromPost==false){
+                     Navigator.pop(context)
+                   }else{
+                     Navigator.of(context).pushAndRemoveUntil(
+                         MaterialPageRoute(builder: (c) => MenuPage(userDetailList:authProvider.userDetailList)),
+                             (route) => false)
+                   }
+                } ),
               ),
             ]),
           ),

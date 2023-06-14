@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 class ColorResources {
 
   static const Color BOTTOM_HEADING = Color(0xff5c5c5c);
+  static const Color PROFILE_BG = Color(0xfffbf7f2);
+
   static const Color COMMENT_BORDER = Color(0xffd2d2d2);
   static const Color BOTTOM_BAR= Color(0xffe8dfd3);
   static const Color COMMENT_BOX = Color(0xffede4da);

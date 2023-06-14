@@ -7,7 +7,7 @@ import '../model/auth_api.dart';
 
 class AppConstants {
 
-  static final String APP_VERSION="2.0.6";
+  static final String APP_VERSION="2.0.10";//40
   static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
   //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Production Url
 
@@ -84,8 +84,10 @@ class AppConstants {
  static String GROUP_MEMBER_DELETE=BASE_URL+'groupMembers?id=';
  static User USER_OBJECT=User();
 
+  static String BUY_SELL_SINGLE_CARD = BASE_URL + "buySell/new/";
 
 
+  static String USER_FIND_BY_MOBILE=BASE_URL+"DeleteUser/getByMobileNumber?mobileNumber=";
 
   static List<LanguageModel> languages = [
     LanguageModel(imageUrl: '', languageName: 'English', countryCode: 'US', languageCode: 'en',isSelected: true),

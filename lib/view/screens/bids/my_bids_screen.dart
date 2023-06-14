@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:http/http.dart' as http;
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
@@ -37,6 +38,8 @@ import 'package:tkd_app/util/date_converter.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/screens/dashboard/allRequirement.dart';
+
+import '../../../util/app_constants.dart';
 
 class MyBidsScreen extends StatefulWidget {
   final bidProvider = locator<BidProvider>();
@@ -228,19 +231,12 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              langCode == 'en' ? Text(model.allBidingList[index].source.toString(),
+                                              Text(model.allBidingList[index].source.toString(),
                                                   style: TextStyle(
                                                       color: Colors.black54,
                                                       fontSize: 14,
                                                       fontFamily: 'RobotoSlab',
-                                                      fontWeight: FontWeight.bold)):CustomText(
-                                                model.allBidingList[index].source.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize: 14,
-                                                    fontFamily: 'RobotoSlab',
-                                                    fontWeight: FontWeight.bold),
-                                              ),
+                                                      fontWeight: FontWeight.bold)),
                                               SizedBox(
                                                 width: 10,
                                               ),
@@ -248,18 +244,12 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                               SizedBox(
                                                 width: 10,
                                               ),
-                                              langCode == 'en' ? Text(model.allBidingList[index].destination.toString(),
+                                               Text(model.allBidingList[index].destination.toString(),
                                                   style: TextStyle(
                                                       color: Colors.black54,
                                                       fontSize: 14,
                                                       fontFamily: 'RobotoSlab',
-                                                      fontWeight: FontWeight.bold)):CustomText(
-                                                model.allBidingList[index].destination.toString(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize: 14,
-                                                    fontFamily: 'RobotoSlab',
-                                                    fontWeight: FontWeight.bold),
+                                                      fontWeight: FontWeight.bold),
                                               ),
                                             ],
                                           ),
@@ -295,12 +285,25 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                         Padding(
                                           padding: const EdgeInsets.only(top: 5,
                                               left: 10.0, bottom: 10, right: 10),
-                                          child: langCode == 'en' ? Text( model.allBidingList[index].content
-                                              .toString(),
-                                            style: regularTextStyle,):CustomText(
-                                            model.allBidingList[index].content
-                                                .toString(),
-                                            style: regularTextStyle,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                           // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            children: [
+                                              Text( model.allBidingList[index].content
+                                                  .toString(),
+                                                style: regularTextStyle,),
+
+                                              InkWell(
+                                                onTap: (){
+                                                  showDialogs(model.allBidingList[index].bidingId,model,index);
+                                                },
+                                                child: Text( "Delete",
+                                                  style: TextStyle(
+                                                      color: ColorResources
+                                                          .PRIMARY_COLOR,
+                                                      fontWeight: FontWeight.bold),),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         /*Divider(
@@ -396,4 +399,72 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
             )
     );
   }
+
+  showDialogs(int id ,BidProvider model,int index){
+    showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+              'Do you want to delete account',
+              style: TextStyle(
+                color: ColorResources.BOTTOM_HEADING,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              )),
+          actions: <Widget>[
+            TextButton(
+
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                        color:
+                        ColorResources
+                            .GREEN,
+                        fontSize:
+                        18)),
+              ),
+              onPressed: () {
+                callDeleteBid(model.allBidingList[index].bidingId,model,index);
+              },
+            ),
+            TextButton(
+              child: Padding(
+                padding:
+                const EdgeInsets
+                    .all(10.0),
+                child: Text(
+                    'Yes',
+                    style: TextStyle(
+                        color:
+                        ColorResources
+                            .RED,
+                        fontSize:
+                        18)),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ));
+
+
+  }
+
+  void callDeleteBid(int id ,BidProvider model,int index)async {
+
+    String myUrl = AppConstants.BID_TO_POST + '?id=$id';
+    var req = await http.delete(Uri.parse(myUrl));
+    var deleteResponse = json.decode(req.body);
+   if(req.statusCode==200){
+     model.allBidingList.removeAt(index);
+     model.notifyListeners();
+
+   }
+  }
+
+
 }

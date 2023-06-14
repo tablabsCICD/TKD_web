@@ -308,6 +308,7 @@ class _CreateNewBuySellPostState extends State<CreateNewBuySellPost> {
                               description:
                               'Your post submitted successfully',
                               isFailed: false,
+                              isFromPost: true,
                             ),
                             dismissible: false,
                             isFlip: false),

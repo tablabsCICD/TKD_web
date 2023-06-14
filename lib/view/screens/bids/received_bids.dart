@@ -263,7 +263,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CustomText(
+                                    Text(
                                         model.myOwnPostList[index].source
                                             .toString(),
                                         style: Style.cityHeading),
@@ -274,7 +274,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                     SizedBox(
                                       width: 10,
                                     ),
-                                    CustomText(
+                                    Text(
                                         model.myOwnPostList[index].destination
                                             .toString(),
                                         style: Style.cityHeading),

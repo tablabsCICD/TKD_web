@@ -6,6 +6,7 @@ import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
  import 'package:http/http.dart' as http;
+import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 class DashboardProvider extends ChangeNotifier{
@@ -66,7 +67,7 @@ class DashboardProvider extends ChangeNotifier{
       allUserList.forEach((element) {
         allUserNameList.add('${element.firstName} ${element.lastName}');
         if(element.isPaid != 0) {
-          allVerifiedUserList.add('${element.firstName} ${element.lastName}');
+          allVerifiedUserList.add('${element.firstName} ${element.lastName}\n${element.companyName}');
         }
       });
       print(allUserNameList.length.toString() + "length sacsczcscscscscscscscscscscscscscscscs");
@@ -161,5 +162,10 @@ class DashboardProvider extends ChangeNotifier{
     var type = TruckLoadType.fromJson(response);
     truckLoadTypeList = type.content;
     notifyListeners();
+  }
+
+  getCountUnreadNotification(int userId){
+    APIHelper apiHelper=APIHelper();
+    apiHelper.ApiGetData(AppConstants.BASE_URL+"getCount/${userId}");
   }
 }

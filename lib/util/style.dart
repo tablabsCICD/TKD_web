@@ -27,6 +27,7 @@ class Style{
 
  static TextStyle appbarheading = TextStyle(fontSize: 22,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xffffffff));
  static TextStyle heading = TextStyle(fontSize: 20,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold);
+ static TextStyle profilename = TextStyle(fontSize: 20,fontFamily: 'RobotoSlabRegular',fontWeight: FontWeight.w600);
  static TextStyle headingBack = TextStyle(fontSize: 20,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xff555555));
 
  static TextStyle heading1 = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xff010101));
@@ -57,11 +58,13 @@ class Style{
  static TextStyle insuranceSubHeading = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xff010101));
 
  static TextStyle button = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
+ static TextStyle buttonborder = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',color: Color(0xff000000));
+
  static TextStyle buttonType2 = TextStyle(fontSize: 14,fontFamily: 'RobotoSlabBold',color: Color(0xff000000));
  static TextStyle boardButton = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
  static TextStyle boardButton1= TextStyle(fontSize: 8,fontFamily: 'RobotoSlabBold',color: Color(0xffffffff));
 
- static TextStyle planTitle = TextStyle(fontSize: 16,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xffffffff));
+ static TextStyle planTitle = TextStyle(fontSize: 13,fontFamily: 'RobotoSlabBold',fontWeight: FontWeight.bold,color: Color(0xffffffff));
  static TextStyle planSubtitle = TextStyle(fontSize: 12,fontFamily: 'RobotoSlabRegular',color: Color(0xfff3f0f0));
  static TextStyle price = TextStyle(fontSize: 24,fontFamily: 'PingFangSC-Regular',fontWeight: FontWeight.bold,color: Color(0xffffffff));
 

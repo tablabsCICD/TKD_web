@@ -61,18 +61,13 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    double screenSize = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      //appBar: AppBarCommon(context, title: "Discussions").appBar(),
-      body: Center(
-        child: Container(
-          width: screenSize<600?screenSize:screenSize/3,
+      appBar: AppBarCommon(context, title: "Discussions").appBar(),
+      body: Container(
         color: ColorResources.HOME_BG,
       //  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Column(
           children: [
-              AppBarCommon(context, title: "Discussions").appBar(),
             Container(
               color: ColorResources.WHITE,
               child: Padding(
@@ -95,14 +90,12 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
           ],
         ),
       ),
-      ),
-      bottomNavigationBar: reportThisCard(screenSize),
+      bottomNavigationBar: reportThisCard(),
     );
   }
 
-  Widget reportThisCard(screenSize){
+  Widget reportThisCard(){
     return Container(
-      width: screenSize<600?screenSize:screenSize/3,
       height:59 ,
 
       decoration: BoxDecoration(

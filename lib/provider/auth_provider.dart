@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/model/deleteuser.dart';
 import 'package:tkd_app/model/validation_model.dart';
+import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 
@@ -174,7 +176,6 @@ class  AuthProvider extends ChangeNotifier{
     await preferences.setBool("Already Visited", flag);
     notifyListeners();
   }
-
 
   setEmpId(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -386,7 +387,7 @@ class  AuthProvider extends ChangeNotifier{
     int? mainBranch,int? mobileNumber ,int? numberOfTimesRating,
     String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,double? rating,
     int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
-  }) async {
+    ,String? panCardForVerification }) async {
     String myUrl = AppConstants.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -424,7 +425,8 @@ class  AuthProvider extends ChangeNotifier{
       "userName": userName ?? userDetailList[0].userName,
       "validTill": validTill ?? userDetailList[0].validTill,
       "verified": verified ?? userDetailList[0].verified ?? 0,
-      "website": website ?? userDetailList[0].website
+      "website": website ?? userDetailList[0].website,
+      "panCardForVerification":panCardForVerification ?? userDetailList[0].panCardForVerification ?? ''
 
     };
     var body = json.encode(data);
@@ -559,5 +561,12 @@ class  AuthProvider extends ChangeNotifier{
         _password.value != null &&
         _phone.value != null &&
         _name.value != null;
+  }
+
+  Future<DeleteUser> isUserDeleted(String mobileNumber)async{
+    APIHelper apiHelper=APIHelper();
+    response= await apiHelper.ApiGetData(AppConstants.USER_FIND_BY_MOBILE+mobileNumber);
+    DeleteUser deleteUser=DeleteUser.fromJson(response);
+    return deleteUser;
   }
 }

@@ -89,6 +89,7 @@ class User {
   int? isUserVerifiedByCompany;
   bool? isSelected;
   bool? addedIngroup;
+  String? panCardForVerification;
 
   User(
       {this.addedIngroup,this.isSelected,this.id,

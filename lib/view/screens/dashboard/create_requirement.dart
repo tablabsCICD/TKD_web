@@ -21,6 +21,7 @@ import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_search_multi_selection.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
+import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 
@@ -295,11 +296,13 @@ class _CreateRequirementState extends State<CreateRequirement> {
                                   description:
                                   'Your post submitted successfully',
                                   isFailed: false,
+                                  isFromPost: true,
                                 ),
                                 dismissible: false,
                                 isFlip: false),
                           });
                           if(result) {
+
                             Navigator.of(context).pop();
 
                           }

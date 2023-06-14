@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
@@ -15,15 +16,19 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
+import 'package:tkd_app/view/screens/more/edit_profile.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 import 'package:tkd_app/view/screens/my_routes/get_state_list.dart';
 import 'package:universal_html/js.dart';
+
+import '../../base_widget/border_button.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -66,398 +71,424 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    // authProvider.getUserDetails(authProvider.userDetailList[0].id!);
-    return Container(
-      color: ColorResources.HOME_BG,
-      child: Consumer<AuthProvider>(
-        builder: (context, model, child) => Card(
-          elevation: 5,
-          margin: ResponsiveWidget.isDesktop(context)
-              ? EdgeInsets.symmetric(horizontal: 250, vertical: 90)
-              : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          color: Colors.white,
-          child: Padding(
-            padding: ResponsiveWidget.isDesktop(context)
-                ? EdgeInsets.all(50.0)
-                : EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
-            child: Column(
+     authProvider.getUserDetails(authProvider.userDetailList[0].id!);
+    return Scaffold(
+      appBar: AppBarCommon(context,title: 'My Profile').appBar(),
+      backgroundColor: Colors.white,
+      body: Consumer<AuthProvider>(
+        builder: (context, model, child) => Column(
+          children: [
+            Stack(
               children: [
-                Stack(
-                  children: [
-                    model.userDetailList[0].profilePicture.toString() == ""
-                        ? Icon(
-                            Icons.account_circle,
-                            size: 75,
-                            color: Colors.grey,
-                          )
-                        : Container(
-                            width: 75.0,
-                            height: 75.0,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: new NetworkImage(model
-                                        .userDetailList[0].profilePicture
-                                        .toString())))),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: () {
-                          pickFile(model);
-                        },
-                        child: Container(
-                          width: 25.0,
-                          height: 25.0,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.black),
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            size: 15,
-                            color: Colors.white,
-                          ),
-                        ),
+                model.userDetailList[0].profilePicture.toString() == ""
+                    ? Icon(
+                  Icons.account_circle,
+                  size: 75,
+                  color: Colors.grey,
+                )
+                    : Container(
+                    width: 75.0,
+                    height: 75.0,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(model
+                                .userDetailList[0].profilePicture
+                                .toString())))),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      pickFile(model);
+                    },
+                    child: Container(
+                      width: 25.0,
+                      height: 25.0,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.black),
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        size: 15,
+                        color: Colors.white,
                       ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                CustomText(
-                  '${model.userDetailList[0].firstName.toString()} ${model.userDetailList[0].lastName.toString()}',
-                  style: Style.heading,
-                ),
-                CustomText(
-                  '${model.userDetailList[0].companyName.toString()}',
-                  style: Style.menuHeading,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                model.userDetailList[0].isPaid == 0
-                    ? getMyPlanCard(
-                        context,
-                        'silver_plan',
-                        'plan_msg',
-                        'Free',
-                        'assets/images/silver.png',
-                        Color(0xff3d3d3d),
-                        Color(0xff9a9a9a))
-                    : model.userDetailList[0].isPaid == 10
-                        ? getMyPlanCard(
-                            context,
-                            'gold_plan',
-                            'plan_msg',
-                            '1,000',
-                            'assets/images/gold.png',
-                            Color(0xffde8b02),
-                            Color(0xfffacf5a))
-                        : model.userDetailList[0].isPaid == 20
-                            ? getMyPlanCard(
-                                context,
-                                'ruby_plan',
-                                'plan_msg',
-                                '2,000',
-                                'assets/images/platinum.png',
-                                Color(0xffab34e0),
-                                Color(0xff8fabff))
-                            : getMyPlanCard(
-                                context,
-                                'diamond_plan',
-                                'plan_msg',
-                                '3,000',
-                                'assets/images/diamond.png',
-                                Color(0xff0087ba),
-                                Color(0xff10c9d9)),
-                SizedBox(
-                  height: 20,
-                ),
-                Divider(
-                  height: 1.5,
-                  thickness: 1.5,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 10.0, bottom: 10, right: 10),
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          //  UserNameWithKyc()
+          //,
+            CustomText(
+              '${model.userDetailList[0].companyName.toString()}',
+              style: Style.menuHeading,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            model.userDetailList[0].isPaid == 0
+                ? getMyPlanCard(
+                context,
+                'silver_plan',
+                'plan_msg',
+                'Free',
+                'assets/images/silver.png',
+                Color(0xff3d3d3d),
+                Color(0xff9a9a9a))
+                : model.userDetailList[0].isPaid == 10
+                ? getMyPlanCard(
+                context,
+                'gold_plan',
+                'plan_msg',
+                '1,000',
+                'assets/images/gold.png',
+                Color(0xffde8b02),
+                Color(0xfffacf5a))
+                : model.userDetailList[0].isPaid == 20
+                ? getMyPlanCard(
+                context,
+                'ruby_plan',
+                'plan_msg',
+                '2,000',
+                'assets/images/platinum.png',
+                Color(0xffab34e0),
+                Color(0xff8fabff))
+                : getMyPlanCard(
+                context,
+                'diamond_plan',
+                'plan_msg',
+                '3,000',
+                'assets/images/diamond.png',
+                Color(0xff0087ba),
+                Color(0xff10c9d9)),
+            SizedBox(
+              height: 20,
+            ),
+            Divider(
+              height: 1.5,
+              thickness: 1.5,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding:
+              const EdgeInsets.only(left: 20.0, bottom: 10, right: 20),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            'Email_Id',
-                            style: Style.title,
-                          ),
-                          CustomText('Mobile Number', style: Style.title),
-                          CustomText('Alternate Number', style: Style.title),
-                          CustomText('Address', style: Style.title),
-                          //   Text('User Type', style: Style.title),
-                        ],
+                      CustomText(
+                        'Email_Id',
+                        style: Style.title,
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                           CustomText(
-                              ': ${model.userDetailList[0].emailId.toString()}',
-
-                              style:
-                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
-                            ),
-                            CustomText(
-                              ': ${model.userDetailList[0].mobileNumber.toString()}',
-                              style:
-                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
-                            ),
-                            CustomText(
-                              ': ${model.userDetailList[0].alternativeNumber.toString()}',
-                              style:
-                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
-                            ),
-                            CustomText(
-                              ': ${model.userDetailList[0].companyAddress.toString()}',
-                              style:
-                                  TextStyle(color: ColorResources.PRIMARY_COLOR),
-                            ),
-                            /* Text(
-                                ': ${userDetailList.city.toString()}',
-                                style: TextStyle(
-                                    color: ColorResources.PRIMARY_COLOR),
-                              ),*/
-                          ],
-                        ),
-                      ),
+                      SizedBox(height: 30,),
+                      CustomText('Mobile Number', style: Style.title),
+                      SizedBox(height: 30,),
+                      //CustomText('Alternate Number', style: Style.title),
+                      //SizedBox(height: 20,),
+                      CustomText('Address', style: Style.title),
+                      //   Text('User Type', style: Style.title),
                     ],
                   ),
-                ),
-                SizedBox(
-                  height:15,
-                ),
-                CustomButton(
-                  buttonText: 'Edit Profile Info',
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                  SizedBox(
+                    width: 30,
+                  ),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          ': ${model.userDetailList[0].emailId.toString()}',
+
+                          style:
+                          TextStyle(color: ColorResources.PRIMARY_COLOR),
+                        ),
+                        SizedBox(height: 30,),
+                        CustomText(
+                          ': ${model.userDetailList[0].mobileNumber.toString()}',
+                          style:
+                          TextStyle(color: ColorResources.PRIMARY_COLOR),
+                        ),
+                        SizedBox(height: 30,),
+
+
+                        CustomText(
+                          ': ${model.userDetailList[0].companyAddress.toString()}',
+                          style:
+                          TextStyle(color: ColorResources.PRIMARY_COLOR),
+                        ),
+
+                        /* Text(
+                          ': ${userDetailList.city.toString()}',
+                          style: TextStyle(
+                              color: ColorResources.PRIMARY_COLOR),
+                        ),*/
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height:15,
+            ),
+            Center(
+              child: kIsWeb?BorderButton(
+                buttonText: 'Edit Profile Info',
+                onTap: () {
+                  if(kIsWeb){
+                    showDailog(context,authProvider);
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                    //   );
+                  }else{
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                    );
+                  }
+
+                },
+              ):SizedBox(),
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: kIsWeb?SizedBox() :BorderButton(
+        buttonText: 'Edit Profile Info',
+        onTap: () {
+          if(kIsWeb){
+            showDailog(context,authProvider);
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => EditProfileScreen()),
+          //   );
+          }else{
+            Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                );
+          }
+
+        },
+      ),
+    );
+  }
+
+  showDailog(BuildContext context,model){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: ResponsiveWidget.isDesktop(context)
+                  ? EdgeInsets.only(
+                  left: 10, top: 10, right: 10, bottom: 10)
+                  : EdgeInsets.symmetric(
+                  horizontal: 0, vertical: 10),
+              margin: ResponsiveWidget.isDesktop(context)
+                  ? EdgeInsets.only(
+                  top: 10,
+                  left: 250,
+                  right: 250,
+                  bottom: 10)
+                  : EdgeInsets.all(0),
+              decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(0, 10),
+                        blurRadius: 10),
+                  ]),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                          BorderRadius.circular(50)),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.close,size: 18,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  size: 30,
+                                  color: Colors.black,
+                                )),
+                            SizedBox(
+                              width: 10,
                             ),
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            child: Container(
-                              padding: ResponsiveWidget.isDesktop(context)
-                                  ? EdgeInsets.only(
-                                      left: 10, top: 10, right: 10, bottom: 10)
-                                  : EdgeInsets.symmetric(
-                                      horizontal: 0, vertical: 10),
-                              margin: ResponsiveWidget.isDesktop(context)
-                                  ? EdgeInsets.only(
-                                      top: 10,
-                                      left: 250,
-                                      right: 250,
-                                      bottom: 10)
-                                  : EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black,
-                                        offset: Offset(0, 10),
-                                        blurRadius: 10),
-                                  ]),
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(50)),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.close,size: 18,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      children: [
-                                        Row(
-                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            InkWell(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Icon(
-                                                  Icons.arrow_back_ios,
-                                                  size: 30,
-                                                  color: Colors.black,
-                                                )),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            CustomText('Edit Profile',
-                                                style: Style.heading),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'First Name',
-                                          controller: firstNameController,
-                                          textInputType: TextInputType.number,
-                                          isValidator: false,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'Last Name',
-                                          controller: lastNameController,
-                                          textInputType:
-                                              TextInputType.emailAddress,
-                                          isValidator: false,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'Mobile Number',
-                                          controller: mobileController,
-                                          textInputType: TextInputType.number,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'Enter Email Id',
-                                          controller: emailController,
-                                          textInputType: TextInputType.number,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'Company Name',
-                                          controller: companyNameController,
-                                          textInputType: TextInputType.text,
-                                        ),
-                                        CustomTextField(
-                                          hintText: 'Company Website',
-                                          controller: websiteController,
-                                          textInputType: TextInputType.text,
-                                        ),
-                                        /* CustomTextField(
+                            CustomText('Edit Profile',
+                                style: Style.heading),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          hintText: 'First Name',
+                          controller: firstNameController,
+                          textInputType: TextInputType.number,
+                          isValidator: false,
+                        ),
+                        CustomTextField(
+                          hintText: 'Last Name',
+                          controller: lastNameController,
+                          textInputType:
+                          TextInputType.emailAddress,
+                          isValidator: false,
+                        ),
+                        CustomTextField(
+                          hintText: 'Mobile Number',
+                          controller: mobileController,
+                          textInputType: TextInputType.number,
+                        ),
+                        CustomTextField(
+                          hintText: 'Enter Email Id',
+                          controller: emailController,
+                          textInputType: TextInputType.number,
+                        ),
+                        CustomTextField(
+                          hintText: 'Company Name',
+                          controller: companyNameController,
+                          textInputType: TextInputType.text,
+                        ),
+                        CustomTextField(
+                          hintText: 'Company Website',
+                          controller: websiteController,
+                          textInputType: TextInputType.text,
+                        ),
+                        /* CustomTextField(
                                           hintText: 'Member Name',
                                           controller: memberController,
                                           textInputType: TextInputType.text,
                                         ),*/
-                                        CustomTextField(
-                                          hintText: 'Address',
-                                          controller: addressController,
-                                          textInputType: TextInputType.text,
-                                        ),
-                                        CustomCityTextField(
-                                          hintText: 'Select State',
-                                          controller: selectedState!,
-                                          onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return CustomStateListDialog(
-                                                      onTap: (String value) {
-                                                    setState(() {
-                                                      selectedState = value;
-                                                    });
-                                                  });
-                                                });
-                                          },
-                                        ),
-                                        CustomCityTextField(
-                                          hintText: 'Select City',
-                                          controller: selectedCity!,
-                                          onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return CustomCityListDialog(
-                                                      onTap: (String value) {
-                                                    setState(() {
-                                                      selectedCity = value;
-                                                    });
-                                                  });
-                                                });
-                                          },
-                                        ),
-                                        CustomButton(
-                                            onTap: () async {
-                                              var result = await model
-                                                  .updateUser(
-                                                    firstName:
-                                                        firstNameController
-                                                            .text,
-                                                    lastName:
-                                                        lastNameController.text,
-                                                    mobileNumber: int.parse(
-                                                        mobileController.text),
-                                                    emailId:
-                                                        emailController.text,
-                                                    companyName:
-                                                        companyNameController
-                                                            .text,
-                                                    companyAddress:
-                                                        addressController.text,
-                                                    state: selectedState,
-                                                    city: selectedCity,
-                                                    website:
-                                                        websiteController.text,
-                                                  )
-                                                  .then((value) => {
-                                                        showAnimatedDialog(
-                                                            context,
-                                                            MyDialog(
-                                                              icon: Icons.check,
-                                                              title:
-                                                                  'Edit Profile',
-                                                              description:
-                                                                  'Your Profile Updated successfully',
-                                                              isFailed: false,
-                                                            ),
-                                                            dismissible: false,
-                                                            isFlip: false),
-                                                      });
-                                              if(result) {
-                                                Navigator.of(context).pop();
-                                              }
-                                            },
-                                            buttonText: 'Save'),
-                                      ],
+                        CustomTextField(
+                          hintText: 'Address',
+                          controller: addressController,
+                          textInputType: TextInputType.text,
+                        ),
+                        CustomCityTextField(
+                          hintText: 'Select State',
+                          controller: selectedState!,
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder:
+                                    (BuildContext context) {
+                                  return CustomStateListDialog(
+                                      onTap: (String value) {
+                                        setState(() {
+                                          selectedState = value;
+                                        });
+                                      });
+                                });
+                          },
+                        ),
+                        CustomCityTextField(
+                          hintText: 'Select City',
+                          controller: selectedCity!,
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder:
+                                    (BuildContext context) {
+                                  return CustomCityListDialog(
+                                      onTap: (String value) {
+                                        setState(() {
+                                          selectedCity = value;
+                                        });
+                                      });
+                                });
+                          },
+                        ),
+                        CustomButton(
+                            onTap: () async {
+                              var result = await model
+                                  .updateUser(
+                                firstName:
+                                firstNameController
+                                    .text,
+                                lastName:
+                                lastNameController.text,
+                                mobileNumber: int.parse(
+                                    mobileController.text),
+                                emailId:
+                                emailController.text,
+                                companyName:
+                                companyNameController
+                                    .text,
+                                companyAddress:
+                                addressController.text,
+                                state: selectedState,
+                                city: selectedCity,
+                                website:
+                                websiteController.text,
+                              )
+                                  .then((value) => {
+                                showAnimatedDialog(
+                                    context,
+                                    MyDialog(
+                                      icon: Icons.check,
+                                      title:
+                                      'Edit Profile',
+                                      description:
+                                      'Your Profile Updated successfully',
+                                      isFailed: false,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        });
-                  },
-                )
-              ],
+                                    dismissible: false,
+                                    isFlip: false),
+                              });
+                              if(result) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            buttonText: 'Save'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 
   getMyPlanCard(BuildContext context, String plan, String planDetails,
@@ -465,25 +496,28 @@ class _MyProfileState extends State<MyProfile> {
     return Column(
       children: [
         Card(
-          elevation: 5,
+          elevation: 0,
           child: Container(
             height: 40,
-            width: 200,
+            width: 130,
             alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+           // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(22),
               gradient: LinearGradient(
                 colors: [color1, color2],
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset(
                   image,
-                  height: 50,
-                  width: 50,
+                  height: 20,
+                  width: 20,
                 ),
+                SizedBox(width: 8,),
                 CustomText(
                   getTranslated(plan, context)!,
                   style: Style.planTitle,
@@ -495,7 +529,7 @@ class _MyProfileState extends State<MyProfile> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 2,
         ),
         CustomText(
           price,
@@ -534,5 +568,32 @@ class _MyProfileState extends State<MyProfile> {
         throw Exception("Exception Occurred ${ex.toString()}");
       }
     }
+  }
+
+  UserNameWithKyc() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+
+        CustomText(
+          '${authProvider.userDetailList[0].firstName.toString()} ${authProvider.userDetailList[0].lastName.toString()}',
+          style: Style.profilename,
+        ),
+        SizedBox(width: 3,),
+        Padding(
+          padding:  EdgeInsets.only(top: 2.0),
+          child: DecoratedBox(
+
+            decoration:  BoxDecoration(color: authProvider.userDetailList[0].aadharCard!.isEmpty==false && authProvider.userDetailList[0].panCardForVerification!.isEmpty==false ?ColorResources.GREEN:ColorResources.RED,borderRadius: BorderRadius.circular(10)),
+            child:  Padding(
+              padding: const EdgeInsets.all(2.0),
+              child:authProvider.userDetailList[0].aadharCard!.isEmpty==false && authProvider.userDetailList[0].panCardForVerification!.isEmpty==false ? Text(' KYC Done ',style: Style.boardButton1):Text(' KYC Pending ',style: Style.boardButton1),
+            ),
+          ),
+        )
+      ],
+    );
+
   }
 }

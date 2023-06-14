@@ -186,9 +186,12 @@ class _MyRoutesState extends State<MyRoutes> {
                   child:CustomText('Add Your Business Route',style: Style.contentHeading,)
                 )
                 :Container(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: model.routeList.length,
+                    padding: EdgeInsets.only(bottom: 20),
+                    scrollDirection: Axis.vertical,
                     itemBuilder: (contex,index){
                       return Container(
                         height: 50,

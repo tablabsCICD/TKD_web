@@ -18,6 +18,7 @@ class CustomCityTextField extends StatelessWidget {
   final bool? readOnly;
   final String? validatorMsg;
   Function? onTap;
+  final bool isFromProfile;
 
   CustomCityTextField({
     required this.controller,
@@ -31,7 +32,8 @@ class CustomCityTextField extends StatelessWidget {
     this.iconData,
     this.obsecure,
     this.readOnly,
-    this.onTap
+    this.onTap,
+    this.isFromProfile=false
   });
 
   @override
@@ -61,11 +63,13 @@ class CustomCityTextField extends StatelessWidget {
             hintText: hintText,
             filled: true,
             errorStyle: TextStyle(color: Colors.red),
-            fillColor: ColorResources.TEXTFEILD_COLOR,
+            fillColor: isFromProfile==false?ColorResources.TEXTFEILD_COLOR:ColorResources.WHITE,
             hintStyle: Style.searchHint,
-            border:OutlineInputBorder(
+            border:isFromProfile==false?OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide.none),
+                borderSide: BorderSide.none) :OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey)),
           ),
           keyboardType: TextInputType.text,
         ),

@@ -381,7 +381,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                         });
                                                   },
                                                   child: CustomText(
-                                                    "View Profile",
+                                                    "View Route",
                                                     style: Style.aleaready,
                                                   ),
                                                 ),

@@ -1025,7 +1025,7 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      CustomText(
+                                      Text(
                                           widget.loadTypeList[index].source
                                               .toString(),
                                           style: Style.cityHeading),
@@ -1040,7 +1040,7 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      CustomText(
+                                      Text(
                                           widget.loadTypeList[index].destination
                                               .toString(),
                                           style: Style.cityHeading),

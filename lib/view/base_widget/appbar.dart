@@ -29,6 +29,7 @@ class AppBarCommon {
     } ,
     ),);
   }
+
   AppBar appBarWithTextField(TextEditingController _controller,String hintText,Function onChangeVal(value),bool backShow){
     //TextEditingController _controller = TextEditingController();
     return AppBar(
@@ -103,6 +104,26 @@ class AppBarCommon {
     );
   }
 
+  AppBar appBarWithNotification(Function ontap){
+    return AppBar(
+      title: Text(title,style:Style.appheading,),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      actions: [
+        Center(
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+              child: IconButton(
+                  onPressed: ontap(),
+                  icon: Icon(Icons.notifications))
+          ),
+        )
+      ],
+      leading: IconButton(icon:Icon(Icons.arrow_back_ios_new,color: Colors.black,),onPressed:(){
+        Navigator.pop(context);
+      } ,
+      ),);
+  }
 
   Widget appBarWithSearch(TextEditingController _controller,String hintText,Function onChangeVal(value),bool backShow){
     //TextEditingController _controller = TextEditingController();
