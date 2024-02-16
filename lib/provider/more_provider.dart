@@ -47,6 +47,9 @@ class MoreProvider extends ChangeNotifier {
       partLoadFlag = false,
       galleryFlag = false;
 
+
+
+
   getOwnPostList(String userName,{int currentPage = 0}) async {
     isMoreLoading = true;
     notifyListeners();

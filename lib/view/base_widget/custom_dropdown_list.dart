@@ -56,7 +56,7 @@ class CustomDropdownList extends StatelessWidget {
           child: FormBuilderDropdown(
               name: hintText,
              // initialValue: selectedType??'',
-              allowClear: true,
+             // allowClear: true,
               isDense: false ,
               decoration: InputDecoration.collapsed(
                 hintText: '',
@@ -67,16 +67,17 @@ class CustomDropdownList extends StatelessWidget {
                     borderSide: BorderSide.none
                 ),
               ),
-              hint: Container(
-                //height: 60,
-                padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 15),
-                child: Text(
-                  hintText,
-                  style: Style.searchHint,
-                ),
-              ),
-              validator: FormBuilderValidators.compose(
-                  [FormBuilderValidators.required(context)]),
+              // hint: Container(
+              //   //height: 60,
+              //   padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 15),
+              //   child: Text(
+              //     hintText,
+              //     style: Style.searchHint,
+              //   ),
+              // ),
+              // validator: FormBuilderValidators.compose(
+              //     [FormBuilderValidators.required(context)]),
+
               items: items
                   .map((value) => DropdownMenuItem(
                         value: value,

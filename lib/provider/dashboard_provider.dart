@@ -33,6 +33,8 @@ class DashboardProvider extends ChangeNotifier{
     }
 
     String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
+    //String myUrl = AppConstants.FULL_LOAD_ALL_CARD_NEW +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
+
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isFirstLoading= false;

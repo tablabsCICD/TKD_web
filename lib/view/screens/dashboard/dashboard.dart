@@ -68,7 +68,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
+      child: 
+      Container(
           color: ColorResources.HOME_BG,
           child: ResponsiveWidget(
             desktop: WebScreenDashBoard(),

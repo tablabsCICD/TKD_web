@@ -292,6 +292,14 @@ class _MenuPageState extends State<MenuPage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          SizedBox(width: 20,),
+          Container(
+              height: 40,
+              color: Colors.black12,
+              child: Text("Note : As we offer annual packages, \n we don't offer refunds.")),
+
+          Spacer(),
+
           FloatingActionButton.extended(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)
@@ -761,6 +769,11 @@ class _MenuPageState extends State<MenuPage> {
               //
               // )),
         ));
+        break;
+
+      case "Logout":
+        logoutFunction(authProvider);
+        print('logout');
         break;
       default:
         container = TransportSearchScreen();
