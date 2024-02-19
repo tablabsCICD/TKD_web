@@ -88,13 +88,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        dashboardProvider.getFullLoadTruckList(currentPage: selectedPageNumber);
-        selectedPageNumber++;
-      }
-    });
+
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:overlay_support/overlay_support.dart';
 import 'package:platform_device_id/platform_device_id.dart';
@@ -72,14 +73,14 @@ class _Login_ScreenState extends State<Login_Screen> {
   }
 
   loginOrHome() async{
-     visitingFlag = (await authProvider.getVisitingFlag())!;
-      if(visitingFlag == true){
-        int? empid = await authProvider.getEmpId();
-        if(empid != null){
-         userDetailList = await authProvider.getUserDetails(empid);
-         Navigator.push(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userDetailList)));
-        }
+    visitingFlag = (await authProvider.getVisitingFlag())!;
+    if(visitingFlag == true){
+      int? empid = await authProvider.getEmpId();
+      if(empid != null){
+        userDetailList = await authProvider.getUserDetails(empid);
+        Navigator.push(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userDetailList)));
       }
+    }
   }
 
   companyLoginOrHome() async{
@@ -101,80 +102,241 @@ class _Login_ScreenState extends State<Login_Screen> {
     return Scaffold(
       body: Consumer<AuthProvider>(
         builder: (context, model, child) =>
-        Container(
-          child: ResponsiveWidget.isMobile(context)
-              ? Stack(children: [
+            Container(
+              child: ResponsiveWidget.isMobile(context)
+                  ? Stack(children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0.5, 0.5],
+                          colors: [Colors.white, ColorResources.HOME_BG])),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      //  getDetails(),
+                      getCart(model),
+                    ],
+                  ),
+                ),
+              ])
+                  : Stack(
+                children: [
                   Container(
-                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             stops: [0.5, 0.5],
                             colors: [Colors.white, ColorResources.HOME_BG])),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                      //  getDetails(),
-                        getCart(model),
-                      ],
-                    ),
                   ),
-                ])
-              : Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [0.5, 0.5],
-                              colors: [Colors.white, ColorResources.HOME_BG])),
-                    ),
-                    Align(
+                  /*Align(
                       alignment: Alignment.topCenter,
                       child: Image.asset(
                         'assets/images/tkd.png',
                         height: 150,
                         width: 250,
                       ),
+                    ),*/
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: SvgPicture.asset(
+                        'assets/svg/logo.svg',
+                        height: 70,
+                        width: 150,
+                      ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: getCart(model),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: getDetails(),
-                    ),
-                    Positioned(
-                      bottom: 50,
-                      left: 50,
-                      right: 50,
-                      child: Column(
-                        children: [
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  InkWell(
-                                    onTap:(){
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("About Us"),
-                                              content: Container(
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: getCart(model),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: getDetails(),
+                  ),
+                  Positioned(
+                    bottom: 50,
+                    left: 50,
+                    right: 50,
+                    child: Column(
+                      children: [
+                        Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap:(){
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("About Us"),
+                                            content: Container(
                                                 width: 450,
                                                 child: Text("To Provide a platform for the Indian transport Industry on cost effective"
                                                     "basis to connect for fast and relaible information to our users,"
-                                                "registered users and paid users on Pan India basis. Our company TKD Communication LLP started it'\s operation"
+                                                    "registered users and paid users on Pan India basis. Our company TKD Communication LLP started it'\s operation"
                                                     " in the year 2017 under different entity offering SMS service for the needy Transporter who were facing problems in Transport Industry."
                                                     "\nAfter 2 years of Research in Transport Sector we now TKD Communication LLP has launched website "
                                                     "and Android Play Store App to further bridge Gap between Transporter, Truck Owners and Agents.")
+                                            ),
+                                            actions: [
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  primary: Colors.black,
+                                                  onPrimary: Colors.white,
+                                                  elevation: 3,
+                                                  shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                ),
+                                                onPressed: () { Navigator.of(context).pop(); },
+                                                child: Text('Ok'),
+                                              )
+                                            ],
+                                          );});
+                                  },
+                                  child: Text("About Us",
+                                      style: Style.aleaready),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+
+                                  },
+                                  child: Text("Terms & Conditions",
+                                      style: Style.aleaready),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            child: AlertDialog(
+                                              title: Text("Contact Us"),
+                                              content: Container(
+                                                  width: 350,
+                                                  height: 420,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      SizedBox(height: 10,),
+                                                      Text('Email : ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+                                                      SizedBox(height: 10,),
+                                                      InkWell(
+                                                        onTap: () async {
+                                                          /* var shareData = {
+                                                              "title": "Email",
+                                                              "text": "For Contact",
+                                                              "url": "loadTypeList.sharableLink",
+                                                            };
+                                                            try{
+                                                              await html.window.navigator.share(shareData);
+                                                            }catch(e){
+                                                              print(e);
+                                                            }*/
+                                                        },
+                                                        child: Card(
+                                                          child: Container(
+                                                              width: 320,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
+                                                                child: Text("tkdcommunications@gmail.com",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
+                                                              )),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10,),
+                                                      InkWell(
+                                                        onTap: () async {
+                                                          /* var shareData = {
+                                                              "title": "Email",
+                                                              "text": "For Contact",
+                                                              "url": "",
+                                                            };
+                                                            try{
+                                                              await html.window.navigator.share(shareData);
+                                                            }catch(e){
+                                                              print(e);
+                                                            }*/
+                                                        },
+                                                        child: Card(
+                                                          child: Container(
+                                                            width: 320,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
+                                                              child: Text("contact@tkdcommunity.com",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ), SizedBox(height: 18,),
+                                                      Text('Support Mobile : ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+                                                      SizedBox(height: 10,),
+                                                      InkWell(
+                                                        onTap: () async {
+                                                          /* var shareData = {
+                                                              "title": "Email",
+                                                              "text": "For Contact",
+                                                              "url": "loadTypeList.sharableLink",
+                                                            };
+                                                            try{
+                                                              await html.window.navigator.share(shareData);
+                                                            }catch(e){
+                                                              print(e);
+                                                            }*/
+                                                        },
+                                                        child: Card(
+                                                          child: Container(
+                                                              width: 320,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
+                                                                child: Text("+91 8123006888",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
+                                                              )),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10,),
+                                                      InkWell(
+                                                        onTap: () async {
+                                                          /*  var shareData = {
+                                                              "title": "Mobile Number",
+                                                              "text": "For Contact",
+                                                              "url": "",
+                                                            };
+                                                            try{
+                                                              await html.window.navigator.share(shareData);
+                                                            }catch(e){
+                                                              print(e);
+                                                            }*/
+                                                        },
+                                                        child: Card(
+                                                          child: Container(
+                                                            width: 320,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
+                                                              child: Text("+91 8123004666",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 16,),
+                                                      Center(child: Text("Technology Partner",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 12,color: Colors.grey),)),
+                                                      SizedBox(height: 10,),
+                                                      Center(child: Text("Tablabs Technologies Pvt. Ltd.",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blueGrey),)),
+
+                                                    ],
+                                                  )
                                               ),
                                               actions: [
                                                 ElevatedButton(
@@ -188,197 +350,47 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                   child: Text('Ok'),
                                                 )
                                               ],
-                                            );});
-                                    },
-                                    child: Text("About Us",
-                                        style: Style.aleaready),
+                                            ),
+                                          );});
+                                  },
+                                  child: Text("Contact Us",
+                                      style: Style.aleaready),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text("Available On",
+                                    style: TextStyle(
+                                      fontFamily: 'RobotoSlab',
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                    )),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                InkWell(
+                                  onTap: (){
+                                    openUrl();
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/bitmap.png',
+                                    height: 36,
+                                    width: 120,
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  InkWell(
-                                    onTap:(){
-                                      html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
-
-                                    },
-                                    child: Text("Terms & Conditions",
-                                        style: Style.aleaready),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  InkWell(
-                                    onTap:(){
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Container(
-                                              child: AlertDialog(
-                                                title: Text("Contact Us"),
-                                                content: Container(
-                                                    width: 350,
-                                                    height: 420,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        SizedBox(height: 10,),
-                                                        Text('Email : ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
-                                                        SizedBox(height: 10,),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                           /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "loadTypeList.sharableLink",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
-                                                          },
-                                                          child: Card(
-                                                            child: Container(
-                                                                width: 320,
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
-                                                                  child: Text("tkdcommunications@gmail.com",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 10,),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                           /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
-                                                          },
-                                                          child: Card(
-                                                            child: Container(
-                                                              width: 320,
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
-                                                                child: Text("contact@tkdcommunity.com",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ), SizedBox(height: 18,),
-                                                        Text('Support Mobile : ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
-                                                        SizedBox(height: 10,),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                           /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "loadTypeList.sharableLink",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
-                                                          },
-                                                          child: Card(
-                                                            child: Container(
-                                                                width: 320,
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
-                                                                  child: Text("+91 8123006888",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 10,),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                          /*  var shareData = {
-                                                              "title": "Mobile Number",
-                                                              "text": "For Contact",
-                                                              "url": "",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
-                                                          },
-                                                          child: Card(
-                                                            child: Container(
-                                                              width: 320,
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
-                                                                child: Text("+91 8123004666",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.orange),),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 16,),
-                                                        Center(child: Text("Technology Partner",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 12,color: Colors.grey),)),
-                                                        SizedBox(height: 10,),
-                                                        Center(child: Text("Tablabs Technologies Pvt. Ltd.",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blueGrey),)),
-
-                                                      ],
-                                                    )
-                                                ),
-                                                actions: [
-                                                  ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      primary: Colors.black,
-                                                      onPrimary: Colors.white,
-                                                      elevation: 3,
-                                                      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                    ),
-                                                    onPressed: () { Navigator.of(context).pop(); },
-                                                    child: Text('Ok'),
-                                                  )
-                                                ],
-                                              ),
-                                            );});
-                                    },
-                                    child: Text("Contact Us",
-                                        style: Style.aleaready),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text("Available On",
-                                      style: TextStyle(
-                                        fontFamily: 'RobotoSlab',
-                                        color: Colors.grey,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        fontStyle: FontStyle.normal,
-                                      )),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  InkWell(
-                                    onTap: (){
-                                      openUrl();
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/bitmap.png',
-                                      height: 36,
-                                      width: 120,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-        ),
+                                )
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
       ),
     );
   }
@@ -424,23 +436,23 @@ class _Login_ScreenState extends State<Login_Screen> {
             Container(
               width: MediaQuery.of(context).size.width,
               padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
               child: userLogin == true? CustomButton(
                   onTap:() async {
-    if (_formKey.currentState!.validate()) {
-                    var result = await  model.sendOtp(mobileController.text);
-                    if(result["Status"]=='Success'){
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: false)));
-                    }
-                    else{
-                     print(result['errorMessage']);
-                     showSimpleNotification(
-                         Text(result['errorMessage'],style: TextStyle(color: Colors.white),),
-                         background: Colors.black
-                     );
-                    }
-                  }},
+                    if (_formKey.currentState!.validate()) {
+                      var result = await  model.sendOtp(mobileController.text);
+                      if(result["responseCode"]=='3001'){
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: false)));
+                      }
+                      else{
+                        print(result['response']);
+                        showSimpleNotification(
+                            Text(result['response'],style: TextStyle(color: Colors.white),),
+                            background: Colors.black
+                        );
+                      }
+                    }},
                   buttonText: 'SEND OTP'):
               CustomButton(
                   onTap:() async {
@@ -469,20 +481,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Login for?",
-                          style: Style.newheading,textAlign: TextAlign.center,),
+                        style: Style.newheading,textAlign: TextAlign.center,),
                       InkWell(
                         onTap: (){
-                         setState(() {
-                           companyLogin = true;
-                           userLogin = false;
-                         });
+                          setState(() {
+                            companyLogin = true;
+                            userLogin = false;
+                          });
                         },
                         child: Text(" Company",
                             style: Style.aleaready,textAlign: TextAlign.center),
                       ),
                     ],
                   ):Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Login for?",
                           style: Style.newheading,textAlign: TextAlign.center),
@@ -520,7 +532,7 @@ class _Login_ScreenState extends State<Login_Screen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("New user?",
-                    style: Style.newheading,textAlign: TextAlign.center,),
+                  style: Style.newheading,textAlign: TextAlign.center,),
                 InkWell(
                   onTap: (){
                     Navigator.pushReplacement(context,
@@ -572,45 +584,45 @@ class _Login_ScreenState extends State<Login_Screen> {
               return Builder(
                   builder:(BuildContext context){
                     return Container(
-                      height: MediaQuery.of(context).size.height*0.30,
-                      width: MediaQuery.of(context).size.width,
-                      child: index < 3?Stack(
-                          children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                            height: 500,
-                            width: MediaQuery.of(context).size.width / 4,
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Image.asset(
-                                carouselImages[index].image2,
-                                height: 72,
-                                width: 222,
+                        height: MediaQuery.of(context).size.height*0.30,
+                        width: MediaQuery.of(context).size.width,
+                        child: index < 3?Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                    height: 500,
+                                    width: MediaQuery.of(context).size.width / 4,
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 20.0),
+                                      child: Image.asset(
+                                        carouselImages[index].image2,
+                                        height: 72,
+                                        width: 222,
+                                      ),
+                                    )),
                               ),
-                            )),
-                          ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              carouselImages[index].image1,
-                              height: 234,
-                              width: 120,
-                            ),
-                            Text(carouselImages[index].title,
-                                style: Style.splashheading),
-                            new Text(
-                              carouselImages[index].subTitle,
-                              style: Style.splashContent,textAlign: TextAlign.center,),
-                          ],
-                        ),
-                      ),
-                      ]):getWidget()
+                              Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      carouselImages[index].image1,
+                                      height: 234,
+                                      width: 120,
+                                    ),
+                                    Text(carouselImages[index].title,
+                                        style: Style.splashheading),
+                                    new Text(
+                                      carouselImages[index].subTitle,
+                                      style: Style.splashContent,textAlign: TextAlign.center,),
+                                  ],
+                                ),
+                              ),
+                            ]):getWidget()
                     );
                   }
               );

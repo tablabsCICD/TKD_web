@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/locator.dart';
@@ -95,11 +96,12 @@ class _MenuPageState extends State<MenuPage> {
       appBar: ResponsiveWidget.isMobile(context)
           ? AppBar(
               leading: ResponsiveWidget.isDesktop(context)
-                  ? Image.asset(
+                  ?/* Image.asset(
                       'assets/images/tkd.png',
                       height: 500,
                       width: 500,
-                    )
+                    )*/
+              SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,)
                   : IconButton(
                       icon: Icon(
                         Icons.menu,
@@ -120,12 +122,13 @@ class _MenuPageState extends State<MenuPage> {
                     child: Container(
                 height: 60,
                 width: 70,
-                decoration: BoxDecoration(
+               /* decoration: BoxDecoration(
                     image: DecorationImage(
                         fit: BoxFit.cover,
                       image: AssetImage('assets/images/tkd.png',)
                     )
-                ),
+                ),*/
+                      child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,),
                     ),
                   )
                   : IconButton(

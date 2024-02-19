@@ -86,7 +86,12 @@ class TruckLoad {
     this.fullLoadChoice,
     this.loadWeight,
     this.typeOfCargo,
-    this.otherDetails
+    this.otherDetails,
+    this.comment,
+    this.likes,
+    this.postImages,
+    this.transporterOrAgent
+
   });
   late final int? id;
   late final int? userId;
@@ -124,8 +129,14 @@ class TruckLoad {
   late final String? typeOfPayment;
   late final String? fullLoadChoice;
   late final String? loadWeight;
- late final String? typeOfCargo;
- late final String? otherDetails;
+  late final String? typeOfCargo;
+  late final String? otherDetails;
+  late final dynamic? likes;
+  late final dynamic? comment;
+  late final List<dynamic>?postImages;
+  late final int?transporterOrAgent;
+
+
 
 
   TruckLoad.fromJson(Map<String, dynamic> json){
@@ -155,10 +166,13 @@ class TruckLoad {
     mfgYear = json['mfgYear']?? '';
     estPrice = json['estPrice']?? '';
     dnd = json['dnd']?? 0;
+    transporterOrAgent = json['transporterOrAgent']?? 0;
+
     vehicleSize = json['vehicleSize']?? '';
     association = json['association']?? '';
     isPaid = json['isPaid']?? 0;
     website = json['website']?? '';
+
     alterativeNumber = json['alterativeNumber']?? '';
     companyDetailsName = json['companyDetailsName']?? '';
     isVerifiedByCompany = json['isVerifiedByCompany']?? '';
@@ -167,6 +181,10 @@ class TruckLoad {
     loadWeight = json['loadWeight']?? '';
     typeOfCargo = json['typeOfCargo']?? '';
     otherDetails = json['otherDetails']?? '';
+    likes=json['likes']??'';
+    comment=json['comment']??'';;
+    postImages=json['images']??'';
+
   }
 
   Map<String, dynamic> toJson() {
@@ -209,6 +227,12 @@ class TruckLoad {
     _data['loadWeight'] = loadWeight;
     _data['typeOfCargo'] = typeOfCargo;
     _data['otherDetails'] = otherDetails;
+    _data['likes'] = likes;
+    _data['comment'] = comment;
+    _data['images'] = postImages;
+    _data['transporterOrAgent'] = transporterOrAgent;
+
+
     return _data;
   }
 }

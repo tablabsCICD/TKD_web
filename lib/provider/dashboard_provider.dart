@@ -2,11 +2,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
  import 'package:http/http.dart' as http;
 import 'package:tkd_app/network/api_call.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 class DashboardProvider extends ChangeNotifier{
@@ -20,20 +22,39 @@ class DashboardProvider extends ChangeNotifier{
   var response;
   bool isFirstLoading = false;
   int totalPages = 0;
-  bool fla = false,pla = false,flr = false,plr = false;
+  bool fla = false,pla = false,flr = false,plr = false,gp=false;
 
   final RefreshController refreshController = RefreshController(initialRefresh: true);
+  final authProvider = locator<AuthProvider>();
 
-  getFullLoadTruckList({int currentPage = 0}) async {
+  getFullLoadTruckList(String fromCity,String toCity,{int currentPage = 0}) async {
     isLoading = true;
     notifyListeners();
     if(currentPage == 0){
       isFirstLoading = true;
       truckLoadTypeList.clear();
     }
-
-    String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
+    User user = await authProvider.getLoginData();
+    String myUrl = '';
+   // String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp';
     //String myUrl = AppConstants.FULL_LOAD_ALL_CARD_NEW +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
+
+    if(fromCity=="All" && toCity=="All"){
+      myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp';
+
+    }else{
+
+      if(fromCity != "All" && toCity!="All"){
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp';
+      }else if(fromCity != "All" && toCity=="All"){
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp';
+      }else{
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp';
+      }
+
+
+      //   url = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity';
+    }
 
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));

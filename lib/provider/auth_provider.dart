@@ -71,7 +71,8 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   sendOtp(String mobile) async {
-    String myUrl = AppConstants.SEND_OTP +'?mobileNumber=${mobile}';
+    //String myUrl = AppConstants.SEND_OTP +'?mobileNumber=${mobile}';
+    String myUrl = AppConstants.SEND_OTP +'?mobileNos=${mobile}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -85,8 +86,8 @@ class  AuthProvider extends ChangeNotifier{
 
       //response =await json.decode(userStatis().staticUser);
       userDetailList.clear();
-  //    var list = AuthApi.fromJson(response);
-    //  userDetailList = list.content!;
+      //    var list = AuthApi.fromJson(response);
+      //  userDetailList = list.content!;
       //print("***********");
       userDetailList.add(User(id: 2763,userName: "user113146", firstName : "Digvijay",lastName: "z",emailId: "digvijayzite@gmail.com",mobileNumber: 9420455551,
           companyName: "tablas",companyAddress: "kolhapur",city: "Kolhapur",state: "Maharashtra",country: "India",
@@ -120,7 +121,8 @@ class  AuthProvider extends ChangeNotifier{
 
 
     }else{
-      String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
+      // String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
+      String myUrl = AppConstants.BASE_URL + 'VerifyOtp?mobileNumber=${mobile}&otp=${otp}';
       print(myUrl);
       var req = await http.post(Uri.parse(myUrl));
       print(req);
@@ -130,6 +132,7 @@ class  AuthProvider extends ChangeNotifier{
         try{
           userDetailList.clear();
           var list = AuthApi.fromJson(response);
+          setLoginData( jsonEncode(list.content![0]));
           userDetailList = list.content!;}
         catch(e){
           print(response['errorMessage']);
@@ -166,6 +169,19 @@ class  AuthProvider extends ChangeNotifier{
     notifyListeners();
     return userDetailList;
   }
+
+  setLoginData(String val)async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.setString("LoginData",val);
+  }
+
+  Future<User> getLoginData()async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String data  = await _prefs.getString("LoginData")!;
+    User datas=User.fromJson(jsonDecode(data));
+    return datas;
+  }
+
 
   setVisitingFlag(bool flag) async {
     if(flag == false){
@@ -459,43 +475,43 @@ class  AuthProvider extends ChangeNotifier{
     String myUrl = AppConstants.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
-    "aadharCard": aadharCard,
-    "aadharCardForVerification": aadharCard,
-    "alternativeNumber": alternativeNumber,
-    "city": city,
-    "companyAddress": companyAddress,
-    "companyId": companyId ?? 0,
-    "companyLogo": companyLogo,
-    "companyName": companyName,
-    "country": country,
-    "deviceId": deviceId,
-    "emailId": emailId,
-    "firstName": firstName,
-    "id": id ?? 0,
-    "idOfMainBranch": idOfMainBranch ?? 0,
-    "isPaid": isPaid ?? 0,
-    "isUserVerifiedByCompany": isUserVerifiedByCompany ?? 0,
-    "landlineNumber": landlineNumber ?? 0,
-    "lastName": lastName,
-    "loggedTime":loggedTime,
-    "loggedUserName": loggedUserName,
-    "mainBranch": mainBranch ?? 0,
-    "mobileNumber": mobileNumber ?? 0,
-    "numberOfTimesRating": numberOfTimesRating ?? 0,
-    "os": os,
-    "otp": otp,
-    "paidStartDate": paidStartDate,
-    "panCardForVerification": panCardForVerification,
-    "password": password,
-    "preferredRouresEntered": preferredRouresEntered ?? 0,
-    "profilePicture": profilePicture,
-    "ratings": 5,
-    "state": state,
-    "transporterOrAgent": transporterOrAgent ?? 0,
-    "userName": userName,
-    "validTill": validTill,
-    "verified": verified ?? 0,
-    "website": website
+      "aadharCard": aadharCard,
+      "aadharCardForVerification": aadharCard,
+      "alternativeNumber": alternativeNumber,
+      "city": city,
+      "companyAddress": companyAddress,
+      "companyId": companyId ?? 0,
+      "companyLogo": companyLogo,
+      "companyName": companyName,
+      "country": country,
+      "deviceId": deviceId,
+      "emailId": emailId,
+      "firstName": firstName,
+      "id": id ?? 0,
+      "idOfMainBranch": idOfMainBranch ?? 0,
+      "isPaid": isPaid ?? 0,
+      "isUserVerifiedByCompany": isUserVerifiedByCompany ?? 0,
+      "landlineNumber": landlineNumber ?? 0,
+      "lastName": lastName,
+      "loggedTime":loggedTime,
+      "loggedUserName": loggedUserName,
+      "mainBranch": mainBranch ?? 0,
+      "mobileNumber": mobileNumber ?? 0,
+      "numberOfTimesRating": numberOfTimesRating ?? 0,
+      "os": os,
+      "otp": otp,
+      "paidStartDate": paidStartDate,
+      "panCardForVerification": panCardForVerification,
+      "password": password,
+      "preferredRouresEntered": preferredRouresEntered ?? 0,
+      "profilePicture": profilePicture,
+      "ratings": 5,
+      "state": state,
+      "transporterOrAgent": transporterOrAgent ?? 0,
+      "userName": userName,
+      "validTill": validTill,
+      "verified": verified ?? 0,
+      "website": website
 
     };
     var body = json.encode(data);

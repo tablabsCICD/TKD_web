@@ -111,7 +111,7 @@ class _CompLoadScreenState extends State<CompLoadScreen> {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        dashboardProvider.getFullLoadTruckList(currentPage: selectedPageNumber);
+        dashboardProvider.getFullLoadTruckList(selectedFromCity!,selectedToCity!,currentPage: selectedPageNumber);
         selectedPageNumber++;
       }
     });

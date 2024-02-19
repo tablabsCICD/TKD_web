@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +60,7 @@ class DashBoardScreen extends StatefulWidget {
   final dashboardProvider = locator<DashboardProvider>();
 
   DashBoardScreen({Key? key}) : super(key: key) {
-    dashboardProvider.getFullLoadTruckList();
+    dashboardProvider.getFullLoadTruckList("All","All");
   }
 
   @override
@@ -68,7 +72,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: 
+      child:
       Container(
           color: ColorResources.HOME_BG,
           child: ResponsiveWidget(
@@ -98,7 +102,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
   var selectedPageNumber = 1;
   final dashboardProvider = locator<DashboardProvider>();
   ScrollController _scrollController = ScrollController();
-  String? selectedFromCity = '', selectedToCity = "";
+  String? selectedFromCity = "All", selectedToCity = "All";
   final _formKey = GlobalKey<FormState>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
@@ -110,7 +114,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        dashboardProvider.getFullLoadTruckList(currentPage: selectedPageNumber);
+        dashboardProvider.getFullLoadTruckList(selectedFromCity!,selectedToCity!,currentPage: selectedPageNumber);
         selectedPageNumber++;
       }
     });
@@ -123,116 +127,118 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
       builder: (context, model, child) => Container(
 
           child: Column(children: [
-        ResponsiveWidget.isDesktop(context)
-            ? Container(
-                height: 60,
-          padding: ResponsiveWidget.isDesktop(context)
-              ? EdgeInsets.symmetric(horizontal: 35)
-              : EdgeInsets.symmetric(horizontal: 10),
-                width: MediaQuery.of(context).size.width - 270,
-                color: ColorResources.HOME_APPBAR,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 40,
-                      margin: EdgeInsets.symmetric(horizontal: 5),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color:  Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            offset: Offset(0, 0),
-                            blurRadius: 5,
-                            spreadRadius: 0,
+            ResponsiveWidget.isDesktop(context)
+                ? Container(
+              height: 60,
+              padding: ResponsiveWidget.isDesktop(context)
+                  ? EdgeInsets.symmetric(horizontal: 35)
+                  : EdgeInsets.symmetric(horizontal: 10),
+              width: MediaQuery.of(context).size.width - 270,
+              color: ColorResources.HOME_APPBAR,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: 40,
+                    margin: EdgeInsets.symmetric(horizontal: 5),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color:  Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0, 0),
+                          blurRadius: 5,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    width: 350,
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomSearchCityTextField(
+                            hintText: 'From',
+                            controller: selectedFromCity!,
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomCityListDialog(
+                                        onTap: (String value) {
+                                          setState(() {
+                                            selectedFromCity = value;
+                                          });
+                                        });
+                                  });
+                            },
+                          ),
+                          Container(
+                            height: 40,
+                            width: 0.2,
+                            color: Colors.grey[200],
+                          ),
+                          CustomSearchCityTextField(
+                            hintText: 'To',
+                            controller: selectedToCity!,
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomCityListDialog(
+                                        onTap: (String value) {
+                                          setState(() {
+                                            selectedToCity = value;
+                                          });
+                                        });
+                                  });
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              model.getFullLoadTruckList(
+                                  selectedFromCity!, selectedToCity!);
+                              /*model.getSearchByNameList(
+                                  '', selectedFromCity!, selectedToCity!);*/
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.black,
+                              onPrimary: Colors.white,
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(5))),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 0),
+                              child: CustomText("Search",
+                                  style: Style.button),
+                            ),
                           ),
                         ],
                       ),
-                      width: 350,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomSearchCityTextField(
-                              hintText: 'From',
-                              controller: selectedFromCity!,
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomCityListDialog(
-                                          onTap: (String value) {
-                                        setState(() {
-                                          selectedFromCity = value;
-                                        });
-                                      });
-                                    });
-                              },
-                            ),
-                            Container(
-                              height: 40,
-                              width: 0.2,
-                              color: Colors.grey[200],
-                            ),
-                            CustomSearchCityTextField(
-                              hintText: 'To',
-                              controller: selectedToCity!,
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomCityListDialog(
-                                          onTap: (String value) {
-                                        setState(() {
-                                          selectedToCity = value;
-                                        });
-                                      });
-                                    });
-                              },
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                model.getSearchByNameList(
-                                    '', selectedFromCity!, selectedToCity!);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.black,
-                                onPrimary: Colors.white,
-                                elevation: 3,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(5))),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 0),
-                                child: CustomText("Search",
-                                    style: Style.button),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
-                    Container(
-                      child: Row(
-                        children: [
-                          getCircularContainer(
-                              "All Loads", (selectedTab == "All Loads"), 0),
-                          getCircularContainer("Full Load Required",
-                              (selectedTab == "Full Load Required"), 1),
-                          getCircularContainer("Full Load Available",
-                              (selectedTab == "Full Load Available"), 2),
-                          getCircularContainer("Part Load Required",
-                              (selectedTab == "Part Load Required"), 3),
-                          getCircularContainer("Part Load Available",
-                              (selectedTab == "Part Load Available"), 4),
+                  ),
+                  Container(
+                    child: Row(
+                      children: [
+                        getCircularContainer(
+                            "All Loads", (selectedTab == "All Loads"), 0),
+                        getCircularContainer("Full Load Required",
+                            (selectedTab == "Full Load Required"), 1),
+                        getCircularContainer("Full Load Available",
+                            (selectedTab == "Full Load Available"), 2),
+                        getCircularContainer("Part Load Required",
+                            (selectedTab == "Part Load Required"), 3),
+                        getCircularContainer("Part Load Available",
+                            (selectedTab == "Part Load Available"), 4),
 
-                          /*InkWell(
+                        /*InkWell(
                         onTap: () {
                           showAnimatedDialog(
                               context,
@@ -291,7 +297,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                               ),
                             )),
                       ),*/
-                          /*Container(
+                        /*Container(
                         // height: 50,
                         margin: EdgeInsets.only(right: 10),
                         width: ResponsiveWidget.isDesktop(context)
@@ -315,662 +321,763 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                             buttonText:
                                 getTranslated('post_requirement', context)),
                       ),*/
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+                : Container(
+              height: 105,
+              width: MediaQuery.of(context).size.width,
+              color: ColorResources.HOME_APPBAR,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 40,
+                      width: ResponsiveWidget.isMobile(context)?screenSize.width : screenSize.width-200,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            offset: Offset(0, 0),
+                            blurRadius: 5,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomSearchCityTextField(
+                              hintText: 'From',
+                              controller: selectedFromCity!,
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomCityListDialog(
+                                          onTap: (String value) {
+                                            setState(() {
+                                              selectedFromCity = value;
+                                            });
+                                          });
+                                    });
+                              },
+                            ),
+                            Container(
+                              height: 40,
+                              width: 0.2,
+                              color: Colors.grey[200],
+                            ),
+                            CustomSearchCityTextField(
+                              hintText: 'To',
+                              controller: selectedToCity!,
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomCityListDialog(
+                                          onTap: (String value) {
+                                            setState(() {
+                                              selectedToCity = value;
+                                            });
+                                          });
+                                    });
+                              },
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                model.getFullLoadTruckList(
+                                     selectedFromCity!, selectedToCity!);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.black,
+                                onPrimary: Colors.white,
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                              ),
+                              child: Container(
+                                height: 30,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 0),
+                                child:
+                                CustomText("SEARCH", style: Style.boardButton),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Container(
+                      height: 45,
+                      padding: EdgeInsets.only(left: 5,top: 10),
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        children: [
+                          getCircularContainer(
+                              "All Loads", (selectedTab == "All Loads"), 0),
+                          getCircularContainer("Full Load Required",
+                              (selectedTab == "Full Load Required"), 1),
+                          getCircularContainer("Full Load Available",
+                              (selectedTab == "Full Load Available"), 2),
+                          getCircularContainer("Part Load Required",
+                              (selectedTab == "Part Load Required"), 3),
+                          getCircularContainer("Part Load Available",
+                              (selectedTab == "Part Load Available"), 4),
                         ],
                       ),
                     ),
                   ],
                 ),
-              )
-            : Container(
-                height: 105,
-                width: MediaQuery.of(context).size.width,
-                color: ColorResources.HOME_APPBAR,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 40,
-                        width: ResponsiveWidget.isMobile(context)?screenSize.width : screenSize.width-200,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(0, 0),
-                              blurRadius: 5,
-                              spreadRadius: 0,
-                            ),
-                          ],
-                        ),
-
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomSearchCityTextField(
-                                hintText: 'From',
-                                controller: selectedFromCity!,
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomCityListDialog(
-                                            onTap: (String value) {
-                                          setState(() {
-                                            selectedFromCity = value;
-                                          });
-                                        });
-                                      });
-                                },
-                              ),
-                              Container(
-                                height: 40,
-                                width: 0.2,
-                                color: Colors.grey[200],
-                              ),
-                              CustomSearchCityTextField(
-                                hintText: 'To',
-                                controller: selectedToCity!,
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomCityListDialog(
-                                            onTap: (String value) {
-                                          setState(() {
-                                            selectedToCity = value;
-                                          });
-                                        });
-                                      });
-                                },
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  model.getSearchByNameList(
-                                      '', selectedFromCity!, selectedToCity!);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.black,
-                                  onPrimary: Colors.white,
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                ),
-                                child: Container(
-                                  height: 30,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 0),
-                                  child:
-                                      CustomText("SEARCH", style: Style.boardButton),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      Container(
-                        height: 45,
-                        padding: EdgeInsets.only(left: 5,top: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: [
-                            getCircularContainer(
-                                "All Loads", (selectedTab == "All Loads"), 0),
-                            getCircularContainer("Full Load Required",
-                                (selectedTab == "Full Load Required"), 1),
-                            getCircularContainer("Full Load Available",
-                                (selectedTab == "Full Load Available"), 2),
-                            getCircularContainer("Part Load Required",
-                                (selectedTab == "Part Load Required"), 3),
-                            getCircularContainer("Part Load Available",
-                                (selectedTab == "Part Load Available"), 4),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
-        model.truckLoadTypeList.isEmpty && model.isLoading == false
-            ? Container(
+            ),
+            model.truckLoadTypeList.isEmpty && model.isLoading == false
+                ? Container(
                 child: Container(
                     height: MediaQuery.of(context).size.height - 200,
                     child: Center(
                         child: Text(
-                      getTranslated('no_post', context)!,
-                      style: Style.heading,
-                    ))))
-        : model.truckLoadTypeList.isEmpty && model.isLoading ? SizedBox(height: MediaQuery.of(context).size.height/2.5,)
-            : Expanded(
-                child: Padding(
-                  padding: ResponsiveWidget.isDesktop(context)
-                      ? EdgeInsets.symmetric(horizontal: 35)
-                      : EdgeInsets.symmetric(horizontal: 10),
-                  child: StaggeredGridView.countBuilder(
-                      controller: _scrollController,
-                      physics: ScrollPhysics(),
-                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                      shrinkWrap: true,
-                      crossAxisCount: ResponsiveWidget.isDesktop(context)
-                          ? 3
-                          : ResponsiveWidget.isMobile(context)
-                              ? 1
-                              : 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 12,
-                      itemCount: model.truckLoadTypeList.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (builder) => RequirementDetails(
-                                          model.truckLoadTypeList[index])));
-                            },
-                            child: Card(
-                              // elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+                          getTranslated('no_post', context)!,
+                          style: Style.heading,
+                        ))))
+                : model.truckLoadTypeList.isEmpty && model.isLoading ? SizedBox(height: MediaQuery.of(context).size.height/2.5,)
+                : Expanded(
+              child: Padding(
+                padding: ResponsiveWidget.isDesktop(context)
+                    ? EdgeInsets.symmetric(horizontal: 35)
+                    : EdgeInsets.symmetric(horizontal: 10),
+                child: StaggeredGridView.countBuilder(
+                    controller: _scrollController,
+                    physics: ScrollPhysics(),
+                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                    shrinkWrap: true,
+                    crossAxisCount: ResponsiveWidget.isDesktop(context)
+                        ? 3
+                        : ResponsiveWidget.isMobile(context)
+                        ? 1
+                        : 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 12,
+                    itemCount: model.truckLoadTypeList.length,
+                    itemBuilder: (context, index) {
+                      print("Index: ${index}");
+                      print("Date: ${model
+                          .truckLoadTypeList[index]
+                          .postingTime
+                          .toString()}");
+                      return model.truckLoadTypeList[index].type=="Advertisement"?Container(
+                        width: 335,
+                        // height: 255.h,
+                        padding: EdgeInsets.all(12),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x114A5568),
+                              blurRadius: 8,
+                              offset: Offset(0, 3),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
                               child: Container(
-                               // padding: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        offset: Offset(0, 0),
-                                        blurRadius: 5,
-                                        color: Color(0xffede8e0),
-                                      )
-                                    ],
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)),
+                                width: 100,
+                                height: 18,
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: ShapeDecoration(
+                                  color: Color(0xFFD9462A),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    model.truckLoadTypeList[index].type!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontFamily: GoogleFonts.poppins().fontFamily,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            imageLoad(model.truckLoadTypeList[index]),
+                            InkWell(
+                              onTap: ()async{
+                                final url = Uri.parse(
+                                  'http://${model.truckLoadTypeList[index].website}',
+                                );
+                              //  await  launchUrl(url);
+                              },
+                              child:  Container(
+                                padding: EdgeInsets.all(4),
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(
+                                      model.truckLoadTypeList[index].companyName??'',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontFamily: GoogleFonts.poppins().fontFamily,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
                                     SizedBox(
-                                      height:20,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 140,
-                                            height: 20,
-                                            alignment: Alignment.center,
-                                            decoration: new BoxDecoration(
-                                                color: model
-                                                            .truckLoadTypeList[
-                                                                index]
-                                                            .mainTag ==
-                                                        "Full load required"
-                                                    ? ColorResources
-                                                        .FULL_LOAD_REQUIRED
-                                                    : model
-                                                                .truckLoadTypeList[
-                                                                    index]
-                                                                .mainTag ==
-                                                            "Part load required"
-                                                        ? ColorResources
-                                                            .PART_LOAD_REQUIRED
-                                                        : model
-                                                                    .truckLoadTypeList[
-                                                                        index]
-                                                                    .mainTag ==
-                                                                "Full load available"
-                                                            ? ColorResources
-                                                                .FULL_LOAD_AVAILABLE
-                                                            : ColorResources
-                                                                .PART_LOAD_AVAILABLE,
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(10),
-                                                    bottomRight:
-                                                        Radius.circular(15))),
-                                            child: CustomText(
-                                                model.truckLoadTypeList[index]
-                                                    .mainTag
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily: 'RobotoMedium',
-                                                    color: model
-                                                                .truckLoadTypeList[
-                                                                    index]
-                                                                .mainTag ==
-                                                            "Full load required"
-                                                        ? ColorResources.FLR_TEXT
-                                                        : model
-                                                                    .truckLoadTypeList[
-                                                                        index]
-                                                                    .mainTag ==
-                                                                "Part load required"
-                                                            ? ColorResources
-                                                                .PLR_TEXT
-                                                            : model
-                                                                        .truckLoadTypeList[
-                                                                            index]
-                                                                        .mainTag ==
-                                                                    "Full load available"
-                                                                ? ColorResources
-                                                                    .FLA_TEXT
-                                                                : ColorResources
-                                                                    .PLA_TEXT)),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 8.0),
-                                            child: Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 3,
-                                                ),
-                                                ConvertStringToDate(model
-                                                    .truckLoadTypeList[index]
-                                                    .postingTime
-                                                    .toString()),
+                                      width: double.infinity,
+                                      child: Text(
+                                        model.truckLoadTypeList[index].website??'',
+                                        style: TextStyle(
+                                          color: Color(0x99001E49),
+                                          fontSize: 12,
+                                          fontFamily: GoogleFonts.poppins().fontFamily,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
 
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),model.truckLoadTypeList[index].privatePost == 0 ?
-                                    ListTile(
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 0, horizontal: 20),
-                                      horizontalTitleGap: 13,
-                                      minVerticalPadding: 0,
-                                      leading: Stack(
-                                        children: [
-                                          getImage(model
-                                              .truckLoadTypeList[index]
-                                              .companyLogo
-                                              .toString()),
-                                          Positioned(
-                                            bottom: -7,
-                                            right: -5,
-                                            child: Image.asset(
-                                              model.truckLoadTypeList[index]
-                                                          .isPaid ==
-                                                      30
-                                                  ? 'assets/images/diamond.png'
+                          ],
+                        ),
+                      ):InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => RequirementDetails(
+                                        model.truckLoadTypeList[index])));
+                          },
+                          child: Card(
+                            // elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Container(
+                              // padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      offset: Offset(0, 0),
+                                      blurRadius: 5,
+                                      color: Color(0xffede8e0),
+                                    )
+                                  ],
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height:20,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 140,
+                                          height: 20,
+                                          alignment: Alignment.center,
+                                          decoration: new BoxDecoration(
+                                              color: model
+                                                  .truckLoadTypeList[
+                                              index]
+                                                  .mainTag ==
+                                                  "Full load required"
+                                                  ? ColorResources
+                                                  .FULL_LOAD_REQUIRED
                                                   : model
-                                                              .truckLoadTypeList[
-                                                                  index]
-                                                              .isPaid ==
-                                                          20
-                                                      ? 'assets/images/gold_badge.png'
+                                                  .truckLoadTypeList[
+                                              index]
+                                                  .mainTag ==
+                                                  "Part load required"
+                                                  ? ColorResources
+                                                  .PART_LOAD_REQUIRED
+                                                  : model
+                                                  .truckLoadTypeList[
+                                              index]
+                                                  .mainTag ==
+                                                  "Full load available"
+                                                  ? ColorResources
+                                                  .FULL_LOAD_AVAILABLE
+                                                  : ColorResources
+                                                  .PART_LOAD_AVAILABLE,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  bottomRight:
+                                                  Radius.circular(15))),
+                                          child: CustomText(
+                                              model.truckLoadTypeList[index]
+                                                  .mainTag
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'RobotoMedium',
+                                                  color: model
+                                                      .truckLoadTypeList[
+                                                  index]
+                                                      .mainTag ==
+                                                      "Full load required"
+                                                      ? ColorResources.FLR_TEXT
                                                       : model
-                                                                  .truckLoadTypeList[
-                                                                      index]
-                                                                  .isPaid ==
-                                                              0
-                                                          ? 'assets/images/silver.png'
-                                                          : 'assets/images/ruby_badge.png',
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      trailing: StarDisplay(
-                                          value: model
-                                              .truckLoadTypeList[index]
-                                              .ratings!
-                                              .toInt()),
-                                      title: Row(
-                                        children: [
-                                          langCode == 'en'?Text(model.truckLoadTypeList[index]
-                                              .nameOfPerson
-                                              .toString(),
-                                              style: Style.title)
-                                          :CustomText(
-                                              model.truckLoadTypeList[index]
-                                                  .nameOfPerson
-                                                  .toString(),
-                                              style: Style.title),
-                                          SizedBox(
-                                            width: 5,
+                                                      .truckLoadTypeList[
+                                                  index]
+                                                      .mainTag ==
+                                                      "Part load required"
+                                                      ? ColorResources
+                                                      .PLR_TEXT
+                                                      : model
+                                                      .truckLoadTypeList[
+                                                  index]
+                                                      .mainTag ==
+                                                      "Full load available"
+                                                      ? ColorResources
+                                                      .FLA_TEXT
+                                                      : ColorResources
+                                                      .PLA_TEXT)),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 3,
+                                              ),
+                                              ConvertStringToDate(model
+                                                  .truckLoadTypeList[index]
+                                                  .postingTime
+                                                  .toString()),
+
+                                            ],
                                           ),
-                                          model.truckLoadTypeList[index]
-                                                      .isVerifiedByCompany ==
-                                                  1
-                                              ? SizedBox.shrink()
-                                              : Tooltip(
-                                            message: "This user is verified by TKDost team",
-                                                child: Image.asset(
-                                                    'assets/images/membership.png',
-                                                    width: 14,
-                                                    height: 14,
-                                                  ),
-                                              )
-                                        ],
-                                      ),
-                                      subtitle:  Row(
-                                        children: [
-                                          langCode == 'en'?Text(model.truckLoadTypeList[index]
-                                              .companyName
-                                              .toString(),
-                                              style: Style.subtitle)
-                                              :CustomText(
-                                              model.truckLoadTypeList[index]
-                                                  .companyName
-                                                  .toString(),
-                                              style: Style.subtitle),
-                                          SizedBox(
-                                            width: 5,
+                                        ),
+                                      ],
+                                    ),
+                                  ),model.truckLoadTypeList[index].privatePost == 0 ?
+                                  ListTile(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 20),
+                                    horizontalTitleGap: 13,
+                                    minVerticalPadding: 0,
+                                    leading: Stack(
+                                      children: [
+                                        getImage(model
+                                            .truckLoadTypeList[index]
+                                            .companyLogo
+                                            .toString()),
+                                        Positioned(
+                                          bottom: -7,
+                                          right: -5,
+                                          child: Image.asset(
+                                            model.truckLoadTypeList[index]
+                                                .isPaid ==
+                                                30
+                                                ? 'assets/images/diamond.png'
+                                                : model
+                                                .truckLoadTypeList[
+                                            index]
+                                                .isPaid ==
+                                                20
+                                                ? 'assets/images/gold_badge.png'
+                                                : model
+                                                .truckLoadTypeList[
+                                            index]
+                                                .isPaid ==
+                                                0
+                                                ? 'assets/images/silver.png'
+                                                : 'assets/images/ruby_badge.png',
+                                            width: 24,
+                                            height: 24,
                                           ),
-                                          model.truckLoadTypeList[index]
-                                              .isVerifiedByCompany ==
-                                              0
-                                              ? SizedBox.shrink()
-                                              : Tooltip(
-                                            message: "This user is verified by '${model.truckLoadTypeList[index]
-                                                .companyName}'",
-                                                child: Image.asset(
+                                        )
+                                      ],
+                                    ),
+                                    trailing: StarDisplay(
+                                        value: model
+                                            .truckLoadTypeList[index]
+                                            .ratings!
+                                            .toInt()),
+                                    title: Row(
+                                      children: [
+                                        langCode == 'en'?Text(model.truckLoadTypeList[index]
+                                            .nameOfPerson
+                                            .toString(),
+                                            style: Style.title)
+                                            :CustomText(
+                                            model.truckLoadTypeList[index]
+                                                .nameOfPerson
+                                                .toString(),
+                                            style: Style.title),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        model.truckLoadTypeList[index]
+                                            .isVerifiedByCompany ==
+                                            1
+                                            ? SizedBox.shrink()
+                                            : Tooltip(
+                                          message: "This user is verified by TKDost team",
+                                          child: Image.asset(
+                                            'assets/images/membership.png',
+                                            width: 14,
+                                            height: 14,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    subtitle:  Row(
+                                      children: [
+                                        langCode == 'en'?Text(model.truckLoadTypeList[index]
+                                            .companyName
+                                            .toString(),
+                                            style: Style.subtitle)
+                                            :CustomText(
+                                            model.truckLoadTypeList[index]
+                                                .companyName
+                                                .toString(),
+                                            style: Style.subtitle),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        model.truckLoadTypeList[index]
+                                            .isVerifiedByCompany ==
+                                            0
+                                            ? SizedBox.shrink()
+                                            : Tooltip(
+                                          message: "This user is verified by '${model.truckLoadTypeList[index]
+                                              .companyName}'",
+                                          child: Image.asset(
                                             'assets/images/shield.png',
                                             width: 13,
                                             height: 13,
                                           ),
-                                              )
-                                        ],
-                                      ),
-                                    ):SizedBox.shrink(),
-                                    SizedBox(height: 10,),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      height: 30,
-                                      decoration: new BoxDecoration(
-                                          color: Color(0xfff0f0f0),
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          langCode == 'en'?Text(model
+                                        )
+                                      ],
+                                    ),
+                                  ):SizedBox.shrink(),
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    margin:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                                    height: 30,
+                                    decoration: new BoxDecoration(
+                                        color: Color(0xFFF4F6F6),
+                                        borderRadius:
+                                        BorderRadius.circular(5)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        langCode == 'en'?Text(model
+                                            .truckLoadTypeList[index].source
+                                            .toString(),
+                                          style: Style.cityHeading,)
+                                            :CustomText(
+                                          model
                                               .truckLoadTypeList[index].source
                                               .toString(),
-                                            style: Style.cityHeading,)
-                                              :CustomText(
-                                            model
-                                                .truckLoadTypeList[index].source
-                                                .toString(),
-                                            style: Style.cityHeading,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          // CustomText("to", style: Style.content),
-                                          Image.asset(
+                                          style: Style.cityHeading,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        // CustomText("to", style: Style.content),
+                                        /* Image.asset(
                                             'assets/images/right-arrow.png',
                                             height: 15,
                                             width: 25,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          langCode == 'en'?Text(model.truckLoadTypeList[index]
+                                          ),*/
+                                        Icon(
+                                          Icons.arrow_circle_right_rounded,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        langCode == 'en'?Text(model.truckLoadTypeList[index]
+                                            .destination
+                                            .toString(),
+                                          style: Style.cityHeading,)
+                                            :CustomText(
+                                          model.truckLoadTypeList[index]
                                               .destination
                                               .toString(),
-                                            style: Style.cityHeading,)
-                                              :CustomText(
-                                            model.truckLoadTypeList[index]
-                                                .destination
-                                                .toString(),
-                                            style: Style.cityHeading,
-                                          ),
-                                        ],
-                                      ),
+                                          style: Style.cityHeading,
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 10,),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 7),
-                                      child: langCode == 'en'?Text( model.truckLoadTypeList[index]
-                                          .topicName
-                                          .toString(),
-                                          style: Style.title)
-                                          :CustomText(
-                                          model.truckLoadTypeList[index]
-                                              .topicName
-                                              .toString(),
-                                          style: Style.title),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20.0, bottom: 10, right: 20),
-                                      child: langCode == 'en'?Text( model.truckLoadTypeList[index].content
-                                          .toString(),
-                                        style: Style.content,)
-                                          :CustomText(
-                                        model.truckLoadTypeList[index].content
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 7),
+                                    child: langCode == 'en'?Text( model.truckLoadTypeList[index]
+                                        .topicName
+                                        .toString(),
+                                        style: Style.title)
+                                        :CustomText(
+                                        model.truckLoadTypeList[index]
+                                            .topicName
                                             .toString(),
-                                        style: Style.content,
-                                      ),
+                                        style: Style.title),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20.0, bottom: 10, right: 20),
+                                    child: langCode == 'en'?Text( model.truckLoadTypeList[index].content
+                                        .toString(),
+                                      style: Style.content,)
+                                        :CustomText(
+                                      model.truckLoadTypeList[index].content
+                                          .toString(),
+                                      style: Style.content,
                                     ),
-                                    /* Divider(
+                                  ),
+                                  /* Divider(
                                           height: 1.5,
                                           thickness: 1.5,
                                         ),*/
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 9.0,horizontal: 21),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          model.truckLoadTypeList[index].privatePost == 0 ?Row(
-                                            children: [
-                                              InkWell(
-                                                onTap: () async {
-                                                  openwhatsapp(
-                                                      context,
-                                                      model
-                                                          .truckLoadTypeList[
-                                                              index]
-                                                          .mobileNumber
-                                                          .toString(),
-                                                      'Type : ${model.truckLoadTypeList[index].type}, \nSubject : ${model.truckLoadTypeList[index].content}, \nSource : ${model.truckLoadTypeList[index].source}, \nDestination : ${model.truckLoadTypeList[index].destination}'
-                                                     );
-                                                },
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/images/chat.png',
-                                                      color: ColorResources
-                                                          .PRIMARY_COLOR,
-                                                      height: 15,
-                                                      width: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Text(
-                                                      getTranslated("chat", context)!,
-                                                      style:
-                                                          Style.bottomHeading,
-                                                    )
-                                                  ],
-                                                ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 9.0,horizontal: 21),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        model.truckLoadTypeList[index].privatePost == 0 ?Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                openwhatsapp(
+                                                    context,
+                                                    model
+                                                        .truckLoadTypeList[
+                                                    index]
+                                                        .mobileNumber
+                                                        .toString(),
+                                                    'Type : ${model.truckLoadTypeList[index].type}, \nSubject : ${model.truckLoadTypeList[index].content}, \nSource : ${model.truckLoadTypeList[index].source}, \nDestination : ${model.truckLoadTypeList[index].destination}'
+                                                );
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/images/chat.png',
+                                                    color: ColorResources
+                                                        .PRIMARY_COLOR,
+                                                    height: 15,
+                                                    width: 15,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    getTranslated("chat", context)!,
+                                                    style:
+                                                    Style.bottomHeading,
+                                                  )
+                                                ],
                                               ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              InkWell(
-                                                onTap: () async {
-                                                  /*share_data(
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            InkWell(
+                                              onTap: () async {
+                                                /*share_data(
                                                       model.truckLoadTypeList[index]);*/
-                                                  showDialog(context: context,
-                                                      builder: (BuildContext context){
-                                                        return ShareDialogBox(
-                                                            model.truckLoadTypeList[index]
-                                                        );
-                                                      }
-                                                  );
+                                                showDialog(context: context,
+                                                    builder: (BuildContext context){
+                                                      return ShareDialogBox(
+                                                          model.truckLoadTypeList[index]
+                                                      );
+                                                    }
+                                                );
 
-                                                },
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/images/share.png',
-                                                      color: ColorResources
-                                                          .PRIMARY_COLOR,
-                                                      height: 15,
-                                                      width: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Text(
-                                                      getTranslated("share", context)!,
-                                                      style:
-                                                          Style.bottomHeading,
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ):SizedBox.shrink(),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              showAnimatedDialog(
-                                                  context,
-                                                  Dialog(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                    child: Form(
-                                                      key: _formKey,
-                                                      child: Container(
-                                                        height: 350,
-                                                        width: 300,
-                                                        child: Stack(
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsets.all(16),
-                                                              child: Column(
-                                                                  children: [
-                                                                    CustomText(
-                                                                      'Place Your Bid',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              18,
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .bold),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 15,
-                                                                    ),
-                                                                    CustomTextField(
-                                                                        controller:
-                                                                            bidAmtController,
-                                                                        hintText:
-                                                                            "Enter Your Bid Amount",
-                                                                        isDigits:true,
-                                                                        textInputType:
-                                                                            TextInputType
-                                                                                .number),
-                                                                    CustomTextField(
-                                                                        controller:
-                                                                            descriptionController,
-                                                                        hintText:
-                                                                            "Comments/Descriptions",
-                                                                        textInputType:
-                                                                            TextInputType
-                                                                                .number),
-                                                                    CustomButton(
-                                                                        onTap: () {
-                                                                          if (_formKey.currentState!.validate()) {
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/images/share.png',
+                                                    color: ColorResources
+                                                        .PRIMARY_COLOR,
+                                                    height: 15,
+                                                    width: 15,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    getTranslated("share", context)!,
+                                                    style:
+                                                    Style.bottomHeading,
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ):SizedBox.shrink(),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            showAnimatedDialog(
+                                                context,
+                                                Dialog(
+                                                  shape:
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          10)),
+                                                  child: Form(
+                                                    key: _formKey,
+                                                    child: Container(
+                                                      height: 350,
+                                                      width: 300,
+                                                      child: Stack(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                            EdgeInsets.all(16),
+                                                            child: Column(
+                                                                children: [
+                                                                  CustomText(
+                                                                    'Place Your Bid',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                        18,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 15,
+                                                                  ),
+                                                                  CustomTextField(
+                                                                      controller:
+                                                                      bidAmtController,
+                                                                      hintText:
+                                                                      "Enter Your Bid Amount",
+                                                                      isDigits:true,
+                                                                      textInputType:
+                                                                      TextInputType
+                                                                          .number),
+                                                                  CustomTextField(
+                                                                      controller:
+                                                                      descriptionController,
+                                                                      hintText:
+                                                                      "Comments/Descriptions",
+                                                                      textInputType:
+                                                                      TextInputType
+                                                                          .number),
+                                                                  CustomButton(
+                                                                      onTap: () {
+                                                                        if (_formKey.currentState!.validate()) {
 
                                                                           bidProvider
                                                                               .generateBid(
-                                                                                  mobile:
-                                                                                      authProvider.userDetailList[0].mobileNumber,
-                                                                                  description: descriptionController.text,
-                                                                                  idOfPost: model.truckLoadTypeList[index].id,
-                                                                                  email: authProvider.userDetailList[0].emailId,
-                                                                                  amount: bidAmtController.text,
-                                                                                  id: 0,
-                                                                                  bidderUserName: authProvider.userDetailList[0].userName,
-                                                                                  userName: authProvider.userDetailList[0].userName,
-                                                                                  type: model.truckLoadTypeList[index].mainTag,
-                                                                                  loggedUserName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
+                                                                              mobile:
+                                                                              authProvider.userDetailList[0].mobileNumber,
+                                                                              description: descriptionController.text,
+                                                                              idOfPost: model.truckLoadTypeList[index].id,
+                                                                              email: authProvider.userDetailList[0].emailId,
+                                                                              amount: bidAmtController.text,
+                                                                              id: 0,
+                                                                              bidderUserName: authProvider.userDetailList[0].userName,
+                                                                              userName: authProvider.userDetailList[0].userName,
+                                                                              type: model.truckLoadTypeList[index].mainTag,
+                                                                              loggedUserName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
                                                                               .then((value) => {
-                                                                                    showAnimatedDialog(
-                                                                                        context,
-                                                                                        MyDialog(
-                                                                                          icon: Icons.check,
-                                                                                          title: 'Generate Bid',
-                                                                                          description: 'Your Bid Created successfully',
-                                                                                          isFailed: false,
-                                                                                        ),
-                                                                                        dismissible: false,
-                                                                                        isFlip: false),
-                                                                                  });
+                                                                            showAnimatedDialog(
+                                                                                context,
+                                                                                MyDialog(
+                                                                                  icon: Icons.check,
+                                                                                  title: 'Generate Bid',
+                                                                                  description: 'Your Bid Created successfully',
+                                                                                  isFailed: false,
+                                                                                ),
+                                                                                dismissible: false,
+                                                                                isFlip: false),
+                                                                          });
                                                                           Navigator.of(
-                                                                                  context)
+                                                                              context)
                                                                               .pop();
                                                                         }},
-                                                                        buttonText:
-                                                                            "Submit")
-                                                                  ]),
+                                                                      buttonText:
+                                                                      "Submit")
+                                                                ]),
+                                                          ),
+                                                          Positioned(
+                                                            top: 10,
+                                                            right: 10,
+                                                            child: IconButton(
+                                                              icon: Icon(Icons.close,size: 18,),
+                                                              onPressed: (){
+                                                                Navigator.of(context).pop();
+                                                              },
                                                             ),
-                                                            Positioned(
-                                                              top: 10,
-                                                              right: 10,
-                                                              child: IconButton(
-                                                                icon: Icon(Icons.close,size: 18,),
-                                                                onPressed: (){
-                                                                  Navigator.of(context).pop();
-                                                                },
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
+                                                          )
+                                                        ],
                                                       ),
                                                     ),
-                                                  ));
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              primary: Colors.black,
-                                              onPrimary: Colors.white,
-                                              elevation: 3,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(5))),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 5, horizontal: 0),
-                                              child: CustomText("BID NOW",
-                                                  style: Style.boardButton),
-                                            ),
+                                                  ),
+                                                ));
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            primary: ColorResources.THEME_COLOR,
+                                            onPrimary: Colors.white,
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.all(
+                                                    Radius.circular(5))),
                                           ),
-                                        ],
-                                      ),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 0),
+                                            child: CustomText("BID NOW",
+                                                style: Style.boardButton),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    /*Padding(
+                                  ),
+                                  /*Padding(
                                           padding: const EdgeInsets.all(5.0),
                                           child: Row(
                                             mainAxisAlignment:
@@ -1182,15 +1289,15 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                                             ],
                                           ),
                                         )*/
-                                  ],
-                                ),
+                                ],
                               ),
-                            ));
-                      }),
-                ),
+                            ),
+                          ));
+                    }),
               ),
-              getLoader(model.isLoading)
-       /*model.isFirstLoading ? getLoader(model.isLoading) :  showDialog(
+            ),
+            getLoader(model.isLoading)
+            /*model.isFirstLoading ? getLoader(model.isLoading) :  showDialog(
           context: context,
           barrierColor: Colors.black38,
           barrierLabel: 'Label',
@@ -1207,7 +1314,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
             );
           },
         )*/
-      ])),
+          ])),
     );
   }
 
@@ -1277,8 +1384,8 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
               model.flr = true;
             }
           });
-          model.getFullLoadTruckList();
-         /* selectedValuesList.add(i);
+          model.getFullLoadTruckList(selectedFromCity!,selectedToCity!);
+          /* selectedValuesList.add(i);
           setState(() {
             isSelected = !isSelected;
             selectedTab = title;
@@ -1316,11 +1423,11 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
             padding: EdgeInsets.symmetric(vertical: 3, horizontal: 20),
             child: CustomText(
               title,
-              style: Style.filterHeading,
+              style: isSelected?Style.filterSelectedHeading:Style.filterHeading,
               textAlign: TextAlign.center,
             ),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Color(0xfff0f0f0),
+              color: isSelected ? ColorResources.PRIMARY_COLOR : Color(0xfff0f0f0),
               border: isSelected ? null : Border.all(color: Color(0xffd1ccc4)),
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
@@ -1342,5 +1449,105 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
     String type,text,subject,weight,source,des;
     type = 'Type : ${truckLoadTypeList.type} Subject : ${truckLoadTypeList.content} Source : ${truckLoadTypeList.source} Destination : ${truckLoadTypeList.deviceId}';
     return type;
+  }
+
+  imageLoad(TruckLoad load){
+    if(load.postImages!.length==0){
+      return    Column(
+        children: [
+          SizedBox(
+            height: 0,
+          ),
+
+        ],
+      );
+    }else if(load.postImages!.length==1){
+      return Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: CachedNetworkImage(
+              imageUrl: load.postImages!.first,
+              placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+              errorWidget: (context, url, error) => ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+                    fit: BoxFit.fill,
+                    width: 311,
+                    height: 200,
+                  )),
+              fit: BoxFit.fill,
+              width: 311,
+              height: 200,
+            ),
+          ),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }else{
+
+      return Column(
+        children: [
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child: Container(
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      padEnds: false,
+                      pageSnapping: false,
+                      enableInfiniteScroll: false,
+                    ),
+                    items: load.postImages!
+                        .map((item) => Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: imageLink(item!)),
+                      ),
+                    ))
+                        .toList(),
+                  ))),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }
+
+  }
+
+  Widget imageLink(String link) {
+    // return Container(
+    //   width: 311.w,
+    //   height: 200.h,
+    //   decoration: ShapeDecoration(
+    //     image: DecorationImage(
+    //       image: NetworkImage(
+    //           link),
+    //       fit: BoxFit.fill,
+    //     ),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(12),
+    //     ),
+    //   ),
+    // );
+
+    return CachedNetworkImage(
+      imageUrl: link,
+      placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+      errorWidget: (context, url, error) => ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+            fit: BoxFit.fill,
+            width: 311,
+            height: 200,
+          )),
+      fit: BoxFit.fill,
+      width: 311,
+      height: 200,
+    );
   }
 }

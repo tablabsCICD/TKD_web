@@ -8,7 +8,7 @@ import '../model/auth_api.dart';
 class AppConstants {
 
   static final String APP_VERSION="2.0.10";//40
-  static String BASE_URL = "https://api.tkdost.com/tkd3/api/"; //Production Url
+  static String BASE_URL = "http://ec2-13-234-76-107.ap-south-1.compute.amazonaws.com:8080//tkd3/api/"; //Production Url
   //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Production Url
 
   //static String BASE_URL = "http://13.233.64.33:8080/tkd2/api/"; //Test Url
@@ -47,7 +47,7 @@ class AppConstants {
 
   static String SEND_OTP_ON_MAIL = BASE_URL + "SendOTPOnEmailId";
   static String VERIFY_OTP_ON_MAIL = BASE_URL + "verifyOTPEmail";
-  static String SEND_OTP = BASE_URL + "SendOTP";
+  static String SEND_OTP = BASE_URL + "sendOtp";
   static String ADD_CITY = BASE_URL + "/set/cities/db";
   static String DIRECTORY = BASE_URL + "directory";
   static String SHARE_POST_BASE_URL = "http://www.tkdost.com/tkd/";
@@ -60,7 +60,7 @@ class AppConstants {
   static String POST_TRANSCATION = BASE_URL + "transactions";
 
   //-------New Api ---------
-  static String FULL_LOAD_ALL_CARD = BASE_URL + "allcards/fullLoad/andquery";
+  static String FULL_LOAD_ALL_CARD = BASE_URL + "dashboard/homepage/posts";
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
   static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";
@@ -71,21 +71,21 @@ class AppConstants {
 
   static String GALLERY = BASE_URL + "/Gallery";
 
- static String IMG_UPLOAD = BASE_URL +"uploadImages";
- static String COMPANY = BASE_URL + "CompanyDetails";
- static String GET_CURRENT_VERSION=BASE_URL+'GetLatestVaersion';
+  static String IMG_UPLOAD = BASE_URL +"uploadImages";
+  static String COMPANY = BASE_URL + "CompanyDetails";
+  static String GET_CURRENT_VERSION=BASE_URL+'GetLatestVaersion';
 
- static const String COUNTRY_CODE = 'country_code';
- static const String LANGUAGE_CODE = 'language_code';
+  static const String COUNTRY_CODE = 'country_code';
+  static const String LANGUAGE_CODE = 'language_code';
 
- static  String GROUP=BASE_URL+'groups';
- static String GROUP_MEMBER_BULK=BASE_URL+'groupMembers/bulk';
- static String GROUP_BY_USER=BASE_URL+"groups/forUser/";
- static String GROUP_CHAT_MASSAGE=BASE_URL+'groups/chat/';
- static String SEND_GROUP_CHAT_MEASSAGE=BASE_URL+'save/chat';
- static String GROUP_MEMBER_LIST=BASE_URL+'groupMembers/byGroupId/';
- static String GROUP_MEMBER_DELETE=BASE_URL+'groupMembers?id=';
- static User USER_OBJECT=User();
+  static  String GROUP=BASE_URL+'groups';
+  static String GROUP_MEMBER_BULK=BASE_URL+'groupMembers/bulk';
+  static String GROUP_BY_USER=BASE_URL+"groups/forUser/";
+  static String GROUP_CHAT_MASSAGE=BASE_URL+'groups/chat/';
+  static String SEND_GROUP_CHAT_MEASSAGE=BASE_URL+'save/chat';
+  static String GROUP_MEMBER_LIST=BASE_URL+'groupMembers/byGroupId/';
+  static String GROUP_MEMBER_DELETE=BASE_URL+'groupMembers?id=';
+  static User USER_OBJECT=User();
 
   static String BUY_SELL_SINGLE_CARD = BASE_URL + "buySell/new/";
 

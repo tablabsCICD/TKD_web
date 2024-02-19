@@ -64,8 +64,8 @@ class DrawerMenu extends StatefulWidget {
             getDivider(),
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_vehicles_off.png',Buy_Sell_Vehicles, context, 'Buy/Sell Vehicles', (selectedTab == Buy_Sell_Vehicles)),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_announce_off.png',Announcement , context, 'Broadcast', (selectedTab == Announcement)),
+           /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+            else getTile('assets/images/navigation_image/icn_announce_off.png',Announcement , context, 'Broadcast', (selectedTab == Announcement)),*/
             authProvider.userDetailList[0].transporterOrAgent == 3?SizedBox.shrink(): getDivider(),
             getTile('assets/images/navigation_image/icn_account_off.png', My_Account, context, 'My Profile', (selectedTab == My_Account)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', My_Post, context, 'My Post', (selectedTab == My_Post)),
@@ -78,7 +78,7 @@ class DrawerMenu extends StatefulWidget {
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Owner Data', (selectedTab == Fleets)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),
-            getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
+           // getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
 
             getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),
 

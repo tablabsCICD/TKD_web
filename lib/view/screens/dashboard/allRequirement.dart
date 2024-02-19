@@ -56,7 +56,7 @@ class _RequirementsState extends State<Requirements> {
     super.initState();
     _scrollController.addListener(() {
       if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent){
-        dashboardProvider.getFullLoadTruckList(currentPage: selectedPageNumber);
+        dashboardProvider.getFullLoadTruckList("All","All",currentPage: selectedPageNumber);
         selectedPageNumber++;
 
       }
@@ -193,7 +193,7 @@ class _RequirementsState extends State<Requirements> {
                                 if(result.contains('refresh')){
                                   print('out ${result} method');
 
-                                  model.getFullLoadTruckList();
+                                  model.getFullLoadTruckList("All","All");
                                   setState(() {
 
                                   });

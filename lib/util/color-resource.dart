@@ -12,7 +12,8 @@ class ColorResources {
   static const Color DOT_COLOR = Color(0xffbcbcbc);
   static const Color SELECTED_MENU = Color(0xfffff6f3);
   static const Color WHITE = Color(0xffffffff);
-  static const Color PRIMARY_COLOR = Color(0xffea6935);
+  static const Color PRIMARY_COLOR = Color(0xFFC3262C);
+  static const Color THEME_COLOR = Color(0xFF001E49);
   static const Color BUTTON_COLOR = Color(0xff00ADE3);
   static const Color TEXTFEILD_COLOR = Color(0xffe8e1d8);
   static const Color CARD_COLOR = Color(0xffcfa473);
