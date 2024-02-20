@@ -143,7 +143,7 @@ class TruckLoad {
     id = json['id']?? 0;
     userId = json['userId']?? 0;
     type = json['type']?? '';
-    postingTime = json['postingTime']?? '';
+    postingTime = json['postingTime'];
     companyName = json['companyName']?? '';
     nameOfPerson = json['nameOfPerson']?? '';
     companyRating = json['companyRating']?? '';

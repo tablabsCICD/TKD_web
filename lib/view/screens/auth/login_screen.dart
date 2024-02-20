@@ -59,10 +59,11 @@ class _Login_ScreenState extends State<Login_Screen> {
 
   var _current = 0;
   List<ImageCarousel> carouselImages = [
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your own business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your tkd business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
+    ImageCarousel('assets/svg/intro_one.svg','assets/svg/intro_one.svg',"Grow your business","Hello! We are here to elevate your logistics experience. Let us be your logistics assistance and your business needs will be fulfilled seamlessly."),
+    ImageCarousel('assets/svg/intro_two.svg','assets/svg/intro_two.svg',"Grow your own business","Your needs are our skills. Let us combine the two and rise up together."),
+    ImageCarousel('assets/svg/intro_three.svg','assets/svg/intro_three.svg',"Grow your tkd business","With our wide network, we shall help you reach wider."),
   ];
+
   @override
   // ignore: must_call_super
   void initState() {
@@ -191,8 +192,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             actions: [
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  primary: Colors.black,
-                                                  onPrimary: Colors.white,
+                                                  foregroundColor: Colors.white, backgroundColor: Colors.black,
                                                   elevation: 3,
                                                   shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                                 ),
@@ -341,8 +341,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                               actions: [
                                                 ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
-                                                    primary: Colors.black,
-                                                    onPrimary: Colors.white,
+                                                    foregroundColor: Colors.white, backgroundColor: Colors.black,
                                                     elevation: 3,
                                                     shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                                   ),
@@ -404,7 +403,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       ResponsiveWidget.isDesktop(context)?355:MediaQuery.of(context).size.width / 3,
       margin: ResponsiveWidget.isMobile(context)?EdgeInsets.all(0):ResponsiveWidget.isDesktop(context)?EdgeInsets.only(right: MediaQuery.of(context).size.width / 5):EdgeInsets.only(right: MediaQuery.of(context).size.width / 8),
       decoration: BoxDecoration(
-        color: ColorResources.HOME_BG,
+        color: ColorResources.WHITE,
         border: Border.all(width: 1,color: Color(0xffe8e1d8)),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
@@ -441,8 +440,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                   onTap:() async {
                     if (_formKey.currentState!.validate()) {
                       var result = await  model.sendOtp(mobileController.text);
+                      print(result);
                       if(result["responseCode"]=='3001'){
-                        Navigator.pushReplacement(context,
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: false)));
                       }
                       else{
@@ -458,7 +458,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   onTap:() async {
                     var result = await  orgProvider.sendOtpByOrgId(mobileController.text);
                     if(result["Status"]=='Success'){
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: true)));
                     }
                     else{
@@ -580,7 +580,7 @@ class _Login_ScreenState extends State<Login_Screen> {
               },
             ),
             items: carouselImages.map((i){
-              index++;
+              int index = carouselImages.indexOf(i);
               return Builder(
                   builder:(BuildContext context){
                     return Container(
@@ -596,7 +596,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     alignment: Alignment.center,
                                     child: Padding(
                                       padding: const EdgeInsets.only(bottom: 20.0),
-                                      child: Image.asset(
+                                      child: SvgPicture.asset(
                                         carouselImages[index].image2,
                                         height: 72,
                                         width: 222,
@@ -609,7 +609,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Image.asset(
+                                    SvgPicture.asset(
                                       carouselImages[index].image1,
                                       height: 234,
                                       width: 120,
@@ -652,7 +652,6 @@ class _Login_ScreenState extends State<Login_Screen> {
         ],
       ),
     );
-
   }
 
 

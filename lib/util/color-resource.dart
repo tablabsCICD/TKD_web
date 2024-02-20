@@ -26,7 +26,7 @@ class ColorResources {
   static const Color GAINS_BORO = Color(0xffE6E6E6);
   static const Color TEXT_BG = Color(0xffF3F9FF);
   static const Color ICON_BG = Color(0xffF9F9F9);
-  static const Color HOME_BG = Color(0xfffbf5ed);
+  static const Color HOME_BG = Color(0xFFF4F6F6);
   static const Color HOME_APPBAR =Color(0xffe6e0d7);
   static const Color IMAGE_BG = Color(0xffE2F0FF);
   static const Color SELLER_TXT = Color(0xff92C6FF);

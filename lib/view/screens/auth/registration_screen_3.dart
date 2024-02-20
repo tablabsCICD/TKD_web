@@ -337,8 +337,7 @@ class _RegistrationScreen3State extends State<RegistrationScreen3> {
                                       model.dummyRouteList[index]);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.red[200],
-                                  onPrimary: Colors.white,
+                                  foregroundColor: Colors.white, backgroundColor: Colors.red[200],
                                   elevation: 3,
                                 ),
                                 child: Text(

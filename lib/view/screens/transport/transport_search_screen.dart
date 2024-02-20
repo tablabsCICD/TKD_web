@@ -422,8 +422,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                   },
                                                   style:
                                                       ElevatedButton.styleFrom(
-                                                    primary: Colors.black,
-                                                    onPrimary: Colors.white,
+                                                    foregroundColor: Colors.white, backgroundColor: Colors.black,
                                                     elevation: 3,
                                                     side: BorderSide(
                                                         color: Colors.black,

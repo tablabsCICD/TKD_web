@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
@@ -37,6 +38,8 @@ import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
@@ -55,6 +58,7 @@ import 'package:tkd_app/util/date_converter.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/screens/dashboard/allRequirement.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashBoardScreen extends StatefulWidget {
   final dashboardProvider = locator<DashboardProvider>();
@@ -206,8 +210,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                                   '', selectedFromCity!, selectedToCity!);*/
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.black,
-                              onPrimary: Colors.white,
+                              foregroundColor: Colors.white, backgroundColor: Colors.black,
                               elevation: 3,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
@@ -400,8 +403,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                                      selectedFromCity!, selectedToCity!);
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.black,
-                                onPrimary: Colors.white,
+                                foregroundColor: Colors.white, backgroundColor: Colors.black,
                                 elevation: 3,
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
@@ -478,99 +480,11 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                           .truckLoadTypeList[index]
                           .postingTime
                           .toString()}");
-                      return model.truckLoadTypeList[index].type=="Advertisement"?Container(
-                        width: 335,
-                        // height: 255.h,
-                        padding: EdgeInsets.all(12),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x114A5568),
-                              blurRadius: 8,
-                              offset: Offset(0, 3),
-                              spreadRadius: 0,
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 100,
-                                height: 18,
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: ShapeDecoration(
-                                  color: Color(0xFFD9462A),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4)),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    model.truckLoadTypeList[index].type!,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontFamily: GoogleFonts.poppins().fontFamily,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            imageLoad(model.truckLoadTypeList[index]),
-                            InkWell(
-                              onTap: ()async{
-                                final url = Uri.parse(
-                                  'http://${model.truckLoadTypeList[index].website}',
-                                );
-                              //  await  launchUrl(url);
-                              },
-                              child:  Container(
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      model.truckLoadTypeList[index].companyName??'',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontFamily: GoogleFonts.poppins().fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: Text(
-                                        model.truckLoadTypeList[index].website??'',
-                                        style: TextStyle(
-                                          color: Color(0x99001E49),
-                                          fontSize: 12,
-                                          fontFamily: GoogleFonts.poppins().fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-
-                          ],
-                        ),
-                      ):InkWell(
+                      return model.truckLoadTypeList[index].type=="Advertisement"
+                          ?getAdvCard(context,model.truckLoadTypeList[index])
+                          :model.truckLoadTypeList[index].type=="General Post"
+                          ?generalPost(model.truckLoadTypeList[index],context)
+                      :InkWell(
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -676,10 +590,14 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                                               SizedBox(
                                                 height: 3,
                                               ),
-                                              ConvertStringToDate(model
+                                              model
+                                                  .truckLoadTypeList[index]
+                                                  .postingTime == null || model
+                                                  .truckLoadTypeList[index]
+                                                  .postingTime == ''?SizedBox.shrink(): ConvertStringToDate(model
                                                   .truckLoadTypeList[index]
                                                   .postingTime
-                                                  .toString()),
+                                                  .toString())
 
                                             ],
                                           ),
@@ -1059,8 +977,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
                                                 ));
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            primary: ColorResources.THEME_COLOR,
-                                            onPrimary: Colors.white,
+                                            foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
                                             elevation: 3,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -1520,8 +1437,8 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
 
   Widget imageLink(String link) {
     // return Container(
-    //   width: 311.w,
-    //   height: 200.h,
+    //   width: 311,
+    //   height: 200,
     //   decoration: ShapeDecoration(
     //     image: DecorationImage(
     //       image: NetworkImage(
@@ -1550,4 +1467,190 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard> {
       height: 200,
     );
   }
+
+  getAdvCard(BuildContext context,TruckLoad load) {
+    return Container(
+      width: 335,
+      // height: 255,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 100,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFFD9462A),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  load.type!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          imageLoad(load),
+          InkWell(
+            onTap: ()async{
+              final url = Uri.parse(
+                'http://${load.website}',
+              );
+              //   final Uri url = Uri.parse('https://flutter.dev');
+              if (!await launchUrl(url)) {
+                throw Exception('Could not launch $url');
+              }
+
+              //  await  launchUrl(url);
+            },
+            child:  Container(
+              padding: EdgeInsets.all(4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                   load.companyName??'',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      load.website??'',
+                      style: TextStyle(
+                        color: Color(0x99001E49),
+                        fontSize: 12,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+
+        ],
+      ),
+    );
+  }
+
+  generalPost(TruckLoad truckLoad,BuildContext context) {
+    return Container(
+      width: 335,
+
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: InkWell(
+              onTap: () async {
+                /*share_data(
+                                                      model.truckLoadTypeList[index]);*/
+                showDialog(context: context,
+                    builder: (BuildContext context){
+                      return ShareDialogBox(
+                          truckLoad
+                      );
+                    }
+                );
+
+              },
+              child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/share.png',
+                    color: ColorResources
+                        .PRIMARY_COLOR,
+                    height: 15,
+                    width: 15,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    getTranslated("share", context)!,
+                    style:
+                    Style.bottomHeading,
+                  )
+                ],
+              ),
+            )
+          ),
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child: BaseWidget().profile(truckLoad.companyLogo!, truckLoad.nameOfPerson!, truckLoad.companyName!,verify: truckLoad.isPaid!)),
+           SizedBox(
+             height: 10,
+           ),
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child:BaseWidget()
+                  .heading(truckLoad.topicName!, truckLoad.content!) ,),
+          Divider(),
+          SizedBox(
+            height: 5,
+          ),
+
+          BaseWidget().likeComment(truckLoad,context,likeCount: 0,commentCount: 0)
+        ],
+      ),
+    );
+  }
+
+
 }

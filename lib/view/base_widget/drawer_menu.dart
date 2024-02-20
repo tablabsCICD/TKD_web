@@ -75,9 +75,9 @@ class DrawerMenu extends StatefulWidget {
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Received_Bids, context, 'Received Bids', (selectedTab == Received_Bids)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Company, context, 'Company', (selectedTab == Company)),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+           /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Owner Data', (selectedTab == Fleets)),
-            getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),
+            getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),*/
            // getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
 
             getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),

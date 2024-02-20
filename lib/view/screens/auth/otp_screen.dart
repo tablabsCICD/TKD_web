@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -74,10 +75,10 @@ class OTP_ScreenState extends State<OTP_Screen> {
 
   var _current = 0;
   List<ImageCarousel> carouselImages = [
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your own business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
-    ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your tkd business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."), ];
-
+    ImageCarousel('assets/svg/intro_one.svg','assets/svg/intro_one.svg',"Grow your business","Hello! We are here to elevate your logistics experience. Let us be your logistics assistance and your business needs will be fulfilled seamlessly."),
+    ImageCarousel('assets/svg/intro_two.svg','assets/svg/intro_two.svg',"Grow your own business","Your needs are our skills. Let us combine the two and rise up together."),
+    ImageCarousel('assets/svg/intro_three.svg','assets/svg/intro_three.svg',"Grow your tkd business","With our wide network, we shall help you reach wider."),
+  ];
 
   @override
   void initState() {
@@ -144,7 +145,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
               ),
               Align(
                 alignment: Alignment.topCenter,
-                child: Image.asset('assets/images/tkd.png',height: 150,width: 250,),
+                child: SvgPicture.asset('assets/svg/logo.svg',height: 150,width: 250,),
               ),
               Align(
                 alignment: Alignment.centerRight,
@@ -185,8 +186,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                                         actions: [
                                           ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              primary: Colors.black,
-                                              onPrimary: Colors.white,
+                                              foregroundColor: Colors.white, backgroundColor: Colors.black,
                                               elevation: 3,
                                               shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                             ),
@@ -332,8 +332,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                                           actions: [
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                primary: Colors.black,
-                                                onPrimary: Colors.white,
+                                                foregroundColor: Colors.white, backgroundColor: Colors.black,
                                                 elevation: 3,
                                                 shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                               ),
@@ -388,7 +387,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
       ResponsiveWidget.isDesktop(context)?355:MediaQuery.of(context).size.width / 3,
       margin: ResponsiveWidget.isMobile(context)?EdgeInsets.all(0):ResponsiveWidget.isDesktop(context)?EdgeInsets.only(right: MediaQuery.of(context).size.width / 5):EdgeInsets.only(right: MediaQuery.of(context).size.width / 8),
       decoration: BoxDecoration(
-        color: ColorResources.HOME_BG,
+        color: ColorResources.WHITE,
         border: Border.all(width: 1,color: Color(0xffe8e1d8)),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
@@ -643,7 +642,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
               },
             ),
             items: carouselImages.map((i){
-              index++;
+              int index = carouselImages.indexOf(i);
               return Builder(
                   builder:(BuildContext context){
                     return Container(
@@ -657,8 +656,8 @@ class OTP_ScreenState extends State<OTP_Screen> {
                                   alignment: Alignment.center,
                                   child: Padding(
                                     padding: const EdgeInsets.only(bottom: 20.0),
-                                    child: Image.asset(
-                                      carouselImages[index].image2,
+                                    child: SvgPicture.asset(
+                                      carouselImages[index].image1,
                                       height: 72,
                                       width: 222,
                                     ),
@@ -669,7 +668,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Image.asset(
+                                    SvgPicture.asset(
                                       carouselImages[index].image1,
                                       height: 234,
                                       width: 120,

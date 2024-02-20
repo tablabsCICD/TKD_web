@@ -213,8 +213,7 @@ class _MyRoutesState extends State<MyRoutes> {
                               model.deleteRoute(model.routeList[index]);
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.red[200],
-                              onPrimary: Colors.white,
+                              foregroundColor: Colors.white, backgroundColor: ColorResources.PRIMARY_COLOR,
                               elevation: 3,
                             ),
                             child: CustomText(getTranslated('delete', context)!,style: Style.button,),

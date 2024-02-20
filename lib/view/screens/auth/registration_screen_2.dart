@@ -374,8 +374,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                 Container(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.black,
-                                      onPrimary: Colors.white,
+                                      foregroundColor: Colors.white, backgroundColor: Colors.black,
                                       elevation: 3,
                                       shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
@@ -391,8 +390,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                 Container(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.black,
-                                      onPrimary: Colors.white,
+                                      foregroundColor: Colors.white, backgroundColor: Colors.black,
                                       elevation: 3,
                                       shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(

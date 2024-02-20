@@ -513,8 +513,7 @@ class _RequirementDetailsState extends State<RequirementDetails> {
                         ));
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white, backgroundColor: Colors.black,
                     elevation: 3,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),

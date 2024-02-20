@@ -74,6 +74,7 @@ dependencies:
   flutter_chat_ui: ^1.6.6
   footer: ^0.0.4
   cached_network_image:
+  flutter_rating_bar:
 
 dev_dependencies:
   flutter_test:

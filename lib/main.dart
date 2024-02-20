@@ -11,6 +11,7 @@ import 'package:tkd_app/entry_screen.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
+import 'package:tkd_app/provider/comment_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<RepeatProvider>()),
         ChangeNotifierProvider(create: (_) => locator<GroupListProvider>()),
         ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
       ],
       child: MyApp(),
   )));

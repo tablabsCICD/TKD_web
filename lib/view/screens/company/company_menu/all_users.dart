@@ -445,8 +445,7 @@ class _AllUsersState extends State<AllUsers> {
                                                       ));
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  primary: Colors.green[100],
-                                                  onPrimary: Colors.white,
+                                                  foregroundColor: Colors.white, backgroundColor: Colors.green[100],
                                                   elevation: 3,
                                                   shape: const BeveledRectangleBorder(
                                                       borderRadius: BorderRadius
@@ -606,8 +605,7 @@ class _AllUsersState extends State<AllUsers> {
                                                       ));
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  primary: Colors.red[100],
-                                                  onPrimary: Colors.white,
+                                                  foregroundColor: Colors.white, backgroundColor: Colors.red[100],
                                                   elevation: 3,
                                                   // side: BorderSide(color: Colors.black, width: 2),
                                                   shape: const BeveledRectangleBorder(

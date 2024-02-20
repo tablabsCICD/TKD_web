@@ -477,8 +477,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.black,
-                                    onPrimary: Colors.white,
+                                    foregroundColor: Colors.white, backgroundColor: Colors.black,
                                     elevation: 3,
                                     side: BorderSide(color: Colors.black, width: 2),
                                   ),

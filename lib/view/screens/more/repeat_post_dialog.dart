@@ -238,8 +238,7 @@ class _RepeatDialogBoxState extends State<RepeatDialogBox> {
               "Ok",
             ),
             style: ElevatedButton.styleFrom(
-              primary: Colors.green,
-              onPrimary: Colors.white,
+              foregroundColor: Colors.white, backgroundColor: Colors.green,
               elevation: 3,
             ),
             onPressed: () {
@@ -280,8 +279,7 @@ class _RepeatDialogBoxState extends State<RepeatDialogBox> {
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.red,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white, backgroundColor: Colors.red,
             elevation: 3,
           ),
           child: CustomText("Cancel",style: Style.button,),

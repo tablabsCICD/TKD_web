@@ -22,8 +22,7 @@ class BorderButton extends StatelessWidget {
           onTap();
         },
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          onPrimary: Colors.black,
+          foregroundColor: Colors.black, backgroundColor: Colors.white,
           elevation: 3,
 
           //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10),)),

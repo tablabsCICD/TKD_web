@@ -172,7 +172,6 @@ class _CompLoadScreenState extends State<CompLoadScreen> {
                                         if (value.toString().isNotEmpty && value != null) {
                                           selectedFromCity = value[0];
                                           setState(() {});
-
                                         }
                                       });
                                     },
@@ -207,8 +206,7 @@ class _CompLoadScreenState extends State<CompLoadScreen> {
                                           selectedToCity!);
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.black,
-                                      onPrimary: Colors.white,
+                                      foregroundColor: Colors.white, backgroundColor: Colors.black,
                                       elevation: 3,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                     ),
