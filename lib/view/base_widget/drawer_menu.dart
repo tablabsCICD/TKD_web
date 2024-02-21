@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
@@ -58,6 +59,18 @@ class DrawerMenu extends StatefulWidget {
         color: Colors.white,
         child: ListView(
           children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Center(
+                  child: SvgPicture.asset(
+                    "assets/svg/logo.svg",
+                    height: 77,
+                    width: 133,
+                  )),
+            ),
+            SizedBox(
+              height: 47,
+            ),
             getTile('assets/images/navigation_image/icn_board_on.png', Dashboard, context, 'Board', (selectedTab == Dashboard)),
             getDivider(),
             getTile('assets/images/navigation_image/icn_directory_off.png', Transport, context, 'Transport Directory', (selectedTab == Transport)),

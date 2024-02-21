@@ -8,6 +8,7 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
+import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
@@ -63,14 +64,50 @@ class Utils {
 
 
 
-  callFunction(String mobile)async{
+  callFunction(BuildContext context,String mobile)async{
 
-    final call = Uri.parse('tel:+91$mobile');
+   /* final call = Uri.parse('tel:+91$mobile');
     if (await canLaunchUrl(call)) {
       launchUrl(call);
     } else {
       throw 'Could not launch $call';
-    }
+    }*/
+    showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+              'Contact Number : $mobile',
+              style: TextStyle(
+                  color:
+                  ColorResources
+                      .BOTTOM_HEADING,
+                  fontSize: 18,
+                  fontWeight:
+                  FontWeight
+                      .bold)),
+          actions: <Widget>[
+            TextButton(
+              child: Padding(
+                padding:
+                const EdgeInsets
+                    .all(10.0),
+                child: Text(
+                    "Ok",
+                    style: TextStyle(
+                        color:
+                        ColorResources
+                            .GREEN,
+                        fontSize:
+                        18)),
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        ));
   }
 
   callShareFunction(String des,TruckLoad load,context){
@@ -217,7 +254,7 @@ class Utils {
           Utils().openwhatsapp(context, load.mobileNumber!,description);
           return;
         case 2:
-          await Utils().callFunction("${load.mobileNumber}");
+          await Utils().callFunction(context,"${load.mobileNumber}");
           return;
 
         case 3:

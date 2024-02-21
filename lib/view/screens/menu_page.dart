@@ -101,7 +101,7 @@ class _MenuPageState extends State<MenuPage> {
                       height: 500,
                       width: 500,
                     )*/
-              SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,)
+              Visibility(visible:false,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,))
                   : IconButton(
                       icon: Icon(
                         Icons.menu,
@@ -128,7 +128,8 @@ class _MenuPageState extends State<MenuPage> {
                       image: AssetImage('assets/images/tkd.png',)
                     )
                 ),*/
-                      child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,),
+
+                      child: Visibility(visible:false,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,)),
                     ),
                   )
                   : IconButton(
