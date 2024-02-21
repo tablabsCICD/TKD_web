@@ -285,7 +285,7 @@ class _PostCommentListState extends State<PostCommentList> {
             child: InkWell(
               onTap: () {
                 String des = truckLoad.topicName! + "\n " + truckLoad.content!;
-                Utils().callShareFunction(des);
+                Utils().callShareFunction(des,truckLoad,context);
               },
               child: Container(
                 width: 38,

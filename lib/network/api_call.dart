@@ -34,12 +34,12 @@ class APIHelper {
   }
 
 
-  Future<int> ApiAddPostDataMapRequest(String url,Map<String,dynamic>data) async{
+  Future<dynamic> ApiAddPostDataMapRequest(String url,Map<String,dynamic>data) async{
     var body = json.encode(data);
     final response = await http.post(Uri.parse(url),
         headers: {"Content-Type": "application/json"}, body: body);
     print("response : ${response.statusCode}" + " --- " + response.body.toString());
-    return response.statusCode;
+    return response;
   }
 
 

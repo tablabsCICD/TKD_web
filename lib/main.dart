@@ -24,6 +24,7 @@ import 'package:tkd_app/provider/more_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/provider/plan_provider.dart';
 import 'package:tkd_app/provider/pool_purchase_provider.dart';
+import 'package:tkd_app/provider/rating_provider.dart';
 import 'package:tkd_app/provider/repeatProvider.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
@@ -63,6 +64,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<GroupListProvider>()),
         ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
         ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<RatingProvider>()),
       ],
       child: MyApp(),
   )));

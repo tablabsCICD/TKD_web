@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
@@ -62,7 +63,6 @@ class CustomTextField extends StatelessWidget {
               ? FilteringTextInputFormatter.digitsOnly
               : FilteringTextInputFormatter.singleLineFormatter
         ],
-        style: Style.dropdownValue,
         validator: isPhoneNumber
             ? Validators.compose([
                 Validators.required('Phone number is required'),
@@ -93,13 +93,20 @@ class CustomTextField extends StatelessWidget {
                             : null,
         readOnly: readOnly == null ? false : true,
         decoration: InputDecoration(
-          hintText: hintText,
-          filled: true,
-          fillColor: ColorResources.TEXTFEILD_COLOR,
-          hintStyle: Style.searchHint,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide.none),
+            hintText: hintText,
+            border: InputBorder.none,
+            hintStyle:TextStyle(
+              color: Color(0x662C363F),
+              fontSize: 14,
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontWeight: FontWeight.w400,
+            )
+        ),
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+          fontFamily: GoogleFonts.poppins().fontFamily,
+          fontWeight: FontWeight.w400,
         ),
         keyboardType:
             textInputType != null ? textInputType : TextInputType.text,

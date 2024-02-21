@@ -647,7 +647,7 @@ Widget heading(String title,String subTitle){
 
   Widget image({String image = ""}) {
     // return Container(
-    //   width: 311.w,
+    //   width: 311 ,
     //   height: 200.h,
     //   decoration: ShapeDecoration(
     //     image: DecorationImage(
@@ -682,7 +682,7 @@ Widget heading(String title,String subTitle){
 
   Widget imageLink(String link) {
     // return Container(
-    //   width: 311.w,
+    //   width: 311 ,
     //   height: 200.h,
     //   decoration: ShapeDecoration(
     //     image: DecorationImage(

@@ -15,7 +15,7 @@ class ColorResources {
   static const Color PRIMARY_COLOR = Color(0xFFC3262C);
   static const Color THEME_COLOR = Color(0xFF001E49);
   static const Color BUTTON_COLOR = Color(0xff00ADE3);
-  static const Color TEXTFEILD_COLOR = Color(0xffe8e1d8);
+  static const Color TEXTFEILD_COLOR = Color(0xffE6E6E6);
   static const Color CARD_COLOR = Color(0xffcfa473);
   static const Color CARD_HEADER_COLOR = Color(0xff3FCC01);
   static const Color APPBAR_COLOR = Color(0xffffffff);

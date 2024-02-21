@@ -67,7 +67,8 @@ class AppConstants {
 
   static String FULL_LOAD_ALL_CARD_NEW=BASE_URL + "dashboard/homepage/posts";
 
-
+  static String GETCOMMENTS(id) => BASE_URL + "/getGerenalPostComments?generalPostId=$id";
+  static String GIVE_RATING_REVIEWS = BASE_URL + "/ratings-reviews/save";
 
   static String GALLERY = BASE_URL + "/Gallery";
 

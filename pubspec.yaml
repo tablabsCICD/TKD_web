@@ -75,6 +75,8 @@ dependencies:
   footer: ^0.0.4
   cached_network_image:
   flutter_rating_bar:
+  timeago:
+
 
 dev_dependencies:
   flutter_test:
