@@ -1613,10 +1613,9 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
               },
               child:  SvgPicture.asset(
                 'assets/images/share_icon.svg',
-                color: ColorResources
-                    .PRIMARY_COLOR,
-                height: 15,
-                width: 15,
+
+                height: 25,
+                width: 25,
               ),
             )
           ),

@@ -148,7 +148,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       padding: const EdgeInsets.only(top: 30.0),
                       child: SvgPicture.asset(
                         'assets/svg/logo.svg',
-                        height: 70,
+                        height: 100,
                         width: 150,
                       ),
                     ),
@@ -214,6 +214,16 @@ class _Login_ScreenState extends State<Login_Screen> {
 
                                   },
                                   child: Text("Terms & Conditions",
+                                      style: Style.aleaready),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+                                  },
+                                  child: Text("Privacy Policy",
                                       style: Style.aleaready),
                                 ),
                                 SizedBox(
@@ -472,7 +482,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   buttonText: 'SEND OTP'),
             ),
             //  SizedBox(height: 50,),
-            Padding(
+           /* Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -510,7 +520,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ),
                     ],
                   ),
-                  /*Row(
+                  *//*Row(
                   //  mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("Continue as a?",
@@ -524,10 +534,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                             style: Style.aleaready,textAlign: TextAlign.center),
                       ),
                     ],
-                  )*/
+                  )*//*
                 ],
               ),
-            ),
+            ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

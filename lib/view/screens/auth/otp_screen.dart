@@ -153,7 +153,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
               ),
               Align(
                 alignment: Alignment.topCenter,
-                child: SvgPicture.asset('assets/svg/logo.svg',height: 150,width: 250,),
+                child: SvgPicture.asset('assets/svg/logo.svg',height: 100,width: 150,),
               ),
               Align(
                 alignment: Alignment.centerRight,
@@ -213,10 +213,21 @@ class OTP_ScreenState extends State<OTP_Screen> {
                               onTap: (){
                                 html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
                               },
-                              child: Text("Terms & Conditions",
+                              child: Text("Terms And Conditions",
                                   style: Style.aleaready
                               ),
                             ),
+                            SizedBox(width: 20,),
+                            InkWell(
+                              onTap: (){
+                                html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+                              },
+                              child: Text("Privacy Policy",
+                                  style: Style.aleaready
+                              ),
+                            ),
+
+
                             SizedBox(width: 20,),
                             InkWell(
                               onTap:(){
