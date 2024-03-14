@@ -76,7 +76,7 @@ dependencies:
   cached_network_image:
   flutter_rating_bar:
   timeago:
-
+  simple_circular_progress_bar:
 
 dev_dependencies:
   flutter_test:

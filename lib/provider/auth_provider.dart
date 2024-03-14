@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -80,6 +81,74 @@ class  AuthProvider extends ChangeNotifier{
     return response;
   }
 
+
+  TextEditingController textControllerOne=TextEditingController();
+  TextEditingController textControllerTwo=TextEditingController();
+  TextEditingController textControllerThree=TextEditingController();
+  TextEditingController textControllerFour=TextEditingController();
+  TextEditingController textControllerFive=TextEditingController();
+  TextEditingController textControllerSix=TextEditingController();
+  bool isButtonEnbale=false;
+  bool resendButtonEnble=false;
+  String? mobileNumber;
+  bool? isRegistration;
+
+
+
+  late Timer _timer;
+  int start = 150;
+  String timeRemaning="02:30";
+
+  void startTimer() {
+
+    const oneSec = const Duration(seconds: 1);
+    resendButtonEnble=false;
+    _timer = new Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (start == 0) {
+          resendButtonEnble=true;
+          notifyListeners();
+          timer.cancel();
+        } else {
+          resendButtonEnble=false;
+          start--;
+          timeRemaning= formatedTime(timeInSecond: start);
+          notifyListeners();
+        }
+      },
+    );
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _timer.cancel();
+    super.dispose();
+  }
+
+  onCallButtonEnble(){
+    if(textControllerOne.text.toString().isNotEmpty && textControllerTwo.text.toString().isNotEmpty &&  textControllerThree.text.toString().isNotEmpty &&  textControllerFour.text.toString().isNotEmpty
+        &&  textControllerFive.text.toString().isNotEmpty &&  textControllerSix.text.toString().isNotEmpty){
+      isButtonEnbale=true;
+    }else{
+      isButtonEnbale =false;
+    }
+    notifyListeners();
+  }
+  onClickResend(BuildContext context, String mobileNumber){
+    if(resendButtonEnble){
+      resendOtp(context,mobileNumber!);
+    }
+  }
+
+  formatedTime({required int timeInSecond}) {
+    int sec = timeInSecond % 60;
+    int min = (timeInSecond / 60).floor();
+    String minute = min.toString().length <= 1 ? "0$min" : "$min";
+    String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
+    return "$minute : $second";
+  }
+
   verifyOtp(String mobile,String otp,String deviceId) async {
     if(mobile.compareTo("9420455551")==0){
 //      print("*************"+userStatis().staticUser );
@@ -149,6 +218,20 @@ class  AuthProvider extends ChangeNotifier{
 
 
   }
+
+  resendOtp(BuildContext context,String mobileNumber) async{
+    String myUrl = AppConstants.SEND_OTP +'?mobileNos=${mobileNumber}';
+    print("resend otp:"+myUrl);
+    var req = await http.post(Uri.parse(myUrl));
+    response = json.decode(req.body);
+    if(req.statusCode==200){
+      start=150;
+      startTimer();
+      //.show(context, "OTP resend Successfully");
+    }
+    notifyListeners();
+  }
+
 
   sendOtpUsingEmail(String email) async {
     String myUrl = AppConstants.SEND_OTP_ON_MAIL +'?emailId=${email}';

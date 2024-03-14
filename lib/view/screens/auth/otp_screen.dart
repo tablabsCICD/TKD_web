@@ -10,11 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/organization_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -36,8 +38,14 @@ import 'registration_screen_1.dart';
 class OTP_Screen extends StatefulWidget {
   String mobileNumber;
   bool companyLogin;
-  OTP_Screen(this.mobileNumber,{ required this.companyLogin});
   final authProvider = locator<AuthProvider>();
+
+  OTP_Screen(this.mobileNumber,{ Key? key,required this.companyLogin}) : super(key: key) {
+    authProvider.startTimer();
+  }
+
+ // OTP_Screen(this.mobileNumber,{ required this.companyLogin});
+
   @override
   OTP_ScreenState createState() => OTP_ScreenState();
 }
@@ -382,7 +390,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
   getCard(AuthProvider model) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
-      height: 400,
+      height: 410,
       width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:
       ResponsiveWidget.isDesktop(context)?355:MediaQuery.of(context).size.width / 3,
       margin: ResponsiveWidget.isMobile(context)?EdgeInsets.all(0):ResponsiveWidget.isDesktop(context)?EdgeInsets.only(right: MediaQuery.of(context).size.width / 5):EdgeInsets.only(right: MediaQuery.of(context).size.width / 8),
@@ -420,8 +428,15 @@ class OTP_ScreenState extends State<OTP_Screen> {
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: progress(),
+            )
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30.0,horizontal: 20),
+            padding: const EdgeInsets.only(bottom: 30.0,left: 20,right:20 ,top:65),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -497,12 +512,10 @@ class OTP_ScreenState extends State<OTP_Screen> {
                         },
                       )),
                 ),
-               /* CustomTextField(
-                  hintText: "Enter Otp",
-                  controller: otpController,
-                  textInputType: TextInputType.number,
 
-                ),*/
+              //  attemptText(),
+                resendOTP(),
+
                 /*Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -610,6 +623,137 @@ class OTP_ScreenState extends State<OTP_Screen> {
           ),
         ],
       ),
+    );
+  }
+
+  attemptText() {
+    return Container(
+      margin: EdgeInsets.only(right: 20),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Text(
+          '${"Attempts"} 00/03',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontFamily: GoogleFonts.poppins().fontFamily,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+
+  progress() {
+    return Consumer<AuthProvider>(
+      builder: (context, provider, child) {
+        return Column(
+          children: [
+            SimpleCircularProgressBar(
+              progressStrokeWidth: 4,
+              size: 40,
+              backStrokeWidth: 2,
+              maxValue: 150,
+              animationDuration: 150,
+              progressColors: [Colors.amber],
+              backColor: Colors.grey,
+              mergeMode: true,
+              onGetText: (double value) {
+                return Text(
+                  '${provider!.timeRemaning}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ColorResources.THEME_COLOR,
+                    fontSize: 10,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 10,),
+            mobileNumber(),
+          ],
+        );
+      },
+    );
+  }
+
+  mobileNumber() {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "OTP sent to",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          TextSpan(
+            text: ' +91 ${widget.mobileNumber}',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  resendOTP() {
+    return Consumer<AuthProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          width: 335,
+          height: 24,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Haven’t received OTP?",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: (){
+                        provider.onClickResend(context,widget.mobileNumber);
+                      },
+                      child: Text(
+                        " Resend OTP",
+                        style: TextStyle(
+                          color:provider.resendButtonEnble?ColorResources.RED:Colors.black26,
+                          fontSize: 14,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
