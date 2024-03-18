@@ -7,6 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -249,6 +250,10 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                             (selectedTab == "Part Load Available"), 4),
                         getCircularContainer("General Post",
                             (selectedTab == "General Post"), 5),
+                        getCircularContainer("Sell Buy Post",
+                            (selectedTab == "Sell Buy Post"), 6),
+                        getCircularContainer("Jobs",
+                            (selectedTab == "Jobs"), 7),
                         /*InkWell(
                         onTap: () {
                           showAnimatedDialog(
@@ -448,6 +453,10 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                               (selectedTab == "Part Load Required"), 3),
                           getCircularContainer("Part Load Available",
                               (selectedTab == "Part Load Available"), 4),
+                          getCircularContainer("Sell Buy Post",
+                              (selectedTab == "Sell Buy Post"), 5),
+                          getCircularContainer("Jobs",
+                              (selectedTab == "Jobs"), 6),
                         ],
                       ),
                     ),
@@ -491,6 +500,10 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                           .toString()}");
                       return model.truckLoadTypeList[index].type=="Advertisement"
                           ?getAdvCard(context,model.truckLoadTypeList[index])
+                     : model.truckLoadTypeList[index].type=="Buy/Sell"
+                          ?cardSellBuyPost(index,context,model.truckLoadTypeList[index])
+                      :model.truckLoadTypeList[index].type=="Jobs"
+                          ?cardJobPost(index,context,model.truckLoadTypeList[index])
                           :model.truckLoadTypeList[index].type=="General Post"
                           ?generalPost(model.truckLoadTypeList[index],context)
                       :AllCards().cardLoadHome(index,context,model.truckLoadTypeList[index],7271,this);
@@ -1280,7 +1293,8 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
             model.pla = false;
             model.plr = false;
             model.gp = false;
-
+            model.buy_sell = false;
+            model.jobs = false;
             if(selectedTab == 'Full Load Required'){
               model.flr = true;
             }
@@ -1296,12 +1310,20 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
             if(selectedTab == 'General Post'){
               model.gp = true;
             }
+            if(selectedTab == 'Sell Buy Post'){
+              model.buy_sell = true;
+            }
+            if(selectedTab == 'Jobs'){
+              model.jobs = true;
+            }
             if(selectedTab == 'All Requirement'){
               model.pla = true;
               model.plr = true;
               model.fla = true;
               model.flr = true;
               model.gp = true;
+              model.buy_sell = true;
+              model.jobs = true;
             }
           });
           model.getFullLoadTruckList(selectedFromCity!,selectedToCity!);
@@ -1468,6 +1490,218 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
       fit: BoxFit.fill,
       width: 311,
       height: 200,
+    );
+  }
+
+  cardSellBuyPost(int index, BuildContext context, TruckLoad load,{int userId=0}) {
+    return Container(
+      width: 335,
+      // height: 255.h,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 100,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xffd0a232),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  load.topicName!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          BaseWidget().profile(
+              load.companyLogo!, load.nameOfPerson!, load.companyName!,
+              verify: load.isPaid!),
+          BaseWidget().headingWithDescription(load.topicName!, getDateObject(load.postingTime), load.mfgYear!,load.modelName!,load.estPrice!,false),
+          SizedBox(height: 8),
+          imageLoad(load),
+          load.userId==userId ?BaseWidget().deleteButton((val) {
+            if(val==10){
+
+            }else{
+              Utils().openMenu(val, load, context);
+            }
+          },false) :BaseWidget().getInTouchButton((val) {
+            Utils().openMenu(val, load, context);
+          })
+        ],
+      ),
+    );
+  }
+
+
+  cardJobPost(int index, BuildContext context, TruckLoad load,{int userId=0}) {
+    return Container(
+      width: 335,
+      // height: 255.h,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 100,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFFd35e61),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  load.type!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          BaseWidget().profileWithUser(
+              load.companyLogo!, load.nameOfPerson!, load.companyName!,
+              verify: load.isPaid!,transporterOrAgent: load.transporterOrAgent!),
+          BaseWidget().headingWithDescription("Job Title", getDateObject(load.postingTime), "-",load.topicName!,'',true),
+          SizedBox(height: 8),
+          BaseWidget().heading("Job Description", load.content!),
+          load.userId==userId ?BaseWidget().deleteButton((val) {
+            if(val==10){
+
+            }else{
+              Utils().openMenu(val, load, context);
+            }
+          },false) :jobApply(load,context)
+        ],
+      ),
+    );
+  }
+
+  getDateObject(String? dateTime){
+    try{
+      DateTime formatedDate = DateTime.parse(dateTime!);
+      // print(formatedDate);
+      var date1 = DateFormat("yyyy-MM-dd").format(formatedDate);
+      var todayDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+      if(date1 == todayDate){
+        date1 = DateFormat("H:mm").format(formatedDate);
+      }
+      return date1;
+    }catch(e){
+      return dateTime;
+    }
+
+  }
+
+  Widget jobApply(TruckLoad load, BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: (){
+              Utils().callFunction(context,load.mobileNumber.toString());
+              /*String Message="I am writing to express my strong interest in the our department"+" From TKD Connect Application";
+                Utils().openwhatsapp(context, load.mobileNumber!, Message);*/
+            },
+            child: Container(
+              height: 38,
+              //width: 203.w,//for save job
+              width: 240,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Call now',
+                    style: TextStyle(
+                      color: Color(0xFF001E49),
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //  SizedBox(width: 12.w),
+          // SvgPicture.asset(Images.savejob),
+          SizedBox(width: 12),
+          InkWell(
+              onTap: (){
+                String Message="I am writing to express my strong interest in the our department"+" From TKD Connect Application";
+                Utils().openwhatsapp(context, load.mobileNumber!, Message);
+              },
+              child: SvgPicture.asset("assets/svg/message_job.svg")),
+        ],
+      ),
     );
   }
 

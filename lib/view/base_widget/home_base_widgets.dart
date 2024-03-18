@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
+import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
 
 class BaseWidget {
@@ -716,6 +717,772 @@ Widget heading(String title,String subTitle){
           ))
               .toList(),
         ));
+  }
+
+  Widget headingWithDescription(String title, String date, String field1,String field2,String field3,bool isJobPost) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          date,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Color(0x99001E49),
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              isJobPost?"Experience : ":"Mfg Year : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              field1,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              isJobPost?"Role : ":"Model : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              field2,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        isJobPost?SizedBox.shrink():Row(
+                          children: [
+                            Text(
+                              "Price : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              field3,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget applyButton(Function(int) onMenuTap) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () {
+              onMenuTap(0);
+            },
+            child: Container(
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Apply Now",
+                    style: TextStyle(
+                      color: Color(0xFF001E49),
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SvgPicture.asset("assets/svg/arrow_right.svg")
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          InkWell(onTap: () {}, child: popUpmenu(onMenuTap))
+        ],
+      ),
+    );
+  }
+
+  Widget deleteButton(Function(int) onMenuTap,bool isOwnPost) {
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () {
+              onMenuTap(10);
+            },
+            child: Container(
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Delete",
+                    style: TextStyle(
+                      color: ColorResources.PRIMARY_COLOR,
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SvgPicture.asset("assets/svg/delete.svg")
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          InkWell(onTap: () {}, child: isOwnPost?popUpmenuForOwnPost(onMenuTap):popUpmenu(onMenuTap))
+        ],
+      ),
+    );
+  }
+
+  Widget profileWithUser(String profileLink, String name, String companyName,
+      {int verify = 0, int transporterOrAgent = 0}) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Container(
+                //   width: 40.w,
+                //   height: 40.h,
+                //   child: Image.network(profileLink),
+                // ),
+                //getImage(profileLink,height: 40.h,width: 40.w)
+                getImageclip(profileLink, height: 40, width: 40)
+              ],
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              // height: 52.h,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              name,
+                                              style:TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontFamily:
+                                                GoogleFonts.poppins()
+                                                    .fontFamily,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Visibility(
+                                                visible:
+                                                verify != 0 ? true : false,
+                                                child: SvgPicture.asset(
+                                                  "assets/svg/verified.svg",
+                                                  height: 12,
+                                                  width: 12,
+                                                ))
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: Text(
+                                            companyName,
+                                            style:TextStyle(
+                                              color: Color(0x99001E49),
+                                              fontSize: 10,
+                                              fontFamily: GoogleFonts.poppins()
+                                                  .fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: Text(
+                                            getTranport(
+                                                transporterOrAgent),
+                                            style:TextStyle(
+                                              color: Color(0x99001E49),
+                                              fontSize: 10,
+                                              fontFamily: GoogleFonts.poppins()
+                                                  .fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                        RatingBar.builder(
+                                          itemSize: 10,
+                                          initialRating: 3,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemPadding: EdgeInsets.symmetric(
+                                              horizontal: 1.0),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                            size: 5,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  popUpmenu(Function(int) onMenuTap) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: SvgPicture.asset("assets/svg/post_menu.svg")),
+      onSelected: (dynamic val) {
+        onMenuTap(val);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            onMenuTap(1);
+          },
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                "assets/svg/message.svg",
+                color: Colors.black,
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                "Chat",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(2);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/call_white.svg",
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Call",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(3);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/share_white.svg",
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Share",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(4);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.star_border,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Rating",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+
+      ],
+    );
+  }
+
+
+  popUpmenuForOwnPost(Function(int) onMenuTap) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: SvgPicture.asset("assets/svg/post_menu.svg")),
+      onSelected: (dynamic val) {
+        onMenuTap(val);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            onMenuTap(1);
+          },
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                "assets/svg/message.svg",
+                color: Colors.black,
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                "Chat",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(2);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/call_white.svg",
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Call",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(3);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/share_white.svg",
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Share",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(4);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.star_border,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Rating",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(5);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/return_route.svg",
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Re Post",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        /*PopupMenuItem(
+            onTap: () {
+              onMenuTap(6);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit_outlined,
+                  color: Colors.black,
+                  size: 20.w,
+                ),
+                SizedBox(
+                  width: 12.w,
+                ),
+                Text(
+                  S().edit,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.sp,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),*/
+      ],
+    );
+  }
+
+  Widget getInTouchButton(Function(int) onMenuTap) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () {
+              onMenuTap(2);
+            },
+            child: Container(
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Get In Touch",
+                    style: TextStyle(
+                      color: Color(0xFF001E49),
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  Icon(Icons.call,size:15)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          InkWell(onTap: () {}, child: popUpmenu(onMenuTap))
+        ],
+      ),
+    );
+  }
+
+  String getTranport(int val){
+    switch(val){
+      case 0:
+        return "Transporters";
+
+      case 1:
+        return "Agents/Brokers";
+
+      case 2:
+        return "PACKERS AND MOVERS";
+      case 3:
+        return "MANUFACTURERS";
+      case 4:
+        return "DISTRIBUTORS";
+      case 5:
+        return "CLEARING AND FORWARDING AGENTS";
+      default:
+        return "";
+    }
+
+
+
   }
 
 }

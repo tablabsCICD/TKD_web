@@ -22,7 +22,7 @@ class DashboardProvider extends ChangeNotifier{
   var response;
   bool isFirstLoading = false;
   int totalPages = 0;
-  bool fla = false,pla = false,flr = false,plr = false,gp=false;
+  bool fla = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false;
 
   final RefreshController refreshController = RefreshController(initialRefresh: true);
   final authProvider = locator<AuthProvider>();
@@ -40,16 +40,16 @@ class DashboardProvider extends ChangeNotifier{
     //String myUrl = AppConstants.FULL_LOAD_ALL_CARD_NEW +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
 
     if(fromCity=="All" && toCity=="All"){
-      myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp';
+      myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
 
     }else{
 
       if(fromCity != "All" && toCity!="All"){
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp';
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       }else if(fromCity != "All" && toCity=="All"){
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp';
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       }else{
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp';
+        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       }
 
 
