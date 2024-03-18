@@ -211,7 +211,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                             SizedBox(width: 20,),
                             InkWell(
                               onTap: (){
-                                html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+                                html.window.open('https://www.tkdconnect.in/term-and-condition',"_blank"/*,"_self"*/);
                               },
                               child: Text("Terms And Conditions",
                                   style: Style.aleaready
