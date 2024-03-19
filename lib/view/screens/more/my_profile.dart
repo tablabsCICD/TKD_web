@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
 import 'package:tkd_app/dialog/CustomStateListDialog.dart';
@@ -16,6 +17,7 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
@@ -29,6 +31,7 @@ import 'package:tkd_app/view/screens/my_routes/get_state_list.dart';
 import 'package:universal_html/js.dart';
 
 import '../../base_widget/border_button.dart';
+import '../../base_widget/utils.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -130,41 +133,42 @@ class _MyProfileState extends State<MyProfile> {
             SizedBox(
               height: 10,
             ),
-            model.userDetailList[0].isPaid == 0
-                ? getMyPlanCard(
-                context,
-                'silver_plan',
-                'plan_msg',
-                'Free',
-                'assets/images/silver.png',
-                Color(0xff3d3d3d),
-                Color(0xff9a9a9a))
-                : model.userDetailList[0].isPaid == 10
-                ? getMyPlanCard(
-                context,
-                'gold_plan',
-                'plan_msg',
-                '1,000',
-                'assets/images/gold.png',
-                Color(0xffde8b02),
-                Color(0xfffacf5a))
-                : model.userDetailList[0].isPaid == 20
-                ? getMyPlanCard(
-                context,
-                'ruby_plan',
-                'plan_msg',
-                '2,000',
-                'assets/images/platinum.png',
-                Color(0xffab34e0),
-                Color(0xff8fabff))
-                : getMyPlanCard(
-                context,
-                'diamond_plan',
-                'plan_msg',
-                '3,000',
-                'assets/images/diamond.png',
-                Color(0xff0087ba),
-                Color(0xff10c9d9)),
+            // model.userDetailList[0].isPaid == 0
+            //     ? getMyPlanCard(
+            //     context,
+            //     'silver_plan',
+            //     'plan_msg',
+            //     'Free',
+            //     'assets/images/silver.png',
+            //     Color(0xff3d3d3d),
+            //     Color(0xff9a9a9a))
+            //     : model.userDetailList[0].isPaid == 10
+            //     ? getMyPlanCard(
+            //     context,
+            //     'gold_plan',
+            //     'plan_msg',
+            //     '1,000',
+            //     'assets/images/gold.png',
+            //     Color(0xffde8b02),
+            //     Color(0xfffacf5a))
+            //     : model.userDetailList[0].isPaid == 20
+            //     ? getMyPlanCard(
+            //     context,
+            //     'ruby_plan',
+            //     'plan_msg',
+            //     '2,000',
+            //     'assets/images/platinum.png',
+            //     Color(0xffab34e0),
+            //     Color(0xff8fabff))
+            //     : getMyPlanCard(
+            //     context,
+            //     'diamond_plan',
+            //     'plan_msg',
+            //     '3,000',
+            //     'assets/images/diamond.png',
+            //     Color(0xff0087ba),
+            //     Color(0xff10c9d9)),
+            selectedPlan(model.userDetailList[0]),
             SizedBox(
               height: 20,
             ),
@@ -596,4 +600,45 @@ class _MyProfileState extends State<MyProfile> {
     );
 
   }
+
+
+
+  selectedPlan(User user){
+    return  Container(
+      transform: Matrix4.translationValues(0.0, -10.0, 0.0),
+      // width: 36.w,
+      // height: 12.h,
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            Utils().getSelectedPackageImage(user!.isPaid!),
+            height: 8,
+            width: 8,
+          ),
+          SizedBox(width: 4,),
+          Text(
+            Utils().getSelectedPackageName(user.isPaid!),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 8,
+              fontFamily: AppConstant.FONTFAMILY
+
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }

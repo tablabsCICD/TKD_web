@@ -441,69 +441,117 @@ class AllCards {
 
 
   cardAdd(int index, BuildContext context, TruckLoad load,{int userId=0}) {
-    return Container(
-      width: 335 ,
-      // height: 255,
-      padding: EdgeInsets.all(12),
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+    return GestureDetector(
+      onTap: (){
+        print('the click is ');
+        imageDialog(load.companyName,load.postImages!.first,context);
+      },
+      child: Container(
+        width: 335 ,
+        // height: 255,
+        padding: EdgeInsets.all(12),
+        clipBehavior: Clip.antiAlias,
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x114A5568),
+              blurRadius: 8 ,
+              offset: Offset(0, 3),
+              spreadRadius: 0,
+            )
+          ],
         ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x114A5568),
-            blurRadius: 8 ,
-            offset: Offset(0, 3),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              width: 100 ,
-              height: 18,
-              padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 2),
-              decoration: ShapeDecoration(
-                color: Color(0xFFD9462A),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-              ),
-              child: Center(
-                child: Text(
-                  load.type!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8 ,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w600,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                width: 100 ,
+                height: 18,
+                padding: EdgeInsets.symmetric(horizontal: 8 , vertical: 2),
+                decoration: ShapeDecoration(
+                  color: Color(0xFFD9462A),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                ),
+                child: Center(
+                  child: Text(
+                    load.type!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8 ,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 8),
+            SizedBox(height: 8),
 
-          imageLoad(load),
-          InkWell(
-            onTap: ()async{
-              final url = Uri.parse(
-                'http://${load.website}',
-              );
-             await  launchUrl(url);
-            },
-            child: BaseWidget().heading(load.companyName!, "", load.website!),
-          )
+            imageLoad(load),
+            InkWell(
+              onTap: ()async{
+                final url = Uri.parse(
+                  'http://${load.website}',
+                );
+               await  launchUrl(url);
+              },
+              child: BaseWidget().heading(load.companyName!, "", load.website!),
+            )
 
-        ],
+          ],
+        ),
       ),
     );
   }
+
+
+
+
+  Widget imageDialog(text, path, context) {
+    return Dialog(
+      // backgroundColor: Colors.transparent,
+      // elevation: 0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$text',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.close_rounded),
+                  color: Colors.red,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 220,
+            height: 200,
+            child: Image.network(
+              '$path',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ),
+    );}
 
 }

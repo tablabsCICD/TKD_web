@@ -16,6 +16,8 @@ import 'package:tkd_app/widgets/rating_dailog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
+import '../../util/images.dart';
+
 class Utils {
 
   String getTranport(int val){
@@ -277,6 +279,39 @@ class Utils {
           return FractionallySizedBox(
               heightFactor: 0.58, child: RatingDialog(load));
         });
+
+  }
+
+
+  getSelectedPackageImage(int val){
+    switch(val){
+      case 0:
+        return Images.pearls;
+
+      case 10:
+        return Images.pearls_blue;
+
+      case 20:
+        return Images.pearls_red;
+      case 30:
+        return Images.pearls_black;
+    }
+
+  }
+
+  getSelectedPackageName(int val){
+    switch(val){
+      case 0:
+        return "Clear";
+
+      case 10:
+        return "Blue";
+
+      case 20:
+        return "Red";
+      case 30:
+        return "Black";
+    }
 
   }
 

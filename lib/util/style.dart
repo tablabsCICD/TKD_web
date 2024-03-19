@@ -69,8 +69,11 @@ class Style{
  static TextStyle planSubtitle = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xfff3f0f0));
  static TextStyle price = TextStyle(fontSize: 24,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Color(0xffffffff));
 
- static TextStyle filterHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Color(0xff262626));
- static TextStyle filterSelectedHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Color(0xffffffff));
+ static TextStyle filterHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Colors.black);
+
+
+ static TextStyle filterSelectedHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Colors.white);
+
 
  static TextStyle tabText = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff000000));
 

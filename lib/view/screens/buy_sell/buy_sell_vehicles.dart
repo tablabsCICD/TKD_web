@@ -21,6 +21,7 @@ import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/date_converter.dart';
@@ -59,7 +60,7 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
           children: [
             Container(
               height: 60,
-              color: ColorResources.HOME_APPBAR,
+              color: ThemeColor.baground,
               child: Padding(
                 padding: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(horizontal: 35,vertical: 10):EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                 child: Row(
@@ -114,10 +115,10 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
         child: Container(
           height: 30,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 20),
-          child: CustomText(title,style: Style.filterHeading,textAlign: TextAlign.center,),
+          padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+          child: CustomText(title,style: isSelected?Style.filterSelectedHeading:Style.filterHeading,textAlign: TextAlign.center,),
           decoration: BoxDecoration(
-            color: isSelected? Colors.white :Color(0xffe6e0d7),
+            color: isSelected? ColorResources.RED :Color(0xffe6e0d7),
             border: isSelected? null : Border.all(color: Color(0xffd1ccc4)),
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
