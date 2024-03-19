@@ -1530,7 +1530,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
               ),
               child: Center(
                 child: Text(
-                  load.topicName!,
+                  load.mainTag!,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 8,
