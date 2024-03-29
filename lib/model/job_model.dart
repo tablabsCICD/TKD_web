@@ -1,3 +1,4 @@
+
 class JobModel {
   JobModel({
     required this.content,

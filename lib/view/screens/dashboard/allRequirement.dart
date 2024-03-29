@@ -308,11 +308,11 @@ class _RequirementsState extends State<Requirements> {
                                                 height: 5,
                                               ),
                                               StarDisplay(
-                                                  value: model
+                                                  value: double.parse( model
                                                       .truckLoadTypeList[
                                                   index]
                                                       .ratings!
-                                                      .toInt()),
+                                                      .toString())),
                                             ],
                                           ),
                                         ),

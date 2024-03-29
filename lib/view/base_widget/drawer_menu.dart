@@ -23,21 +23,22 @@ const Buy_Sell_Vehicles = 'Buy_Sell_Vehicles';
 const Insurance_Finance = 'Insurance_Finance';
 const Announcement = 'Announcement';
 const Pool_Purchase = 'Pool_Purchase';
-const Job_Page = 'Job_Page';
+const Job_Page = 'Jobs';
 const My_Account = 'My_Account';
 const My_Post = 'My_Post';
 const My_Routes = 'My_Routes';
 const Feedback = 'Feedback';
-const My_Bids = 'My_Bids';
+const My_Quotes = 'My Quotes';
 const My_Plans = 'Plans';
 const Company = 'Company';
 const Discussion = 'Discussion';
 const Fleets = 'Fleets';
 const Chat = 'Chats';
-const Received_Bids = 'Received Bids';
+const Received_Quotes = 'Received Quotes';
 const Logout = 'Logout';
 const Call="Call";
 const Group="Group";
+const Privacy_Policy = "Privacy Policy";
 // ignore: must_be_immutable
 class DrawerMenu extends StatefulWidget {
   StringValue callBack;
@@ -75,29 +76,32 @@ class DrawerMenu extends StatefulWidget {
             getDivider(),
             getTile('assets/images/navigation_image/icn_directory_off.png', Transport, context, 'Transport Directory', (selectedTab == Transport)),
             getDivider(),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+            if (authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent == 2) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_vehicles_off.png',Buy_Sell_Vehicles, context, 'Buy/Sell Vehicles', (selectedTab == Buy_Sell_Vehicles)),
-           /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_announce_off.png',Announcement , context, 'Broadcast', (selectedTab == Announcement)),*/
-            authProvider.userDetailList[0].transporterOrAgent == 3?SizedBox.shrink(): getDivider(),
+            authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent == 2 ?SizedBox.shrink(): getDivider(),
+           if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
+            else getTile('assets/images/navigation_image/jobs.png',Job_Page , context, 'Jobs', (selectedTab == Job_Page)),
+            authProvider.userDetailList[0].transporterOrAgent == 3 || authProvider.userDetailList[0].transporterOrAgent == 2 ?SizedBox.shrink(): getDivider(),
             getTile('assets/images/navigation_image/icn_account_off.png', My_Account, context, 'My Profile', (selectedTab == My_Account)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', My_Post, context, 'My Post', (selectedTab == My_Post)),
             getTile('assets/images/navigation_image/icn_bullet_01.png',My_Routes , context, 'My Route', (selectedTab == My_Routes)),
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_bullet_01.png', My_Bids, context, 'My Bids', (selectedTab == My_Bids)),
+            else getTile('assets/images/navigation_image/icn_bullet_01.png', My_Quotes, context, 'My Quotes', (selectedTab == My_Quotes)),
             if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_bullet_01.png', Received_Bids, context, 'Received Bids', (selectedTab == Received_Bids)),
+            else getTile('assets/images/navigation_image/icn_bullet_01.png', Received_Quotes, context, 'Received Quotes', (selectedTab == Received_Quotes)),
           //  getTile('assets/images/navigation_image/icn_bullet_01.png', Company, context, 'Company', (selectedTab == Company)),
            /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
             else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Owner Data', (selectedTab == Fleets)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),*/
-           // getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
+            getTile('assets/images/navigation_image/icn_bullet_01.png',Group , context, 'Group', (selectedTab == Group)),
 
          //   getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),
 
 
             getDivider(),
             getTile('assets/images/call.png',Call , context, 'Call To Support', (selectedTab == Call)),
+            getDivider(),
+            getTile('assets/images/privacy_policy.png',Privacy_Policy , context, 'Privacy Policy', (selectedTab == Privacy_Policy)),
             getDivider(),
             getTile('assets/images/navigation_image/icn_board_on.png',Logout , context, 'Logout', (selectedTab == Logout)),
 
@@ -122,7 +126,10 @@ class DrawerMenu extends StatefulWidget {
       color: isSelected ? ColorResources.SELECTED_MENU : Colors.white,
       child: InkWell(
         onTap: (){
+          selectedTab = value;
           if(value== Call){
+
+                calltoSupport(context);
 
           }else {
             if(value==Discussion){
@@ -157,13 +164,13 @@ class DrawerMenu extends StatefulWidget {
           }
 
 
-          setState(() {
+          /*setState(() {
             if(value== Call){
             calltoSupport(context);
             }
                 selectedTab = value;
 
-          });
+          });*/
         },
         child: Row(
           children: [
@@ -225,10 +232,11 @@ class DrawerMenu extends StatefulWidget {
                         18)),
               ),
               onPressed: () {
-                widget.callBack("Back");
+               /* widget.callBack("Back");
                 setState(() {
 
-                });
+                });*/
+                Navigator.pop(context);
               },
             ),
           ],

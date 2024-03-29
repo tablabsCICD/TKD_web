@@ -17,7 +17,7 @@ class FleetProvider extends ChangeNotifier{
     if(currentPage == 0){
       fleetList.clear();
     }
-    String myUrl = AppConstants.BASE_URL + 'Fleet?page=${currentPage}';
+    String myUrl = ApiConstant.BASE_URL + 'Fleet?page=${currentPage}';
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
@@ -29,7 +29,7 @@ class FleetProvider extends ChangeNotifier{
 
   createFleet({String? userName,int? orgId,String? typeOfVehicle,
     int? userId,String? vehicleNumber,String? weight}) async {
-    String myUrl = AppConstants.BASE_URL + 'Fleet';
+    String myUrl = ApiConstant.BASE_URL + 'Fleet';
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
         "id": 0,
@@ -53,7 +53,7 @@ class FleetProvider extends ChangeNotifier{
   }
 
   deleteFleet(Fleet obj) async {
-    String myUrl = AppConstants.BASE_URL + 'Fleet?id=${obj.id}';
+    String myUrl = ApiConstant.BASE_URL + 'Fleet?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     fleetList.remove(obj);

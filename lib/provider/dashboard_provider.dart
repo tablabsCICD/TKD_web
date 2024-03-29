@@ -1,9 +1,14 @@
  import 'dart:convert';
+import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/model/request/genral_post.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
  import 'package:http/http.dart' as http;
@@ -27,7 +32,114 @@ class DashboardProvider extends ChangeNotifier{
   final RefreshController refreshController = RefreshController(initialRefresh: true);
   final authProvider = locator<AuthProvider>();
 
+
   getFullLoadTruckList(String fromCity,String toCity,{int currentPage = 0}) async {
+
+    User user = await authProvider.getLoginData();
+    String url="";
+    if(currentPage==0){
+      truckLoadTypeList.clear();
+      // print('the clear the api');
+      notifyListeners();
+    }
+    isLoading = true;
+    if(fromCity=="All" && toCity=="All"){
+
+      // bool  bool fla = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false; = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false;
+      if(!fla && !pla && !flr & !plr &!gp & ! buy_sell  &!jobs){
+        //  url = ApiConstant.ALL_CARD +'?page=${currentPage}&size=10';//&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.content!.first.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+        url = ApiConstant.ALL_CARD(user.id,currentPage);//&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.content!.first.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+
+      }else{
+        if(fla){
+          url=ApiConstant.FULL_LOAD_AVILABLE(user.id,currentPage);
+
+        }else if(pla){
+          url=ApiConstant.PART_LOAD_AVILABLE(user.id,currentPage);
+        }else if(flr){
+          url=ApiConstant.FULL_LOAD_REQUIRED(user.id,currentPage);
+        }else if(plr){
+          url=ApiConstant.PART_LOAD_REQUIRED(user.id,currentPage);
+        }else if(gp){
+          url=ApiConstant.General_POST_HOMEPAGE(user.id,currentPage);
+        }else if(buy_sell){
+          url=ApiConstant.BUYSELL_HOMEPAGE(user.id,currentPage);
+        }else if(jobs){
+          url=ApiConstant.JOBS_HOMEPAGE(user.id,currentPage);
+        }else{
+          url = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=50&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+        }
+
+      }
+
+    }else{
+      if(fromCity != "All" && toCity!="All"){
+        url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else if(fromCity != "All" && toCity=="All"){
+        url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else{
+        url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }
+
+    }
+    print('the url $url');
+
+    var req = await http.get(Uri.parse(url));
+    isFirstLoading= false;
+    isLoading = false;
+    if(req.statusCode == 200) {
+      response = json.decode(req.body);
+      var type = TruckLoadType.fromJson(response);
+
+      totalPages = type.totalPages;
+      truckLoadTypeList.addAll(type.content);
+
+      notifyListeners();
+    }
+
+  }
+
+
+  reSendPost(BuildContext context,TruckLoad postBidData)async {
+    //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
+    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}"));
+    if(apiResponse.statusCode==200){
+      await getFullLoadTruckList("All", "All",currentPage: 0);
+      showSimpleNotification(
+          Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+     // Navigator.pop(context,1);
+    }else{
+      showSimpleNotification(
+          Text("Please try again",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+    }
+    notifyListeners();
+  }
+
+  interChnageSendPost(BuildContext context,TruckLoad postBidData) async{
+    // var apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}");
+    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}"));
+    if(apiResponse.statusCode==200){
+      await getFullLoadTruckList("All", "All",currentPage: 0);
+      showSimpleNotification(
+          Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+   //   Navigator.pop(context,1);
+    }else{
+      showSimpleNotification(
+          Text("Please try again",style: TextStyle(color: Colors.white),),
+          background: Colors.red
+      );
+    }
+    notifyListeners();
+  }
+
+
+  /*getFullLoadTruckList(String fromCity,String toCity,{int currentPage = 0}) async {
     isLoading = true;
     notifyListeners();
     if(currentPage == 0){
@@ -39,20 +151,45 @@ class DashboardProvider extends ChangeNotifier{
    // String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp';
     //String myUrl = AppConstants.FULL_LOAD_ALL_CARD_NEW +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
 
+
     if(fromCity=="All" && toCity=="All"){
-      myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-
-    }else{
-
-      if(fromCity != "All" && toCity!="All"){
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else if(fromCity != "All" && toCity=="All"){
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      if(!flr & !fla & !plr & !pla & !gp & !buy_sell & !jobs){
+       // myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?loggedUserId=${user.id}&page=${currentPage}&size=20';
       }else{
-        myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+        if(flr){
+          myUrl = ApiConstant.FULL_LOAD_REQUIRED(user.id,currentPage);
+        }else if(fla){
+          myUrl = ApiConstant.FULL_LOAD_AVILABLE(user.id,currentPage);
+        }else if(plr){
+          myUrl = ApiConstant.PART_LOAD_REQUIRED(user.id,currentPage);
+        }else if(pla){
+          myUrl = ApiConstant.PART_LOAD_AVILABLE(user.id,currentPage);
+        }else if(jobs){
+          myUrl = ApiConstant.JOBS_HOMEPAGE(user.id,currentPage);
+        }else if(buy_sell) {
+          myUrl = ApiConstant.BUYSELL_HOMEPAGE(user.id,currentPage);
+        }else{
+          myUrl = ApiConstant.General_POST_HOMEPAGE(user.id,currentPage);
+        }
+        }
+   }else{
+
+    *//*  if(fromCity != "All" && toCity!="All"){
+        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else if(fromCity != "All" && toCity=="All"){
+        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else{
+        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       }
-
-
+*//*
+      if(fromCity != "All" && toCity!="All"){
+        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else if(fromCity != "All" && toCity=="All"){
+        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }else{
+        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
+      }
       //   url = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity';
     }
 
@@ -67,7 +204,7 @@ class DashboardProvider extends ChangeNotifier{
       truckLoadTypeList.addAll(type.content);
       notifyListeners();
     }
-  }
+  }*/
 
   List<String> allVerifiedUserList = [];
   getAllUserList({int currentPage = 0}) async {
@@ -78,7 +215,7 @@ class DashboardProvider extends ChangeNotifier{
       truckLoadTypeList.clear();
     }
 
-    String myUrl = AppConstants.BASE_URL +'companyRegistration?page=${currentPage}&size=6000';
+    String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${currentPage}&size=6000';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isFirstLoading= false;
@@ -113,19 +250,28 @@ class DashboardProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  deleteFullLoad(int id, int index) async {
+    String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${id}';
+    print(myUrl);
+    var req = await http.delete(Uri.parse(myUrl));
+    var deleteResponse = json.decode(req.body);
+    print(deleteResponse);
+    truckLoadTypeList.removeAt(index);
+    notifyListeners();
+  }
 
   savePost({int? mobile,String? destination,int? dnd,String? email,String? fullLoadChoice,int? id,String? instruction,User? userList,
     String? loadWeight,String? name,String? mainTag,String? os,String? otherDetails,String? source,int? partLoad,
     int? privatePost,double? rating,String? customerName, String? type,String? typeOfCargo,String? vehicleSize, String? typeOfPayment,int? userId}) async {
 
-    String myUrl = selectedSampleData == "Show to All" ? AppConstants.BASE_URL + "fullTruckLoad" : AppConstants.POST_FULL_LOAD;
+    String myUrl = selectedSampleData == "Show to All" ? ApiConstant.BASE_URL + "fullTruckLoad" : ApiConstant.POST_FULL_LOAD;
     print(myUrl);
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
     "contactNumber": mobile?? 0,
     //"date": "2022-07-04T08:55:23.783Z",
     "destination": destination,
-    "dnd": dnd?? 0,
+    "dnd": dnd,
     "emailId": email,
     "fullLoadChoice": fullLoadChoice,
     "instructions": instruction,
@@ -154,16 +300,29 @@ class DashboardProvider extends ChangeNotifier{
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
     print("response : ${response.statusCode}" + " --- " + response.body.toString());
-    var jsonData = jsonDecode(response.body);
-    TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-    print(dataObj);
-    truckLoadTypeList.add(dataObj);
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      TruckLoad dataObj = TruckLoad.fromJson(jsonData);
+      print(dataObj);
+      truckLoadTypeList.add(dataObj);
+
+      showSimpleNotification(
+          Text("Post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+    }else{
+      showSimpleNotification(
+          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
+          background: Colors.red
+      );
+    }
+
     notifyListeners();
   }
 
   SharedPostModel? truckLoad;
   getRequirementDetails(int id) async {
-    String myUrl = AppConstants.BASE_URL +'fullTruckLoad/${id}';
+    String myUrl = ApiConstant.BASE_URL +'fullTruckLoad/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -177,7 +336,7 @@ class DashboardProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     truckLoadTypeList.clear();
-    String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
+    String myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading == false;
@@ -187,8 +346,42 @@ class DashboardProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+
+  void createGeneralPost(BuildContext context,String title,String description)async {
+    GeneralPost generalPost=GeneralPost();
+    generalPost.images=[];
+    generalPost.description=description;
+    generalPost.title=title;
+    generalPost.typeName="General Post";
+    generalPost.comment=0;
+    generalPost.likes=0;
+    generalPost.loggedUserName=authProvider.userDetailList[0].id!;
+    generalPost.disLikes=0;
+ //  ApiResponse apiResponse=await ApiHelper().postParameter(ApiConstant.BASE_URL+"GeneralPost/save", generalPost.toJson());
+    final response = await http.post(Uri.parse(ApiConstant.BASE_URL+"GeneralPost/save"),
+        headers: {"Content-Type": "application/json"}, body: json.encode(generalPost.toJson()));
+    print("response : ${response.statusCode}" + " --- " + response.body.toString());
+    if(response.statusCode==200){
+      showSimpleNotification(
+          Text("Post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+      getFullLoadTruckList("All", "All",currentPage:  0);
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+    } else{
+      showSimpleNotification(
+          Text("Please try again!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+    }
+    notifyListeners();
+  }
+
+
   getCountUnreadNotification(int userId){
-    APIHelper apiHelper=APIHelper();
-    apiHelper.ApiGetData(AppConstants.BASE_URL+"getCount/${userId}");
+    ApiHelper apiHelper=ApiHelper();
+    apiHelper.ApiGetData(ApiConstant.BASE_URL+"getCount/${userId}");
   }
 }

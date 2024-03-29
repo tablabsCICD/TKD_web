@@ -3,14 +3,22 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/comments_model.dart';
 import 'package:tkd_app/model/feedback_model.dart';
 import 'package:tkd_app/model/gallary_model.dart';
 import 'package:tkd_app/model/job_model.dart';
+import 'package:tkd_app/model/my_job_list.dart';
+import 'package:tkd_app/model/own_genral_post.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/network/api_call.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
+import 'package:tkd_app/provider/buy_sell_provider.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 import '../model/discussion_model.dart';
@@ -19,9 +27,8 @@ class MoreProvider extends ChangeNotifier {
   List<TruckLoad> allPostList = [];
   List<TruckLoad> myFullLoadTypeList = [];
   List<TruckLoad> myPartLoadTypeList = [];
-  List<TruckLoad> myJobList = [];
+  List<MyJobData> myJobList = [];
   List<TruckLoad> myOwnPostList = [];
-  List<Job> myJobsList = [];
   List<TruckLoad> myBuyVehicleList = [];
   List<PoolPurchase> myPoolPurchaseList = [];
   List<Gallery> myGalleryList = [];
@@ -47,8 +54,38 @@ class MoreProvider extends ChangeNotifier {
       partLoadFlag = false,
       galleryFlag = false;
 
+  DashboardProvider dashboardProvider = locator<DashboardProvider>();
+  BuySellProvider buySellProvider = locator<BuySellProvider>();
+  AuthProvider authProvider = locator<AuthProvider>();
+  List<GernralPostOwnData> listOwnPost=[];
 
 
+  callGeneralPostApi() async{
+    listOwnPost.clear();
+    String url="${ApiConstant.BASE_URL}getBuySellByUserId?userId=${authProvider.userDetailList[0].id}";
+    print("the url ${url}");
+    var apiResponse=await http.get(Uri.parse(url));
+    print("the url ${apiResponse.body}");
+    if(apiResponse.statusCode==200){
+      OwnGenralPostList ownGenralPostList=OwnGenralPostList.fromJson(jsonDecode(apiResponse.body));
+      listOwnPost.addAll(ownGenralPostList.data!);
+      print('the lenghth is ${listOwnPost.length}');
+
+    }else{
+   }
+  }
+
+
+  deleteGeneralPost(int index,BuildContext context)async{
+    String myUrl = ApiConstant.BASE_URL+'GeneralPost/deleteById?id=${listOwnPost[index].id!}';
+    var apiResponse= await http.delete(Uri.parse(myUrl));
+    if(apiResponse.statusCode==200){
+      listOwnPost.removeAt(index);
+
+    }else{
+    }
+    notifyListeners();
+  }
 
   getOwnPostList(String userName,{int currentPage = 0}) async {
     isMoreLoading = true;
@@ -58,11 +95,11 @@ class MoreProvider extends ChangeNotifier {
       allPostList.clear();
       myFullLoadTypeList.clear();
       myPartLoadTypeList.clear();
-      myJobList.clear();
+
       myBuyVehicleList.clear();
     }
 
-    String myUrl = AppConstants.GET_OWNPOST + '?userName=${userName}';
+    String myUrl = ApiConstant.GET_OWNPOST + '?userId=${userName}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isMoreFirstLoading= false;
@@ -76,9 +113,69 @@ class MoreProvider extends ChangeNotifier {
       else if (allPostList[i].type == 'Part Load')
         myPartLoadTypeList.add(allPostList[i]);
       else if (allPostList[i].type == 'Jobs')
-        myJobList.add(myJobList[i]);
+        null;
       else
         myBuyVehicleList.add(allPostList[i]);
+    }
+    notifyListeners();
+  }
+
+  getOwnJobList(String userName,{int currentPage = 0}) async {
+    isMoreLoading = true;
+    notifyListeners();
+    if(currentPage == 0){
+      myJobList.clear();
+    }
+    print("the url is ${ApiConstant.BASE_URL}getPostJobsByUserId/${authProvider.userDetailList[0].id}");
+    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet("${ApiConstant.BASE_URL}getPostJobsByUserId/${authProvider.userDetailList[0].id}");
+    print('the status code is ${apiResponse.statusCode}');
+    isMoreLoading=false;
+    if(apiResponse.statusCode==200){
+      MyJobList jobList=MyJobList.fromJson(jsonDecode(apiResponse.response));
+      myJobList.addAll(jobList.data!);
+      print('the lenghth is ${myJobList.length}');
+    }else{
+
+
+    }
+    notifyListeners();
+  }
+
+  reSendPost(BuildContext context,TruckLoad postBidData)async {
+  //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
+    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}"));
+    if(apiResponse.statusCode==200){
+      await getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
+      showSimpleNotification(
+          Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+
+     // Navigator.pop(context,1);
+    }else{
+      showSimpleNotification(
+          Text("Please try again",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+    }
+    notifyListeners();
+  }
+
+  interChnageSendPost(BuildContext context,TruckLoad postBidData) async{
+   // var apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}");
+    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}"));
+    if(apiResponse.statusCode==200){
+      getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
+      showSimpleNotification(
+          Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+     // Navigator.pop(context,1);
+    }else{
+      showSimpleNotification(
+          Text("Please try again",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
     }
     notifyListeners();
   }
@@ -86,7 +183,7 @@ class MoreProvider extends ChangeNotifier {
   getList(String userName) async {
     allPostList.clear();
     myOwnPostList.clear();
-    String myUrl = AppConstants.GET_OWNPOST + '?userName=${userName}';
+    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -103,43 +200,61 @@ class MoreProvider extends ChangeNotifier {
 
   getDiscussionList(String userName)async{
     discussionList.clear();
-    APIHelper apiHelper=APIHelper();
-    var result=await apiHelper.ApiGetData(AppConstants.GET_DISCUSSION+'/getByUserName?userName=${userName}');
+    ApiHelper apiHelper=ApiHelper();
+    var result=await apiHelper.ApiGetData(ApiConstant.GET_DISCUSSION+'/getByUserName?userName=${userName}');
     DiscussionData discussion = await DiscussionData.fromJson(result);
     discussionList.addAll(discussion.content!);
   }
 
-  deleteJob(TruckLoad job) async {
-    String myUrl = AppConstants.POST_JOB + '?id=${job.id}';
+  deleteJob(MyJobData job) async {
+    String myUrl = ApiConstant.POST_JOB + '?id=${job.postJob!.id}';
     var req = await http.delete(Uri.parse(myUrl));
     response = json.decode(req.body);
     myJobList.remove(job);
     notifyListeners();
   }
 
-  deleteFullLoad(TruckLoad truckLoad) async {
-    String myUrl = AppConstants.BASE_URL + 'fullTruckLoad?id=${truckLoad.id}';
-    print(myUrl);
+  deleteFullLoad(int id,int index) async {
+    TruckLoad truckLoad = await getRequirementDetails(id);
+    String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${id}';
 
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
-    print(deleteResponse);
     truckLoad.type == 'Full Load'
-        ? myFullLoadTypeList.remove(truckLoad)
-        : myPartLoadTypeList.remove(truckLoad);
+        ? myFullLoadTypeList.removeAt(index)
+        : myPartLoadTypeList.removeAt(index);
+   await getOwnPostList(authProvider.userDetailList[0].id.toString());
+
+    print("delete response: "+deleteResponse);
     notifyListeners();
   }
 
-  deleteBuySell(TruckLoad truckLoad) async {
-    String myUrl = AppConstants.POST_BUY_SELL + '?id=${truckLoad.id}';
+  TruckLoad? truckLoad;
+  getRequirementDetails(int id) async {
+    String myUrl = ApiConstant.BASE_URL +'fullTruckLoad/${id}';
+    print(myUrl);
+    var req = await http.get(Uri.parse(myUrl));
+    response = await json.decode(req.body);
+    var list = TruckLoadType.fromJson(response);
+    truckLoad = list.content[0];
+    notifyListeners();
+    return truckLoad;
+  }
+
+
+
+
+  deleteBuySell(int id,int index) async {
+    String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
-    myBuyVehicleList.remove(truckLoad);
     notifyListeners();
+    myBuyVehicleList.removeAt(index);
+    buySellProvider.notifyListeners();
   }
 
   deleteMultipleBuySell() async {
-    String myUrl = AppConstants.POST_BUY_SELL + '/deleteMultiple';
+    String myUrl = ApiConstant.POST_BUY_SELL + '/deleteMultiple';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     // myBuyVehicleList.remove();
@@ -147,7 +262,7 @@ class MoreProvider extends ChangeNotifier {
   }
 
   deleteGallery(Gallery gallery) async {
-    String myUrl = AppConstants.GALLERY + '?id=${gallery.id}';
+    String myUrl = ApiConstant.GALLERY + '?id=${gallery.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     myGalleryList.remove(gallery);
@@ -155,7 +270,7 @@ class MoreProvider extends ChangeNotifier {
   }
 
   deletePoolPurchase(PoolPurchase obj) async {
-    String myUrl = AppConstants.BULK_DATA + '?id=${obj.id}';
+    String myUrl = ApiConstant.BULK_DATA + '?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     myPoolPurchaseList.remove(obj);
@@ -163,7 +278,7 @@ class MoreProvider extends ChangeNotifier {
   }
 
   deleteFeedback(FeedBack obj) async {
-    String myUrl = AppConstants.BASE_URL + 'Feedback?id=${obj.id}';
+    String myUrl = ApiConstant.BASE_URL + 'Feedback?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     feedbackList.remove(obj);
@@ -172,7 +287,7 @@ class MoreProvider extends ChangeNotifier {
 
   getPoolPurchaseList(String userName) async {
     myPoolPurchaseList.clear();
-    String myUrl = AppConstants.BULK_DATA + '/byUserName?userName=${userName}';
+    String myUrl = ApiConstant.BULK_DATA + '/byUserName?userName=${userName}';
     var req = await http.get(Uri.parse(myUrl));
     poolPurchaseResponse = json.decode(req.body);
     var type = PoolPurchaseModel.fromJson(poolPurchaseResponse);
@@ -182,7 +297,7 @@ class MoreProvider extends ChangeNotifier {
 
   getGalleryList(String id) async {
     myGalleryList.clear();
-    String myUrl = AppConstants.GALLERY + '/byUserId?userId=${id}';
+    String myUrl = ApiConstant.GALLERY + '/byUserId?userId=${id}';
     var req = await http.get(Uri.parse(myUrl));
     galleryResponse = json.decode(req.body);
     var type = GalleryModel.fromJson(galleryResponse);
@@ -224,7 +339,7 @@ class MoreProvider extends ChangeNotifier {
 
   saveFeedback({int? id,String? feedbackDetails,int? postId,int? userId,String? type,int? rating}) async {
     String date = DateFormat.yMMMMd('en_US').format(now);
-    String myUrl = AppConstants.BASE_URL + 'Feedback';
+    String myUrl = ApiConstant.BASE_URL + 'Feedback';
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "date": "2022-06-29T09:35:24.342Z",
@@ -260,7 +375,7 @@ class MoreProvider extends ChangeNotifier {
       galleryFeedbackList.clear();
       BuySellFeedbackList.clear();
     }
-    String myUrl = AppConstants.BASE_URL +'Feedback?page=${currentPage}&size=10';
+    String myUrl = ApiConstant.BASE_URL +'Feedback?page=${currentPage}&size=10';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isFirstFeedbackLoading= false;

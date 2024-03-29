@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
@@ -139,10 +140,13 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                   ),
                   Align(
                     alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      'assets/images/tkd.png',
-                      height: 150,
-                      width: 250,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top:20.0),
+                      child: SvgPicture.asset(
+                        'assets/svg/logo.svg',
+                        height: 90,
+                        width: 120,
+                      ),
                     ),
                   ),
                   Align(
@@ -188,11 +192,15 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset(
-                  'assets/images/tkd.png',
-                  height: 80,
-                  width: 200,
+                SizedBox(height:30),
+               /* Center(
+                  child: SvgPicture.asset(
+                    'assets/svg/logo.svg',
+                    height: 50,
+                    width: 100,
+                  ),
                 ),
+                SizedBox(height:20),*/
                 CustomTextField(
                   hintText: 'Company Name',
                   controller: companyController,
@@ -301,14 +309,14 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                         return InkWell(
                                           onTap: () {
                                             setState(() {
-                                              AppConstants.languages[index].isSelected = !AppConstants.languages[index].isSelected;
-                                              AppConstants.languages.forEach((element) {
-                                                if (element.languageCode != AppConstants.languages[index].languageCode) {
+                                              ApiConstant.languages[index].isSelected = !ApiConstant.languages[index].isSelected;
+                                              ApiConstant.languages.forEach((element) {
+                                                if (element.languageCode != ApiConstant.languages[index].languageCode) {
                                                   element.isSelected = false;
                                                 }
                                               });
-                                              if (AppConstants.languages[index].isSelected == true) {
-                                                selectedLang = AppConstants.languages[index]
+                                              if (ApiConstant.languages[index].isSelected == true) {
+                                                selectedLang = ApiConstant.languages[index]
                                                     .languageName
                                                     .toString();
                                                 selectedLang == 'हिंदी'
@@ -328,9 +336,9 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                                         context,
                                                         listen: false)
                                                     .setLanguage(Locale(
-                                                  AppConstants.languages[index]
+                                                  ApiConstant.languages[index]
                                                       .languageCode!,
-                                                  AppConstants
+                                                  ApiConstant
                                                       .languages[index].countryCode,
                                                 ));
                                               }
@@ -341,7 +349,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                             padding:
                                                 EdgeInsets.symmetric(vertical: 5),
                                             decoration: BoxDecoration(
-                                                color: AppConstants.languages[index]
+                                                color: ApiConstant.languages[index]
                                                             .isSelected ==
                                                         true
                                                     ? ColorResources.PRIMARY_COLOR
@@ -352,10 +360,10 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                                                 borderRadius:
                                                     BorderRadius.circular(25)),
                                             child: Text(
-                                                AppConstants.languages[index]
+                                                ApiConstant.languages[index]
                                                     .languageName
                                                     .toString(),
-                                                style: TextStyle(color:AppConstants.languages[index]
+                                                style: TextStyle(color:ApiConstant.languages[index]
                                                     .isSelected ==
                                                     false
                                                     ? ColorResources.PRIMARY_COLOR

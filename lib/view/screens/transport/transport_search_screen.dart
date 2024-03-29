@@ -1,8 +1,12 @@
 
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +25,7 @@ import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
@@ -55,11 +60,8 @@ class _TransportSearchScreenState extends State<TransportSearchScreen> {
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.1, 0.5],
-                colors: [ColorResources.HOME_BG, ColorResources.HOME_BG])),
+          color: Colors.white
+           ),
         child: Consumer<TransportProvider>(
           builder: (context, model,
                   child) => /* model.transportSearchList.isEmpty
@@ -128,6 +130,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
     final double itemWidth = screenSize.width / 2;
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: ThemeColor.baground,
       appBar: AppBarCommon(context, title: "Search")
           .appBarWithTextField(_controller, hintSearch, (value) {
         if (value.toString().length > 3)
@@ -175,13 +178,28 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                             mainAxisSpacing: 12,
                             itemCount: model.transportSearchList.length,
                             itemBuilder: (context, index) {
-                              return InkWell(
+                              return model.transportSearchList[index].type=="Directory"?InkWell(
                                 onTap: () {},
-                                child: Card(
+                                child: Container(
+                                   /* color: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    elevation: 5,
+                                    elevation: 5,*/
+                                    decoration: ShapeDecoration(
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      shadows: [
+                                        BoxShadow(
+                                          color: Color(0x114A5568),
+                                          blurRadius: 8,
+                                          offset: Offset(0, 3),
+                                          spreadRadius: 0,
+                                        )
+                                      ],
+                                    ),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -224,9 +242,12 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                               child: StarDisplay(
                                                   value: model
                                                       .transportSearchList[
-                                                          index]
-                                                      .ratings!
-                                                      .toInt()),
+                                                  index]
+                                                      .ratings==0.0 ? 4.5 : double.parse(model
+                                                      .transportSearchList[
+                                                  index]
+                                                      .ratings!.toString())
+                                                      ),
                                             ),
                                           ],
                                         ),
@@ -281,9 +302,13 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: IconButton(
-                                                      onPressed: () {
-                                                        launch(
-                                                            "tel:${model.transportSearchList[index].mobileNumber}");
+                                                      onPressed: () async {
+                                                        String _url = "tel:${model.transportSearchList[index].mobileNumber}";
+                                                        if (!await launchUrl(Uri.parse(_url))) {
+                                                        throw Exception('Could not launch $_url');
+                                                        }
+                                                        /*launch(
+                                                            "tel:${model.transportSearchList[index].mobileNumber}");*/
                                                       },
                                                       icon: Image.asset(
                                                           "assets/images/call.png"),
@@ -314,7 +339,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                       .toString(),
                                                   height: 45,
                                                   width: 45),
-                                              Positioned(
+                                             /* Positioned(
                                                 bottom: -5,
                                                 right: -3,
                                                 child: Image.asset(
@@ -340,7 +365,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                   width: 24,
                                                   height: 24,
                                                 ),
-                                              )
+                                              )*/
                                             ],
                                           ),
                                         ),
@@ -370,14 +395,14 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 InkWell(
-                                                  onTap: () {
+                                                  onTap: () async {
+                                                    await model.getById(model.transportSearchList[index].id!);
                                                     showDialog(
                                                         context: context,
                                                         builder: (BuildContext
                                                             context) {
                                                           return CustomDialogBox(
-                                                              model.transportSearchList[
-                                                                  index]);
+                                                              model.transportSearchData!);
                                                         });
                                                   },
                                                   child: CustomText(
@@ -422,10 +447,10 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                   },
                                                   style:
                                                       ElevatedButton.styleFrom(
-                                                    foregroundColor: Colors.white, backgroundColor: Colors.black,
+                                                    foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
                                                     elevation: 3,
                                                     side: BorderSide(
-                                                        color: Colors.black,
+                                                        color: ColorResources.THEME_COLOR,
                                                         width: 2),
                                                     //shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
                                                   ),
@@ -445,7 +470,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                             )),
                                       ],
                                     )),
-                              );
+                              ):getAdvCard(context, model.transportSearchList[index]);
                             },
                             shrinkWrap: true,
                             staggeredTileBuilder: (int index) =>
@@ -457,6 +482,317 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
         ),
       ),
       bottomNavigationBar: fliterdirectory(),
+    );
+  }
+
+  Widget imageDialog(text, path, context,transportSearchData) {
+    return Dialog(
+      // backgroundColor: Colors.transparent,
+      // elevation: 0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$text',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.close_rounded),
+                  color: Colors.red,
+                ),
+              ],
+            ),
+          ),
+          imageLoadAdd(transportSearchData,context),
+        ],
+      ),
+    );}
+
+  imageLoadAdd(TransportSearchData transportSearchData,BuildContext context){
+    if(transportSearchData.images!.length==0){
+      return    Column(
+        children: [
+          SizedBox(
+            height: 0,
+          ),
+
+        ],
+      );
+    }else if(transportSearchData.images!.length==1){
+      return Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: CachedNetworkImage(
+              imageUrl: transportSearchData.images!.first,
+              placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+              errorWidget: (context, url, error) => ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+                    fit: BoxFit.fill,
+                    width: MediaQuery.of(context).size.width-100,
+                    height: MediaQuery.of(context).size.height-100,
+                  )),
+              fit: BoxFit.fill,
+              width: 500,
+              height: 500,
+            ),
+          ),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }else{
+
+      return Column(
+        children: [
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child: Container(
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      padEnds: false,
+                      pageSnapping: false,
+                      enableInfiniteScroll: false,
+                    ),
+                    items: transportSearchData.images!
+                        .map((item) => Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: imageLink(item!)),
+                      ),
+                    ))
+                        .toList(),
+                  ))),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }
+
+  }
+
+
+  Widget imageLink(String link) {
+    // return Container(
+    //   width: 311,
+    //   height: 200,
+    //   decoration: ShapeDecoration(
+    //     image: DecorationImage(
+    //       image: NetworkImage(
+    //           link),
+    //       fit: BoxFit.fill,
+    //     ),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(12),
+    //     ),
+    //   ),
+    // );
+
+    return CachedNetworkImage(
+      imageUrl: link,
+      placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+      errorWidget: (context, url, error) => ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+            fit: BoxFit.fill,
+            width: 311,
+            height: 200,
+          )),
+      fit: BoxFit.fill,
+      width: 311,
+      height: 200,
+    );
+  }
+
+  imageLoad(TransportSearchData transportSearchData){
+    if(transportSearchData.images!.length==0){
+      return    Column(
+        children: [
+          SizedBox(
+            height: 0,
+          ),
+
+        ],
+      );
+    }else if(transportSearchData.images!.length==1){
+      return Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: CachedNetworkImage(
+              imageUrl: transportSearchData.images!.first,
+              placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+              errorWidget: (context, url, error) => ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+                    fit: BoxFit.fill,
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                  )),
+              fit: BoxFit.fill,
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+            ),
+          ),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }else{
+
+      return Column(
+        children: [
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child: Container(
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      padEnds: false,
+                      pageSnapping: false,
+                      enableInfiniteScroll: false,
+                    ),
+                    items: transportSearchData.images!
+                        .map((item) => Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: imageLink(item!)),
+                      ),
+                    ))
+                        .toList(),
+                  ))),
+          SizedBox(
+            height: 9,
+          ),
+        ],
+      );
+    }
+
+  }
+  getAdvCard(BuildContext context,TransportSearchData transportSearchData) {
+    return GestureDetector(
+      onTap: (){
+        // print('the deds');
+        showDialog(
+          context: context,
+          builder: (_) => imageDialog(transportSearchData.companyName,transportSearchData.images!.first,context,transportSearchData),
+        );
+
+
+      },
+      child: Container(
+        width: 335,
+        // height: 255,
+        padding: EdgeInsets.all(12),
+        clipBehavior: Clip.antiAlias,
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x114A5568),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                width: 100,
+                height: 18,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: ShapeDecoration(
+                  color: Color(0xFFD9462A),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                ),
+                child: Center(
+                  child: Text(
+                    transportSearchData.type!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            imageLoad(transportSearchData),
+            InkWell(
+              onTap: ()async{
+                final url = Uri.parse(
+                  'http://${transportSearchData.website}',
+                );
+                //   final Uri url = Uri.parse('https://flutter.dev');
+                if (!await launchUrl(url)) {
+                  throw Exception('Could not launch $url');
+                }
+
+                //  await  launchUrl(url);
+              },
+              child:  Container(
+                padding: EdgeInsets.all(4),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      transportSearchData.companyName??'',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        transportSearchData.website??'',
+                        style: TextStyle(
+                          color: Color(0x99001E49),
+                          fontSize: 12,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+
+          ],
+        ),
+      ),
     );
   }
 
@@ -613,6 +949,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
         },
       ));
   }
+
   callApiByRadio(){
     switch(val){
       case 0:

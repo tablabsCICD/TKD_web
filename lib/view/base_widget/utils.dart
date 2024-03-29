@@ -22,38 +22,39 @@ class Utils {
 
   String getTranport(int val){
     switch(val){
-      case 0:
-        return "Transporters";
+    case 0:
+    //   return "Transporters";
+    return "Agents/Brokers";
 
-      case 1:
-        return "Agents/Brokers";
+    case 1:
+    // return "Agents/Brokers";
+    return "Transporters";
 
-      case 2:
-        return "PACKERS AND MOVERS";
-      case 3:
-        return "MANUFACTURERS";
-      case 4:
-        return "DISTRIBUTORS";
-      case 5:
-        return "CLEARING AND FORWARDING AGENTS";
-      default:
-        return "";
+    case 2:
+    return "PACKERS AND MOVERS";
+    case 3:
+    return "MANUFACTURERS";
+    case 4:
+    return "DISTRIBUTORS";
+    case 5:
+    return "CLEARING AND FORWARDING AGENTS";
+    default:
+    return "";
     }
 
 
 
-  }
-
+    }
   String mainTag(String tag){
     switch(tag){
       case 'Full load available':
-        return 'Full load available';
-      case 'Part load available':
-        return 'Part load available';
-      case 'Full load required':
         return 'Full vehicle required';
-      case 'Part load required':
+      case 'Part load available':
         return 'Part vehicle required';
+      case 'Full load required':
+        return 'Full load required';
+      case 'Part load required':
+        return 'Part load required';
 
 
       case '':

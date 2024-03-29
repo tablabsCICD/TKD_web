@@ -23,13 +23,13 @@ class TransportProvider extends ChangeNotifier{
     if(currentPage == 0){
       transportSearchList.clear();
     }
-    String myUrl = AppConstants.DIRECTORY +'?page=${currentPage}';
+    String myUrl = ApiConstant.DIRECTORY +'?page=${currentPage}&size=30';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
-    transportSearchList.addAll(type.content);
+    transportSearchList.addAll(type.content!);
     totalPages = type.totalPages!;
     notifyListeners();
    }
@@ -38,14 +38,14 @@ class TransportProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = AppConstants.DIRECTORY +'?cityOfRegistrtion=${city}';
+    String myUrl = ApiConstant.DIRECTORY +'?cityOfRegistrtion=${city}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
-    transportSearchList = type.content;
-    if(type.content.length >0){
+    transportSearchList = type.content!;
+    if(type.content!.length >0){
       isExpand=false;
     }else {
       isExpand=true;
@@ -57,32 +57,45 @@ class TransportProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = AppConstants.DIRECTORY +'?companyName=${name}';
+    String myUrl = ApiConstant.DIRECTORY +'?companyName=${name}';
     print("Api Call"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
-    transportSearchList = type.content;
-    if(type.content.length >0){
+    transportSearchList = type.content!;
+    if(type.content!.length >0){
       isExpand=false;
     }else {
       isExpand=true;
     }
     notifyListeners();
   }
+
+  TransportSearchData? transportSearchData;
+  getById(int id) async {
+    String myUrl = ApiConstant.BASE_URL +'directory/detailsOfDirectoryUser?directoryUserId=${id}';
+    print("Api Call By id"+myUrl);
+    var req = await http.get(Uri.parse(myUrl));
+    response = json.decode(req.body);
+    var type = TransportSearchModel.fromJson(response);
+    transportSearchData = type.content![0];
+
+    notifyListeners();
+  }
+
   getBySearchData(String name) async {
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = AppConstants.DIRECTORY +'?search=${name}';
-    print("Api Call"+myUrl);
+    String myUrl = ApiConstant.DIRECTORY +'?search=${name}';
+    print("Search Api Call"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
-    transportSearchList = type.content;
-    if(type.content.length >0){
+    transportSearchList = type.content!;
+    if(type.content!.length >0){
       isExpand=false;
     }else {
       isExpand=true;
@@ -94,14 +107,14 @@ class TransportProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = AppConstants.DIRECTORY +'?source=${source}&destination=${destination}';
+    String myUrl = ApiConstant.DIRECTORY +'?source=${source}&destination=${destination}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     var type = TransportSearchModel.fromJson(response);
-    transportSearchList = type.content;
-    if(type.content.length >0){
+    transportSearchList = type.content!;
+    if(type.content!.length >0){
       isExpand=false;
     }else {
       isExpand=true;

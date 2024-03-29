@@ -18,7 +18,7 @@ class PoolPurchaseProvider extends ChangeNotifier{
     notifyListeners();
     if(currentPage == 0){
     poolPurchaseList.clear();}
-    String myUrl = AppConstants.BULK_DATA +'?page=${currentPage}&size=20';
+    String myUrl = ApiConstant.BULK_DATA +'?page=${currentPage}&size=20';
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
@@ -32,7 +32,7 @@ class PoolPurchaseProvider extends ChangeNotifier{
     if(currentPage == 0){
       poolPurchaseList.clear();
     }
-    String myUrl = AppConstants.BULK_DATA +'?page=${currentPage}&size=20';
+    String myUrl = ApiConstant.BULK_DATA +'?page=${currentPage}&size=20';
     if(vehicles){
       myUrl = myUrl + '&myParam[]=Vehicles';
     }
@@ -62,7 +62,7 @@ class PoolPurchaseProvider extends ChangeNotifier{
 
   createPoolPurchase({String? agentName,String? city,int? mobile,String? description,String? email,String? firstName,
     int? id,String? lastname,String? lUserName,String? image,String? purchaseItem,String? purchaseDate,String? type}) async {
-    String myUrl = AppConstants.BULK_DATA;
+    String myUrl = ApiConstant.BULK_DATA;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "agentName": agentName,
@@ -95,7 +95,7 @@ class PoolPurchaseProvider extends ChangeNotifier{
   }
 
   deletePoolPurchase(PoolPurchase obj) async {
-    String myUrl = AppConstants.BULK_DATA +'?id=${obj.id}';
+    String myUrl = ApiConstant.BULK_DATA +'?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     poolPurchaseList.remove(obj);

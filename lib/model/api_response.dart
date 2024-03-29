@@ -1,7 +1,7 @@
-class ApiResponseHelper {
+class ApiResponse {
   final int statusCode;
   final dynamic response;
 
-  ApiResponseHelper(this.statusCode, this.response);
+  ApiResponse(this.statusCode, this.response);
 
 }

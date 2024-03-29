@@ -210,7 +210,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 ),
                                 InkWell(
                                   onTap:(){
-                                    html.window.open('https://www.tkdconnect.in/term-and-condition',"_blank"/*,"_self"*/);
+                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368168541-termsadnCondition.pdf";
+                                    html.window.open(url,"_blank"/*,"_self"*/);
 
                                   },
                                   child: Text("Terms & Conditions",
@@ -221,7 +222,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 ),
                                 InkWell(
                                   onTap:(){
-                                    html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368127989-privacyPolicy.pdf";
+                                    html.window.open(url,"_blank"/*,"_self"*/);
+
                                   },
                                   child: Text("Privacy Policy",
                                       style: Style.aleaready),

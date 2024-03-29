@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tkd_app/util/color-resource.dart';
 class Style{
  static TextStyle searchHint = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight:FontWeight.normal,color: Color(0xffb19f88));
- static TextStyle dashboardSearchHint = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff000000));
+ static TextStyle dashboardSearchHint = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff000000));
  static TextStyle leadingName = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff000000),);
  static TextStyle companyName = TextStyle(fontSize: 10,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff888888));
  static TextStyle languageHeading = TextStyle(fontSize: 10,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff010101));
@@ -48,6 +48,7 @@ class Style{
  static TextStyle content = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff555555));
  static TextStyle contentHeading = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold);
  static TextStyle cityHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff000000));
+ static TextStyle cityHeadingWithEven = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xfffffffff));
  static TextStyle bottomHeading = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,decoration: TextDecoration.underline,color: ColorResources.PRIMARY_COLOR);
  static TextStyle callHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Colors.black);
 

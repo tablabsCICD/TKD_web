@@ -12,8 +12,8 @@ class GroupChatProvider extends ChangeNotifier{
 
   loadMessage(int groupId) async{
     messages.clear();
-    APIHelper apiHelper=APIHelper();
-    var response=await apiHelper.ApiGetData(AppConstants.GROUP_CHAT_MASSAGE+groupId.toString());
+    ApiHelper apiHelper=ApiHelper();
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_CHAT_MASSAGE+groupId.toString());
     GroupChatMassage groupChatMassage=GroupChatMassage.fromJson(response);
     List<GroupChatMessageContent>listMessages=groupChatMassage.content!;
    for (int i=listMessages.length-1;i>=0;i--){
@@ -43,8 +43,8 @@ class GroupChatProvider extends ChangeNotifier{
       "message": messageSend,
       "userId": user.id
     };
-    APIHelper apiHelper=APIHelper();
-    ApiResponseHelper response=await apiHelper.ApiAddPostDataMapRequestCall(AppConstants.SEND_GROUP_CHAT_MEASSAGE, parameter);
+    ApiHelper apiHelper=ApiHelper();
+    ApiResponse response=await apiHelper.ApiAddPostDataMapRequestCall(ApiConstant.SEND_GROUP_CHAT_MEASSAGE, parameter);
     GroupChatMessageContent chatMessageContent=GroupChatMessageContent.fromJson(response.response);
     if(response.statusCode==200){
       final textMessage = types.TextMessage(

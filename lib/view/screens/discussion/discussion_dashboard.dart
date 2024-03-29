@@ -287,9 +287,9 @@ class _DiscussionDashboardState extends State<DiscussionDashboard> {
     setState(() {
 
     });
-    APIHelper api = APIHelper();
+    ApiHelper api = ApiHelper();
     var result = await api.ApiGetData(
-        AppConstants.GET_DISCUSSION + "?page=${selectedPageNumber}");
+        ApiConstant.GET_DISCUSSION + "?page=${selectedPageNumber}");
     // print(result);
     DiscussionModel discussion = await DiscussionModel.fromJson(result);
     discussionList.addAll(discussion.content!);

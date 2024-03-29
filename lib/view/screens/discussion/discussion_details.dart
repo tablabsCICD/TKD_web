@@ -35,8 +35,8 @@ class DiscussionDetails extends StatefulWidget {
   State<DiscussionDetails> createState() => _DiscussionDetailsState();
 
   void getDiscussion(int i) async {
-    APIHelper api = APIHelper();
-    var result = await api.ApiGetData(AppConstants.GET_DISCUSSION + "/${i}");
+    ApiHelper api = ApiHelper();
+    var result = await api.ApiGetData(ApiConstant.GET_DISCUSSION + "/${i}");
     DiscussionModel discussion = DiscussionModel.fromJson(result);
     discussionList.addAll(discussion.content!);
     // isLoading=false;
@@ -309,9 +309,9 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
   }
 
   void getComments(int i) async {
-    APIHelper api = APIHelper();
+    ApiHelper api = ApiHelper();
     var result = await api.ApiGetData(
-        AppConstants.GET_COMMENTS + "/discussionId/${i}");
+        ApiConstant.GET_COMMENTS + "/discussionId/${i}");
     print(result);
 
     CommentModel comments = CommentModel.fromJson(result);
@@ -323,7 +323,7 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
   }
 
   void sendComment()async{
-    APIHelper apiHelper=APIHelper();
+    ApiHelper apiHelper=ApiHelper();
     Map<String,dynamic>parameter={
       'comment':commentHere.text.toString(),
       'discussionId':widget._discussionContent.id,
@@ -338,7 +338,7 @@ class _DiscussionDetailsState extends State<DiscussionDetails> {
    if(commentHere.text.isEmpty==true){
 
    }else{
-     int result = await apiHelper.ApiAddPostDataMapRequest(AppConstants.GET_COMMENTS,parameter);
+     int result = await apiHelper.ApiAddPostDataMapRequest(ApiConstant.GET_COMMENTS,parameter);
       if(result==200){
         CommentsContent commentsContent =CommentsContent();
         commentsContent.firstName=authProvider.userDetailList[0].firstName;

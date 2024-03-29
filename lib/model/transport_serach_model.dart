@@ -1,53 +1,57 @@
 import 'package:tkd_app/model/transport_model.dart';
 
 class TransportSearchModel {
-  late final List<TransportSearchData> content;
-  int? totalPages;
-  int? totalElements;
+  List<TransportSearchData>? content;
   bool? last;
-  int? size;
-  int? number;
-  String? sort;
+  int? totalElements;
+  int? totalPages;
+  Null? sort;
   bool? first;
   int? numberOfElements;
+  int? size;
+  int? number;
 
   TransportSearchModel(
-      {required this.content,
-        this.totalPages,
-        this.totalElements,
+      {this.content,
         this.last,
-        this.size,
-        this.number,
+        this.totalElements,
+        this.totalPages,
         this.sort,
         this.first,
-        this.numberOfElements});
+        this.numberOfElements,
+        this.size,
+        this.number});
 
   TransportSearchModel.fromJson(Map<String, dynamic> json) {
-    content = List.from(json['content']).map((e)=>TransportSearchData.fromJson(e)).toList();
-    totalPages = json['totalPages']?? 0;
-    totalElements = json['totalElements']?? 0;
-    last = json['last']?? false;
-    size = json['size']?? 0;
-    number = json['number']?? 0;
-    sort = json['sort']?? '';
-    first = json['first']?? false;
-    numberOfElements = json['numberOfElements']?? 0;
+    if (json['content'] != null) {
+      content = <TransportSearchData>[];
+      json['content'].forEach((v) {
+        content!.add(new TransportSearchData.fromJson(v));
+      });
+    }
+    last = json['last'];
+    totalElements = json['totalElements'];
+    totalPages = json['totalPages'];
+    sort = json['sort'];
+    first = json['first'];
+    numberOfElements = json['numberOfElements'];
+    size = json['size'];
+    number = json['number'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.content != null) {
-      data['content'] =
-          this.content.map((e)=>e.toJson()).toList();
+      data['content'] = this.content!.map((v) => v.toJson()).toList();
     }
-    data['totalPages'] = this.totalPages;
-    data['totalElements'] = this.totalElements;
     data['last'] = this.last;
-    data['size'] = this.size;
-    data['number'] = this.number;
+    data['totalElements'] = this.totalElements;
+    data['totalPages'] = this.totalPages;
     data['sort'] = this.sort;
     data['first'] = this.first;
     data['numberOfElements'] = this.numberOfElements;
+    data['size'] = this.size;
+    data['number'] = this.number;
     return data;
   }
 }
@@ -71,13 +75,17 @@ class TransportSearchData {
   double? ratings;
   String? profilePicture;
   String? loggedUserName;
-  int? loggedTime;
+  String? loggedTime;
   int? transporterOrAgent;
   int? isPaid;
   String? paidStartDate;
   String? validTill;
   String? website;
- late final List<ListOfPreferredRoutes> listOfPreferredRoutes;
+  List<ListOfPreferredRoutes>? listOfPreferredRoutes;
+  String? title;
+  String? mainTag;
+  List<String>? images;
+  String? type;
 
   TransportSearchData(
       {this.id,
@@ -104,34 +112,53 @@ class TransportSearchData {
         this.paidStartDate,
         this.validTill,
         this.website,
-       required this.listOfPreferredRoutes});
+        this.listOfPreferredRoutes,
+        this.title,
+        this.mainTag,
+        this.images,
+        this.type});
 
   TransportSearchData.fromJson(Map<String, dynamic> json) {
-    id = json['id']?? 0;
-    userName = json['userName']?? '';
-    firstName = json['firstName']?? '';
-    lastName = json['lastName']?? '';
-    emailId = json['emailId']?? '';
-    mobileNumber = json['mobileNumber']?? 0;
-    companyName = json['companyName']?? '';
-    companyAddress = json['companyAddress']?? '';
-    city = json['city']?? '';
-    state = json['state']?? '';
-    country = json['country']?? '';
-    landlineNumber = json['landlineNumber']?? 0;
-    verified = json['verified']?? 0;
-    companyLogo = json['companyLogo']?? '';
-    aadharCard = json['aadharCard']?? '';
-    ratings = json['ratings']?? 0.0;
-    profilePicture = json['profilePicture']?? '';
-    loggedUserName = json['loggedUserName']?? '';
-    loggedTime = json['loggedTime']?? 0;
-    transporterOrAgent = json['transporterOrAgent']?? 0;
-    isPaid = json['isPaid']?? 0;
-    paidStartDate = json['paidStartDate']?? '';
-    validTill = json['validTill']?? '';
-    website = json['website']?? '';
-    listOfPreferredRoutes = List.from(json['listOfPreferredRoutes']).map((e)=>ListOfPreferredRoutes.fromJson(e)).toList();
+    id = json['id'];
+    userName = json['userName'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    emailId = json['emailId'];
+    mobileNumber = json['mobileNumber'];
+    companyName = json['companyName'];
+    companyAddress = json['companyAddress'];
+    city = json['city'];
+    state = json['state'];
+    country = json['country'];
+    landlineNumber = json['landlineNumber'];
+    verified = json['verified'];
+    companyLogo = json['companyLogo']??'';
+    aadharCard = json['aadharCard']??'';
+    ratings = json['ratings']??0.0;
+    profilePicture = json['profilePicture']??"";
+    loggedUserName = json['loggedUserName'];
+    loggedTime = json['loggedTime'];
+    transporterOrAgent = json['transporterOrAgent'];
+    isPaid = json['isPaid'];
+    paidStartDate = json['paidStartDate'];
+    validTill = json['validTill'];
+    website = json['website'];
+    if (json['listOfPreferredRoutes'] != null) {
+      listOfPreferredRoutes = <ListOfPreferredRoutes>[];
+      json['listOfPreferredRoutes'].forEach((v) {
+        listOfPreferredRoutes!.add(new ListOfPreferredRoutes.fromJson(v));
+      });
+    }
+    title = json['title'];
+    mainTag = json['mainTag'];
+    images = json['images'].cast<String>();
+    if (json['images'] != null) {
+      images = <String>[];
+      json['images'].forEach((v) {
+        images!.add(v);
+      });
+    }
+    type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -162,11 +189,21 @@ class TransportSearchData {
     data['website'] = this.website;
     if (this.listOfPreferredRoutes != null) {
       data['listOfPreferredRoutes'] =
-          this.listOfPreferredRoutes.map((e)=>e.toJson()).toList();
+          this.listOfPreferredRoutes!.map((v) => v.toJson()).toList();
     }
+    data['title'] = this.title;
+    data['mainTag'] = this.mainTag;
+    data['images'] = this.images;
+    data['type'] = this.type;
     return data;
   }
 }
+
+
+
+
+
+
 
 class ListOfPreferredRoutes {
   int? id;

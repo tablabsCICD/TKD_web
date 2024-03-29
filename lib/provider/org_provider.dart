@@ -61,7 +61,7 @@ class OrgProvider extends ChangeNotifier{
   int userCount=0,allPostCount=0,buySellPostCount=0,poolPurchasePostCount=0,fullLoadPostCount=0,bidCont=0;
 
   sendOtpByOrgId(String mobile) async {
-    String myUrl = AppConstants.BASE_URL + 'sendMobileOTPForCompanyLogin?mobileNumber=${mobile}';
+    String myUrl = ApiConstant.BASE_URL + 'sendMobileOTPForCompanyLogin?mobileNumber=${mobile}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -70,7 +70,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   verifyOtpByOrgId(String mobile,String otp,String deviceId) async {
-    String myUrl = AppConstants.BASE_URL + 'verifyOTPForCompany?mobileNumber=${mobile}&otp=${otp}';
+    String myUrl = ApiConstant.BASE_URL + 'verifyOTPForCompany?mobileNumber=${mobile}&otp=${otp}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -81,7 +81,7 @@ class OrgProvider extends ChangeNotifier{
 
 
   sendOtpUsingEmail(String email) async {
-    String myUrl = AppConstants.BASE_URL + 'SendOTPOnCompanyEmailId?emailId=${email}';
+    String myUrl = ApiConstant.BASE_URL + 'SendOTPOnCompanyEmailId?emailId=${email}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -90,7 +90,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   verifyOtpUsingEmail(String email,String otp,String deviceId) async {
-    String myUrl = AppConstants.BASE_URL + 'verifyOTPCompanyEmail?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
+    String myUrl = ApiConstant.BASE_URL + 'verifyOTPCompanyEmail?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -107,7 +107,7 @@ class OrgProvider extends ChangeNotifier{
     if(currentPage == 0){
       orgVerifiedList.clear();
     }
-    String myUrl = AppConstants.COMPANY + '?page=0&size=100';
+    String myUrl = ApiConstant.COMPANY + '?page=0&size=100';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -153,7 +153,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   getCompanyDetails(int id) async {
-    String myUrl = AppConstants.BASE_URL + 'CompanyDetails/${id}';
+    String myUrl = ApiConstant.BASE_URL + 'CompanyDetails/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -164,7 +164,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   getUsersByCompanyId(int id) async {
-    String myUrl = AppConstants.BASE_URL + 'companyRegistration/byCompany?companyId=${id}';
+    String myUrl = ApiConstant.BASE_URL + 'companyRegistration/byCompany?companyId=${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -209,7 +209,7 @@ class OrgProvider extends ChangeNotifier{
     String? companyName,String? gst1,String? typeOfRegistration,String? landlineNumber,int? numberOfTimesRating, int? rating,
     int? verified,String? state,String? offEmail,String? pointName,String? website
   }) async {
-    String myUrl = AppConstants.COMPANY;
+    String myUrl = ApiConstant.COMPANY;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "city": city,
@@ -246,7 +246,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     //String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getStastitcs?organizationId=${id}";
-    String myUrl = AppConstants.BASE_URL+"/getStastitcs?organizationId=${id}";
+    String myUrl = ApiConstant.BASE_URL+"/getStastitcs?organizationId=${id}";
     print("GET COUNT URL : "+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -271,7 +271,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
   //  String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBiding/ForOrganisation?organizationId=26";
-    String myUrl = AppConstants.BASE_URL+ "/getBiding/ForOrganisation?organizationId=${id}";
+    String myUrl = ApiConstant.BASE_URL+ "/getBiding/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -289,7 +289,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
    // String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBuySell/ForOrganisation?organizationId=26";
-    String myUrl = AppConstants.BASE_URL + "getBuySell/ForOrganisation?organizationId=${id}";
+    String myUrl = ApiConstant.BASE_URL + "getBuySell/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -311,7 +311,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     //String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getFullLoad/ForOrganisation?organizationId=26";
-    String myUrl = AppConstants.BASE_URL+"getFullLoad/ForOrganisation?organizationId=${id}";
+    String myUrl = ApiConstant.BASE_URL+"getFullLoad/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -364,7 +364,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
    // String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBulkBuySell/ForOrganisation?organizationId=26";
-    String myUrl = AppConstants.BASE_URL + "getBulkBuySell/ForOrganisation?organizationId=${id}";
+    String myUrl = ApiConstant.BASE_URL + "getBulkBuySell/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -432,7 +432,7 @@ class OrgProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     orgFullLoadList.clear();
-    String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
+    String myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading == false;
@@ -443,7 +443,7 @@ class OrgProvider extends ChangeNotifier{
 
 
   deleteFullLoad(OrgFullLoadModel truckLoad) async {
-    String myUrl = AppConstants.BASE_URL + 'fullTruckLoad?id=${truckLoad.id}';
+    String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${truckLoad.id}';
     print(myUrl);
 
     var req = await http.delete(Uri.parse(myUrl));
@@ -456,7 +456,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   deleteBuySell(OrgBuySellModel truckLoad) async {
-    String myUrl = AppConstants.POST_BUY_SELL + '?id=${truckLoad.id}';
+    String myUrl = ApiConstant.POST_BUY_SELL + '?id=${truckLoad.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     orgBuySellList.remove(truckLoad);
@@ -464,7 +464,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
  deletePoolPurchase(OrgPoolPurchaseModel obj) async {
-    String myUrl = AppConstants.BULK_DATA + '?id=${obj.id}';
+    String myUrl = ApiConstant.BULK_DATA + '?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     orgPoolPurchaseList.remove(obj);
@@ -472,7 +472,7 @@ class OrgProvider extends ChangeNotifier{
   }
 
   deleteBid(OrgBidingModel bid) async {
-    String myUrl = AppConstants.BID_TO_POST + '?id=${bid.bidingId}';
+    String myUrl = ApiConstant.BID_TO_POST + '?id=${bid.bidingId}';
     print(myUrl);
     var req = await http.delete(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -491,7 +491,7 @@ class OrgProvider extends ChangeNotifier{
   uploadCompanyDocuments({String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile}) async {
 
-    String myUrl = AppConstants.IMG_UPLOAD;
+    String myUrl = ApiConstant.IMG_UPLOAD;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);

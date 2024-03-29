@@ -20,7 +20,7 @@ class PlanProvider extends ChangeNotifier{
       truckLoadTypeList.clear();
     }
 
-    String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
+    String myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     if(req.statusCode == 200) {
@@ -35,7 +35,7 @@ class PlanProvider extends ChangeNotifier{
   savePost({int? mobile,String? destination,int? dnd,String? email,String? fullLoadChoice,int? id,String? instruction,
     String? loadWeight,String? name,String? mainTag,String? os,String? otherDetails,String? source,int? partLoad,
     int? privatePost,double? rating,String? customerName, String? type,String? typeOfCargo,String? vehicleSize, String? typeOfPayment,int? userId}) async {
-    String myUrl = AppConstants.POST_FULL_LOAD;
+    String myUrl = ApiConstant.POST_FULL_LOAD;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "contactNumber": mobile?? 0,
@@ -79,7 +79,7 @@ class PlanProvider extends ChangeNotifier{
 
   getSearchByNameList(String name,String source,String dest) async {
     truckLoadTypeList.clear();
-    String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
+    String myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?nameOfPerson=${name}&source=${source}&destination=${dest}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = json.decode(req.body);

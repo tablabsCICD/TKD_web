@@ -13,6 +13,7 @@ import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/comment_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
+import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
@@ -65,6 +66,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
         ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
         ChangeNotifierProvider(create: (_) => locator<RatingProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<EditPostLoadProvider>()),
       ],
       child: MyApp(),
   )));
@@ -81,7 +83,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Locale> _locals = [];
     locator<RepeatProvider>().startTimer();
-    AppConstants.languages.forEach((language) {
+    ApiConstant.languages.forEach((language) {
       _locals.add(Locale(language.languageCode!, language.countryCode));
     });
 
@@ -99,6 +101,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: _locals,
           theme: ThemeData(
             primarySwatch: Colors.blue,
+            cardColor: Colors.white
           ),
           home:EntryScreen()
       // home: UpgradeAlert(

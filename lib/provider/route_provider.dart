@@ -13,7 +13,7 @@ class RouteProvider extends ChangeNotifier{
   List<DummyRoute> dummyRouteList = [];
 
   getRouteListByUserId(int id) async {
-    String myUrl = AppConstants.ROUTE +'/userId/${id}';
+    String myUrl = ApiConstant.ROUTE +'/userId/${id}';
     var req = await http.get(Uri.parse(myUrl));
     var response = json.decode(req.body);
     var type = RouteModel.fromJson(response);
@@ -52,7 +52,7 @@ class RouteProvider extends ChangeNotifier{
   }
 
   createRoute({String? userName,String? source,String? destination,int? id,int? userId}) async {
-    String myUrl = AppConstants.ROUTE;
+    String myUrl = ApiConstant.ROUTE;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "id": id,
@@ -74,7 +74,7 @@ class RouteProvider extends ChangeNotifier{
   }
 
   deleteRoute(RouteData obj) async {
-    String myUrl = AppConstants.ROUTE +'?id=${obj.id}';
+    String myUrl = ApiConstant.ROUTE +'?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     routeList.remove(obj);

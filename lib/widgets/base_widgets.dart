@@ -12,6 +12,7 @@ import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/util/textview.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
+import 'package:tkd_app/widgets/verified_tag.dart';
 
 class BaseWidget {
   Widget profile(String profileLink, String name, String companyName,
@@ -93,13 +94,15 @@ class BaseWidget {
                                               width: 4 ,
                                             ),
                                             Visibility(
-                                                visible:
-                                                    verify != 0 ? true : false,
-                                                child: SvgPicture.asset(
-                                                  Images.verified,
-                                                  height: 12 ,
-                                                  width: 12 ,
-                                                ))
+                                              visible:
+                                              verify != 0 ? true : false,
+                                              // child: SvgPicture.asset(
+                                              //   Images.verified,
+                                              //   height: 12.h,
+                                              //   width: 12.w,
+                                              // ))
+                                              child: VerifiedTag().onVeriedTag(),
+                                            )
                                           ],
                                         ),
                                         SizedBox(
@@ -233,15 +236,17 @@ class BaseWidget {
                                               width: 4 ,
                                             ),
                                             Visibility(
-                                                visible:
-                                                    verify != 0 ? true : false,
-                                                child: SvgPicture.asset(
-                                                  Images.verified,
-                                                  height: 12 ,
-                                                  width: 12 ,
-                                                ))
+                                              visible:
+                                              verify != 0 ? true : false,
+                                              // child: SvgPicture.asset(
+                                              //   Images.verified,
+                                              //   height: 12.h,
+                                              //   width: 12.w,
+                                              // ))
+                                              child: VerifiedTag().onVeriedTag(),
+                                            )
                                           ],
-                                        ),
+                                         ),
                                         SizedBox(
                                           width: double.infinity,
                                           child: Text(
@@ -271,11 +276,12 @@ class BaseWidget {
                                         ),
                                         RatingBar.builder(
                                           itemSize: 10,
-                                          initialRating: 3,
+                                          initialRating: 4.5,
                                           minRating: 1,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
                                           itemCount: 5,
+                                          ignoreGestures: true,
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 1.0),
                                           itemBuilder: (context, _) => Icon(
@@ -386,13 +392,15 @@ class BaseWidget {
                                               width: 4 ,
                                             ),
                                             Visibility(
-                                                visible:
-                                                    verify != 0 ? true : false,
-                                                child: SvgPicture.asset(
-                                                  Images.verified,
-                                                  height: 12 ,
-                                                  width: 12 ,
-                                                ))
+                                              visible:
+                                              verify != 0 ? true : false,
+                                              // child: SvgPicture.asset(
+                                              //   Images.verified,
+                                              //   height: 12.h,
+                                              //   width: 12.w,
+                                              // ))
+                                              child: VerifiedTag().onVeriedTag(),
+                                            )
                                           ],
                                         ),
                                         SizedBox(
@@ -677,7 +685,7 @@ class BaseWidget {
     );
   }
 
-  Widget deleteButton(Function(int) onMenuTap) {
+  Widget deleteButton(Function(int) onMenuTap,{bool isOwnPost=false}) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(right: 8 ),
@@ -721,7 +729,7 @@ class BaseWidget {
             ),
           ),
           SizedBox(width: 8 ),
-          InkWell(onTap: () {}, child: popUpmenu(onMenuTap))
+          InkWell(onTap: () {}, child: isOwnPost?popUpmenuForMyPost(onMenuTap):popUpmenuForOwnPost(onMenuTap))
         ],
       ),
     );
@@ -1202,6 +1210,271 @@ class BaseWidget {
       ],
     );
   }
+  popUpmenuForMyPost(Function(int) onMenuTap) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: SvgPicture.asset(Images.post_menu)),
+      onSelected: (dynamic val) {
+        onMenuTap(val);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(3);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Images.share_white,
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Share",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(4);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.star_border,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Rating",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(5);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Images.return_route,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Repost",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(6);
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/images/two_way_arrow.png",
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "City Interchange",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(7);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit_outlined,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Edit",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+      ],
+    );
+  }
+
+  popUpmenuForOwnPost(Function(int) onMenuTap) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: SvgPicture.asset(Images.post_menu)),
+      onSelected: (dynamic val) {
+        onMenuTap(val);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(3);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Images.share_white,
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Share",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(5);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Images.return_route,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Repost",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(6);
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/images/two_way_arrow.png",
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "City Interchange",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(7);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit_outlined,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Edit",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+      ],
+    );
+  }
 
   popUpmenu(Function(int) onMenuTap) {
     return PopupMenuButton(
@@ -1504,7 +1777,7 @@ class BaseWidget {
       child: Container(
         height: 20 ,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
@@ -1518,52 +1791,27 @@ class BaseWidget {
                   Container(
                     width: 16 ,
                     height: 16 ,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
-                          },
-                          child: Container(
-                            width: 16 ,
-                            height: 16 ,
-                            child: Stack(
-                                children: [SvgPicture.asset(Images.like)]),
-                          ),
-                        ),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+                      },
+                      child: Container(
+                        width: 16 ,
+                        height: 16 ,
+                        child: SvgPicture.asset(Images.like),
+                      ),
                     ),
                   ),
                   SizedBox(width: 8),
                   Container(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Like",
-                          style: TextStyle(
-                            color: Color(0xFF001E49),
-                            fontSize: 12  ,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        // Text(
-                        //   '( ${likeCount} )',
-                        //   style: TextStyle(
-                        //     color: Color(0xFF001E49),
-                        //     fontSize: 12  ,
-                        //     fontFamily: GoogleFonts.poppins().fontFamily,
-                        //     fontWeight:  FontWeight.w400,
-                        //   ),
-                        // ),
-                      ],
+                    child: Text(
+                      "Like",
+                      style: TextStyle(
+                        color: Color(0xFF001E49),
+                        fontSize: 12  ,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight:  FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -1584,19 +1832,8 @@ class BaseWidget {
                     Container(
                       width: 16 ,
                       height: 16 ,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 16 ,
-                            height: 16 ,
-                            child: Stack(
-                                children: [SvgPicture.asset(Images.message)]),
-                          ),
-                        ],
-                      ),
+                      child: Stack(
+                          children: [SvgPicture.asset(Images.message)]),
                     ),
                     SizedBox(width: 8),
                     Container(

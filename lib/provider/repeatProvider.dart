@@ -122,7 +122,7 @@ class RepeatProvider extends ChangeNotifier {
 
   Load? truckLoadObj;
   getFullLoadTruckById(int id) async {
-    String myUrl = AppConstants.BASE_URL +'fullTruckLoad/${id}';
+    String myUrl = ApiConstant.BASE_URL +'fullTruckLoad/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     if(req.statusCode == 200) {

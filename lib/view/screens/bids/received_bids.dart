@@ -24,6 +24,7 @@ import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
@@ -159,9 +160,9 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(5),
                                             bottomRight: Radius.circular(10))),
-                                    child: CustomText(
-                                        model.myOwnPostList[index].mainTag
-                                            .toString(),
+                                    child: CustomText(Utils().mainTag(model.myOwnPostList[index].mainTag
+                                        .toString())
+                                        ,
                                         style: TextStyle(
                                             fontSize: 12,
                                             fontFamily: 'RobotoMedium',
@@ -192,8 +193,8 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                           height: 5,
                                         ),
                                         StarDisplay(
-                                            value: model.myOwnPostList[index].ratings!
-                                                .toInt()),
+                                            value:double.parse( model.myOwnPostList[index].ratings!
+                                                .toString())),
                                       ],
                                     ),
                                   ),
@@ -208,7 +209,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                   children: [
                                     getImage(model.myOwnPostList[index].companyLogo
                                         .toString()),
-                                    Positioned(
+                                    /*Positioned(
                                       bottom: 0,
                                       right: 0,
                                       child: Image.asset(
@@ -221,7 +222,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                         width: 15,
                                         height: 20,
                                       ),
-                                    )
+                                    )*/
                                   ],
                                 ),
                                 title: Row(
@@ -234,8 +235,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                       width: 10,
                                     ),
                                     model.myOwnPostList[index]
-                                        .isVerifiedByCompany ==
-                                        null
+                                        .isverified ==0
                                         ? Image.asset(
                                       'assets/images/membership.png',
                                       width: 15,
@@ -477,7 +477,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white, backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
                                     elevation: 3,
                                     side: BorderSide(color: Colors.black, width: 2),
                                   ),

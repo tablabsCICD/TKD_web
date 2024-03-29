@@ -71,14 +71,14 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                     itemBuilder: (context,index){
                       return Card(
                         elevation: 3,
-                        color: Colors.green[100],
+                        color: Colors.grey[100],
                         child: Container(
                           padding: EdgeInsets.all(9),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(model.receivedBidingList[index].loggedUserName.toString(),style: Style.selectedMenuHeading,),
-                                Text(model.receivedBidingList[index].mobileNumber.toString(),style: Style.selectedMenuHeading,),
+                                Text("${model.receivedBidingList[index].firstName.toString()} ${model.receivedBidingList[index].lastName.toString()}",style: Style.selectedMenuHeading,),
+                                Text(model.receivedBidingList[index].bidings!.mobileNumber.toString(),style: Style.selectedMenuHeading,),
                                 Row(
                                   children: [
                                     CustomText('Bid Amount Is : ',
@@ -87,7 +87,7 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                                                 .PRIMARY_COLOR,
                                             fontWeight: FontWeight.bold)),
                                     CustomText(
-                                        model.receivedBidingList[index].amount
+                                        model.receivedBidingList[index].bidings!.amount
                                             .toString(),
                                         style: TextStyle(
                                             color: ColorResources
@@ -95,7 +95,7 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                                             fontWeight: FontWeight.bold)),
                                   ],
                                 ),
-                                Text(model.receivedBidingList[index].description.toString(),style: Style.selectedMenuHeading,),
+                                Text(model.receivedBidingList[index].bidings!.description.toString(),style: Style.selectedMenuHeading,),
                               ]
                           ),
 
@@ -113,7 +113,7 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, backgroundColor: Colors.black,
                     elevation: 3,
-                    side: BorderSide(color: Colors.black, width: 2),
+                    side: BorderSide(color: ColorResources.THEME_COLOR, width: 2),
                   ),
                   child: Icon(Icons.close,size: 18,color: Colors.white,),
                   onPressed: (){

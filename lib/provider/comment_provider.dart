@@ -21,7 +21,7 @@ class CommentProvider extends ChangeNotifier {
   final authProvider = locator<AuthProvider>();
 
   getCommentByPostId(int PostId) async {
-    String url=AppConstants.BASE_URL+"/getGerenalPostComments?generalPostId=$PostId";
+    String url=ApiConstant.BASE_URL+"/getGerenalPostComments?generalPostId=$PostId";
 
     print('the url $url');
 
@@ -45,7 +45,7 @@ class CommentProvider extends ChangeNotifier {
   createCommentApi(int postId, String comment)async{
 
     User user = await authProvider.getLoginData();
-    String url=AppConstants.BASE_URL+"comments";
+    String url=ApiConstant.BASE_URL+"comments";
 
     print('the url $url');
 
@@ -78,7 +78,7 @@ class CommentProvider extends ChangeNotifier {
   likeIncreamentApi(int postId, BuildContext context)async{
 
     User user = await authProvider.getLoginData();
-    String url=AppConstants.BASE_URL+"GeneralPost/incrementLike?postId=${postId}&userId=${user.id}";
+    String url=ApiConstant.BASE_URL+"GeneralPost/incrementLike?postId=${postId}&userId=${user.id}";
 
     print('the url $url');
 

@@ -211,7 +211,8 @@ class OTP_ScreenState extends State<OTP_Screen> {
                             SizedBox(width: 20,),
                             InkWell(
                               onTap: (){
-                                html.window.open('https://www.tkdconnect.in/term-and-condition',"_blank"/*,"_self"*/);
+                                String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368168541-termsadnCondition.pdf";
+                                html.window.open(url,"_blank"/*,"_self"*/);
                               },
                               child: Text("Terms And Conditions",
                                   style: Style.aleaready
@@ -220,7 +221,9 @@ class OTP_ScreenState extends State<OTP_Screen> {
                             SizedBox(width: 20,),
                             InkWell(
                               onTap: (){
-                                html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
+                                String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368127989-privacyPolicy.pdf";
+                                html.window.open(url,"_blank"/*,"_self"*/);
+                               // html.window.open('https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',"_blank"/*,"_self"*/);
                               },
                               child: Text("Privacy Policy",
                                   style: Style.aleaready
@@ -665,8 +668,8 @@ class OTP_ScreenState extends State<OTP_Screen> {
               progressStrokeWidth: 4,
               size: 40,
               backStrokeWidth: 2,
-              maxValue: 150,
-              animationDuration: 150,
+              maxValue: 60,
+              animationDuration: 60,
               progressColors: [Colors.amber],
               backColor: Colors.grey,
               mergeMode: true,

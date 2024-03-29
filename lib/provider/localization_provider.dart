@@ -11,7 +11,7 @@ class LocalizationProvider extends ChangeNotifier {
     _loadCurrentLanguage();
   }
 
-  Locale _locale = Locale(AppConstants.languages[0].languageCode!, AppConstants.languages[0].countryCode);
+  Locale _locale = Locale(ApiConstant.languages[0].languageCode!, ApiConstant.languages[0].countryCode);
   bool _isLtr = true;
   late int _languageIndex;
 
@@ -22,10 +22,10 @@ class LocalizationProvider extends ChangeNotifier {
   void setLanguage(Locale locale) {
     _locale = locale;
     _isLtr = _locale.languageCode != 'hi';
-    for(int index=0; index<AppConstants.languages.length; index++) {
-      if(AppConstants.languages[index].languageCode == locale.languageCode) {
+    for(int index=0; index<ApiConstant.languages.length; index++) {
+      if(ApiConstant.languages[index].languageCode == locale.languageCode) {
         _languageIndex = index;
-        AppConstants.languages[index].isSelected = true;
+        ApiConstant.languages[index].isSelected = true;
         break;
       }
     }
@@ -34,13 +34,13 @@ class LocalizationProvider extends ChangeNotifier {
   }
 
   _loadCurrentLanguage() async {
-    _locale = Locale(sharedPreferences.getString(AppConstants.LANGUAGE_CODE) ?? AppConstants.languages[0].languageCode!,
-        sharedPreferences.getString(AppConstants.COUNTRY_CODE) ?? AppConstants.languages[0].countryCode);
+    _locale = Locale(sharedPreferences.getString(ApiConstant.LANGUAGE_CODE) ?? ApiConstant.languages[0].languageCode!,
+        sharedPreferences.getString(ApiConstant.COUNTRY_CODE) ?? ApiConstant.languages[0].countryCode);
     _isLtr = _locale.languageCode != 'ar';
-    for(int index=0; index<AppConstants.languages.length; index++) {
-      if(AppConstants.languages[index].languageCode == locale.languageCode) {
+    for(int index=0; index<ApiConstant.languages.length; index++) {
+      if(ApiConstant.languages[index].languageCode == locale.languageCode) {
         _languageIndex = index;
-        selectedlanguage = AppConstants.languages[index].languageName.toString();
+        selectedlanguage = ApiConstant.languages[index].languageName.toString();
         break;
       }
     }
@@ -49,7 +49,7 @@ class LocalizationProvider extends ChangeNotifier {
   }
 
   _saveLanguage(Locale locale) async {
-    sharedPreferences.setString(AppConstants.LANGUAGE_CODE, locale.languageCode);
-    sharedPreferences.setString(AppConstants.COUNTRY_CODE, locale.countryCode!);
+    sharedPreferences.setString(ApiConstant.LANGUAGE_CODE, locale.languageCode);
+    sharedPreferences.setString(ApiConstant.COUNTRY_CODE, locale.countryCode!);
   }
 }

@@ -196,16 +196,19 @@ class _MyRoutesState extends State<MyRoutes> {
                       return Container(
                         height: 50,
                         color: index.isEven
-                            ? ColorResources.HOME_APPBAR
-                            : ColorResources.HOME_BG,
+                            ? ColorResources.THEME_COLOR
+                            : Colors.grey.shade50,
                         child: ListTile(
                           title: Row(
                             children: [
-                           Text('${model.routeList[index].routeSource}'),
+                           Text('${model.routeList[index].routeSource}',style: index.isEven
+                               ?Style.filterSelectedHeading:Style.filterHeading,),
                               SizedBox(width: 10,),
-                              Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
+                              Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,color: index.isEven
+                                  ?Colors.white:ColorResources.THEME_COLOR,),
                               SizedBox(width: 10,),
-                            Text('${model.routeList[index].routeDestination}'),
+                            Text('${model.routeList[index].routeDestination}',style: index.isEven
+                                ?Style.filterSelectedHeading:Style.filterHeading,),
                             ],
                           ),//Text('${model.routeList[index].routeSource} To ${model.routeList[index].routeDestination}',style: Style.cityHeading,),
                           trailing: ElevatedButton(

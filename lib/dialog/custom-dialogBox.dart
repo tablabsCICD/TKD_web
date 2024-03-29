@@ -173,13 +173,13 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 CustomText('${widget.transportList.companyAddress}',style: Style.subtitle,textAlign: TextAlign.center,),
                 SizedBox(height: 20,),
 
-                widget.transportList.listOfPreferredRoutes.length != 0? CustomText('Operating Routes',style: Style.contentHeading):SizedBox.shrink(),
-                widget.transportList.listOfPreferredRoutes.length != 0 ? Container(
-                  height:  widget.transportList.listOfPreferredRoutes.length <= 3 ? 200 : 200,
+                widget.transportList.listOfPreferredRoutes!.length != 0? CustomText('Operating Routes',style: Style.contentHeading):SizedBox.shrink(),
+                widget.transportList.listOfPreferredRoutes!.length != 0 ? Container(
+                  height:  widget.transportList.listOfPreferredRoutes!.length <= 3 ? 200 : 200,
                   margin: EdgeInsets.symmetric(vertical: 15),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: widget.transportList.listOfPreferredRoutes.length,
+                    itemCount: widget.transportList.listOfPreferredRoutes!.length,
                     itemBuilder: (contex,index){
                       return Container(
                         height: 50,
@@ -200,11 +200,13 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('${widget.transportList.listOfPreferredRoutes[index].routeSource}',style: Style.cityHeading,),
+                            Text('${widget.transportList.listOfPreferredRoutes![index].routeSource}',style: index.isEven
+                                ?Style.cityHeading:Style.cityHeading,),
                             SizedBox(width: 5,),
                             Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
                             SizedBox(width: 5,),
-                            Text('${widget.transportList.listOfPreferredRoutes[index].routeDestination}',style: Style.cityHeading,),
+                            Text('${widget.transportList.listOfPreferredRoutes![index].routeDestination}',style: index.isEven
+                                ?Style.cityHeading:Style.cityHeading,),
                           ],
                         )
                       );

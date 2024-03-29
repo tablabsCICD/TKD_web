@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/bid_model.dart';
+import 'package:tkd_app/model/biding_user_model.dart';
 import 'package:tkd_app/multi_select.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -22,6 +24,8 @@ import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
@@ -100,11 +104,10 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                   horizontal: 10,vertical: 10
               ),
               child: model.allBidingList.isEmpty && model.isLoading == false
-            ? Expanded(
-            child: Container(
+            ? Container(
               alignment: Alignment.center,
             height: MediaQuery.of(context).size.height - 200,
-            child: Center(child: Text(getTranslated('no_post', context)!,style: Style.heading,))))
+            child: Center(child: Text(getTranslated('no_post', context)!,style: Style.heading,)))
             :Column(
                     children: [
                    model.allBidingList.isEmpty && model.isLoading ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):Expanded(
@@ -122,7 +125,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                 onTap: () {
                                   // Navigator.push(context, MaterialPageRoute(builder: (builder)=> RequirementDetails(widget.loadTypeList[index])));
                                 },
-                                child: Card(
+                                child: /*Card(
                                   elevation: 5,
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -306,7 +309,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                             ],
                                           ),
                                         ),
-                                        /*Divider(
+                                        *//*Divider(
                                           height: 1.5,
                                           thickness: 1.5,
                                         ),
@@ -379,12 +382,13 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                             ),
                                             child: CustomText("Delete",style: Style.button,),
                                           ),
-                                        ),*/
+                                        ),*//*
 
                                       ],
                                     ),
                                   ),
-                                ),
+                                ),*/
+                                cardLoad(index, context, model.allBidingList[index], model)
                               );
                             },
                             physics: ScrollPhysics(),
@@ -397,6 +401,152 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                     ],
                   ),
             )
+    );
+  }
+
+  cardLoad(int index, BuildContext context, BidingUser bids,BidProvider provider) {
+    return Container(
+      width: 335,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 120,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFF2C8FEA),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  Utils().mainTag(bids.mainTag!)          ,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+            child: Column(
+              children: [
+                Text(
+                  "Quote price",
+                  style: TextStyle(
+                    color: Color(0x99001E49),
+                    fontSize: 10,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                ),
+                Text(
+                  '₹ ${bids.amount}',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                    height: 0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          BaseWidget().routes(bids.source!, bids.destination!),
+          SizedBox(
+            height: 12,
+          ),
+          BaseWidget().heading1(bids.topicName!, bids.postingTime!.split(" ").first, bids.content!),
+          BaseWidget().onlyBidButton((){
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Withdraw quote',style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),),
+                  content: Text('Are you sure you want to withdraw this quote?',style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                  ),),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('Cancel',style: TextStyle(color: ColorResources.THEME_COLOR, fontSize: 12,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w600,),),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        provider
+                            .deleteBid(provider
+                            .allBidingList[
+                        index])
+                            .then(
+                                (value) => {
+                              showAnimatedDialog(
+                                  context,
+                                  MyDialog(
+                                    icon: Icons.check,
+                                    title: 'Quote Withdraw',
+                                    description: 'Your quote deleted successfully',
+                                    isFailed: false,
+                                  ),
+                                  dismissible: false,
+                                  isFlip: false)
+                            });
+                        Navigator.of(
+                            context)
+                            .pop();
+                      },
+                      child: Text(
+                        'Withdraw',
+                        style: TextStyle(color: Colors.red, fontSize: 12,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontWeight: FontWeight.w600,),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+
+          })
+        ],
+      ),
     );
   }
 
@@ -456,7 +606,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
 
   void callDeleteBid(int id ,BidProvider model,int index)async {
 
-    String myUrl = AppConstants.BID_TO_POST + '?id=$id';
+    String myUrl = ApiConstant.BID_TO_POST + '?id=$id';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
    if(req.statusCode==200){

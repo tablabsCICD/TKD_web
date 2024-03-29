@@ -5,15 +5,13 @@ import 'package:tkd_app/model/language_model.dart';
 
 import '../model/auth_api.dart';
 
-class AppConstants {
+class ApiConstant {
 
   static final String APP_VERSION="2.0.10";//40
  // static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
   //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Production Url
-
-  //static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
- // static String BASE_URL = "http://ec2-13-201-134-254.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
-  static final String BASE_URL="https://api.tkdost.com/tkd2/api/";
+  // static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
+  static String BASE_URL = "http://ec2-13-201-134-254.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
 
   static String LOGIN = BASE_URL + "authLogin/emailId";
   static String REGISTRATION = BASE_URL + "companyRegistration";
@@ -52,7 +50,7 @@ class AppConstants {
   static String VERIFY_OTP_ON_MAIL = BASE_URL + "verifyOTPEmail";
   static String SEND_OTP = BASE_URL + "sendOtp";
   static String ADD_CITY = BASE_URL + "/set/cities/db";
-  static String DIRECTORY = BASE_URL + "directory";
+  static String DIRECTORY = BASE_URL + "directory/allDirectoryUser";
   static String SHARE_POST_BASE_URL = "http://www.tkdost.com/tkd/";
   static String BID_TO_POST = BASE_URL + "biding";
   static String BID_FOR_USER = BASE_URL + "GetAllBidsForUser";
@@ -64,6 +62,9 @@ class AppConstants {
 
   //-------New Api ---------
   static String FULL_LOAD_ALL_CARD = BASE_URL + "dashboard/homepage/posts";
+
+
+
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
   static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";
@@ -81,10 +82,11 @@ class AppConstants {
 
   static const String COUNTRY_CODE = 'country_code';
   static const String LANGUAGE_CODE = 'language_code';
-
+  static String FULL_LOAD_BY_ID=BASE_URL+'fullTruckLoad/';
   static  String GROUP=BASE_URL+'groups';
+  static String DELETE_GROUP= BASE_URL + "groups?id=";
   static String GROUP_MEMBER_BULK=BASE_URL+'groupMembers/bulk';
-  static String GROUP_BY_USER=BASE_URL+"groups/forUser/";
+  static String GROUP_BY_USER=BASE_URL+"groups/byUser/";
   static String GROUP_CHAT_MASSAGE=BASE_URL+'groups/chat/';
   static String SEND_GROUP_CHAT_MEASSAGE=BASE_URL+'save/chat';
   static String GROUP_MEMBER_LIST=BASE_URL+'groupMembers/byGroupId/';
@@ -95,6 +97,18 @@ class AppConstants {
 
 
   static String USER_FIND_BY_MOBILE=BASE_URL+"DeleteUser/getByMobileNumber?mobileNumber=";
+
+
+  static String FULL_LOAD_AVILABLE(userId,page)=>BASE_URL+"dashboard/homepage/fullLoadAvailable?loggedUserId=${userId}&page=${page}&size=10";
+  static String PART_LOAD_AVILABLE(userId,page)=>BASE_URL+"dashboard/homepage/PartLoadAvailable?loggedUserId=${userId}&page=${page}&size=10";
+
+  static String FULL_LOAD_REQUIRED(userId,page)=>BASE_URL+"dashboard/homepage/fullLoadRequired?loggedUserId=${userId}&page=${page}&size=10";
+  static String PART_LOAD_REQUIRED(userId,page)=>BASE_URL+"dashboard/homepage/partLoadRequired?loggedUserId=${userId}&page=${page}&size=10";
+  static String General_POST_HOMEPAGE(userId,page)=>BASE_URL+"dashboard/homepage/General?loggedUserId=${userId}&page=${page}&size=10";
+  static String JOBS_HOMEPAGE(userId,page)=>BASE_URL+"dashboard/homepage/Jobs?loggedUserId=${userId}&page=${page}&size=10";
+  static String BUYSELL_HOMEPAGE(userId,page)=>BASE_URL+"dashboard/homepage/BuySell?loggedUserId=${userId}&page=${page}&size=10";
+  static String HOMEPAGE_FILTER = BASE_URL+"dashboard/homepage/Search";
+  static String ALL_CARD(userId,page)=>BASE_URL+"dashboard/homepage/posts?loggedUserId=${userId}&page=${page}&size=10";
 
   static List<LanguageModel> languages = [
     LanguageModel(imageUrl: '', languageName: 'English', countryCode: 'US', languageCode: 'en',isSelected: true),

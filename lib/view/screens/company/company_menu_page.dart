@@ -51,7 +51,7 @@ class _CompanyMenuPageState extends State<CompanyMenuPage> {
   @override
   void initState() {
     container = CompanyDashboard(widget.organization!);
-    AppConstants.languages
+    ApiConstant.languages
         .forEach((language) => _valueList.add(language.languageName!));
   }
 

@@ -259,17 +259,38 @@ class _CreateRequirementState extends State<CreateRequirement> {
                       ],
                     ),
                   ),
-
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                        height: 25,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Do Not Disturb',style: Style.heading1),
+                            FlutterSwitch(
+                              showOnOff: true,
+                              valueFontSize: 12,
+                              activeColor: ColorResources.PRIMARY_COLOR,
+                              activeTextColor: Colors.black,
+                              inactiveTextColor: Colors.red,
+                              value: disturbSwitch,
+                              onToggle: (val) {
+                                setState(() {
+                                  disturbSwitch = val;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                   CustomButton(
                       onTap: () async{
                         if (_formKey.currentState!.validate()) {
                           var result = await model.savePost(
                             mobile: authProvider.userDetailList[0].mobileNumber ,
                             destination: selectedToCity,
-                            dnd: 0,
                             email: authProvider.userDetailList[0].emailId,
                             fullLoadChoice: selectedRequirementType,
-                            id: 1,
+                            id: 0,
                             instruction: instructionController.text,
                             loadWeight: loadWeightController.text,
                             name: authProvider.userDetailList[0].userName,
@@ -280,6 +301,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             partLoad: selectedPostType == 'Part Load' ? 1 : 0,
                             privatePost: identitySwitch == true ? 1 : 0,
                             rating: 5,
+                            dnd:disturbSwitch == true ? 1 : 0,
                             customerName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
                             type: selectedPostType,
                             typeOfCargo: selectedCargoType,

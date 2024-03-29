@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/date_converter.dart';
 
@@ -24,7 +26,7 @@ class BuySellProvider extends ChangeNotifier{
     if(currentPage == 0){
       buyVehicleList.clear();
     }
-    String myUrl = AppConstants.BUY_SELL_ALL_CARD +'?type=Buy&&page=${currentPage}';
+    String myUrl = ApiConstant.BUY_SELL_ALL_CARD +'?type=Buy&&page=${currentPage}';
     var req = await http.get(Uri.parse(myUrl));
     isLoadingForBuyVehicles = false;
     response = json.decode(req.body);
@@ -39,12 +41,13 @@ class BuySellProvider extends ChangeNotifier{
     notifyListeners();
     if(currentPage==0){
     sellVehicleList.clear();}
-    String myUrl = AppConstants.BUY_SELL_ALL_CARD +'?type=Sell&page=${currentPage}';
+    String myUrl = ApiConstant.BUY_SELL_ALL_CARD +'?type=Sell&page=${currentPage}';
+    print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoadingForSellVehicles = false;
     response1 = json.decode(req.body);
     var type1 = TruckLoadType.fromJson(response1);
-
+    sellVehicleList.addAll(type1.content);
     print('the id is ${truckLoadNotification.id}');
     notifyListeners();
     return type1;
@@ -54,7 +57,7 @@ class BuySellProvider extends ChangeNotifier{
     isLoadingForSellVehicles = true;
     notifyListeners();
     sellVehicleList.clear();
-    String myUrl = AppConstants.BUY_SELL_SINGLE_CARD +'${id}';
+    String myUrl = ApiConstant.BUY_SELL_SINGLE_CARD +'${id}';
     var req = await http.get(Uri.parse(myUrl));
     print('req $myUrl');
     isLoadingForSellVehicles = false;
@@ -66,11 +69,11 @@ class BuySellProvider extends ChangeNotifier{
     return type1;
   }
 
-  createBuySell({String? description,String? agentName,String? bodyType,String? buySellType,String? city,String? conditionOfTyre,
+  createBuySell({int? userId,String? description,String? agentName,String? bodyType,String? buySellType,String? city,String? conditionOfTyre,
     String? ConOfVehicle,int? mobile,String? date,String? price,int? id,String? image,String? insurancePaidDate,String? mainTag,String? maker,String? mfgYear,
     String? model,String? lUserName,String? owner,String? postingTime,String? type,String? registrationNumber,String? yearOfBuying
   }) async {
-    String myUrl = AppConstants.POST_BUY_SELL;
+    String myUrl = ApiConstant.POST_BUY_SELL;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "additionalInformation": description,
@@ -83,26 +86,27 @@ class BuySellProvider extends ChangeNotifier{
       "contactNumber": mobile,
       "date": "2022-01-22T11:29:53.473Z",
       "estimatedPrice": price,
-      "id": id,
+      "id": 0,
       "image1": image,
-      "image2": " ",
-      "image3": " ",
-      "image4": " ",
+      "image2": "",
+      "image3": "",
+      "image4": "",
       "insaurancePaidUpto": insurancePaidDate,
-      "loggedTime": "2022-01-22T11:29:53.473Z",
+      "loggedTime": "",
       "loggedUserName": lUserName,
       "mainTag": mainTag,
       "maker": maker,
       "mfgYear": yearOfBuying,
       "model": model,
       "negotiable": 0,
-      "os": " ",
+      "os": "",
       "ownerName": owner,
-      "postingTime": "2022-01-22T11:29:53.473Z",
+      "postingTime": "",
       "privatePost": 0,
       "tableName": "string",
       "topicName": "string",
       "type": type,
+      "userId":userId,
       "vehicleRegistrationNumber": registrationNumber,
       "yearOfBuying": yearOfBuying
     };
@@ -121,19 +125,21 @@ class BuySellProvider extends ChangeNotifier{
       sellVehicleList.add(dataObj);
     }
     notifyListeners();
-
   }
 
-  deleteBuySell(TruckLoad truckLoad, String? type) async {
-    String myUrl = AppConstants.POST_BUY_SELL +'?id=${truckLoad.id}';
+  final dashBoardProvider = locator<DashboardProvider>();
+  deleteBuySell(int id,int index,bool isBuy) async {
+    String myUrl = ApiConstant.POST_BUY_SELL +'?id=${id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
-    if(type=='Buy Vehicle'){
-      buyVehicleList.remove(truckLoad);
+    if(isBuy){
+      buyVehicleList.removeAt(index);
     }
     else{
-      sellVehicleList.remove(truckLoad);
+      sellVehicleList.removeAt(index);
     }
+    dashBoardProvider.notifyListeners();
+    dashBoardProvider.getFullLoadTruckList("All", "All");
     notifyListeners();
     }
 }

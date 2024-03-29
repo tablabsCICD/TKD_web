@@ -130,8 +130,8 @@ class _AllUsersState extends State<AllUsers> {
                                           Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 5),
                                             child: StarDisplay(
-                                                value:model.userList[index].ratings!
-                                                    .toInt()),
+                                                value:double.parse(model.userList[index].ratings!
+                                                    .toString())),
                                           ),
 
                                         ],),

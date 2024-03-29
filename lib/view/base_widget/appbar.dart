@@ -104,6 +104,34 @@ class AppBarCommon {
     );
   }
 
+  AppBar appBarWithDeleteButton(Function ontap){
+    return AppBar(
+      title: Text(title,style:Style.appheading,),
+      backgroundColor: Colors.white,
+      leading: IconButton(icon:Icon(Icons.arrow_back_ios_new,color: Colors.black,),onPressed:(){
+        Navigator.pop(context);
+      } ,
+      ),
+      actions: [
+        Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+            child: RichText(text:
+            TextSpan(
+                text: "Delete",style: Style.newheadingappbar,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    ontap();
+                  }
+            ),
+            ),
+          ),
+        )
+      ],
+
+    );
+  }
+
   AppBar appBarWithNotification(Function ontap){
     return AppBar(
       title: Text(title,style:Style.appheading,),

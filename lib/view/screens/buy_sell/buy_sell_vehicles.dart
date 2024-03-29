@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,9 @@ import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/open_whatsapp.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
+import 'package:tkd_app/provider/delete_interface.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/share_data.dart';
@@ -27,9 +30,12 @@ import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/date_converter.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/all_cards.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_details_screen.dart';
 import 'package:tkd_app/view/screens/buy_sell/create_new_post.dart';
@@ -59,19 +65,19 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
         child: Column(
           children: [
             Container(
-              height: 60,
+              height: 62,
               color: ThemeColor.baground,
               child: Padding(
                 padding: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(horizontal: 35,vertical: 10):EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                 child: Row(
                   children: [
-                    getCircularContainer("Buy Vehicles",(selectedTab == "Buy Vehicles")),
-                    getCircularContainer("Sell Vehicles",(selectedTab == "Sell Vehicles")),
+                    getCircularContainer("Buy Vehicle",(selectedTab == "Buy Vehicle")),
+                    getCircularContainer("Sell Vehicle",(selectedTab == "Sell Vehicle")),
                   ],
                 ),
               ),
             ),
-            selectedTab == "Buy Vehicles"
+            selectedTab == "Buy Vehicle"
                 ? Expanded(
                   child: Container(
               color: ColorResources.HOME_BG,
@@ -98,7 +104,7 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
     );
   }
 
-  var selectedTab = 'Buy Vehicles';
+  var selectedTab = 'Buy Vehicle';
 
   getCircularContainer(String title, bool isSelected) {
     return InkWell(
@@ -118,7 +124,7 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
           padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
           child: CustomText(title,style: isSelected?Style.filterSelectedHeading:Style.filterHeading,textAlign: TextAlign.center,),
           decoration: BoxDecoration(
-            color: isSelected? ColorResources.RED :Color(0xffe6e0d7),
+            color: isSelected? ColorResources.RED :Color(0xffffffff),
             border: isSelected? null : Border.all(color: Color(0xffd1ccc4)),
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
@@ -134,6 +140,8 @@ class _BuySellVehiclesState extends State<BuySellVehicles> {
       ),
     );
   }
+
+
 }
 
 class BuyCard extends StatefulWidget {
@@ -141,11 +149,11 @@ class BuyCard extends StatefulWidget {
   _BuyCardState createState() => _BuyCardState();
 }
 
-class _BuyCardState extends State<BuyCard> {
+class _BuyCardState extends State<BuyCard> implements DeletePostInf{
   var selectedPageNumber = 1;
   ScrollController _scrollController = ScrollController();
   final buySellProvider = locator<BuySellProvider>();
-
+  final authProvider = locator<AuthProvider>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
 
@@ -197,245 +205,8 @@ class _BuyCardState extends State<BuyCard> {
                                   builder: (builder) => BuySellDetailsScreen(
                                       model.buyVehicleList[index])));
                         },
-                        child: Card(
-                          elevation: 5,
-                          child: Container(
-                          //  padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  horizontalTitleGap: 5,
-                                  minVerticalPadding: 0,
-                                  leading: getImage(model
-                                      .buyVehicleList[index].companyLogo
-                                      .toString()),
-                                  title: langCode == 'en' ? Text( model.buyVehicleList[index].nameOfPerson
-                                      .toString(),
-                                      style: Style.title):CustomText(
-                                      model.buyVehicleList[index].nameOfPerson
-                                          .toString(),
-                                      style: Style.title),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      langCode == 'en' ? Text( model
-                                          .buyVehicleList[index].companyName
-                                          .toString(),
-                                          style: Style.subtitle):CustomText(
-                                          model
-                                              .buyVehicleList[index].companyName
-                                              .toString(),
-                                          style: Style.subtitle),
-                                      StarDisplay(
-                                          value: model
-                                              .buyVehicleList[index].ratings!
-                                              .toInt()),
-                                    ],
-                                  ),
-                                  trailing: ConvertStringToDate(model
-                                      .buyVehicleList[index].postingTime
-                                      .toString()),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 10),
-                                  child: langCode == 'en' ? Text( model.buyVehicleList[index].topicName
-                                      .toString(),
-                                      style: Style.contentHeading):CustomText(
-                                      model.buyVehicleList[index].topicName
-                                          .toString(),
-                                      style: Style.contentHeading),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, bottom: 10, right: 10),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            getTranslated('v_model', context)!,
-                                            style: Style.vehicleLable,
-                                          ),
-                                          Text(
-                                              getTranslated(
-                                                  'v_brand', context)!,
-                                              style: Style.vehicleLable),
-                                          Text(getTranslated('price', context)!,
-                                              style: Style.vehicleLable),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          langCode == 'en' ? Text(': ${model.buyVehicleList[index].modelName.toString()}',
-                                              style: Style.vehicleData):CustomText(
-                                              ': ${model.buyVehicleList[index].modelName.toString()}',
-                                              style: Style.vehicleData),
-                                          langCode == 'en' ? Text(': ${model.buyVehicleList[index].makerName.toString()}',
-                                              style: Style.vehicleData):CustomText(
-                                              ': ${model.buyVehicleList[index].makerName.toString()}',
-                                              style: Style.vehicleData),
-                                          langCode == 'en' ? Text(': ${priceText(model.buyVehicleList[index].estPrice.toString())}',
-                                              style: Style.vehicleData):CustomText(
-                                              ': ${priceText(model.buyVehicleList[index].estPrice.toString())}',
-                                              style: Style.vehicleData),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  height: 1.5,
-                                  thickness: 1.5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 9),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          showDialog(context: context,
-                                              builder: (BuildContext context){
-                                                return ShareDialogBox(
-                                                    model.buyVehicleList[index]
-                                                );
-                                              }
-                                          );
-
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/share.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                                getTranslated("share", context)!,
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          openwhatsapp(
-                                              context,
-                                              model.buyVehicleList[index]
-                                                  .mobileNumber
-                                                  .toString(),
-                                              'Type : ${model.buyVehicleList[index].type}, \nSubject : ${model.buyVehicleList[index].content}');
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/chat.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                                getTranslated("chat", context)!,
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  new CupertinoAlertDialog(
-                                                    title: CustomText(
-                                                        'Contact Number : ${model.buyVehicleList[index].mobileNumber}',
-                                                        style: TextStyle(
-                                                            color:
-                                                                ColorResources
-                                                                    .BOTTOM_HEADING,
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10.0),
-                                                          child: CustomText(
-                                                              "Ok",
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      ColorResources
-                                                                          .GREEN,
-                                                                  fontSize:
-                                                                      18)),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/call.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            CustomText(
-                                                "Call",
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                        child:
+                        AllCards().cardSellBuyPost(index,context,model.buyVehicleList[index],this,userId: authProvider.userDetailList[0].id!)
                       );
                     },
                     //  physics: NeverScrollableScrollPhysics(),
@@ -461,18 +232,88 @@ class _BuyCardState extends State<BuyCard> {
       int.parse(s),
     );
   }
+
+  @override
+  void deleteOwnPost(int postId,int index,) {
+    _showMyDialog(index, postId,buySellProvider);
+  }
+
+
+  Future<void> _showMyDialog(int index,int id,BuySellProvider provider) async {
+    return   showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+            'Are you sure want to deleted your post?',
+            style: Style.title,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: CustomText(
+                  getTranslated('yes',
+                      context)!,
+                  style:
+                  Style.okButton),
+              onPressed: () {
+                provider
+                    .deleteBuySell(
+                    id,index,true)
+                    .then((value) => {
+                  showAnimatedDialog(
+                      context,
+                      MyDialog(
+                        icon:
+                        Icons.check,
+                        title:
+                        'Post Delete',
+                        description:
+                        'Your post deleted successfully',
+                        isFailed:
+                        false,
+                      ),
+                      dismissible:
+                      false,
+                      isFlip:
+                      false)
+                });
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+            TextButton(
+              child: CustomText('no',
+                  style: Style
+                      .cancelButton),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
+  }
+
+
 }
+
+
 
 class SellCard extends StatefulWidget {
   @override
   _SellCardState createState() => _SellCardState();
 }
 
-class _SellCardState extends State<SellCard> {
+class _SellCardState extends State<SellCard> implements DeletePostInf{
   var selectedPageNumber1 = 1;
   ScrollController _scrollController = ScrollController();
   final buySellProvider = locator<BuySellProvider>();
-
+  final authProvider = locator<AuthProvider>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
 
@@ -525,237 +366,8 @@ class _SellCardState extends State<SellCard> {
                                   builder: (builder) => BuySellDetailsScreen(
                                       model.sellVehicleList[index])));
                         },
-                        child: Card(
-                          elevation: 5,
-                          child: Container(
-                           // padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  horizontalTitleGap: 5,
-                                  minVerticalPadding: 0,
-                                  leading: getImage(model
-                                      .sellVehicleList[index].companyLogo
-                                      .toString()),
-                                  title: CustomText(
-                                      model.sellVehicleList[index].nameOfPerson
-                                          .toString(),
-                                      style: Style.title),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomText(
-                                          model.sellVehicleList[index]
-                                              .companyName
-                                              .toString(),
-                                          style: Style.subtitle),
-                                      StarDisplay(
-                                          value: model
-                                              .sellVehicleList[index].ratings!
-                                              .toInt()),
-                                    ],
-                                  ),
-                                  trailing: ConvertStringToDate(model
-                                      .sellVehicleList[index].postingTime
-                                      .toString()),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 10),
-                                  child: CustomText(
-                                      model.sellVehicleList[index].topicName
-                                          .toString(),
-                                      style: Style.contentHeading),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, bottom: 10, right: 10),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            getTranslated('v_model', context)!,
-                                            style: Style.vehicleLable,
-                                          ),
-                                          Text(
-                                              getTranslated(
-                                                  'v_brand', context)!,
-                                              style: Style.vehicleLable),
-                                          Text(getTranslated('price', context)!,
-                                              style: Style.vehicleLable),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CustomText(
-                                              ': ${model.sellVehicleList[index].modelName.toString()}',
-                                              style: Style.vehicleData),
-                                          CustomText(
-                                              ': ${model.sellVehicleList[index].makerName.toString()}',
-                                              style: Style.vehicleData),
-                                          CustomText(
-                                              ': ${priceText(model.sellVehicleList[index].estPrice.toString())}',
-                                              style: Style.vehicleData),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  height: 1.5,
-                                  thickness: 1.5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 9),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          showDialog(context: context,
-                                              builder: (BuildContext context){
-                                                return ShareDialogBox(
-                                                    model.sellVehicleList[index]
-                                                );
-                                              }
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/share.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              getTranslated("share", context)!,
-                                              style: Style.bottomHeading,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          openwhatsapp(
-                                              context,
-                                              model.sellVehicleList[index]
-                                                  .mobileNumber
-                                                  .toString(),
-                                              'please contact for more details');
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/chat.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              getTranslated("chat", context)!,
-                                              style: Style.bottomHeading,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  new CupertinoAlertDialog(
-                                                    title: CustomText(
-                                                        'Contact Number : ${model.sellVehicleList[index].mobileNumber}',
-                                                        style: TextStyle(
-                                                            color:
-                                                                ColorResources
-                                                                    .BOTTOM_HEADING,
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10.0),
-                                                          child: CustomText(
-                                                              "Ok",
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      ColorResources
-                                                                          .GREEN,
-                                                                  fontSize:
-                                                                      18)),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/call.png',
-                                              color: ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            CustomText(
-                                              "Call",
-                                              style: Style.bottomHeading,
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                        child:AllCards().cardSellBuyPost(index,context,model.sellVehicleList[index],this,userId: authProvider.userDetailList[0].id!)
+
                       );
                     },
                     //  physics: NeverScrollableScrollPhysics(),
@@ -781,5 +393,73 @@ class _SellCardState extends State<SellCard> {
       int.parse(s),
     );
   }
+
+  @override
+  void deleteOwnPost(int postId,int index,) {
+    _showMyDialog(index, postId,buySellProvider);
+  }
+
+
+  Future<void> _showMyDialog(int index,int id,BuySellProvider provider) async {
+    return   showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+            'Are you sure want to deleted your post?',
+            style: Style.title,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: CustomText(
+                  getTranslated('yes',
+                      context)!,
+                  style:
+                  Style.okButton),
+              onPressed: () {
+                provider
+                    .deleteBuySell(
+                    id,index,false)
+                    .then((value) => {
+                  showAnimatedDialog(
+                      context,
+                      MyDialog(
+                        icon:
+                        Icons.check,
+                        title:
+                        'Post Delete',
+                        description:
+                        'Your post deleted successfully',
+                        isFailed:
+                        false,
+                      ),
+                      dismissible:
+                      false,
+                      isFlip:
+                      false)
+                });
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+            TextButton(
+              child: CustomText('no',
+                  style: Style
+                      .cancelButton),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
+
+  }
+
 
 }

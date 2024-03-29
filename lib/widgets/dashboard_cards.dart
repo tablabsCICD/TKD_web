@@ -2,17 +2,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tkd_app/dialog/animated_custom_dialog.dart';
+import 'package:tkd_app/dialog/my_dialog.dart';
+import 'package:tkd_app/dialog/share_dialog_box.dart';
+import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/delete_interface.dart';
+import 'package:tkd_app/provider/edit_post_provider.dart';
+import 'package:tkd_app/provider/more_provider.dart';
+import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/images.dart';
+import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
+import 'package:tkd_app/view/localization/language_constrants.dart';
+import 'package:tkd_app/view/screens/editPost/edit_post_load.dart';
 import 'package:tkd_app/widgets/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'base_widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class AllCards {
+class DashbordCards {
 
 
   cardLoad(int index, BuildContext context, TruckLoad load,{int userId=0}) {
@@ -90,11 +102,7 @@ class AllCards {
     );
   }
 
-
-
-
-
-  cardLoadHome(int index, BuildContext context, TruckLoad load,int userId,DeletePostInf postDelete) {
+  cardLoadHome(int index, BuildContext context, TruckLoad load,int userId,DeletePostInf postDelete, DashboardProvider provider,bool isOwnPost) {
     return Container(
       width: 335 ,
       // height: 255,
@@ -145,7 +153,7 @@ class AllCards {
           SizedBox(width: 8),
           BaseWidget().profileWithUser(
               load.companyLogo!, load.nameOfPerson!, load.companyName!,
-              verify: load.isPaid!,transporterOrAgent: load.transporterOrAgent!),
+              verify: load.isverified!,transporterOrAgent: load.transporterOrAgent!),
           BaseWidget().routes(load.source!, load.destination!),
           SizedBox(
             height: 12,
@@ -155,10 +163,49 @@ class AllCards {
 
 
           load.userId==userId ?BaseWidget().deleteButton((val) {
-            if(val==10){
-                postDelete.deleteOwnPost(load.id!,index);
+            if(val==5){
+              //re-submit your post
+              postDelete.rePost(load,false);
+            }else
+            if(val==6){
+              //city-interchange
+              postDelete.rePost(load,true);
+            }else if(val==10){
+
+               postDelete.deleteOwnPost(load.id!,index);
+            }else if(val==7){
+            // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>EditPostLoadScreen(load)));
+              showDialog(
+                  context: context,
+                  builder: (_) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 0.0,
+                    insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
+                    backgroundColor: Colors.white,
+                    child: Container(
+                      width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
+                      child: Stack(
+                        children: [
+                          EditPostLoadScreen(load),
+                          Positioned(
+                            top: 7,
+                            right: 7,
+                            child: IconButton(
+                              icon: Icon(Icons.close,size: 18,),
+                              onPressed: (){
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+              );
             }else{
-              if(load.dnd==0){
+              if(load.dnd==1){
                 ToastMessage.show(context, "This is DND Post");
               }else{
                 Utils().openMenu(val, load, context);
@@ -166,13 +213,81 @@ class AllCards {
 
             }
 
-          }) :BaseWidget().bidButton((val) {
+          },isOwnPost: isOwnPost) :BaseWidget().bidButton((val) {
             if(load.dnd==1){
               ToastMessage.show(context, "This is DND Post");
             }else{
               Utils().openMenu(val, load, context);
             }
           })
+        ],
+      ),
+    );
+  }
+
+  generalPost(TruckLoad truckLoad,BuildContext context) {
+    return Container(
+      width: 335,
+
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                onTap: () async {
+                  /*share_data(
+                                                      model.truckLoadTypeList[index]);*/
+                  showDialog(context: context,
+                      builder: (BuildContext context){
+                        return ShareDialogBox(
+                            truckLoad
+                        );
+                      }
+                  );
+
+                },
+                child:  SvgPicture.asset(
+                  'assets/images/share_icon.svg',
+
+                  height: 25,
+                  width: 25,
+                ),
+              )
+          ),
+          Container(
+              transform: Matrix4.translationValues(0.0, -25.0, 00),
+              child: BaseWidget().profile(truckLoad.companyLogo!, truckLoad.nameOfPerson!, truckLoad.companyName!,verify: truckLoad.isPaid!)),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            transform: Matrix4.translationValues(0.0, -25.0, 00),
+            child:BaseWidget()
+                .heading(truckLoad.topicName!, truckLoad.postingTime!,truckLoad.content!) ,),
+          Divider(),
+          SizedBox(
+            height: 5,
+          ),
+
+          BaseWidget().likeComment(truckLoad,context,likeCount: 0,commentCount: 0)
         ],
       ),
     );
@@ -309,67 +424,7 @@ class AllCards {
   }
 
 
-  generalPost(TruckLoad truckLoad,BuildContext context) {
-    return Container(
-      width: 335 ,
 
-      padding: EdgeInsets.all(12),
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x114A5568),
-            blurRadius: 8 ,
-            offset: const Offset(0, 3),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: InkWell(
-              onTap: (){
-                String des=truckLoad.topicName!+"\n "+truckLoad.content!;
-                Utils().callShareFunction(des,truckLoad,context);
-              },
-              child: Container(
-                width: 38 ,
-                height: 38,
-                child: SvgPicture.asset(
-                  Images.share_icon,
-                  height: 38,
-                  width: 38 ,
-                ),
-              ),
-            ),
-          ),
-          Container(
-              transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: BaseWidget().profile(truckLoad.companyLogo!, truckLoad.nameOfPerson!, truckLoad.companyName!,verify: truckLoad.isPaid!)),
-          // SizedBox(
-          //   height: 12,
-          // ),
-          Container(
-              transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: BaseWidget().heading(truckLoad.topicName!, getDateObject(truckLoad.postingTime), truckLoad.content!)),
-          SizedBox(
-            height: 5,
-          ),
-
-          imagePost(truckLoad,context),
-
-        ],
-      ),
-    );
-  }
 
   imagePost(TruckLoad load,BuildContext context){
     if(load.postImages!.length==0){

@@ -72,11 +72,11 @@ class EntryState extends State<EntryScreen> {
   }
 
   versionControllApi() async{
-    APIHelper api=APIHelper();
-    var result=await api.ApiGetData(AppConstants.GET_CURRENT_VERSION);
+    ApiHelper api=ApiHelper();
+    var result=await api.ApiGetData(ApiConstant.GET_CURRENT_VERSION);
     Version version=Version.fromJson(result);
     print('the version is ${version.version}');
-    if(version.version! == AppConstants.APP_VERSION){
+    if(version.version! == ApiConstant.APP_VERSION){
      // loginOrHome();
       await initUniLinks();
     }else{
@@ -93,7 +93,7 @@ class EntryState extends State<EntryScreen> {
 
         if (empid != null) {
         userDetailList = await authProvider.getUserDetails(empid);
-        AppConstants.USER_OBJECT=authProvider.userDetailList[0];
+        ApiConstant.USER_OBJECT=authProvider.userDetailList[0];
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

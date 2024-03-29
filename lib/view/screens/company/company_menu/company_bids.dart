@@ -201,7 +201,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                         style: subTitleTextStyle),
                                     StarDisplay(
                                         value:
-                                        model.orgBigingList[index].ratings!.toInt()),
+                                        double.parse(model.orgBigingList[index].ratings!.toString())),
                                   ],
                                 ),
                               ),

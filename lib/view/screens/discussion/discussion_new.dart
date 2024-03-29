@@ -110,7 +110,7 @@ class _NewDiscussionState extends State<NewDiscussion> {
 
   /*  APIHelper api=APIHelper();
     var result= await api.ApiPOSTData(AppConstants.GET_DISCUSSION);*/
-    String myUrl = AppConstants.GET_DISCUSSION;
+    String myUrl = ApiConstant.GET_DISCUSSION;
     print(myUrl);
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -149,8 +149,8 @@ class _NewDiscussionState extends State<NewDiscussion> {
       };;
       print('the parameter${parameter}');
 
-      APIHelper apiHelper=APIHelper();
-      var result=await apiHelper.ApiAddPostDataMapRequest(AppConstants.GET_DISCUSSION, parameter);
+      ApiHelper apiHelper=ApiHelper();
+      var result=await apiHelper.ApiAddPostDataMapRequest(ApiConstant.GET_DISCUSSION, parameter);
       if(result == 200){
         topic.clear();
         additionalinfo.clear();

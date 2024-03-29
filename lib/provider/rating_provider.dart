@@ -40,7 +40,7 @@ class RatingProvider extends ChangeNotifier {
    // String myUrl = AppConstants.BASE_URL+"companyRegistration/${load!.userId}";
     User? userData;
    // var req = await APIHelper().ApiPostData(myUrl);
-    String myUrl = AppConstants.REGISTRATION +'/${load!.userId}';
+    String myUrl = ApiConstant.REGISTRATION +'/${load!.userId}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     var response = await json.decode(req.body);
@@ -56,7 +56,7 @@ print(response);
     ratingRequest.review = commentController.text;
     ratingRequest.companyId = userData!.companyId;
 
-    var apiResponse = await http.post(Uri.parse(AppConstants.GIVE_RATING_REVIEWS),body:ratingRequest.toJson());
+    var apiResponse = await http.post(Uri.parse(ApiConstant.GIVE_RATING_REVIEWS),body:ratingRequest.toJson());
     print(apiResponse.body);
     if(apiResponse.statusCode==200){
       print(apiResponse.body);

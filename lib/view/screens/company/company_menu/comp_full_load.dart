@@ -366,11 +366,11 @@ class _CompLoadScreenState extends State<CompLoadScreen> {
                                                     .postingTime
                                                     .toString()),
                                                 StarDisplay(
-                                                    value: model
+                                                    value: double.parse(model
                                                         .orgFullLoadList[
                                                     index]
                                                         .ratings!
-                                                        .toInt()),
+                                                        .toString())),
                                               ],
                                             ),
                                           ),

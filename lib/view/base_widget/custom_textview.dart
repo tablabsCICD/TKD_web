@@ -29,7 +29,7 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<LocalizationProvider>(
       builder: (context, provider, child)=> FutureBuilder<Translation>(
-          future: translator.translate(data, to: language ?? AppConstants.languages[provider.languageIndex].languageCode!),
+          future: translator.translate(data, to: language ?? ApiConstant.languages[provider.languageIndex].languageCode!),
           builder: (context, snapshot) => snapshot.hasData
               ? Text(
             snapshot.data!.text,

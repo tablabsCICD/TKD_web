@@ -224,9 +224,9 @@ class _BuyCardState extends State<BuyCard> {
                                             .toString(),
                                         style: Style.subtitle),
                                     StarDisplay(
-                                        value: model
+                                        value: double.parse(model
                                             .orgBuyList[index].ratings!
-                                            .toInt()),
+                                            .toString())),
                                   ],
                                 ),
                                 trailing: ConvertStringToDate(model
@@ -593,9 +593,9 @@ class _SellCardState extends State<SellCard> {
                                             .toString(),
                                         style: Style.subtitle),
                                     StarDisplay(
-                                        value: model
+                                        value: double.parse(model
                                             .orgSellList[index].ratings!
-                                            .toInt()),
+                                            .toString())),
                                   ],
                                 ),
                                 trailing: ConvertStringToDate(model

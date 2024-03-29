@@ -16,6 +16,7 @@ import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
@@ -76,194 +77,207 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
      authProvider.getUserDetails(authProvider.userDetailList[0].id!);
     return Scaffold(
-      appBar: AppBarCommon(context,title: 'My Profile').appBar(),
-      backgroundColor: Colors.white,
+    //  appBar: AppBarCommon(context,title: 'My Profile').appBar(),
+      backgroundColor: ThemeColor.baground,
       body: Consumer<AuthProvider>(
-        builder: (context, model, child) => Column(
-          children: [
-            Stack(
-              children: [
-                model.userDetailList[0].profilePicture.toString() == ""
-                    ? Icon(
-                  Icons.account_circle,
-                  size: 75,
-                  color: Colors.grey,
-                )
-                    : Container(
-                    width: 75.0,
-                    height: 75.0,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: new NetworkImage(model
-                                .userDetailList[0].profilePicture
-                                .toString())))),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: InkWell(
-                    onTap: () {
-                      pickFile(model);
-                    },
-                    child: Container(
-                      width: 25.0,
-                      height: 25.0,
+        builder: (context, model, child) => Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  model.userDetailList[0].companyLogo.toString() == ""
+                      ? Icon(
+                    Icons.account_circle,
+                    size: 100,
+                    color: Colors.grey,
+                  )
+                      : Container(
+                      width: 100.0,
+                      height: 100.0,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.black),
-                      child: Icon(
-                        Icons.camera_alt_outlined,
-                        size: 15,
-                        color: Colors.white,
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(model
+                                  .userDetailList[0].companyLogo
+                                  .toString())))),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: InkWell(
+                      onTap: () {
+                        pickFile(model);
+                      },
+                      child: Container(
+                        width: 25.0,
+                        height: 25.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.black),
+                        child: Icon(
+                          Icons.camera_alt_outlined,
+                          size: 15,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          //  UserNameWithKyc()
-          //,
-            CustomText(
-              '${model.userDetailList[0].companyName.toString()}',
-              style: Style.menuHeading,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            // model.userDetailList[0].isPaid == 0
-            //     ? getMyPlanCard(
-            //     context,
-            //     'silver_plan',
-            //     'plan_msg',
-            //     'Free',
-            //     'assets/images/silver.png',
-            //     Color(0xff3d3d3d),
-            //     Color(0xff9a9a9a))
-            //     : model.userDetailList[0].isPaid == 10
-            //     ? getMyPlanCard(
-            //     context,
-            //     'gold_plan',
-            //     'plan_msg',
-            //     '1,000',
-            //     'assets/images/gold.png',
-            //     Color(0xffde8b02),
-            //     Color(0xfffacf5a))
-            //     : model.userDetailList[0].isPaid == 20
-            //     ? getMyPlanCard(
-            //     context,
-            //     'ruby_plan',
-            //     'plan_msg',
-            //     '2,000',
-            //     'assets/images/platinum.png',
-            //     Color(0xffab34e0),
-            //     Color(0xff8fabff))
-            //     : getMyPlanCard(
-            //     context,
-            //     'diamond_plan',
-            //     'plan_msg',
-            //     '3,000',
-            //     'assets/images/diamond.png',
-            //     Color(0xff0087ba),
-            //     Color(0xff10c9d9)),
-            selectedPlan(model.userDetailList[0]),
-            SizedBox(
-              height: 20,
-            ),
-            Divider(
-              height: 1.5,
-              thickness: 1.5,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding:
-              const EdgeInsets.only(left: 20.0, bottom: 10, right: 20),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        'Email_Id',
-                        style: Style.title,
-                      ),
-                      SizedBox(height: 30,),
-                      CustomText('Mobile Number', style: Style.title),
-                      SizedBox(height: 30,),
-                      //CustomText('Alternate Number', style: Style.title),
-                      //SizedBox(height: 20,),
-                      CustomText('Address', style: Style.title),
-                      //   Text('User Type', style: Style.title),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  Flexible(
-                    child: Column(
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            //  UserNameWithKyc()
+            //,
+              CustomText(
+                '${model.userDetailList[0].companyName.toString()}',
+                style: Style.menuHeading,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              // model.userDetailList[0].isPaid == 0
+              //     ? getMyPlanCard(
+              //     context,
+              //     'silver_plan',
+              //     'plan_msg',
+              //     'Free',
+              //     'assets/images/silver.png',
+              //     Color(0xff3d3d3d),
+              //     Color(0xff9a9a9a))
+              //     : model.userDetailList[0].isPaid == 10
+              //     ? getMyPlanCard(
+              //     context,
+              //     'gold_plan',
+              //     'plan_msg',
+              //     '1,000',
+              //     'assets/images/gold.png',
+              //     Color(0xffde8b02),
+              //     Color(0xfffacf5a))
+              //     : model.userDetailList[0].isPaid == 20
+              //     ? getMyPlanCard(
+              //     context,
+              //     'ruby_plan',
+              //     'plan_msg',
+              //     '2,000',
+              //     'assets/images/platinum.png',
+              //     Color(0xffab34e0),
+              //     Color(0xff8fabff))
+              //     : getMyPlanCard(
+              //     context,
+              //     'diamond_plan',
+              //     'plan_msg',
+              //     '3,000',
+              //     'assets/images/diamond.png',
+              //     Color(0xff0087ba),
+              //     Color(0xff10c9d9)),
+              selectedPlan(model.userDetailList[0]),
+              SizedBox(
+                height: 20,
+              ),
+              Divider(
+                height: 1.5,
+                thickness: 1.5,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.only(left: 20.0, bottom: 10, right: 20),
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomText(
-                          ': ${model.userDetailList[0].emailId.toString()}',
-
-                          style:
-                          TextStyle(color: ColorResources.PRIMARY_COLOR),
+                          'Email_Id',
+                          style: Style.title,
                         ),
                         SizedBox(height: 30,),
-                        CustomText(
-                          ': ${model.userDetailList[0].mobileNumber.toString()}',
-                          style:
-                          TextStyle(color: ColorResources.PRIMARY_COLOR),
-                        ),
+                        CustomText('Mobile Number', style: Style.title),
                         SizedBox(height: 30,),
-
-
-                        CustomText(
-                          ': ${model.userDetailList[0].companyAddress.toString()}',
-                          style:
-                          TextStyle(color: ColorResources.PRIMARY_COLOR),
-                        ),
-
-                        /* Text(
-                          ': ${userDetailList.city.toString()}',
-                          style: TextStyle(
-                              color: ColorResources.PRIMARY_COLOR),
-                        ),*/
+                        //CustomText('Alternate Number', style: Style.title),
+                        //SizedBox(height: 20,),
+                        CustomText('Address', style: Style.title),
+                        //   Text('User Type', style: Style.title),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height:15,
-            ),
-            Center(
-              child: kIsWeb?BorderButton(
-                buttonText: 'Edit Profile Info',
-                onTap: () {
-                  if(kIsWeb){
-                    showDailog(context,authProvider);
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(builder: (context) => EditProfileScreen()),
-                    //   );
-                  }else{
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => EditProfileScreen()),
-                    );
-                  }
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            ': ${model.userDetailList[0].emailId.toString()}',
 
-                },
-              ):SizedBox(),
-            )
-          ],
+                            style:
+                            TextStyle(color: ColorResources.PRIMARY_COLOR),
+                          ),
+                          SizedBox(height: 30,),
+                          CustomText(
+                            ': ${model.userDetailList[0].mobileNumber.toString()}',
+                            style:
+                            TextStyle(color: ColorResources.PRIMARY_COLOR),
+                          ),
+                          SizedBox(height: 30,),
+
+
+                          CustomText(
+                            ': ${model.userDetailList[0].companyAddress.toString()}',
+                            style:
+                            TextStyle(color: ColorResources.PRIMARY_COLOR),
+                          ),
+
+                          /* Text(
+                            ': ${userDetailList.city.toString()}',
+                            style: TextStyle(
+                                color: ColorResources.PRIMARY_COLOR),
+                          ),*/
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height:15,
+              ),
+              Center(
+                child: kIsWeb?ElevatedButton(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Edit Profile Info',style: TextStyle(color: Colors.white),),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(5))),
+                  ),
+                  onPressed: () {
+                    if(kIsWeb){
+                      showDailog(context,authProvider);
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                      //   );
+                    }else{
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                      );
+                    }
+
+                  },
+                ):SizedBox(),
+              )
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: kIsWeb?SizedBox() :BorderButton(

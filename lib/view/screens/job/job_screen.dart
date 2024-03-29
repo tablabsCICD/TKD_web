@@ -1,8 +1,10 @@
-/*
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:number_pagination/number_pagination.dart';
 
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/job_model.dart';
+import 'package:tkd_app/model/post_job.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/share_data.dart';
@@ -20,10 +23,13 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/date_converter.dart';
+import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/job/job_details_screen.dart';
@@ -33,8 +39,9 @@ class JobScreen extends StatefulWidget {
   final jobProvider = locator<JobProvider>();
 
   JobScreen({Key? key}) : super(key: key) {
-    jobProvider.getCard();
-    jobProvider.getCandidates();
+    jobProvider.getAllJobs(currentPage: 0);
+    /*jobProvider.getCard();
+    jobProvider.getCandidates();*/
   }
 
   @override
@@ -42,6 +49,23 @@ class JobScreen extends StatefulWidget {
 }
 
 class _JobScreenState extends State<JobScreen> {
+
+  final jobProvider = locator<JobProvider>();
+  int selectedPageNumber = 1;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        jobProvider.getAllJobs(currentPage: selectedPageNumber);
+        selectedPageNumber++;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -49,63 +73,183 @@ class _JobScreenState extends State<JobScreen> {
       length: 2,
       child: Scaffold(
         backgroundColor: ColorResources.HOME_BG,
-        appBar: AppBar(
-          toolbarHeight: 10,
-          backgroundColor: ColorResources.APPBAR_COLOR,
-          bottom: TabBar(
-            labelColor: Colors.deepOrangeAccent,
-            labelStyle: Style.tabHeading,
-            unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.deepOrangeAccent,
-            indicatorWeight: 4,
-            tabs: [
-              Tab(
-                text: getTranslated('jobs', context)!,
-                height: 30,
-              ),
-              Tab(
-                text: getTranslated('candidates', context)!,
-                height: 30,
-              )
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (builder) => CreateJob()));
-          },
-          icon: Icon(Icons.add),
-          label: Text(
-            getTranslated('post', context)!,
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            Container(
-              color: ColorResources.HOME_BG,
-              child: ResponsiveWidget(
-                desktop: JobCard(),
-                mobile: JobCard(),
-                tablet: JobCard(),
-              ),
+        body: Consumer<JobProvider>(
+          builder: (context, model, child) => Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                model.listJobs.isEmpty
+
+                    ? Expanded(
+                    child: Container(
+                        height: MediaQuery.of(context).size.height - 200,
+                        child: Center(child: Text(getTranslated('no_post', context)!,style: Style.heading,))))
+                    : Expanded(
+                  child: StaggeredGridView.countBuilder(
+                    controller: _scrollController,
+                    physics: ScrollPhysics(),
+                    crossAxisCount: ResponsiveWidget.isDesktop(context)
+                        ? 3
+                        : ResponsiveWidget.isMobile(context)
+                        ? 1
+                        : 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 12,
+                    itemCount: model.listJobs.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          /*Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => JobDetailsScreen(
+                                      model.listJobs[index])));*/
+                        },
+                        child: jobCard(model.listJobs[index]),
+                      );
+                    },
+                    shrinkWrap: true,
+                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                  ),
+                ),
+                getLoader(model.isLoadingCandidate)
+              ],
             ),
-            Container(
-              color: ColorResources.HOME_BG,
-              child: ResponsiveWidget(
-                desktop: CandidateCard(),
-                mobile: CandidateCard(),
-                tablet: CandidateCard(),
-              ),
-            ),
-          ],
-        ),
+          ),
+        )
       ),
     );
   }
+
+  jobCard(JobData jobData) {
+    return Container(
+      width: 335,
+      // height: 417.h,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 120,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFFD25D5D),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  jobData.postJob!.experience != null
+                      ? "Exp: "+jobData.postJob!.experience! + " Year"
+                      : "No Info",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          BaseWidget().profile(
+              "",
+              jobData.name != null ? jobData.name! : "No Info",
+              jobData.postJob!.companyName != null
+                  ? jobData.postJob!.companyName!
+                  : "No Info"),
+          SizedBox(width: 8),
+          BaseWidget().jobHeading(jobData.postJob!.salary==null?"":jobData.postJob!.salary!),
+          /*BaseWidget().headingWithDescription(
+              jobData.postJob!.jobDepartment!,
+              jobData.postingDate != null ? jobData.postingDate!.split(" ").first : "",
+             jobData.postJob!.jobDescription!,
+            '',
+            '',
+            true
+          ),*/
+          BaseWidget().jobHeadingWithDescription("Job Title", jobData.postingDate != null ? jobData.postingDate!.split(" ").first : "", jobData.postJob!.jobDepartment!,jobData.postJob!.jobType!,jobData.postJob!.jobDescription!,true),
+          SizedBox(width: 8),
+          jobApply(jobData),
+        ],
+      ),
+    );
+  }
+
+  Widget jobApply(JobData jobData) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: (){
+              Utils().callFunction(context,jobData.postJob!.contactNumber.toString());
+            },
+            child: Container(
+              height: 38,
+              //width: 203.w,//for save job
+              width: 240,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Call now',
+                    style: TextStyle(
+                      color: Color(0xFF001E49),
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //  SizedBox(width: 12.w),
+          // SvgPicture.asset(Images.savejob),
+          SizedBox(width: 12),
+          InkWell(
+              onTap: (){
+                String Message="I am writing to express my strong interest in the "+jobData.postJob!.jobDepartment!+" From TKD Connect Application";
+                Utils().openwhatsapp(context, jobData.postJob!.contactNumber!, Message);
+              },
+              child: SvgPicture.asset(Images.message_job)),
+        ],
+      ),
+    );
+  }
+
 }
 
 class CandidateCard extends StatefulWidget {
@@ -199,9 +343,9 @@ class _CandidateCardState extends State<CandidateCard> {
                                           padding:
                                               const EdgeInsets.only(right: 8.0),
                                           child: StarDisplay(
-                                              value: model
+                                              value:double.parse( model
                                                   .candidateList[index].ratings!
-                                                  .toInt()),
+                                                  .toString())),
                                         ),
                                       ],
                                     ),
@@ -318,7 +462,7 @@ class _CandidateCardState extends State<CandidateCard> {
                                                           style: TextStyle(
                                                               color:
                                                                   ColorResources
-                                                                      .BLACK,
+                                                                      .THEME_COLOR,
                                                               fontSize: 18,
                                                               fontWeight:
                                                                   FontWeight
@@ -477,9 +621,9 @@ class _JobCardState extends State<JobCard> {
                                           padding:
                                               const EdgeInsets.only(right: 8.0),
                                           child: StarDisplay(
-                                              value: model
+                                              value: double.parse(model
                                                   .jobList[index].ratings!
-                                                  .toInt()),
+                                                  .toString())),
                                         ),
                                       ],
                                     ),
@@ -592,7 +736,7 @@ class _JobCardState extends State<JobCard> {
                                                           style: TextStyle(
                                                               color:
                                                                   ColorResources
-                                                                      .BLACK,
+                                                                      .THEME_COLOR,
                                                               fontSize: 18,
                                                               fontWeight:
                                                                   FontWeight
@@ -659,4 +803,4 @@ class _JobCardState extends State<JobCard> {
     );
   }
 }
-*/
+

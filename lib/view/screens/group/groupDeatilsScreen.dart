@@ -10,6 +10,7 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/loader.dart';
+import 'package:tkd_app/view/screens/group/groupListScreen.dart';
 import '../../base_widget/getLoader.dart';
 import '../../../locator.dart';
 import '../../../provider/auth_provider.dart';
@@ -67,14 +68,15 @@ class GroupDetailsState extends State<GroupDetailsScreen>{
             Navigator.pop(context);
           },child: Text("Back",style: Style.headingBack,)),
          Text("New Group",style:Style.heading),
-          InkWell(onTap: (){
+          InkWell(onTap: () async {
             if(_controller.text.length==0){
               final snackBar = SnackBar(
                 content: const Text('Please Enter Group Name'),
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }else{
-              groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
+              await groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) =>GroupList()));
             }
           },child: Text("Create",style: Style.creategroup,))
         ],
@@ -182,14 +184,15 @@ class GroupDetailsState extends State<GroupDetailsScreen>{
       width: MediaQuery.of(context).size.width,
       color: ColorResources.PRIMARY_COLOR,
       child: Center(
-        child: InkWell(onTap: (){
+        child: InkWell(onTap: () async {
           if(_controller.text.length==0){
             final snackBar = SnackBar(
               content: const Text('Please Enter Group Name'),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }else{
-            groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
+            await groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>GroupList()));
           }
         }
             ,child: Text("Create Group",style: Style.button,)),

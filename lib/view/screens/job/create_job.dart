@@ -1,11 +1,13 @@
-/*
 
 
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:tkd_app/dialog/animated_custom_dialog.dart';
+import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
@@ -29,15 +31,16 @@ class _CreateJobState extends State<CreateJob> {
   String selectedPostType = '';
   String selectedCtc = '';
   String selectedJobType = '';
-  String selectedSalary = '';
-  String selectedCity = 'Pune';
+  String selectedExpFrom = '';
+  String selectedExpTo = '';
   List<String> ctcList = List<String>.empty(growable: true);
   List<String> jobTypeList = List<String>.empty(growable: true);
   TextEditingController description = TextEditingController();
   TextEditingController experience = TextEditingController();
-  TextEditingController msg = TextEditingController();
-  TextEditingController name = TextEditingController();
+  TextEditingController position = TextEditingController();
+  TextEditingController jobTitle = TextEditingController();
   TextEditingController cityController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   setCity(value){
     print(value);
@@ -46,250 +49,268 @@ class _CreateJobState extends State<CreateJob> {
     });
   }
 
+  List<String> expList = ["Fresher","6 Month","1 Year","1.5 Year","2 Year","2.5 Year","3 Year","3.5 Year","4 Year","4.5  Year","5 Year","5.5 Year","6 Year"];
+  List<String> salaryList = ['1LPA','1PLA to 2LPA','2PLA to 3LPA','4PLA to 5LPA','6PLA to 7LPA','8PLA to 9LPA','10PLA to Above',];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Post Job',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-        backgroundColor: ColorResources.PRIMARY_COLOR,
+        backgroundColor: Colors.white,
+        title: Text("Post Job",style: Style.appheading,),
+        shadowColor: Colors.white,
+        leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,),onPressed:(){
+          Navigator.pop(context,1);
+        } ,),
       ),
-      backgroundColor: ColorResources.HOME_BG,
       body: Consumer<AuthProvider>(
           builder: (context, model, child) =>
-         Container(
-           margin: ResponsiveWidget.isDesktop(context)? EdgeInsets.symmetric(horizontal: 200,vertical: 10):ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(horizontal: 20,vertical: 10):EdgeInsets.symmetric(horizontal: 100,vertical: 10),
-           child: ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color:ColorResources.WHITE
+         Form(
+           key: _formKey,
+           child: Container(
+             child: ListView(
+              shrinkWrap: true,
+              children: [
+                CustomTextField(
+                  hintText: 'Position',
+                  controller: position,
+                  textInputType: TextInputType.text,
                 ),
-                child: FormBuilderDropdown(
-                    name: 'Post Type',
-                    allowClear: true,
-                    style: Style.searchHint,
-                    hint: Text("Post Type"),
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    items: ['Post Type','Job Seeker','Employer']
-                        .map((value) => DropdownMenuItem(
-                      value: value,
-                      child: Text('$value',style: Style.dropdownValue,),
-                    ))
-                        .toList(),
-                    onChanged: (String? value){
-                      setState(() {
-                        selectedPostType = value!;
-                     });}
+                CustomTextField(
+                  hintText: 'Job Title',
+                  controller: jobTitle,
+                  textInputType: TextInputType.text,
                 ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black54, width: 0.9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: DropdownButtonFormField(
+                      decoration: InputDecoration(
+                        enabledBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        border: InputBorder.none
+                      ),
+                      hint: Text("Select Salary",style: TextStyle(
+                        color: Color(0x662C363F),
+                        fontSize: 14,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      items: ['1LPA','1PLA to 2LPA','2PLA to 3LPA','4PLA to 5LPA','6PLA to 7LPA','8PLA to 9LPA','10PLA to Above',]
+                          .map((value) => DropdownMenuItem(
+                        value: value,
+                        child: Text('$value',style: Style.dropdownValue,),
+                      ))
+                          .toList(),
+                      onChanged: (String? value){
+                        setState(() {
+                          selectedCtc = value!;
+                        });}
+                  ),
+                ),
+                CustomTextField(
+                  hintText: 'Job description',
+                  controller: description,
+                  textInputType: TextInputType.text,
+                  maxLine: 5,
+                ),
+                jobExp(context),
+                CustomButton(onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      await widget.jobProvider.saveJobs(context,salary : selectedCtc,description : description.text,experience : "${selectedExpFrom} - ${selectedExpTo}",position : position.text,jonTitle : jobTitle.text,model: model);/*.then((value) => {
+                        showAnimatedDialog(
+                            context,
+                            MyDialog(
+                              icon: Icons.check,
+                              title:
+                              'New Post',
+                              description:
+                              'Your post submitted successfully',
+                              isFailed: false,
+                              isFromPost: true,
+                            ),
+                            dismissible: false,
+                            isFlip: false),
+                      });*/
+                   //   if(result) {
+
+
+                    //  }
+                    }
+                },
+                    buttonText: "Post Job")
+              ],
+            ),
+                   ),
+         ),
+      ),
+    );
+  }
+
+  jobExp(BuildContext context) {
+    return Consumer<JobProvider>(
+      builder: (context, provider, child) {
+        return Row(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
+              height: 50,
+              width:200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54, width: 0.9),
+                borderRadius: BorderRadius.circular(5.0),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color:ColorResources.WHITE
-                ),
-                child: FormBuilderDropdown(
-                    name: 'CTC',
-                   allowClear: true,
-                    hint: Text("CTC"),
-                    style: Style.searchHint,
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    items: ['0.5K to 1LPA','1PLA to 2LPA','2PLA to 3LPA','3PLA to 4LPA','4PLA to 5LPA','5PLA to Above',]
-                        .map((value) => DropdownMenuItem(
-                      value: value,
-                      child: Text('$value',style: Style.dropdownValue,),
-                    ))
-                        .toList(),
-                    onChanged: (String? value){
-                      setState(() {
-                        selectedCtc = value!;
-                      });}
-                ),
+              child: DropdownButtonFormField(
+                  hint: Text('Experience From',style: TextStyle(
+                    color: Color(0x662C363F),
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                  ),),
+                  decoration: InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      border: InputBorder.none
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  items: ["Fresher","6 Month","1 Year","1.5 Year","2 Year","2.5 Year","3 Year","3.5 Year","4 Year","4.5  Year","5 Year","5.5 Year","6 Year"]
+                      .map((value) => DropdownMenuItem(
+                    value: value,
+                    child: Text('$value',style: Style.dropdownValue,),
+                  ))
+                      .toList(),
+                  onChanged: (String? value){
+                    setState(() {
+                      selectedExpFrom = value!;
+                    });}
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color:ColorResources.WHITE
-                ),
-                child: FormBuilderDropdown(
-                    name: 'Salary Negotiable',
-                   allowClear: true,
-                    style: Style.searchHint,
-                    hint: Text("Salary Negotiable"),
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    items: ['Yes','No']
-                        .map((value) => DropdownMenuItem(
-                      value: value,
-                      child: Text('$value',style: Style.dropdownValue,),
-                    ))
-                        .toList(),
-                    onChanged: (String? value){
-                      setState(() {
-                        selectedSalary = value!;
-                      });}
-                ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
+              height: 50,
+              width: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54, width: 0.9),
+                borderRadius: BorderRadius.circular(5.0),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color:ColorResources.WHITE
-                ),
-                child: FormBuilderDropdown(
-                    name: 'Job Type',
-                    allowClear: true,
-                    style: Style.searchHint,
-                    hint: Text("Job Type"),
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    items: ['Driver','Traffic','Maintenance','Marketing','Manager','Traffic Department','Other']
-                        .map((value) => DropdownMenuItem(
-                      value: value,
-                      child: Text('$value',style: Style.dropdownValue,),
-                    ))
-                        .toList(),
-                    onChanged: (String? value){
-                      setState(() {
-                        selectedJobType = value!;
-                      });}
-                ),
+              child: DropdownButtonFormField(
+                  decoration: InputDecoration(
+                      enabledBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      border: InputBorder.none
+                  ),
+                hint: Text("Experience To",style: TextStyle(
+                  color: Color(0x662C363F),
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                ),),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  items:["Fresher","6 Month","1 Year","1.5 Year","2 Year","2.5 Year","3 Year","3.5 Year","4 Year","4.5  Year","5 Year","5.5 Year","6 Year"]
+                      .map((value) => DropdownMenuItem(
+                    value: value,
+                    child: Text('$value',style: Style.dropdownValue,),
+                  ))
+                      .toList(),
+                  onChanged: (String? value){
+                    setState(() {
+                      selectedExpTo = value!;
+                    });}
               ),
-              CustomCityTextField(
-                hintText: 'Select City',
-                controller: selectedCity,
-                onTap: (){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              GetCityList())).then((value) {
-                    if (value.toString().isNotEmpty &&
-                        value != null) {
-                      selectedCity = value[0];
-                      setState(() {});
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDropdownField(String label, String hint,
+      List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        SizedBox(
+          height: 52,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 0.7),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: DropdownButton(
+                value: label,
+                isExpanded: true,
+                icon: const Icon(Icons.arrow_drop_down),
+                borderRadius: BorderRadius.circular(5.0),
+                underline: SizedBox.shrink(),
+                hint: Text(
+                  "Source of Lead",
+                  style: TextStyle(
+                    color: Color(0xff1B1B1B),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(
+                      items,
+                      style: TextStyle(
+                        color: Color(0xff1B1B1B),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    if(hint=="Experience From"){
+                      selectedExpFrom = newValue!;
+                    }else if(hint=="Experience To"){
+                      selectedExpTo = newValue!;
+                    }else{
+                      selectedCtc = newValue!;
                     }
                   });
                 },
               ),
-
-              */
-/*Container(
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 5),
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color:ColorResources.WHITE
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width-64,
-                      child: InkWell(
-                        onTap: (){
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) =>
-                                  CityScreen())
-                          ).then((value) => value!=null ? setCity(value) : null);
-                        },
-                        child: TextFormField(
-                          readOnly: true,
-                          enabled: false,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select City';
-                            }
-                            return null;
-                          },
-                          controller: cityController,
-                          decoration: InputDecoration(
-                            hintText: 'Select City',
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                            ),
-                            counterText: "",
-                          ),
-                          onChanged: (value) {
-                            selctedCity = value;
-                            setState(() {
-
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    cityController.text==''?SizedBox.shrink():IconButton(
-                      icon: Icon(Icons.clear),
-                      iconSize: 20,
-                      onPressed: (){
-                        setState(() {
-                          cityController.text = '';
-                        });
-                      },
-                    )
-                  ],
-                ),
-              ),*//*
-
-              CustomTextField(
-                hintText: 'Job description',
-                controller: description,
-                textInputType: TextInputType.text,
-              ),
-              CustomTextField(
-                hintText: 'Job Experience (in years)',
-                controller: experience,
-                textInputType: TextInputType.text,
-              ),
-              CustomTextField(
-                hintText: 'Message',
-                controller: msg,
-                textInputType: TextInputType.text,
-              ),
-              CustomTextField(
-                hintText: 'Enter Name',
-                controller: name,
-                textInputType: TextInputType.text,
-              ),
-              CustomTextField(
-                hintText: 'Email',
-                controller: TextEditingController(text: model.userDetailList[0].emailId ?? ''),
-                textInputType: TextInputType.emailAddress,
-                readOnly: true,
-              ),
-              CustomTextField(
-                hintText: 'Mobile',
-                controller: TextEditingController(text: model.userDetailList[0].mobileNumber.toString()),
-                textInputType: TextInputType.phone,
-                readOnly: true,
-              ),
-              CustomButton(onTap: (){
-                  widget.jobProvider.saveJabs(selectedPostType: selectedPostType,ctc : selectedCtc,salaryType : selectedSalary,jobType : selectedJobType,city : selectedCity,description : description.text,experience : experience.text,msg : msg.text,name : name.text,email : model.userDetailList[0].emailId,mobile: model.userDetailList[0].mobileNumber,model: model);
-                  Navigator.of(context).pop();
-              },
-                  buttonText: "Post Jobs")
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
-*/

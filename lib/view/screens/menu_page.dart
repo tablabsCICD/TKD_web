@@ -45,6 +45,7 @@ import 'package:tkd_app/view/screens/gallery/gallery_screen.dart';
 import 'package:tkd_app/view/screens/insuranceAndFinance.dart';
 import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/job/job_screen.dart';
+import 'package:tkd_app/view/screens/more/create_general_post.dart';
 import 'auth/login_screen.dart';
 import 'package:tkd_app/view/screens/more/more_screen.dart';
 import 'package:tkd_app/view/screens/more/my_profile.dart';
@@ -57,6 +58,7 @@ import 'package:tkd_app/view/screens/transport/transport_search_screen.dart';
 
 import 'chats/IFramePage.dart';
 import 'discussion/discussion_new.dart';
+import 'dart:html' as html;
 
 class MenuPage extends StatefulWidget {
   List<User>? userDetailList;
@@ -80,7 +82,7 @@ class _MenuPageState extends State<MenuPage> {
   void initState() {
     container = DashBoardScreen();
     routeProvider.addDataFromDummyListToRouteList();
-    AppConstants.languages
+    ApiConstant.languages
         .forEach((language) => _valueList.add(language.languageName!));
   }
 
@@ -219,7 +221,7 @@ class _MenuPageState extends State<MenuPage> {
                                 barrierColor: Colors.transparent);
                           },
                           child: getImage(
-                          model.userDetailList[0].profilePicture.toString())
+                          model.userDetailList[0].companyLogo.toString())
                       );
                     }),
                   ),
@@ -281,8 +283,8 @@ class _MenuPageState extends State<MenuPage> {
                             Provider.of<LocalizationProvider>(context,
                                     listen: false)
                                 .setLanguage(Locale(
-                              AppConstants.languages[index].languageCode!,
-                              AppConstants.languages[index].countryCode,
+                              ApiConstant.languages[index].languageCode!,
+                              ApiConstant.languages[index].countryCode,
                             ));
                           });
                         },
@@ -308,7 +310,7 @@ class _MenuPageState extends State<MenuPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)
           ),
-            backgroundColor: Colors.black,
+            backgroundColor: ColorResources.THEME_COLOR,
             foregroundColor: Colors.white,
             onPressed: () {
               showDialog(
@@ -358,7 +360,7 @@ class _MenuPageState extends State<MenuPage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10)
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: ColorResources.THEME_COLOR,
             foregroundColor: Colors.white,
             onPressed: () {
               showDialog(
@@ -449,6 +451,41 @@ class _MenuPageState extends State<MenuPage> {
                               },
                             ),
                             Divider(),
+                            InkWell(
+                              child: Text("General Post"),
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16.0),
+                                      ),
+                                      elevation: 0.0,
+                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
+                                      backgroundColor: Colors.white,
+                                      child: Container(
+                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
+                                        child: Stack(
+                                          children: [
+                                            CreateGeneralPost(),
+                                            Positioned(
+                                              top: 7,
+                                              right: 7,
+                                              child: IconButton(
+                                                icon: Icon(Icons.close,size: 18,),
+                                                onPressed: (){
+                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                );
+                              },
+                            ),
+                            Divider(),
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
@@ -491,8 +528,7 @@ class _MenuPageState extends State<MenuPage> {
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
                             else
-                              Divider(),
-                            /*Divider(),
+                            Divider(),
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
@@ -500,18 +536,43 @@ class _MenuPageState extends State<MenuPage> {
                               InkWell(
                                 child: Text(getTranslated('jobs', context)!),
                                 onTap: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (builder) => CreateJob()));
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16.0),
+                                        ),
+                                        elevation: 0.0,
+                                        insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
+                                        backgroundColor: Colors.white,
+                                        child: Container(
+                                          width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
+                                          child: Stack(
+                                            children: [
+                                              CreateJob(),
+                                              Positioned(
+                                                top: 7,
+                                                right: 7,
+                                                child: IconButton(
+                                                  icon: Icon(Icons.close,size: 18,),
+                                                  onPressed: (){
+                                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                  );
                                 },
-                              ),*/
-                            /* Divider(),
+                              ),
+                            Divider(),/*
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
                             else*/
-                            InkWell(
+                           /* InkWell(
                               child: CustomText('BroadCast'),
                               onTap: () {
                                 showDialog(
@@ -544,7 +605,7 @@ class _MenuPageState extends State<MenuPage> {
                                     )
                                 );
                               },
-                            ),
+                            ),*/
                          //   Divider(),
 
                             /*if (widget.userDetailList![0].transporterOrAgent == 2 ||
@@ -587,7 +648,7 @@ class _MenuPageState extends State<MenuPage> {
                                 },
                               ),*/
 
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
+                          /*  if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
                             else
@@ -629,12 +690,12 @@ class _MenuPageState extends State<MenuPage> {
                                       )
                                   );
                                 },
-                              ),
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
+                              ),*/
+                          /*  if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
                             else
-                              Divider(),
+                              Divider(),*/
                             InkWell(
                               child: CustomText(
                                 "Cancel",
@@ -729,8 +790,8 @@ class _MenuPageState extends State<MenuPage> {
       case "Insurance_Finance":
         container = InsuranceAndFinanceScreen();
         break;
-      case "Announcement":
-        container = GalleryScreen();
+      case "Jobs":
+        container = JobScreen();
         break;
       case "Pool_Purchase":
         container = PoolPurchesScreen();
@@ -744,10 +805,10 @@ class _MenuPageState extends State<MenuPage> {
       case "My_Routes":
         container = MyRoutes();
         break;
-      case "My_Bids":
+      case "My Quotes":
         container = MyBidsScreen();
         break;
-      case "Received Bids":
+      case "Received Quotes":
         container = ReceivedBidsScreen();
         break;
       case "Company":
@@ -762,6 +823,11 @@ class _MenuPageState extends State<MenuPage> {
       case "Plans":
         container = PlanScreen();
         //container = IFramePage(url: 'https://rcltechlab.000webhostapp.com/#/register',);
+        break;
+      case "Privacy Policy":
+        String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368127989-privacyPolicy.pdf";
+        html.window.open(url,"_blank"/*,"_self"*/);
+
         break;
       case "Chats":
         container = Consumer<AuthProvider>(

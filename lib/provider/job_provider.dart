@@ -1,9 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/job_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/model/post_job.dart';
+import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
@@ -11,6 +17,7 @@ class JobProvider extends ChangeNotifier{
   List<String> cityList = [];
   List<Job> jobList = [];
   List<Job> candidateList = [];
+  List<JobData>listJobs=[];
   var response;
 int jobPages = 0;
   int totalpages = 0;
@@ -23,7 +30,7 @@ int jobPages = 0;
     if(currentPage == 0){
       jobList.clear();
     }
-    String myUrl = AppConstants.JOBS_ALL_CARD +'?type=Job&page=${currentPage}';
+    String myUrl = ApiConstant.JOBS_ALL_CARD +'?type=Job&page=${currentPage}';
     var req = await http.get(Uri.parse(myUrl));
     isLoadingJob = false;
     response = json.decode(req.body);
@@ -40,7 +47,7 @@ int jobPages = 0;
     if(currentPage==0){
     candidateList.clear();
     }
-    String myUrl = AppConstants.JOBS_ALL_CARD +'?type=Candidates&page=${currentPage}';
+    String myUrl = ApiConstant.JOBS_ALL_CARD +'?type=Candidates&page=${currentPage}';
     var req = await http.get(Uri.parse(myUrl));
     isLoadingCandidate = false;
     response = json.decode(req.body);
@@ -52,7 +59,7 @@ int jobPages = 0;
   }
 
   deleteJob(Job job) async {
-    String myUrl = AppConstants.POST_JOB +'?id=${job.id}';
+    String myUrl = ApiConstant.POST_JOB +'?id=${job.id}';
     var req = await http.delete(Uri.parse(myUrl));
     response = json.decode(req.body);
     if(job.type=='Buy Vehicle'){
@@ -66,57 +73,98 @@ int jobPages = 0;
 
   Future<List<String>> getCityList() async {
     String myUrl =
-        AppConstants.GET_ALL_CITY;
+        ApiConstant.GET_ALL_CITY;
     var req = await http.get(Uri.parse(myUrl));
     var response = jsonDecode(req.body);
      cityList = response;
     return cityList;
   }
 
-  saveJabs({String? selectedPostType,String? ctc,String? salaryType,String? jobType,String? city,String? description,String? experience,String? msg,String? name,String? email,int? mobile,AuthProvider? model}) async {
-    String myUrl = AppConstants.POST_JOB;
+  saveJobs(BuildContext context,{String? salary,String? description,String? experience,String? position,String? jonTitle,AuthProvider? model}) async {
+    String myUrl = ApiConstant.POST_JOB;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "companyName": model!.userDetailList[0].companyName,
-      "contactNumber": mobile,
-      "emailId": email,
+      "contactNumber": model!.userDetailList[0].mobileNumber,
+      "emailId": model!.userDetailList[0].emailId,
       "experience": experience,
-      "id": model.userDetailList[0].id,
-      "isSalaryNegotiable": salaryType=='Yes' ? 1 : 0,
+      "isSalaryNegotiable": 1,
       "isSelected": 0,
-      "jobDepartment": jobType,
+      "jobDepartment": jonTitle,
       "jobDescription": description,
-      "jobLocation": city,
-      "jobType": jobType,
+      "jobLocation": "city",
+      "jobType": position,
       "loggedTime":'',// DateFormat("dd/MM/yyyy hh:mm").format(DateTime.now()), //+" "+DateTime.now().hour.toString() +":" +DateTime.now().minute.toString() ,
-      "loggedUserName": name,
-      "mainTag": jobType,
-      "message": msg,
+      "loggedUserName":model!.userDetailList[0].userName,
+      "mainTag": "Job Seeker",
+      "message": description,
       "os": "window",
       "postingTime": '',//DateTime.now(),// DateFormat("dd/MM/yyyy hh:mm").format(DateTime.now()), // +" "+DateTime.now().hour.toString() +":" +DateTime.now().minute.toString() ,
-      "loggedUserName": name,
       "privatePost": 0,
       "removedDate": '' ,
-      "salary": ctc,
+      "salary": salary,
       "tableName": " ",
       "topicName": " ",
-      "type": selectedPostType
+      "type":  "Job Seeker",
+      "userId":model.userDetailList[0].id
     };
     var body = json.encode(data);
     print(data);
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
     print("${response.statusCode}" + " --- " + response.body.toString());
-    var jsonData = jsonDecode(response.body);
-    if(selectedPostType == 'Job Seeker'){
-      Job dataObj = Job.fromJson(jsonData);
-      jobList.add(dataObj);
+
+    if(response.statusCode==200){
+      showSimpleNotification(
+          Text("Post job successfull",style: TextStyle(color: Colors.white),),
+          background: Colors.black
+      );
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }else{
+      showSimpleNotification(
+          Text("Please try again",style: TextStyle(color: Colors.white),),
+          background: Colors.red
+      );
     }
-    else{
-      Job dataObj = Job.fromJson(jsonData);
-      candidateList.add(dataObj);
-    }
+   // var jsonData = jsonDecode(response.body);
+  //  JobData dataObj = JobData.fromJson(jsonData);
+  //  jobList.add(dataObj.postJob);
     notifyListeners();
   }
+
+  int selectedPage=0;
+  ScrollController scrollController=ScrollController();
+
+  getAllJobs({int currentPage = 0})async{
+    isLoadingCandidate = true;
+    notifyListeners();
+    if(currentPage==0){
+      listJobs.clear();
+    }
+
+    String myUrl = ApiConstant.BASE_URL+'postJob/getAllJobsWithSearch?page=$currentPage';
+    print(myUrl);
+    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(myUrl);
+    print("Response:::"+apiResponse.response);
+    isLoadingCandidate = false;
+    if(apiResponse.statusCode==200){
+      JobList jobList=JobList.fromJson(jsonDecode(apiResponse.response));
+      listJobs.addAll(jobList.content!);
+      currentPage++;
+      notifyListeners();
+    }else{
+    }
+  }
+
+  pagenation(){
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        getAllJobs();
+      }
+    });
+  }
+
 
 }

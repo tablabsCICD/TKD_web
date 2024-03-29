@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
 import 'package:tkd_app/dialog/CustomStateListDialog.dart';
@@ -102,10 +103,13 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                   ),
                   Align(
                     alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      'assets/images/tkd.png',
-                      height: 150,
-                      width: 250,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top:20.0),
+                      child: SvgPicture.asset(
+                        'assets/svg/logo.svg',
+                        height: 90,
+                        width: 120,
+                      ),
                     ),
                   ),
                   Align(
@@ -156,13 +160,15 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
           key: _formKey,
           child: ListView(
             children: [
+              SizedBox(height:30),
               Center(
-                child: Image.asset(
-                  'assets/images/tkd.png',
-                  height: 90,
-                  width: 200,
+                child: SvgPicture.asset(
+                  'assets/svg/logo.svg',
+                  height: 50,
+                  width: 100,
                 ),
               ),
+              SizedBox(height:20),
               Center(
                 child: Text("Sign Up",
                     style: TextStyle(
@@ -173,6 +179,7 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                       fontStyle: FontStyle.normal,
                     )),
               ),
+              SizedBox(height:20),
               CustomTextField(
                 hintText: 'Enter First Name',
                 controller: firstNameController,

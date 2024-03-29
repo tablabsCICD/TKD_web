@@ -1,25 +1,29 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/bid_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/model/biding_user_model.dart';
+import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 class BidProvider extends ChangeNotifier{
   List<BidingUser> allBidingList = [];
-  List<Bid> receivedBidingList = [];
+  List<Bidings> receivedBidingList = [];
   var response;
   int totalPages = 0;
   bool isLoading = false;
   List<BidingUser> truckLoadTypeList = [];
+  final authProvider = locator<AuthProvider>();
 
   getAllBidingList(String userName,int isPublic) async {
     isLoading = true;
     notifyListeners();
    // https://api.tkdost.com/tkd2/api/GetPostsAndBidsForUser?userName=user327796&privatePost=0
-    String myUrl = AppConstants.BID_OWN_POST +'?userName=${userName}&privatePost=${isPublic}';
+    String myUrl = ApiConstant.BID_OWN_POST +'?userName=${userName}&privatePost=${isPublic}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -40,7 +44,7 @@ class BidProvider extends ChangeNotifier{
   getList(String userName) async {
     allPostList.clear();
     myOwnPostList.clear();
-    String myUrl = AppConstants.GET_OWNPOST + '?userName=${userName}';
+    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -59,24 +63,24 @@ class BidProvider extends ChangeNotifier{
   getReceivedBidingList(String type1,int postId) async {
     isLoading = true;
     notifyListeners();
-    String myUrl = AppConstants.BASE_URL +'/GetBidsForPost?type=${type1.toString()}&postId=${postId}';
+    String myUrl = ApiConstant.BASE_URL +'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
     response = json.decode(req.body);
     print(response);
-    var type = BidModel.fromJson(response);
+    var type = MyPostBids.fromJson(response);
     receivedBidingList.clear();
-    receivedBidingList=type.content;
-    receivedBidingList.sort((a, b) => int.parse(a.amount!).compareTo(int.parse(b.amount!)));
+    receivedBidingList=type.content![0].bidings!;
+    receivedBidingList.sort((a, b) => int.parse(a.bidings!.amount!).compareTo(int.parse(b.bidings!.amount!)));
     print('Low to hight in biding amount: $receivedBidingList');
-    receivedBidingList.forEach((element) {print("amount : "+element.amount.toString());});
+    receivedBidingList.forEach((element) {print("amount : "+element.bidings!.amount.toString());});
     notifyListeners();
     return receivedBidingList;
   }
 
   getBidingUser(int id) async {
-    String myUrl = AppConstants.BASE_URL + '/fullTruckLoad/${id}';
+    String myUrl = ApiConstant.BASE_URL + '/fullTruckLoad/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -90,7 +94,7 @@ class BidProvider extends ChangeNotifier{
 
   generateBid({int? mobile,String? description,int? id,String? email,String? amount,int? idOfPost,String? bidderUserName,
     String? userName,String? type,String? loggedUserName}) async {
-    String myUrl = AppConstants.BID_TO_POST;
+    String myUrl = ApiConstant.BID_TO_POST;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "amount": amount,
@@ -117,7 +121,7 @@ class BidProvider extends ChangeNotifier{
   }
 
   deleteBid(BidingUser bid) async {
-    String myUrl = AppConstants.BID_TO_POST + '?id=${bid.bidingId}';
+    String myUrl = ApiConstant.BID_TO_POST + '?id=${bid.bidingId}';
     print(myUrl);
     var req = await http.delete(Uri.parse(myUrl));
     response = json.decode(req.body);

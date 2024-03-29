@@ -9,7 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
+import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
+import 'package:tkd_app/widgets/verified_tag.dart';
 
 class BaseWidget {
 
@@ -236,13 +239,15 @@ class BaseWidget {
                                               width: 4,
                                             ),
                                             Visibility(
-                                                visible:
-                                                verify != 0 ? true : false,
-                                                child: Image.asset(
-                                                  'assets/images/shield.png',
-                                                  height: 12,
-                                                  width: 12,
-                                                ))
+                                              visible:
+                                              verify != 0 ? true : false,
+                                              // child: SvgPicture.asset(
+                                              //   Images.verified,
+                                              //   height: 12.h,
+                                              //   width: 12.w,
+                                              // ))
+                                              child: VerifiedTag().onVeriedTag(),
+                                            )
                                           ],
                                         ),
                                         SizedBox(
@@ -260,7 +265,8 @@ class BaseWidget {
                                         ),
                                         RatingBar.builder(
                                           itemSize: 10,
-                                          initialRating: 3,
+                                          initialRating: 4.5,
+                                          ignoreGestures: true,
                                           minRating: 1,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
@@ -849,6 +855,132 @@ Widget heading(String title,String subTitle){
     );
   }
 
+  Widget jobHeadingWithDescription(String title, String date, String exp,String role,String desc,bool isJobPost) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          date,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Color(0x99001E49),
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Department : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              exp,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Role : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              role,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Job Description:",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          desc,
+                          style: TextStyle(
+                            color: Color(0x99001E49),
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget applyButton(Function(int) onMenuTap) {
     return Container(
       width: double.infinity,
@@ -1029,13 +1161,15 @@ Widget heading(String title,String subTitle){
                                               width: 4,
                                             ),
                                             Visibility(
-                                                visible:
-                                                verify != 0 ? true : false,
-                                                child: SvgPicture.asset(
-                                                  "assets/svg/verified.svg",
-                                                  height: 12,
-                                                  width: 12,
-                                                ))
+                                              visible:
+                                              verify != 0 ? true : false,
+                                              // child: SvgPicture.asset(
+                                              //   Images.verified,
+                                              //   height: 12.h,
+                                              //   width: 12.w,
+                                              // ))
+                                              child: VerifiedTag().onVeriedTag(),
+                                            )
                                           ],
                                         ),
                                         SizedBox(
@@ -1067,7 +1201,8 @@ Widget heading(String title,String subTitle){
                                         ),
                                         RatingBar.builder(
                                           itemSize: 10,
-                                          initialRating: 3,
+                                          initialRating: 4.5,
+                                          ignoreGestures: true,
                                           minRating: 1,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
@@ -1485,4 +1620,289 @@ Widget heading(String title,String subTitle){
 
   }
 
+
+  Widget routes(String fromCity, String toCity) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 8),
+      decoration: ShapeDecoration(
+        color: Color(0xFFF4F6F6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: SizedBox(
+              child: Text(
+                fromCity,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: Color(0xCC001E49),
+                  fontSize: 12,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Icon(
+            Icons.arrow_circle_right_rounded,
+            color: Colors.grey,
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Expanded(
+            child: SizedBox(
+              child: Text(
+                toCity,
+                style: TextStyle(
+                  color: Color(0xCC001E49),
+                  fontSize: 12,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget heading1(String title, String date, String subTitle) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontFamily: GoogleFonts.poppins().fontFamily,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            // overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          date,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: Color(0x99001E49),
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      subTitle,
+                      style: TextStyle(
+                        color: Color(0x99001E49),
+                        fontSize: 12,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget onlyBidButton(Function onTab) {
+    return InkWell(
+      onTap: () {
+        onTab();
+      },
+      child: Container(
+        height: 38,
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Withdraw quote",
+              style: TextStyle(
+                color: Color(0xFF001E49),
+                fontSize: 12,
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget deleteMyPostButton(Function(int) onMenuTap) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () {
+              onMenuTap(10);
+            },
+            child: Container(
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Delete",
+                    style: TextStyle(
+                      color: ThemeColor.red,
+                      fontSize: 12,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SvgPicture.asset(Images.delete)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          InkWell(onTap: () {}, child: popUpmenuOwnPost(onMenuTap))
+        ],
+      ),
+    );
+  }
+
+  popUpmenuOwnPost(Function(int) onMenuTap) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: SvgPicture.asset(Images.post_menu)),
+      onSelected: (dynamic val) {
+        onMenuTap(val);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            onMenuTap(1);
+          },
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                Images.delete,
+                color: Colors.black,
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                "Delete",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+            onTap: () {
+              onMenuTap(3);
+            },
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Images.share_white,
+                  color: Colors.black,
+                  width: 20,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  "Share",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                )
+              ],
+            )),
+      ],
+    );
+  }
 }

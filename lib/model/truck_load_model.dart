@@ -6,7 +6,7 @@ class TruckLoadType {
     required this.last,
     required this.size,
     required this.number,
-    this.sort,
+   // this.sort,
     required this.first,
     required this.numberOfElements,
   });
@@ -16,7 +16,7 @@ class TruckLoadType {
   late final bool last;
   late final int size;
   late final int number;
-  late final String? sort;
+ // late final String? sort;
   late final bool first;
   late final int numberOfElements;
 
@@ -27,7 +27,7 @@ class TruckLoadType {
     last = json['last'];
     size = json['size'];
     number = json['number'];
-    sort = json['sort']?? '';
+    //sort = json['sort']?? '';
     first = json['first'];
     numberOfElements = json['numberOfElements'];
   }
@@ -40,7 +40,7 @@ class TruckLoadType {
     _data['last'] = last;
     _data['size'] = size;
     _data['number'] = number;
-    _data['sort'] = sort;
+   // _data['sort'] = sort;
     _data['first'] = first;
     _data['numberOfElements'] = numberOfElements;
     return _data;
@@ -90,8 +90,9 @@ class TruckLoad {
     this.comment,
     this.likes,
     this.postImages,
-    this.transporterOrAgent
-
+    this.transporterOrAgent,
+    this.userList,
+    this.isverified
   });
   late final int? id;
   late final int? userId;
@@ -133,9 +134,10 @@ class TruckLoad {
   late final String? otherDetails;
   late final dynamic? likes;
   late final dynamic? comment;
-  late final List<dynamic>?postImages;
-  late final int?transporterOrAgent;
-
+  late final List<dynamic>? postImages;
+  late final int? transporterOrAgent;
+  late final String? userList;
+  late final int? isverified;
 
 
 
@@ -143,7 +145,7 @@ class TruckLoad {
     id = json['id']?? 0;
     userId = json['userId']?? 0;
     type = json['type']?? '';
-    postingTime = json['postingTime'];
+    postingTime = json['postingTime']?? '';
     companyName = json['companyName']?? '';
     nameOfPerson = json['nameOfPerson']?? '';
     companyRating = json['companyRating']?? '';
@@ -178,13 +180,14 @@ class TruckLoad {
     isVerifiedByCompany = json['isVerifiedByCompany']?? '';
     typeOfPayment = json['typeOfPayment']?? '';
     fullLoadChoice = json['fullLoadChoice']?? '';
-    loadWeight = json['loadWeight']?? '';
-    typeOfCargo = json['typeOfCargo']?? '';
+    loadWeight = json['vehicleWeight']?? '';
+    typeOfCargo = json['cargoType']?? '';
     otherDetails = json['otherDetails']?? '';
     likes=json['likes']??'';
     comment=json['comment']??'';;
-    postImages=json['images']??'';
-
+    postImages=json['images']??[];
+    userList=json['userList']??'';
+    isverified=json['isverified'];
   }
 
   Map<String, dynamic> toJson() {
@@ -224,14 +227,15 @@ class TruckLoad {
     _data['isVerifiedByCompany'] = isVerifiedByCompany;
     _data['typeOfPayment'] = typeOfPayment;
     _data['fullLoadChoice'] = fullLoadChoice;
-    _data['loadWeight'] = loadWeight;
-    _data['typeOfCargo'] = typeOfCargo;
+    _data['vehicleWeight'] = loadWeight;
+    _data['cargoType'] = typeOfCargo;
     _data['otherDetails'] = otherDetails;
     _data['likes'] = likes;
     _data['comment'] = comment;
     _data['images'] = postImages;
     _data['transporterOrAgent'] = transporterOrAgent;
-
+    _data['userList'] = userList;
+    _data['isverified'] = isverified;
 
     return _data;
   }

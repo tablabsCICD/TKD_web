@@ -1,21 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:tkd_app/util/color-resource.dart';
 class StarDisplay extends StatelessWidget {
-  final int value;
+  final double value;
   const StarDisplay({Key? key, this.value = 0})
       : assert(value != null),
         super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return RatingBar.builder(
+      itemSize: 10,
+      initialRating: value,
+      minRating: 1,
+      direction: Axis.horizontal,
+      allowHalfRating: true,
+      itemCount: 5,
+      ignoreGestures: true,
+      itemPadding: EdgeInsets.symmetric(
+          horizontal: 1.0),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.amber,
+        size: 5,
+      ),
+      onRatingUpdate: (rating) {
+        print(rating);
+      },
+    ); /*Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
         return Icon(
           index < value ? Icons.star : Icons.star_border,
           size: 10,
-          color: index < value ? ColorResources.GREEN : null,
+          color: index < value ? Colors.amber : null,
         );
       }),
-    );
+    )*/;
   }
 }

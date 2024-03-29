@@ -63,7 +63,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   getUserUsingEmailId(String email,String password,String os,String DeviceId) async {
-    String myUrl = AppConstants.LOGIN_USER_NAME +'?userName=${email}&password=${'password'}&os=${os}&deviceId=${DeviceId}';
+    String myUrl = ApiConstant.LOGIN_USER_NAME +'?userName=${email}&password=${'password'}&os=${os}&deviceId=${DeviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -73,7 +73,7 @@ class  AuthProvider extends ChangeNotifier{
 
   sendOtp(String mobile) async {
     //String myUrl = AppConstants.SEND_OTP +'?mobileNumber=${mobile}';
-    String myUrl = AppConstants.SEND_OTP +'?mobileNos=${mobile}';
+    String myUrl = ApiConstant.SEND_OTP +'?mobileNos=${mobile}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -96,8 +96,8 @@ class  AuthProvider extends ChangeNotifier{
 
 
   late Timer _timer;
-  int start = 150;
-  String timeRemaning="02:30";
+  int start = 60;
+  String timeRemaning="01:00";
 
   void startTimer() {
 
@@ -191,7 +191,7 @@ class  AuthProvider extends ChangeNotifier{
 
     }else{
       // String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
-      String myUrl = AppConstants.BASE_URL + 'VerifyOtp?mobileNumber=${mobile}&otp=${otp}';
+      String myUrl = ApiConstant.BASE_URL + 'VerifyOtp?mobileNumber=${mobile}&otp=${otp}';
       print(myUrl);
       var req = await http.post(Uri.parse(myUrl));
       print(req);
@@ -220,7 +220,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   resendOtp(BuildContext context,String mobileNumber) async{
-    String myUrl = AppConstants.SEND_OTP +'?mobileNos=${mobileNumber}';
+    String myUrl = ApiConstant.SEND_OTP +'?mobileNos=${mobileNumber}';
     print("resend otp:"+myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -234,7 +234,7 @@ class  AuthProvider extends ChangeNotifier{
 
 
   sendOtpUsingEmail(String email) async {
-    String myUrl = AppConstants.SEND_OTP_ON_MAIL +'?emailId=${email}';
+    String myUrl = ApiConstant.SEND_OTP_ON_MAIL +'?emailId=${email}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -243,7 +243,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   verifyOtpUsingEmail(String email,String otp,String deviceId) async {
-    String myUrl = AppConstants.VERIFY_OTP_ON_MAIL +'?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
+    String myUrl = ApiConstant.VERIFY_OTP_ON_MAIL +'?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -299,7 +299,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   getUserDetails(int id) async {
-    String myUrl = AppConstants.REGISTRATION +'/${id}';
+    String myUrl = ApiConstant.REGISTRATION +'/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -319,7 +319,7 @@ class  AuthProvider extends ChangeNotifier{
   uploadAadharCard({String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile}) async {
 
-    String myUrl = AppConstants.IMG_UPLOAD;
+    String myUrl = ApiConstant.IMG_UPLOAD;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
@@ -344,7 +344,7 @@ class  AuthProvider extends ChangeNotifier{
   uploadPanCard({String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile}) async {
 
-    String myUrl = AppConstants.IMG_UPLOAD;
+    String myUrl = ApiConstant.IMG_UPLOAD;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
@@ -370,7 +370,7 @@ class  AuthProvider extends ChangeNotifier{
   postProfilePicture(String userId,{String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile}) async {
 
-    String myUrl = AppConstants.BASE_URL + "profilePicture";
+    String myUrl = ApiConstant.BASE_URL + "profilePicture";
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
@@ -395,7 +395,7 @@ class  AuthProvider extends ChangeNotifier{
   updateProfilePicture(String userId,{String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile,}) async {
 
-    String myUrl = AppConstants.BASE_URL + "profilePicture";
+    String myUrl = ApiConstant.BASE_URL + "profilePicture";
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("PUT", postUri);
@@ -430,7 +430,7 @@ class  AuthProvider extends ChangeNotifier{
     String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,int? rating,
     int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
   }) async {
-    String myUrl = AppConstants.REGISTRATION;
+    String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "aadharCard": aadharCard,
@@ -487,7 +487,7 @@ class  AuthProvider extends ChangeNotifier{
     String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,double? rating,
     int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
     ,String? panCardForVerification }) async {
-    String myUrl = AppConstants.REGISTRATION;
+    String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "aadharCard": aadharCard ?? userDetailList[0].aadharCard ?? '',
@@ -541,7 +541,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   deleteUser(User user) async {
-    String myUrl = AppConstants.REGISTRATION + '?id=${user.id}';
+    String myUrl = ApiConstant.REGISTRATION + '?id=${user.id}';
     var req = await http.delete(Uri.parse(myUrl));
     response = json.decode(req.body);
     userDetailList.remove(user);
@@ -555,7 +555,7 @@ class  AuthProvider extends ChangeNotifier{
     String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,int? rating,
     int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
   }) async {
-    String myUrl = AppConstants.REGISTRATION;
+    String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "aadharCard": aadharCard,
@@ -663,8 +663,8 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   Future<DeleteUser> isUserDeleted(String mobileNumber)async{
-    APIHelper apiHelper=APIHelper();
-    response= await apiHelper.ApiGetData(AppConstants.USER_FIND_BY_MOBILE+mobileNumber);
+    ApiHelper apiHelper=ApiHelper();
+    response= await apiHelper.ApiGetData(ApiConstant.USER_FIND_BY_MOBILE+mobileNumber);
     DeleteUser deleteUser=DeleteUser.fromJson(response);
     return deleteUser;
   }

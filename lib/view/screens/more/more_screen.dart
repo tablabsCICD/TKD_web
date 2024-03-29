@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -15,6 +16,8 @@ import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/gallary_model.dart';
 import 'package:tkd_app/model/job_model.dart';
+import 'package:tkd_app/model/my_job_list.dart';
+import 'package:tkd_app/model/own_genral_post.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/multi_select.dart';
@@ -24,6 +27,7 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
+import 'package:tkd_app/provider/delete_interface.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
@@ -35,15 +39,20 @@ import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:http/http.dart' as http;
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/date_converter.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/all_cards.dart';
+
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_details_screen.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_vehicles.dart';
@@ -59,6 +68,7 @@ import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/more/repeat_post_dialog.dart';
 import 'package:tkd_app/view/screens/pool_purchase/pool_purchase_detail_screen.dart';
 import 'package:tkd_app/view/screens/pool_purchase/pool_purches_screen.dart';
+import 'package:tkd_app/widgets/dashboard_cards.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../../model/discussion_model.dart';
@@ -68,10 +78,11 @@ class MoreScreen extends StatefulWidget {
   final authProvider = locator<AuthProvider>();
 
   MoreScreen({Key? key}) : super(key: key) {
-    moreProvider
-        .getOwnPostList(authProvider.userDetailList[0].userName.toString());
+    moreProvider.getOwnJobList(authProvider.userDetailList[0].id.toString());
+    moreProvider.getOwnPostList(authProvider.userDetailList[0].id.toString());
     moreProvider.getPoolPurchaseList(
         authProvider.userDetailList[0].userName.toString());
+    moreProvider.callGeneralPostApi();
     moreProvider.getGalleryList(authProvider.userDetailList[0].id.toString());
     moreProvider
         .getDiscussionList(authProvider.userDetailList[0].userName.toString());
@@ -88,191 +99,251 @@ class _MoreScreenState extends State<MoreScreen> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-          backgroundColor: ColorResources.HOME_BG,
+          backgroundColor: ThemeColor.baground,
           body: Consumer<MoreProvider>(
             builder: (context, model, child) => Container(
-              child:model.isMoreLoading?getLoader(true): Column(
-                children: [
-                  Container(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    color: Color(0xffede8e0),
-                    child: Padding(
-                      padding: ResponsiveWidget.isDesktop(context)
-                          ? EdgeInsets.symmetric(horizontal: 35, vertical: 15)
-                          : EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        children: [
-                          getCircularContainer(
-                              "Full Load", (selectedTab == "Full Load")),
-                          getCircularContainer(
-                              "Part Load", (selectedTab == "Part Load")),
-                          widget.authProvider.userDetailList[0]
-                                          .transporterOrAgent ==
-                                      2 ||
-                                  widget.authProvider.userDetailList[0]
-                                          .transporterOrAgent ==
-                                      3
-                              ? SizedBox.shrink()
-                              : getCircularContainer("Buy/Sell Vehicles",
-                                  (selectedTab == "Buy/Sell Vehicles")),
-                          widget.authProvider.userDetailList[0]
-                                      .transporterOrAgent ==
-                                  3
-                              ? SizedBox.shrink()
-                              : getCircularContainer("Announcement",
-                                  (selectedTab == "Announcement")),
-                          getCircularContainer(
-                              "Discussion", (selectedTab == "Discussion"))
-                        ],
-                      ),
-                    ),
-                  ),
-                  selectedTab == "Full Load"
-                      ? Expanded(
-                          child: Container(
-                            color: ColorResources.HOME_BG,
-                            child: model.myFullLoadTypeList.isEmpty
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    height: screenSize.height,
-                                    width: screenSize.width,
-                                    child: Text(
-                                        getTranslated('no_post', context)!,
-                                        style: Style.heading))
-                                : ResponsiveWidget(
-                                    desktop: MyRequirementCard(
-                                        model.myFullLoadTypeList),
-                                    mobile: MyRequirementCard(
-                                        model.myFullLoadTypeList),
-                                    tablet: MyRequirementCard(
-                                        model.myFullLoadTypeList),
-                                  ),
+              child: model.isMoreLoading
+                  ? getLoader(true)
+                  : Column(
+                      children: [
+                        Container(
+                          height: 62,
+                          width: MediaQuery.of(context).size.width,
+                          // color: Color(0xffede8e0),
+                          child: Padding(
+                            padding: ResponsiveWidget.isDesktop(context)
+                                ? EdgeInsets.symmetric(
+                                    horizontal: 35, vertical: 15)
+                                : EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 15),
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              children: [
+                                getCircularContainer(
+                                    "Full Load", (selectedTab == "Full Load")),
+                                getCircularContainer(
+                                    "Part Load", (selectedTab == "Part Load")),
+                                widget.authProvider.userDetailList[0]
+                                                .transporterOrAgent ==
+                                            2 ||
+                                        widget.authProvider.userDetailList[0]
+                                                .transporterOrAgent ==
+                                            3
+                                    ? SizedBox.shrink()
+                                    : getCircularContainer("Buy/Sell Vehicles",
+                                        (selectedTab == "Buy/Sell Vehicles")),
+                                getCircularContainer("General Post",
+                                    (selectedTab == "General Post")),
+                                getCircularContainer(
+                                    "Jobs", (selectedTab == "Jobs")),
+                              ],
+                            ),
                           ),
-                        )
-                      : selectedTab == "Part Load"
-                          ? Expanded(
-                              child: Container(
-                                color: ColorResources.HOME_BG,
-                                child: model.myPartLoadTypeList.isEmpty
-                                    ? Container(
-                                        alignment: Alignment.center,
-                                        height: screenSize.height,
-                                        width: screenSize.width,
-                                        child: Text(
-                                            getTranslated('no_post', context)!,
-                                            style: Style.heading))
-                                    : ResponsiveWidget(
-                                        desktop: MyRequirementCard(
-                                            model.myPartLoadTypeList),
-                                        mobile: MyRequirementCard(
-                                            model.myPartLoadTypeList),
-                                        tablet: MyRequirementCard(
-                                            model.myPartLoadTypeList),
-                                      ),
-                              ),
-                            )
-                          : selectedTab == "Buy/Sell Vehicles"
-                              ? Expanded(
-                                  child: Container(
-                                    color: ColorResources.HOME_BG,
-                                    child: model.myBuyVehicleList.isEmpty
-                                        ? Container(
-                                            alignment: Alignment.center,
-                                            height: screenSize.height,
-                                            width: screenSize.width,
-                                            child: Text(
-                                                getTranslated(
-                                                    'no_post', context)!,
-                                                style: Style.heading))
-                                        : ResponsiveWidget(
-                                            desktop: MyBuySellCard(
-                                                model.myBuyVehicleList),
-                                            mobile: MyBuySellCard(
-                                                model.myBuyVehicleList),
-                                            tablet: MyBuySellCard(
-                                                model.myBuyVehicleList),
-                                          ),
-                                  ),
-                                )
-                              : selectedTab == "Pool Purchase"
-                                  ? Expanded(
-                                      child: Container(
-                                        color: ColorResources.HOME_BG,
-                                        child: model.myPoolPurchaseList.isEmpty
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: screenSize.height,
-                                                width: screenSize.width,
-                                                child: CustomText(
-                                                    getTranslated(
-                                                        'no_post', context)!,
-                                                    style: Style.heading))
-                                            : ResponsiveWidget(
-                                                desktop: MyPoolPurchaseCard(
-                                                    model.myPoolPurchaseList),
-                                                mobile: MyPoolPurchaseCard(
-                                                    model.myPoolPurchaseList),
-                                                tablet: MyPoolPurchaseCard(
-                                                    model.myPoolPurchaseList),
-                                              ),
-                                      ),
-                                    )
-                                  : selectedTab == "Announcement"
-                                      ? Expanded(
-                                          child: Container(
-                                            color: ColorResources.HOME_BG,
-                                            child: model.myGalleryList.isEmpty
-                                                ? Container(
-                                                    alignment: Alignment.center,
-                                                    height: screenSize.height,
-                                                    width: screenSize.width,
-                                                    child: CustomText(
-                                                        getTranslated('no_post',
-                                                            context)!,
-                                                        style: Style.heading))
-                                                : ResponsiveWidget(
-                                                    desktop: MyGallaryCard(
-                                                        model.myGalleryList),
-                                                    mobile: MyGallaryCard(
-                                                        model.myGalleryList),
-                                                    tablet: MyGallaryCard(
-                                                        model.myGalleryList),
-                                                  ),
-                                          ),
-                                        )
-                                      : Expanded(
-                                          child: Container(
-                                            color: ColorResources.HOME_BG,
-                                            child: model.discussionList.isEmpty
-                                                ? Container(
-                                                    alignment: Alignment.center,
-                                                    height: screenSize.height,
-                                                    width: screenSize.width,
-                                                    child: Text(
-                                                        getTranslated('no_post',
-                                                            context)!,
-                                                        style: Style.heading))
-                                                : ResponsiveWidget(
-                                                    desktop: MyDiscussionCard(
-                                                      listComment:
-                                                          model.discussionList,moreProvider: model,
-                                                    ),
-                                                    mobile: MyDiscussionCard(
-                                                      listComment:
-                                                          model.discussionList,moreProvider: model,
-                                                    ),
-                                                    tablet: MyDiscussionCard(
-                                                      listComment:
-                                                          model.discussionList,moreProvider: model,
-                                                    ),
-                                                  ),
-                                          ),
+                        ),
+                        selectedTab == "Full Load"
+                            ? Expanded(
+                                child: Container(
+                                  color: ColorResources.HOME_BG,
+                                  child: model.myFullLoadTypeList.isEmpty
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          height: screenSize.height,
+                                          width: screenSize.width,
+                                          child: Text(
+                                              getTranslated(
+                                                  'no_post', context)!,
+                                              style: Style.heading))
+                                      : ResponsiveWidget(
+                                          desktop: MyRequirementCard(
+                                              model.myFullLoadTypeList),
+                                          mobile: MyRequirementCard(
+                                              model.myFullLoadTypeList),
+                                          tablet: MyRequirementCard(
+                                              model.myFullLoadTypeList),
                                         ),
-                ],
-              ),
+                                ),
+                              )
+                            : selectedTab == "Part Load"
+                                ? Expanded(
+                                    child: Container(
+                                      color: ColorResources.HOME_BG,
+                                      child: model.myPartLoadTypeList.isEmpty
+                                          ? Container(
+                                              alignment: Alignment.center,
+                                              height: screenSize.height,
+                                              width: screenSize.width,
+                                              child: Text(
+                                                  getTranslated(
+                                                      'no_post', context)!,
+                                                  style: Style.heading))
+                                          : ResponsiveWidget(
+                                              desktop: MyRequirementCard(
+                                                  model.myPartLoadTypeList),
+                                              mobile: MyRequirementCard(
+                                                  model.myPartLoadTypeList),
+                                              tablet: MyRequirementCard(
+                                                  model.myPartLoadTypeList),
+                                            ),
+                                    ),
+                                  )
+                                : selectedTab == "Buy/Sell Vehicles"
+                                    ? Expanded(
+                                        child: Container(
+                                          color: ColorResources.HOME_BG,
+                                          child: model.myBuyVehicleList.isEmpty
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  height: screenSize.height,
+                                                  width: screenSize.width,
+                                                  child: Text(
+                                                      getTranslated(
+                                                          'no_post', context)!,
+                                                      style: Style.heading))
+                                              : ResponsiveWidget(
+                                                  desktop: MyBuySellCard(
+                                                      model.myBuyVehicleList),
+                                                  mobile: MyBuySellCard(
+                                                      model.myBuyVehicleList),
+                                                  tablet: MyBuySellCard(
+                                                      model.myBuyVehicleList),
+                                                ),
+                                        ),
+                                      )
+                                    : selectedTab == "General Post"
+                                        ? Expanded(
+                                            child: Container(
+                                              color: ColorResources.HOME_BG,
+                                              child: model
+                                                      .myBuyVehicleList.isEmpty
+                                                  ? Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      height: screenSize.height,
+                                                      width: screenSize.width,
+                                                      child: Text(
+                                                          getTranslated(
+                                                              'no_post',
+                                                              context)!,
+                                                          style: Style.heading))
+                                                  : ResponsiveWidget(
+                                                      desktop: MyGeneralPostCard(),
+                                                      mobile: MyGeneralPostCard(),
+                                                      tablet:MyGeneralPostCard(),
+                                                    ),
+                                            ),
+                                          )
+                                        : selectedTab == "Jobs"
+                                            ? Expanded(
+                                                child: Container(
+                                                  color: ColorResources.HOME_BG,
+                                                  child: model.myJobList.isEmpty
+                                                      ? Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          height:
+                                                              screenSize.height,
+                                                          width:
+                                                              screenSize.width,
+                                                          child: CustomText(
+                                                              getTranslated(
+                                                                  'no_post',
+                                                                  context)!,
+                                                              style: Style
+                                                                  .heading))
+                                                      : ResponsiveWidget(
+                                                          desktop: MyJobCard(
+                                                              model.myJobList),
+                                                          mobile: MyJobCard(
+                                                              model.myJobList),
+                                                          tablet: MyJobCard(
+                                                              model.myJobList),
+                                                        ),
+                                                ),
+                                              )
+                                            : selectedTab == "Announcement"
+                                                ? Expanded(
+                                                    child: Container(
+                                                      color: ColorResources
+                                                          .HOME_BG,
+                                                      child: model.myGalleryList
+                                                              .isEmpty
+                                                          ? Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              height: screenSize
+                                                                  .height,
+                                                              width: screenSize
+                                                                  .width,
+                                                              child: CustomText(
+                                                                  getTranslated(
+                                                                      'no_post',
+                                                                      context)!,
+                                                                  style: Style
+                                                                      .heading))
+                                                          : ResponsiveWidget(
+                                                              desktop:
+                                                                  MyGallaryCard(
+                                                                      model
+                                                                          .myGalleryList),
+                                                              mobile: MyGallaryCard(
+                                                                  model
+                                                                      .myGalleryList),
+                                                              tablet: MyGallaryCard(
+                                                                  model
+                                                                      .myGalleryList),
+                                                            ),
+                                                    ),
+                                                  )
+                                                : Expanded(
+                                                    child: Container(
+                                                      color: ColorResources
+                                                          .HOME_BG,
+                                                      child: model
+                                                              .discussionList
+                                                              .isEmpty
+                                                          ? Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              height: screenSize
+                                                                  .height,
+                                                              width: screenSize
+                                                                  .width,
+                                                              child: Text(
+                                                                  getTranslated(
+                                                                      'no_post',
+                                                                      context)!,
+                                                                  style: Style
+                                                                      .heading))
+                                                          : ResponsiveWidget(
+                                                              desktop:
+                                                                  MyDiscussionCard(
+                                                                listComment: model
+                                                                    .discussionList,
+                                                                moreProvider:
+                                                                    model,
+                                                              ),
+                                                              mobile:
+                                                                  MyDiscussionCard(
+                                                                listComment: model
+                                                                    .discussionList,
+                                                                moreProvider:
+                                                                    model,
+                                                              ),
+                                                              tablet:
+                                                                  MyDiscussionCard(
+                                                                listComment: model
+                                                                    .discussionList,
+                                                                moreProvider:
+                                                                    model,
+                                                              ),
+                                                            ),
+                                                    ),
+                                                  ),
+                      ],
+                    ),
             ),
           )),
     );
@@ -295,14 +366,15 @@ class _MoreScreenState extends State<MoreScreen> {
         child: Container(
           height: 30,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
           child: CustomText(
             title,
-            style: Style.filterHeading,
+            style:
+                isSelected ? Style.filterSelectedHeading : Style.filterHeading,
             textAlign: TextAlign.center,
           ),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Color(0xffe6e0d7),
+            color: isSelected ? ColorResources.RED : Color(0xffffffff),
             border: isSelected ? null : Border.all(color: Color(0xffd1ccc4)),
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
@@ -329,9 +401,10 @@ class MyBuySellCard extends StatefulWidget {
   _MyBuySellCardState createState() => _MyBuySellCardState();
 }
 
-class _MyBuySellCardState extends State<MyBuySellCard> {
+class _MyBuySellCardState extends State<MyBuySellCard>
+    implements DeletePostInf {
   final buySellProvider = locator<BuySellProvider>();
-
+  final authProvider = locator<AuthProvider>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
 
@@ -350,26 +423,6 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
             : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
-            /*Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      width: MediaQuery.of(context).size.width / 6,
-                      child: model.buySellFlag == false ?CustomButton(
-                          onTap: (){
-                            model.setBuySellFlag(true);
-                          },
-                          buttonText: getTranslated('edit', context)):
-                      CustomButton(
-                          onTap: (){
-                            model.setBuySellFlag(false);
-                          },
-                          buttonText: getTranslated('cancel', context))
-                      ,
-                    ),
-                  ],
-                ),*/
             widget.buySellList.isEmpty
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height / 2.5,
@@ -386,340 +439,16 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
                     itemCount: widget.buySellList.length,
                     itemBuilder: (context, index) {
                       return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => BuySellDetailsScreen(
-                                      widget.buySellList[index])));
-                        },
-                        child: Card(
-                          elevation: 5,
-                          child: Container(
-                            //padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  horizontalTitleGap: 5,
-                                  minVerticalPadding: 0,
-                                  leading: getImage(widget
-                                      .buySellList[index].companyLogo
-                                      .toString()),
-                                  title: langCode == 'en'
-                                      ? Text(
-                                          widget.buySellList[index].nameOfPerson
-                                              .toString(),
-                                          style: Style.title)
-                                      : CustomText(
-                                          widget.buySellList[index].nameOfPerson
-                                              .toString(),
-                                          style: Style.title),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      langCode == 'en'
-                                          ? Text(
-                                              widget.buySellList[index]
-                                                  .companyName
-                                                  .toString(),
-                                              style: Style.subtitle)
-                                          : CustomText(
-                                              widget.buySellList[index]
-                                                  .companyName
-                                                  .toString(),
-                                              style: Style.subtitle),
-                                      StarDisplay(
-                                          value: widget
-                                              .buySellList[index].ratings!
-                                              .toInt()),
-                                    ],
-                                  ),
-                                  trailing: ConvertStringToDate(widget
-                                      .buySellList[index].postingTime
-                                      .toString()),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 10),
-                                  child: langCode == 'en'
-                                      ? Text(
-                                          widget.buySellList[index].topicName
-                                              .toString(),
-                                          style: Style.contentHeading)
-                                      : CustomText(
-                                          widget.buySellList[index].topicName
-                                              .toString(),
-                                          style: Style.contentHeading),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, bottom: 10, right: 10),
-                                  child: langCode == 'en'
-                                      ? Text(
-                                          widget.buySellList[index].content
-                                              .toString(),
-                                          style: Style.content,
-                                        )
-                                      : CustomText(
-                                          widget.buySellList[index].content
-                                              .toString(),
-                                          style: Style.content,
-                                        ),
-                                ),
-                                /*Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, bottom: 10, right: 10),
-                                    child: Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              getTranslated('v_model', context)!,
-                                              style: regularTextStyle,
-                                            ),
-                                            Text(getTranslated('v_brand', context)!, style: regularTextStyle),
-                                            Text(getTranslated('price', context)!, style: regularTextStyle),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              ': ${widget.buySellList[index].modelName.toString()}',
-                                              style: TextStyle(
-                                                  color: ColorResources.PRIMARY_COLOR),
-                                            ),
-                                            Text(
-                                              ': ${widget.buySellList[index].makerName.toString()}',
-                                              style: TextStyle(
-                                                  color: ColorResources.PRIMARY_COLOR),
-                                            ),
-                                            Text(
-                                              ': ${widget.buySellList[index].estPrice.toString()}',
-                                              style: TextStyle(
-                                                  color: ColorResources.PRIMARY_COLOR),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),*/
-                                Divider(
-                                  height: 1.5,
-                                  thickness: 1.5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      /* InkWell(
-                                  onTap: () async {
-                                    share_data(widget.buySellList[index]);
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/share.png',
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(getTranslated('share', context)!,
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),*/
-                                      InkWell(
-                                        onTap: () {
-                                          openwhatsapp(
-                                              context,
-                                              widget.buySellList[index]
-                                                  .mobileNumber
-                                                  .toString(),
-                                              'please contact for more details');
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/chat.png',
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              height: 14,
-                                              width: 14,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                                getTranslated('chat', context)!,
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      /* InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                        new RepeatDialogBox(widget.buySellList[index]));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.repeat_one,
-                                        color: ColorResources.PRIMARY_COLOR,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('Repeat Post',
-                                          style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),*/
-                                      InkWell(
-                                        onTap: () {
-                                          _showMultiSelect(context,
-                                              widget.buySellList[index]);
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.feedback,
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              size: 16,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text('Feedback',
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  new CupertinoAlertDialog(
-                                                    title: CustomText(
-                                                        'Are you sure want to deleted your post?',
-                                                        style: Style.heading),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: CustomText(
-                                                            getTranslated('yes',
-                                                                context)!,
-                                                            style:
-                                                                Style.okButton),
-                                                        onPressed: () {
-                                                          model
-                                                              .deleteBuySell(
-                                                                  widget.buySellList[
-                                                                      index])
-                                                              .then((value) => {
-                                                                    showAnimatedDialog(
-                                                                        context,
-                                                                        MyDialog(
-                                                                          icon:
-                                                                              Icons.check,
-                                                                          title:
-                                                                              'Post Delete',
-                                                                          description:
-                                                                              'Your post deleted successfully',
-                                                                          isFailed:
-                                                                              false,
-                                                                        ),
-                                                                        dismissible:
-                                                                            false,
-                                                                        isFlip:
-                                                                            false)
-                                                                  });
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                      TextButton(
-                                                        child: CustomText(
-                                                          getTranslated(
-                                                              'no', context)!,
-                                                          style: Style
-                                                              .cancelButton,
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.delete,
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              size: 16,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            CustomText(
-                                                getTranslated(
-                                                    'delete', context)!,
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => BuySellDetailsScreen(
+                                        widget.buySellList[index])));
+                          },
+                          child: AllCards().cardSellBuyPost(
+                              index, context, widget.buySellList[index], this,
+                              userId: authProvider.userDetailList[0].id!));
                     },
                     //  physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -731,31 +460,57 @@ class _MyBuySellCardState extends State<MyBuySellCard> {
     );
   }
 
-  Set<int>? selectedValues = [
-    1,
-  ].toSet();
+  final moreProvider = locator<MoreProvider>();
 
-  void _showMultiSelect(BuildContext context, TruckLoad object) async {
-    final items = <MultiSelectDialogItem<int>>[
-      MultiSelectDialogItem(1, 'I RECEIVED VERY GOOD RESPONSE BY CALLS.'),
-      MultiSelectDialogItem(2, 'I RECEIVED MANY BIDS.'),
-      MultiSelectDialogItem(3, 'THANKS MY WORK WAS DONE.'),
-      MultiSelectDialogItem(4, 'WE SAVED ON TRANSPORTATION.'),
-      MultiSelectDialogItem(5, 'WE DID NOT GET ANY RESPONSE.'),
-    ];
+  @override
+  void deleteOwnPost(
+    int postId,
+    int index,
+  ) {
+    _showMyDialog(index, postId, moreProvider);
+  }
 
-    selectedValues = await showDialog<Set<int>>(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelectDialog(
-          items: items,
-          initialSelectedValues: selectedValues,
-          obj: object,
-        );
-      },
-    );
-    print(selectedValues!.length);
-    print(selectedValues);
+  Future<void> _showMyDialog(int index, int id, MoreProvider provider) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to deleted your post?',
+                style: Style.heading,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    provider.deleteBuySell(id, index).then((value) => {
+                          showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon: Icons.check,
+                                title: 'Post Delete',
+                                description: 'Your post deleted successfully',
+                                isFailed: false,
+                              ),
+                              dismissible: false,
+                              isFlip: false)
+                        });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
   }
 }
 
@@ -768,7 +523,8 @@ class MyRequirementCard extends StatefulWidget {
   _MyRequirementCardState createState() => _MyRequirementCardState();
 }
 
-class _MyRequirementCardState extends State<MyRequirementCard> {
+class _MyRequirementCardState extends State<MyRequirementCard>
+    implements DeletePostInf {
   final bidProvider = locator<BidProvider>();
   final authProvider = locator<AuthProvider>();
   final dashboardProvider = locator<DashboardProvider>();
@@ -784,46 +540,46 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
     Future.delayed(Duration(seconds: 5), () {
       var result = dashboardProvider
           .savePost(
-              mobile: authProvider.userDetailList[0].mobileNumber,
-              destination: moreProvider.myFullLoadTypeList[0].destination,
-              dnd: 0,
-              email: authProvider.userDetailList[0].emailId,
-              fullLoadChoice: moreProvider.myFullLoadTypeList[0].type,
-              id: 0,
-              instruction: moreProvider.myFullLoadTypeList[0].content,
-              loadWeight: moreProvider.myFullLoadTypeList[0].vehicleSize,
-              name: authProvider.userDetailList[0].userName,
-              mainTag: moreProvider.myFullLoadTypeList[0].mainTag,
-              os: '',
-              otherDetails: moreProvider.myFullLoadTypeList[0].content,
-              source: moreProvider.myFullLoadTypeList[0].source,
-              partLoad: moreProvider.myFullLoadTypeList[0].type == 'Part Load'
-                  ? 1
-                  : 0,
-              privatePost:
-                  moreProvider.myFullLoadTypeList[0].privatePost == true
-                      ? 1
-                      : 0,
-              rating: 5,
-              customerName:
-                  '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
-              type: moreProvider.myFullLoadTypeList[0].type,
-              typeOfCargo: moreProvider.myFullLoadTypeList[0].topicName,
-              typeOfPayment: moreProvider.myFullLoadTypeList[0].typeOfPayment,
-              vehicleSize: moreProvider.myFullLoadTypeList[0].vehicleSize,
-              userId: authProvider.userDetailList[0].id)
+          mobile: authProvider.userDetailList[0].mobileNumber,
+          destination: moreProvider.myFullLoadTypeList[0].destination,
+          dnd: 0,
+          email: authProvider.userDetailList[0].emailId,
+          fullLoadChoice: moreProvider.myFullLoadTypeList[0].type,
+          id: 0,
+          instruction: moreProvider.myFullLoadTypeList[0].content,
+          loadWeight: moreProvider.myFullLoadTypeList[0].vehicleSize,
+          name: authProvider.userDetailList[0].userName,
+          mainTag: moreProvider.myFullLoadTypeList[0].mainTag,
+          os: '',
+          otherDetails: moreProvider.myFullLoadTypeList[0].content,
+          source: moreProvider.myFullLoadTypeList[0].source,
+          partLoad: moreProvider.myFullLoadTypeList[0].type == 'Part Load'
+              ? 1
+              : 0,
+          privatePost:
+          moreProvider.myFullLoadTypeList[0].privatePost == true
+              ? 1
+              : 0,
+          rating: 5,
+          customerName:
+          '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
+          type: moreProvider.myFullLoadTypeList[0].type,
+          typeOfCargo: moreProvider.myFullLoadTypeList[0].topicName,
+          typeOfPayment: moreProvider.myFullLoadTypeList[0].typeOfPayment,
+          vehicleSize: moreProvider.myFullLoadTypeList[0].vehicleSize,
+          userId: authProvider.userDetailList[0].id)
           .then((value) => {
-                showAnimatedDialog(
-                    context,
-                    MyDialog(
-                      icon: Icons.check,
-                      title: 'New Post',
-                      description: 'Your post submitted successfully',
-                      isFailed: false,
-                    ),
-                    dismissible: false,
-                    isFlip: false),
-              });
+        showAnimatedDialog(
+            context,
+            MyDialog(
+              icon: Icons.check,
+              title: 'New Post',
+              description: 'Your post submitted successfully',
+              isFailed: false,
+            ),
+            dismissible: false,
+            isFlip: false),
+      });
     });
   }
 
@@ -849,6 +605,199 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
           children: [
             widget.loadTypeList.isEmpty
                 ? SizedBox(
+              height: MediaQuery.of(context).size.height / 2.5,
+            )
+                : Expanded(
+                child: StaggeredGridView.countBuilder(
+                  crossAxisCount: ResponsiveWidget.isDesktop(context)
+                      ? 3
+                      : ResponsiveWidget.isMobile(context)
+                      ? 1
+                      : 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 12,
+                  itemCount: widget.loadTypeList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => RequirementDetails(
+                                      widget.loadTypeList[index])));
+                        },
+                        child: DashbordCards().cardLoadHome(
+                            index,
+                            context,
+                            widget.loadTypeList[index],
+                            authProvider.userDetailList[0].id!,
+                            this,
+                            dashboardProvider,
+                            true));
+                  },
+                  //physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Set<int>? selectedValues = [
+    1,
+  ].toSet();
+
+  @override
+  void deleteOwnPost(
+      int postId,
+      int index,
+      ) {
+    _showMyDialog(index, postId, moreProvider);
+  }
+
+  Future<void> _showMyDialog(int index, int id, MoreProvider provider) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+          title: CustomText(
+            'Are you sure want to deleted your post?',
+            style: Style.title,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: CustomText(getTranslated('yes', context)!,
+                  style: Style.okButton),
+              onPressed: () {
+                provider.deleteFullLoad(id, index).then((value) => {
+                  showAnimatedDialog(
+                      context,
+                      MyDialog(
+                        icon: Icons.check,
+                        title: 'Post Delete',
+                        description: 'Your post deleted successfully',
+                        isFailed: false,
+                      ),
+                      dismissible: false,
+                      isFlip: false)
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: CustomText('no', style: Style.cancelButton),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
+    _showRepostDialog(truckLoad, isCityInterchange);
+  }
+
+  Future<void> _showRepostDialog(
+      TruckLoad truckLoad, bool isCityInterchange) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+          title: CustomText(
+            'Are you sure want to ${isCityInterchange ? "City Interchange and Re-submit" : "Re-submit"} your post?',
+            style: Style.title,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: CustomText(getTranslated('yes', context)!,
+                  style: Style.okButton),
+              onPressed: () {
+                isCityInterchange
+                    ? moreProvider
+                    .interChnageSendPost(context, truckLoad)
+                    .then((value) => {
+                  showAnimatedDialog(
+                      context,
+                      MyDialog(
+                        icon: Icons.check,
+                        title: 'City Interchange Post',
+                        description:
+                        'Your post submitted successfully',
+                        isFailed: false,
+                      ),
+                      dismissible: false,
+                      isFlip: false)
+                })
+                    : moreProvider
+                    .reSendPost(context, truckLoad)
+                    .then((value) => {
+                  showAnimatedDialog(
+                      context,
+                      MyDialog(
+                        icon: Icons.check,
+                        title: 'Re-submit Post',
+                        description:
+                        'Your post submitted successfully',
+                        isFailed: false,
+                      ),
+                      dismissible: false,
+                      isFlip: false)
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: CustomText('no', style: Style.cancelButton),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ));
+  }
+}
+
+
+class MyGeneralPostCard extends StatefulWidget {
+
+  final moreProvider = locator<MoreProvider>();
+
+  MyGeneralPostCard({Key? key}) : super(key: key) {
+   // moreProvider.callGeneralPostApi();
+  }
+
+  @override
+  _MyGeneralPostCardState createState() => _MyGeneralPostCardState();
+}
+
+class _MyGeneralPostCardState extends State<MyGeneralPostCard>
+    implements DeletePostInf {
+  final authProvider = locator<AuthProvider>();
+  final dashboardProvider = locator<DashboardProvider>();
+  final moreProvider = locator<MoreProvider>();
+
+
+  @override
+  void initState() {
+    super.initState();
+ // getData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    return Consumer<MoreProvider>(
+      builder: (context, model, child) => Container(
+        margin: ResponsiveWidget.isDesktop(context)
+            ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
+            : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Column(
+          children: [
+            model.listOwnPost.isEmpty
+                ? SizedBox(
                     height: MediaQuery.of(context).size.height / 2.5,
                   )
                 : Expanded(
@@ -860,420 +809,9 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
                             : 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 12,
-                    itemCount: widget.loadTypeList.length,
+                    itemCount: model.listOwnPost.length,
                     itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => RequirementDetails(
-                                      widget.loadTypeList[index])));
-                        },
-                        child: Card(
-                          elevation: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 140,
-                                      height: 20,
-                                      alignment: Alignment.center,
-                                      decoration: new BoxDecoration(
-                                          color: widget.loadTypeList[index]
-                                                      .mainTag ==
-                                                  "Full load required"
-                                              ? ColorResources
-                                                  .FULL_LOAD_REQUIRED
-                                              : widget.loadTypeList[index]
-                                                          .mainTag ==
-                                                      "Part load required"
-                                                  ? ColorResources
-                                                      .PART_LOAD_REQUIRED
-                                                  : widget.loadTypeList[index]
-                                                              .mainTag ==
-                                                          "Full load available"
-                                                      ? ColorResources
-                                                          .FULL_LOAD_AVAILABLE
-                                                      : ColorResources
-                                                          .PART_LOAD_AVAILABLE,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(5),
-                                              bottomRight:
-                                                  Radius.circular(10))),
-                                      child: CustomText(
-                                          widget.loadTypeList[index].mainTag
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontFamily: 'RobotoMedium',
-                                              color: widget.loadTypeList[index]
-                                                          .mainTag ==
-                                                      "Full load required"
-                                                  ? ColorResources.FLR_TEXT
-                                                  : widget.loadTypeList[index]
-                                                              .mainTag ==
-                                                          "Part load required"
-                                                      ? ColorResources.PLR_TEXT
-                                                      : widget
-                                                                  .loadTypeList[
-                                                                      index]
-                                                                  .mainTag ==
-                                                              "Full load available"
-                                                          ? ColorResources
-                                                              .FLA_TEXT
-                                                          : ColorResources
-                                                              .PLA_TEXT)),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          ConvertStringToDate(widget
-                                              .loadTypeList[index].postingTime
-                                              .toString()),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          StarDisplay(
-                                              value: widget
-                                                  .loadTypeList[index].ratings!
-                                                  .toInt()),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 5),
-                                  horizontalTitleGap: 5,
-                                  minVerticalPadding: 0,
-                                  leading: Stack(
-                                    children: [
-                                      getImage(widget
-                                          .loadTypeList[index].companyLogo
-                                          .toString()),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Image.asset(
-                                          widget.loadTypeList[index].isPaid ==
-                                                  30
-                                              ? 'assets/images/diamond.png'
-                                              : widget.loadTypeList[index]
-                                                          .isPaid ==
-                                                      20
-                                                  ? 'assets/images/gold_badge.png'
-                                                  : 'assets/images/ruby_badge.png',
-                                          width: 15,
-                                          height: 20,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      CustomText(
-                                          widget
-                                              .loadTypeList[index].nameOfPerson
-                                              .toString(),
-                                          style: Style.title),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      widget.loadTypeList[index]
-                                                  .isVerifiedByCompany ==
-                                              null
-                                          ? Image.asset(
-                                              'assets/images/membership.png',
-                                              width: 15,
-                                              height: 15,
-                                            )
-                                          : Image.asset(
-                                              'assets/images/membership.png',
-                                              width: 15,
-                                              height: 15,
-                                            )
-                                    ],
-                                  ),
-                                  subtitle: CustomText(
-                                      widget.loadTypeList[index].companyName
-                                          .toString(),
-                                      style: Style.subtitle),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.symmetric(horizontal: 45),
-                                  height: 30,
-                                  decoration: new BoxDecoration(
-                                      color: Color(0xfff0f0f0),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                          widget.loadTypeList[index].source
-                                              .toString(),
-                                          style: Style.cityHeading),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Image.asset(
-                                        'assets/images/two_way_arrow.png',
-                                        height: 15,
-                                        width: 25,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                          widget.loadTypeList[index].destination
-                                              .toString(),
-                                          style: Style.cityHeading),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 7),
-                                  child: langCode == 'en'
-                                      ? Text(
-                                          widget.loadTypeList[index].topicName
-                                              .toString(),
-                                          style: Style.contentHeading)
-                                      : CustomText(
-                                          widget.loadTypeList[index].topicName
-                                              .toString(),
-                                          style: Style.contentHeading),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, bottom: 10, right: 10),
-                                  child: langCode == 'en'
-                                      ? Text(
-                                          widget.loadTypeList[index].content
-                                              .toString(),
-                                          style: Style.content,
-                                        )
-                                      : CustomText(
-                                          widget.loadTypeList[index].content
-                                              .toString(),
-                                          style: Style.content,
-                                        ),
-                                ),
-                                Divider(
-                                  height: 1.5,
-                                  thickness: 1.5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          openwhatsapp(
-                                              context,
-                                              widget.loadTypeList[index]
-                                                  .mobileNumber
-                                                  .toString(),
-                                              'please contact for more details');
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/chat.png',
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                            SizedBox(
-                                              width: ResponsiveWidget.isDesktop(
-                                                      context)
-                                                  ? 10
-                                                  : 5,
-                                            ),
-                                            Text(
-                                              getTranslated('chat', context)!,
-                                              style: Style.bottomHeading,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  new RepeatDialogBox(widget
-                                                      .loadTypeList[index]));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.repeat_one,
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              size: 16,
-                                            ),
-                                            SizedBox(
-                                              width: ResponsiveWidget.isDesktop(
-                                                      context)
-                                                  ? 10
-                                                  : 5,
-                                            ),
-                                            Text('Repeat Post',
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          _showMultiSelect(context,
-                                              widget.loadTypeList[index]);
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.feedback,
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              size: 16,
-                                            ),
-                                            SizedBox(
-                                              width: ResponsiveWidget.isDesktop(
-                                                      context)
-                                                  ? 10
-                                                  : 5,
-                                            ),
-                                            Text('Feedback',
-                                                style: Style.bottomHeading)
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1.5,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      InkWell(
-                                        onTap: () async {
-                                          //share_data(widget.loadTypeList[index]);
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  new CupertinoAlertDialog(
-                                                    title: CustomText(
-                                                      'Are you sure want to deleted your post?',
-                                                      style: Style.heading,
-                                                    ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Text(
-                                                            getTranslated('yes',
-                                                                context)!,
-                                                            style:
-                                                                Style.okButton),
-                                                        onPressed: () {
-                                                          model
-                                                              .deleteFullLoad(
-                                                                  widget.loadTypeList[
-                                                                      index])
-                                                              .then((value) => {
-                                                                    showAnimatedDialog(
-                                                                        context,
-                                                                        MyDialog(
-                                                                          icon:
-                                                                              Icons.check,
-                                                                          title:
-                                                                              'Post Delete',
-                                                                          description:
-                                                                              'Your post deleted successfully',
-                                                                          isFailed:
-                                                                              false,
-                                                                        ),
-                                                                        dismissible:
-                                                                            false,
-                                                                        isFlip:
-                                                                            false)
-                                                                  });
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                      TextButton(
-                                                        child: Text(
-                                                            getTranslated(
-                                                                'no', context)!,
-                                                            style: Style
-                                                                .cancelButton),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.delete,
-                                              color:
-                                                  ColorResources.PRIMARY_COLOR,
-                                              size: 16,
-                                            ),
-                                            SizedBox(
-                                              width: ResponsiveWidget.isDesktop(
-                                                      context)
-                                                  ? 10
-                                                  : 5,
-                                            ),
-                                            CustomText(
-                                              "Delete",
-                                              style: Style.bottomHeading,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      return generalPost(model.listOwnPost[index], context);
                     },
                     //physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -1285,31 +823,156 @@ class _MyRequirementCardState extends State<MyRequirementCard> {
     );
   }
 
-  Set<int>? selectedValues = [
-    1,
-  ].toSet();
+  generalPost(GernralPostOwnData generalPostOwnData,BuildContext context) {
+    return Container(
+      width: 335,
 
-  void _showMultiSelect(BuildContext context, TruckLoad object) async {
-    final items = <MultiSelectDialogItem<int>>[
-      MultiSelectDialogItem(1, 'I RECEIVED VERY GOOD RESPONSE BY CALLS.'),
-      MultiSelectDialogItem(2, 'I RECEIVED MANY BIDS.'),
-      MultiSelectDialogItem(3, 'THANKS MY WORK WAS DONE.'),
-      MultiSelectDialogItem(4, 'WE SAVED ON TRANSPORTATION.'),
-      MultiSelectDialogItem(5, 'WE DID NOT GET ANY RESPONSE.'),
-    ];
-
-    selectedValues = await showDialog<Set<int>>(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelectDialog(
-          items: items,
-          initialSelectedValues: selectedValues,
-          obj: object,
-        );
-      },
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            transform: Matrix4.translationValues(0.0, -25.0, 00),
+            child:BaseWidget()
+                .heading(generalPostOwnData.title!,generalPostOwnData.description!) ,),
+          Divider(),
+          SizedBox(
+            height: 5,
+          ),
+        //  BaseWidget().likeComment(truckLoad,context,likeCount: 0,commentCount: 0)
+        ],
+      ),
     );
-    print(selectedValues!.length);
-    print(selectedValues);
+  }
+
+  @override
+  void deleteOwnPost(
+    int postId,
+    int index,
+  ) {
+    _showMyDialog(index, postId, moreProvider);
+  }
+
+  Future<void> _showMyDialog(int index, int id, MoreProvider provider) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to deleted your post?',
+                style: Style.title,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    provider.deleteFullLoad(id, index).then((value) => {
+                          showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon: Icons.check,
+                                title: 'Post Delete',
+                                description: 'Your post deleted successfully',
+                                isFailed: false,
+                              ),
+                              dismissible: false,
+                              isFlip: false)
+                        });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
+    _showRepostDialog(truckLoad, isCityInterchange);
+  }
+
+  Future<void> _showRepostDialog(
+      TruckLoad truckLoad, bool isCityInterchange) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to ${isCityInterchange ? "City Interchange and Re-submit" : "Re-submit"} your post?',
+                style: Style.title,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    isCityInterchange
+                        ? moreProvider
+                            .interChnageSendPost(context, truckLoad)
+                            .then((value) => {
+                                  showAnimatedDialog(
+                                      context,
+                                      MyDialog(
+                                        icon: Icons.check,
+                                        title: 'City Interchange Post',
+                                        description:
+                                            'Your post submitted successfully',
+                                        isFailed: false,
+                                      ),
+                                      dismissible: false,
+                                      isFlip: false)
+                                })
+                        : moreProvider
+                            .reSendPost(context, truckLoad)
+                            .then((value) => {
+                                  showAnimatedDialog(
+                                      context,
+                                      MyDialog(
+                                        icon: Icons.check,
+                                        title: 'Re-submit Post',
+                                        description:
+                                            'Your post submitted successfully',
+                                        isFailed: false,
+                                      ),
+                                      dismissible: false,
+                                      isFlip: false)
+                                });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  void getData() async {
+   await moreProvider.callGeneralPostApi();
   }
 }
 
@@ -1774,26 +1437,6 @@ class _MyPoolPurchaseCardState extends State<MyPoolPurchaseCard> {
               : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             children: [
-              /*Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 10),
-                        width: MediaQuery.of(context).size.width / 6,
-                        child: model.poolPurchaseFlag == false ?CustomButton(
-                            onTap: (){
-                              model.setPoolPurchaseFlag(true);
-                            },
-                            buttonText: getTranslated('edit', context)):
-                        CustomButton(
-                            onTap: (){
-                              model.setPoolPurchaseFlag(false);
-                            },
-                            buttonText: getTranslated('cancel', context))
-                        ,
-                      ),
-                    ],
-                  ),*/
               widget.myPoolPurchaseList.isEmpty
                   ? SizedBox(
                       height: MediaQuery.of(context).size.height / 2.5,
@@ -2071,13 +1714,15 @@ class _MyPoolPurchaseCardState extends State<MyPoolPurchaseCard> {
 class MyJobCard extends StatefulWidget {
   MyJobCard(this.jobList);
 
-  List<TruckLoad> jobList;
+  List<MyJobData> jobList;
 
   @override
   _MyJobCardState createState() => _MyJobCardState();
 }
 
-class _MyJobCardState extends State<MyJobCard> {
+class _MyJobCardState extends State<MyJobCard> implements DeletePostInf {
+  final authProvider = locator<AuthProvider>();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MoreProvider>(
@@ -2087,26 +1732,6 @@ class _MyJobCardState extends State<MyJobCard> {
             : EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
-            /* Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  width: MediaQuery.of(context).size.width / 6,
-                  child: model.jobFlag == false ?CustomButton(
-                      onTap: (){
-                        model.setjobFlag(true);
-                      },
-                      buttonText: getTranslated('edit', context)):
-                  CustomButton(
-                      onTap: (){
-                        model.setjobFlag(false);
-                      },
-                      buttonText: getTranslated('cancel', context))
-                  ,
-                ),
-              ],
-            ),*/
             Expanded(
               child: StaggeredGridView.countBuilder(
                 physics: ScrollPhysics(),
@@ -2119,196 +1744,9 @@ class _MyJobCardState extends State<MyJobCard> {
                 mainAxisSpacing: 12,
                 itemCount: widget.jobList.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5,
-                    child: Container(
-                      // padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 5),
-                            horizontalTitleGap: 5,
-                            minVerticalPadding: 0,
-                            leading: getImage(
-                                widget.jobList[index].companyLogo.toString()),
-                            title: CustomText(
-                                widget.jobList[index].nameOfPerson.toString(),
-                                style: Style.title),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                    widget.jobList[index].companyName
-                                        .toString(),
-                                    style: Style.subtitle),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: StarDisplay(
-                                      value: widget.jobList[index].ratings!
-                                          .toInt()),
-                                ),
-                              ],
-                            ),
-                            trailing: ConvertStringToDate(
-                                widget.jobList[index].postingTime.toString()),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 9),
-                            child: CustomText(
-                                widget.jobList[index].topicName.toString(),
-                                style: Style.contentHeading),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, bottom: 10, right: 10),
-                            child: CustomText(
-                              widget.jobList[index].content.toString(),
-                              style: Style.content,
-                            ),
-                          ),
-                          Divider(
-                            height: 1.5,
-                            thickness: 1.5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return ShareDialogBox(
-                                              widget.jobList[index]);
-                                        });
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/share.png',
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('Share', style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/chat.png',
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        height: 14,
-                                        width: 14,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('Chat', style: Style.bottomHeading)
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: 1.5,
-                                  height: 30,
-                                  color: Colors.grey,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                            new CupertinoAlertDialog(
-                                              title: CustomText(
-                                                'Are you sure want to deleted your post?',
-                                                style: Style.heading,
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'yes', context)!,
-                                                      style: Style.okButton),
-                                                  onPressed: () {
-                                                    model
-                                                        .deleteJob(widget
-                                                            .jobList[index])
-                                                        .then((value) => {
-                                                              showAnimatedDialog(
-                                                                  context,
-                                                                  MyDialog(
-                                                                    icon: Icons
-                                                                        .check,
-                                                                    title:
-                                                                        'Post Delete',
-                                                                    description:
-                                                                        'Your post deleted successfully',
-                                                                    isFailed:
-                                                                        false,
-                                                                  ),
-                                                                  dismissible:
-                                                                      false,
-                                                                  isFlip: false)
-                                                            });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'no', context)!,
-                                                      style:
-                                                          Style.cancelButton),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.delete,
-                                        color: ColorResources.BOTTOM_HEADING,
-                                        size: 16,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        getTranslated('delete', context)!,
-                                        style: Style.bottomHeading,
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return cardMyJobPost(
+                      index, context, widget.jobList[index], this, model,
+                      userId: authProvider.userDetailList[0].id!);
                 },
                 // physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -2320,18 +1758,146 @@ class _MyJobCardState extends State<MyJobCard> {
       ),
     );
   }
+
+  cardMyJobPost(int index, BuildContext context, MyJobData myJobPost,
+      DeletePostInf postDelete, MoreProvider model,
+      {int userId = 0}) {
+    return Container(
+      width: 335,
+      // height: 255.h,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 100,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFFd35e61),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  myJobPost.postJob!.type!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          BaseWidget().heading(
+              myJobPost.postJob!.jobDescription!.isEmpty
+                  ? ""
+                  : myJobPost.postJob!.topicName!,
+              myJobPost.postJob!.jobDescription!),
+          SizedBox(height: 8),
+          BaseWidget().deleteMyPostButton((val) async {
+            if (val == 10) {
+              Future.delayed(
+                  Duration.zero, () => _showMyDialog(index, myJobPost, model));
+            }
+            if (val == 1) {
+              Future.delayed(
+                  Duration.zero, () => _showMyDialog(index, myJobPost, model));
+            }
+            if (val == 3) {
+              String description =
+                  "'Type : ${myJobPost.postJob!.type!}, \nSubject : ${myJobPost.postJob!.jobDescription}, \nPost Title : ${myJobPost.postJob!.jobDescription}, \nLink : https://api.tkdost.com/postJob/?id=${myJobPost.postJob!.id}'";
+              // await Utils().callShareFunction(description);
+            }
+          })
+        ],
+      ),
+    );
+  }
+
+  @override
+  void deleteOwnPost(
+    int postId,
+    int index,
+  ) {}
+
+  Future<void> _showMyDialog(
+      int index, MyJobData myJobData, MoreProvider provider) async {
+    return showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to deleted your post?',
+                style: Style.title,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    provider.deleteJob(myJobData).then((value) => {
+                          showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon: Icons.check,
+                                title: 'Post Delete',
+                                description: 'Your post deleted successfully',
+                                isFailed: false,
+                              ),
+                              dismissible: false,
+                              isFlip: false)
+                        });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  @override
+  void rePost(TruckLoad truckLoad, bool isCityInterchange) {
+    // TODO: implement rePost
+  }
 }
 
 class MyDiscussionCard extends StatefulWidget {
   final List<DiscussionContent> listComment;
   final MoreProvider moreProvider;
 
-  const MyDiscussionCard({Key? key, required this.listComment,required this.moreProvider})
+  const MyDiscussionCard(
+      {Key? key, required this.listComment, required this.moreProvider})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return MyDiscussionState(listComment,moreProvider);
+    return MyDiscussionState(listComment, moreProvider);
   }
 }
 
@@ -2339,7 +1905,7 @@ class MyDiscussionState extends State<MyDiscussionCard> {
   List<DiscussionContent> discussionList;
   MoreProvider moreProvider;
 
-  MyDiscussionState(this.discussionList,this.moreProvider);
+  MyDiscussionState(this.discussionList, this.moreProvider);
 
   @override
   void initState() {}
@@ -2424,7 +1990,7 @@ class MyDiscussionState extends State<MyDiscussionCard> {
               children: [
                 InkWell(
                   onTap: () {
-                    showDeleteDialog(context,index);
+                    showDeleteDialog(context, index);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -2474,13 +2040,13 @@ class MyDiscussionState extends State<MyDiscussionCard> {
     );
   }
 
-  showDeleteDialog(context,index) {
+  showDeleteDialog(context, index) {
     showDialog(
         context: context,
         builder: (_) => new CupertinoAlertDialog(
               title: CustomText(
                 'Are you sure want to deleted your post?',
-                style: Style.heading,
+                style: Style.title,
               ),
               actions: <Widget>[
                 TextButton(
@@ -2524,15 +2090,13 @@ class MyDiscussionState extends State<MyDiscussionCard> {
   }
 
   void callDelete(index) async {
-    APIHelper apiHelper=APIHelper();
-    int status=await apiHelper.ApiDeleteData(AppConstants.GET_DISCUSSION+"?id=${discussionList[index].id}");
-    if(status==200){
-
+    ApiHelper apiHelper = ApiHelper();
+    int status = await apiHelper.ApiDeleteData(
+        ApiConstant.GET_DISCUSSION + "?id=${discussionList[index].id}");
+    if (status == 200) {
       discussionList.removeAt(index);
       Navigator.pop(context);
-      setState(() {
-
-      });
+      setState(() {});
       moreProvider.discussionList.removeAt(index);
     }
   }

@@ -24,7 +24,7 @@ class GalleryProvider extends ChangeNotifier{
     if(currentPage == 0){
       imageList.clear();
     }
-    String myUrl = AppConstants.GALLERY +'?page=${currentPage}';
+    String myUrl = ApiConstant.GALLERY +'?page=${currentPage}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -38,7 +38,7 @@ class GalleryProvider extends ChangeNotifier{
   postGallery({String? topicName,String? userId,io.File? imageFile,String? description, String? imageFilePath,
     Uint8List? imageBytes,PlatformFile? objectFile}) async {
 
-    String myUrl = AppConstants.GALLERY;
+    String myUrl = ApiConstant.GALLERY;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
@@ -69,7 +69,7 @@ class GalleryProvider extends ChangeNotifier{
   }
 
   deleteGallery(Gallery gallery) async {
-    String myUrl = AppConstants.GALLERY +'?id=${gallery.id}';
+    String myUrl = ApiConstant.GALLERY +'?id=${gallery.id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     imageList.remove(gallery);

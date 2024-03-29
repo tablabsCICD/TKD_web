@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
+import 'package:tkd_app/dialog/animated_custom_dialog.dart';
+import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/view/base_widget/custom_textview.dart';
+import 'package:tkd_app/view/localization/language_constrants.dart';
 
 import '../../../locator.dart';
 import '../../../model/group_list_model.dart';
@@ -45,7 +49,65 @@ class EditGroupState extends State<EditGroupScreen> {
     return Consumer<GroupListProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBarCommon(context, title: "Group Info").appBar(),
+         // appBar: AppBarCommon(context, title: "Group Info").appBar(),
+          appBar: AppBarCommon(context, title: "Group Info").appBarWithDeleteButton(() async {
+            showDialog(
+                context: context,
+                builder: (_) =>
+                new CupertinoAlertDialog(
+                  title: CustomText(
+                    'Are you sure want to deleted your group?',
+                    style: Style.heading,
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: CustomText(
+                          getTranslated('yes',
+                              context)!,
+                          style:
+                          Style.okButton),
+                      onPressed: () async{
+                       await groupListProvider.deleteGroup(context,widget.groupContent)
+                        .then((value) => {
+                          showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon:
+                                Icons.check,
+                                title:
+                                'Group Delete',
+                                description:
+                                'Your group deleted successfully',
+                                isFailed:
+                                false,
+                              ),
+                              dismissible:
+                              false,
+                              isFlip:
+                              false)
+                        });
+                       Navigator.of(context)
+                           .pop();
+                       Navigator.of(context)
+                           .pop();
+                       Navigator.of(context)
+                           .pop();
+                       Navigator.of(context)
+                           .pop();
+                      },
+                    ),
+                    TextButton(
+                      child: CustomText('no',
+                          style: Style
+                              .cancelButton),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop();
+                      },
+                    ),
+                  ],
+                ));
+          }),
           backgroundColor: ColorResources.HOME_BG,
           body: Column(
             children: [
