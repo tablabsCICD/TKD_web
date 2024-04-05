@@ -1,6 +1,9 @@
 {
   "board": "Board",
   "chat": "Chat",
+  "re_post": "RePost",
+  "city_interchange": "City Interchange",
+  "rating": "Rating",
   "my_post": "My Post",
   "edit": "Edit",
   "about": "About",

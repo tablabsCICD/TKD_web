@@ -328,26 +328,15 @@ class _MenuPageState extends State<MenuPage> {
                             FontWeight
                                 .bold)),
                     actions: <Widget>[
-                      TextButton(
-                        child: Padding(
-                          padding:
-                          const EdgeInsets
-                              .all(10.0),
-                          child: Text(
-                              getTranslated(
-                                  'ok',
-                                  context)!,
-                              style: TextStyle(
-                                  color:
-                                  ColorResources
-                                      .GREEN,
-                                  fontSize:
-                                  18)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                        child: CustomButton(
+                          buttonText: 'Ok',
+                          onTap: () {
+                            Navigator.of(context)
+                                .pop();
+                          },
                         ),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pop();
-                        },
                       ),
                     ],
                   ));
@@ -546,6 +535,7 @@ class _MenuPageState extends State<MenuPage> {
                                         insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
                                         backgroundColor: Colors.white,
                                         child: Container(
+                                          height: 500,
                                           width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
                                           child: Stack(
                                             children: [

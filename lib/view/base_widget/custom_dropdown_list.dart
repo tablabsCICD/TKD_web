@@ -49,9 +49,13 @@ class CustomDropdownList extends StatelessWidget {
       child: Container(
           margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: EdgeInsets.symmetric(horizontal: 3, vertical: 0),
-          // height: 47,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+          height: 50,
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1, color: Colors.black54),
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: FormBuilderDropdown(
               name: hintText,
@@ -60,8 +64,8 @@ class CustomDropdownList extends StatelessWidget {
               isDense: false ,
               decoration: InputDecoration.collapsed(
                 hintText: '',
-                filled: true,
-                fillColor: ColorResources.TEXTFEILD_COLOR,
+               /* filled: true,
+                fillColor: ColorResources.TEXTFEILD_COLOR,*/
                 border:OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(6.0),
                     borderSide: BorderSide.none

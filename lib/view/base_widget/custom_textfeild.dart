@@ -93,8 +93,10 @@ class CustomTextField extends StatelessWidget {
                             : null,
         readOnly: readOnly == null ? false : true,
         decoration: InputDecoration(
+          fillColor: Colors.white,
+            filled: true,
             hintText: hintText,
-            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade100),),
+            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black54),borderRadius: BorderRadius.circular(10)),
             hintStyle:TextStyle(
               color: Color(0x662C363F),
               fontSize: 14,

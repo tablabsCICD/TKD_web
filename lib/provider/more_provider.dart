@@ -57,7 +57,7 @@ class MoreProvider extends ChangeNotifier {
   DashboardProvider dashboardProvider = locator<DashboardProvider>();
   BuySellProvider buySellProvider = locator<BuySellProvider>();
   AuthProvider authProvider = locator<AuthProvider>();
-  List<GernralPostOwnData> listOwnPost=[];
+ /* List<GernralPostOwnData> listOwnPost=[];
 
 
   callGeneralPostApi() async{
@@ -74,18 +74,9 @@ class MoreProvider extends ChangeNotifier {
     }else{
    }
   }
+*/
 
 
-  deleteGeneralPost(int index,BuildContext context)async{
-    String myUrl = ApiConstant.BASE_URL+'GeneralPost/deleteById?id=${listOwnPost[index].id!}';
-    var apiResponse= await http.delete(Uri.parse(myUrl));
-    if(apiResponse.statusCode==200){
-      listOwnPost.removeAt(index);
-
-    }else{
-    }
-    notifyListeners();
-  }
 
   getOwnPostList(String userName,{int currentPage = 0}) async {
     isMoreLoading = true;

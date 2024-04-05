@@ -16,6 +16,7 @@ import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
+import 'package:tkd_app/provider/general_post_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/provider/group/groupListProvider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
@@ -67,6 +68,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
         ChangeNotifierProvider(create: (_) => locator<RatingProvider>()),
         ChangeNotifierProvider(create: (_) => locator<EditPostLoadProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<GeneralPostProvider>()),
       ],
       child: MyApp(),
   )));
@@ -101,7 +103,11 @@ class MyApp extends StatelessWidget {
           supportedLocales: _locals,
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            cardColor: Colors.white
+            cardColor: Colors.white,
+            popupMenuTheme: PopupMenuThemeData(
+              color: Colors.white, // Set the background color of the dialog box
+            ),
+
           ),
           home:EntryScreen()
       // home: UpgradeAlert(

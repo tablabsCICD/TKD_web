@@ -6,8 +6,10 @@ import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/provider/group/groupListProvider.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/screens/group/groupDeatilsScreen.dart';
 
 import '../../../locator.dart';
@@ -44,6 +46,7 @@ class CreateNewGroupState extends State<CreateNewGroup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ThemeColor.baground,
       appBar: AppBarCommon(context, title: "Add Participants",appBarWord: "Next").appBarWithNewButton((){
 
         if(groupListProvider.selectedUsers.length==0){
@@ -86,7 +89,7 @@ class CreateNewGroupState extends State<CreateNewGroup> {
        ),
 
       ),
-      backgroundColor: ColorResources.HOME_BG,
+     // backgroundColor: ColorResources.HOME_BG,
       bottomNavigationBar: nextButton(),
 
 
@@ -115,6 +118,7 @@ class CreateNewGroupState extends State<CreateNewGroup> {
     );
   }
   groupTile(int index) {
+    String img = groupListProvider.filterByName[index].profilePicture!.replaceAll('"', '');
     String displayName=groupListProvider.filterByName[index].firstName!+" "+groupListProvider.filterByName[index].lastName!;
     if(displayName.length >18){
       displayName=displayName.substring(0,18);
@@ -128,10 +132,11 @@ class CreateNewGroupState extends State<CreateNewGroup> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: <Widget>[
-               groupListProvider.filterByName[index].profilePicture!.allMatches("null")==0 ? Image.network(groupListProvider.filterByName[index].profilePicture!,height: 64,width: 64,) : Icon(
+              /* groupListProvider.filterByName[index].profilePicture!.allMatches("null")==0 ? Image.network(groupListProvider.filterByName[index].profilePicture!,height: 64,width: 64,) : Icon(
                   Icons.account_circle,
                   size: 64.0,
-                ),
+                ),*/
+                BaseWidget().getImageclip(img, height: 40 , width: 40 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

@@ -9,7 +9,9 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/transport_serach_model.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
+import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/getLoader.dart';
 
 class CustomCityListDialog extends StatefulWidget {
   Function onTap;
@@ -25,21 +27,45 @@ class _CustomCityListDialogState extends State<CustomCityListDialog> {
   List<dynamic> uniquFoundCity = [];
   List<dynamic> cityList = [];
 
-  getCity() async {
-    String myUrl = 'https://api.tkdost.com/tkd2/api/get/cities/db';
+  ScrollController _scrollController = ScrollController();
+  int selectedPageNumber = 1;
+  int size = 100;
+  bool isLoading = false;
+
+  getCity(String searchChar,int page,int size) async {
+    isLoading = true;
+    setState(() {
+      if(page==0){
+        foundCity.clear();
+      }
+    });
+   // String myUrl = 'https://api.tkdost.com/tkd2/api/get/cities/db';
+    String myUrl = ApiConstant.BASE_URL + "get/cities/db/page/search?city=${searchChar}&page=${page}&size=${size}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     var response = json.decode(req.body);
-    setState(() {
       cityList = response;
-    });
     foundCity = cityList.toSet().toList();
+    selectedPageNumber++;
+    isLoading = false;
+    setState(() {
+
+    });
   }
+
+
 
   @override
   initState() {
-    getCity();
+    getCity('',0,size);
     foundCity = cityList..toSet().toList();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        getCity('',selectedPageNumber,size);
+      }
+    });
     super.initState();
   }
 
@@ -71,7 +97,7 @@ class _CustomCityListDialogState extends State<CustomCityListDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                onChanged: (value) => _runFilter(value),
+                onChanged: (value) => getCity(value,0,size),
                 decoration: const InputDecoration(
                     labelText: 'Search', suffixIcon: Icon(Icons.search)),
               ),
@@ -83,7 +109,9 @@ class _CustomCityListDialogState extends State<CustomCityListDialog> {
                 width: 300,
                 child: foundCity.isNotEmpty
                     ? ListView.builder(
+                  controller: _scrollController,
                   shrinkWrap: true,
+                  physics: ScrollPhysics(),
                   itemCount: foundCity.length,
                   itemBuilder: (context, index) =>
                       Column(
@@ -103,9 +131,10 @@ class _CustomCityListDialogState extends State<CustomCityListDialog> {
                 )
                     : const Text(
                   'No results found',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18,color: Colors.black),
                 ),
               ),
+              getLoader(isLoading)
             ],
           ),
         ),

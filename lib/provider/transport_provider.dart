@@ -57,7 +57,7 @@ class TransportProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = ApiConstant.DIRECTORY +'?companyName=${name}';
+    String myUrl = ApiConstant.BASE_URL +'/directory?search=${name}&page=0&size=30';
     print("Api Call"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;

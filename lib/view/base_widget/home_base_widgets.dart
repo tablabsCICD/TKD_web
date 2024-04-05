@@ -11,6 +11,7 @@ import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/images.dart';
+import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
 import 'package:tkd_app/widgets/verified_tag.dart';
 
@@ -1266,7 +1267,7 @@ Widget heading(String title,String subTitle){
                 width: 12,
               ),
               Text(
-                "Chat",
+                getTranslated('chat', context)!,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1297,7 +1298,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Call",
+                  getTranslated('call', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1324,7 +1325,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Share",
+                  getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1350,7 +1351,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Rating",
+                  getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1394,7 +1395,7 @@ Widget heading(String title,String subTitle){
                 width: 12,
               ),
               Text(
-                "Chat",
+                getTranslated('chat', context)!,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1425,7 +1426,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Call",
+                  getTranslated('call', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1452,7 +1453,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Share",
+                  getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1478,7 +1479,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Rating",
+                  getTranslated('rating', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1504,7 +1505,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Re Post",
+                  getTranslated('re_post', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1860,7 +1861,7 @@ Widget heading(String title,String subTitle){
                 width: 12,
               ),
               Text(
-                "Delete",
+                getTranslated('delete', context)!,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1891,7 +1892,7 @@ Widget heading(String title,String subTitle){
                   width: 12,
                 ),
                 Text(
-                  "Share",
+                  getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,

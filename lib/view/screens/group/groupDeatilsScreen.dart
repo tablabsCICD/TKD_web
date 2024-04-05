@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
@@ -36,7 +37,7 @@ class GroupDetailsState extends State<GroupDetailsScreen>{
   builder: (context, provider, child) {
 
   return Scaffold(
-     backgroundColor: ColorResources.HOME_BG,
+     backgroundColor: ThemeColor.baground,
     // appBar: AppBarCommon(context, title: "Create Group").appBar(),
      body: Column(
        mainAxisAlignment: MainAxisAlignment.start,

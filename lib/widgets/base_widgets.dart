@@ -10,7 +10,9 @@ import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/util/textview.dart';
+import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
+import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
 import 'package:tkd_app/widgets/verified_tag.dart';
 
@@ -1071,8 +1073,9 @@ class BaseWidget {
 
   popUpmenuOwnRepostPost(Function(int) onMenuTap) {
     return PopupMenuButton(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Color(0x332C363F)),
+        side: BorderSide(width: 1 , color: Colors.white),
         borderRadius: BorderRadius.circular(8 ),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
@@ -1096,7 +1099,7 @@ class BaseWidget {
                 width: 12 ,
               ),
               Text(
-                "Delete",
+                getTranslated("delete", context)!,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14  ,
@@ -1127,7 +1130,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Share",
+                  getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,
@@ -1154,7 +1157,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Re_post",
+                  getTranslated("re_post", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,
@@ -1171,8 +1174,9 @@ class BaseWidget {
 
   popUpmenuOwnBid(Function(int) onMenuTap) {
     return PopupMenuButton(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Color(0x332C363F)),
+        side: BorderSide(width: 1 , color: Colors.white),
         borderRadius: BorderRadius.circular(8 ),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
@@ -1196,7 +1200,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Share",
+                  getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,
@@ -1212,8 +1216,9 @@ class BaseWidget {
   }
   popUpmenuForMyPost(Function(int) onMenuTap) {
     return PopupMenuButton(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        side: BorderSide(width: 1, color: Colors.white),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
@@ -1237,7 +1242,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Share",
+                  getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1263,7 +1268,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Rating",
+                  getTranslated("rating", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1289,7 +1294,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Repost",
+                  getTranslated("re_post", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1315,7 +1320,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "City Interchange",
+                  getTranslated("city_interchange", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1341,7 +1346,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Edit",
+                  getTranslated("edit", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1358,8 +1363,9 @@ class BaseWidget {
 
   popUpmenuForOwnPost(Function(int) onMenuTap) {
     return PopupMenuButton(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        side: BorderSide(width: 1, color: Colors.white),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
@@ -1383,7 +1389,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Share",
+                  getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1409,7 +1415,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Repost",
+                  getTranslated("re_post", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1435,7 +1441,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "City Interchange",
+                  getTranslated("city_interchange", context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1461,7 +1467,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  "Edit",
+                  getTranslated('edit', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
@@ -1478,8 +1484,9 @@ class BaseWidget {
 
   popUpmenu(Function(int) onMenuTap) {
     return PopupMenuButton(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Color(0x332C363F)),
+        side: BorderSide(width: 1 , color: Colors.white),
         borderRadius: BorderRadius.circular(8 ),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
@@ -1503,7 +1510,7 @@ class BaseWidget {
                 width: 12 ,
               ),
               Text(
-                "Chat",
+                getTranslated('chat', context)!,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14  ,
@@ -1534,7 +1541,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Call",
+                  getTranslated('call', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,
@@ -1561,7 +1568,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Share",
+                  getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,
@@ -1587,7 +1594,7 @@ class BaseWidget {
                   width: 12 ,
                 ),
                 Text(
-                  "Rating",
+                  getTranslated('rating', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14  ,

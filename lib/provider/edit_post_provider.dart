@@ -13,6 +13,7 @@ import 'package:tkd_app/model/group_list_model.dart';
 import 'package:tkd_app/model/group_member_list.dart';
 import 'package:tkd_app/model/group_response.dart';
 import 'package:tkd_app/model/my_bids.dart';
+import 'package:tkd_app/model/new_truckLod_model.dart';
 import 'package:tkd_app/model/request/post_load.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/model/userdata.dart';
@@ -29,62 +30,58 @@ import '../view/screens/editPost/edit_post_load.dart';
 
 class EditPostLoadProvider extends ChangeNotifier {
 
-  String  selectedRequirementType = '';
-  String selectedPostType = '';
-
-  String selectedTypeOfPayment = 'Immediate';
-
-  List<String> requirementList = <String>['I Want Vehicle', 'I Have Vehicle'];
-  List<String> itemList = <String>['Full Load', 'Part Load'];
-  List<String> cargoList = <String>['Wooden Case','Cartons','Drums','Gunny Bags',"Machinery",'Other'];
-  List<String> paymentList = <String>['Immediate','Fortnight','Weekly','Others'];
-  String selectedFromCity = '';
-  String selectedToCity = '';
- /* String selectedTypeOfCargo = '';
-  String selectedPaymentType = '';*/
-  TextEditingController selectedVehicleSizeController = TextEditingController();
   TextEditingController loadWeightController = TextEditingController();
-  TextEditingController instructionController = TextEditingController();
-  bool identitySwitch = false;
-  bool privateSwitch = false;
-  bool disturbSwitch = false;
-  List<RadioModel> sampleData = <RadioModel>[
-    RadioModel(true, 'Show to only your preferred Transporters'),
-    RadioModel(false, 'Show to only verified Transporters'),
-    RadioModel(false, 'Show to All')
-  ];
-  String selectedSampleData = "Show to only your preferred Transporters";
+  TextEditingController vehicleSizeController = TextEditingController();
+  TextEditingController specialInstructionController = TextEditingController();
+  TextEditingController mobileNumberController = TextEditingController();
+  TextEditingController emailIdController = TextEditingController();
 
-  List<String> reqirement = ["Full Load", "Part Load"];
-  List<String> reqirementVehicale = ["Full Load Vehicle", "Part Load Vehicle"];
-  List<String> images = [];
   String selectedRequriment = "Select One";
+  String selectedPostType = "Select One";
   String selectedCargo = "Select One";
   String selectedPayment = "Select One";
   String selectedGroup = "Select Group";
   String sourceCity = "Select One";
   String destinationCity = "Select One";
+  String selectedSampleData = "Show to only your preferred Transporters";
 
-  TextEditingController vehicleSizeController = TextEditingController();
-  TextEditingController specialInstructionController = TextEditingController();
-  TextEditingController mobileNumberController = TextEditingController();
-  TextEditingController emailIdController = TextEditingController();
-  bool enbleButton = false;
-  bool vehicaleSize = true;
-  bool loadWieght = true;
+  bool identitySwitch = false;
+  bool privateSwitch = false;
+  bool disturbSwitch = false;
   bool dnd = false;
   bool hideMyID = false;
+  bool enableButton = false;
+  bool vehicleSize = false;
+  bool loadWieght = false;
+
+  List<String> requirementList = <String>['I Want Vehicle', 'I Have Vehicle'];
+  List<String> postTypeList = <String>['Full Load', 'Part Load'];
+  List<String> cargoList = <String>['Wooden Case','Cartons','Drums','Gunny Bags',"Machinery",'Other'];
+  List<String> paymentList = <String>['Immediate','Fortnight','Weekly','Others'];
+  List<String> reqirement = ["Full Load", "Part Load"];
+  List<String> reqirementVehicale = ["Full Load Vehicle", "Part Load Vehicle"];
+  List<String> images = [];
+  List<String> searchingList = [];
+
+  List<RadioModel> sampleData = <RadioModel>[
+    RadioModel(true, 'Show to only your preferred Transporters'),
+    RadioModel(false, 'Show to only verified Transporters'),
+    RadioModel(false, 'Show to All')
+  ];
+
  final authProvider = locator<AuthProvider>();
 
 
 
   initData(TruckLoad postBidData) async {
+    print("Edit Object:"+postBidData.mobileNumber.toString());
     User user = authProvider.userDetailList[0];
     emailIdController.text = user.emailId!;
     mobileNumberController.text = user.mobileNumber!.toString();
     selectedCargo = postBidData.typeOfCargo!;
     loadWeightController.text = postBidData.loadWeight!;
     await getTruckLoadById(postBidData.id!);
+    notifyListeners();
   }
 
   pickFile() async {
@@ -177,7 +174,7 @@ class EditPostLoadProvider extends ChangeNotifier {
   List<int> addedUserListInPost=[];
   List<UserData> addedUsers = [];
   getUserListFromString(String userList){
-    if(userList.isNotEmpty) {
+    if(userList.isNotEmpty){
       addedUserListIdInPost = userList.split(',').map((e) => e.trim()).toList();
       print(addedUserListIdInPost);
       addedUserListIdInPost.forEach((element) async {
@@ -187,24 +184,50 @@ class EditPostLoadProvider extends ChangeNotifier {
         print(userData.firstName);
         addedUsers.add(userData);
       });
-
-    return addedUserListIdInPost;}else{
-      return [];
     }
+    return addedUserListIdInPost;
   }
+
 
   getUserById(int userId) async {
     ApiHelper apiHelper = ApiHelper();
     String myUrl = ApiConstant.BASE_URL +"/companyRegistration/"+ userId.toString();
     print(myUrl);
-    ApiResponse response = await apiHelper.ApiGetData(myUrl);
+    var response = await apiHelper.apiWithoutDecodeGet(myUrl);
     print(response.response);
     if(response.statusCode==200){
-      var result = UserModel.fromJson(response.response);
+      var result = UserModel.fromJson(jsonDecode(response.response));
       UserData userData = result.content!.first;
       return userData;
     }else{
       return null;
+    }
+  }
+
+  List<User> allUserList = [];
+  List<String> allVerifiedUserList = [];
+  List<String> allUserNameList = [];
+  getAllUserList({int currentPage = 0}) async {
+    notifyListeners();
+    if(currentPage == 0){
+      allUserList.clear();
+    }
+
+    String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${currentPage}&size=6000';
+    print(myUrl);
+    var req = await http.get(Uri.parse(myUrl));
+    if(req.statusCode == 200) {
+      var response = json.decode(req.body);
+      var type = AuthApi.fromJson(response);
+      allUserList.addAll(type.content!);
+      allUserList.forEach((element) {
+        allUserNameList.add('${element.firstName} ${element.lastName}');
+        if(element.isPaid != 0) {
+          allVerifiedUserList.add('${element.firstName} ${element.lastName}\n${element.companyName}');
+        }
+      });
+      print(allUserNameList.length.toString() + "length sacsczcscscscscscscscscscscscscscscscs");
+      notifyListeners();
     }
   }
 
@@ -214,26 +237,28 @@ class EditPostLoadProvider extends ChangeNotifier {
     print(myUrl);
     var response = await apiHelper.apiWithoutDecodeGet(myUrl);
     print(response.response);
-    var result = TruckLoadType.fromJson(jsonDecode(response.response));
-    TruckLoad truckLoad = result.content.first;
-    vehicleSizeController.text = truckLoad.vehicleSize!;
-
-    specialInstructionController.text = truckLoad.otherDetails!;
-    selectedGroup = '';
-
-    selectedPayment = truckLoad.typeOfPayment!;
-    selectedRequriment = truckLoad.type!;
-    sourceCity = truckLoad.source!;
-    destinationCity = truckLoad.destination!;
-    dnd = truckLoad.dnd == 0 ? false : true;
-    hideMyID = truckLoad.privatePost == 0 ? false : true;
-    var userList = getUserListFromString(truckLoad.userList!);
+    var result = NewTruckLoadModel.fromJson(jsonDecode(response.response));
+    NewTruckLoad newTruckLoad = result.content![0];
+    vehicleSizeController.text = newTruckLoad.vehicleSize!;
+    loadWeightController.text = newTruckLoad.loadWeight!;
+    specialInstructionController.text = newTruckLoad.otherDetails!;
+    selectedCargo = newTruckLoad.typeOfCargo!;
+    selectedPayment = newTruckLoad.typeOfPayment!;
+    selectedRequriment = newTruckLoad.fullLoadChoice!;
+    selectedPostType = newTruckLoad.type!;
+    sourceCity = newTruckLoad.source!;
+    destinationCity = newTruckLoad.destination!;
+    dnd = newTruckLoad.dnd == 0 ? false : true;
+    hideMyID = newTruckLoad.privatePost == 0 ? false : true;
+    if(newTruckLoad.userList==null){
+    }else{
+      var userList = getUserListFromString(newTruckLoad.userList!);
+    }
     addedMemberIdList = addedUserListInPost;
   }
 
   editPost(BuildContext context, int? id) async {
     User user = authProvider.userDetailList[0];
-
     PostLoad postLoad = PostLoad();
     postLoad.contactNumber = user.mobileNumber!;
     postLoad.destination = destinationCity;
@@ -250,7 +275,6 @@ class EditPostLoadProvider extends ChangeNotifier {
     postLoad.partLoad = selectedRequriment == 'Part Load' ? 1 : 0;
     postLoad.privatePost = hideMyID ? 1 : 0;
     postLoad.rating = 5;
-    //  postLoad.customerName= '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}';
     postLoad.type = selectedRequriment;
     postLoad.typeOfCargo = selectedCargo;
     postLoad.typeOfPayment = selectedPayment;
@@ -260,16 +284,16 @@ class EditPostLoadProvider extends ChangeNotifier {
     postLoad.image = images;
     postLoad.listOfUserIds = addedMemberIdList;
     postLoad.id = id;
-    ApiResponse response = await ApiHelper()
+    final response = await ApiHelper()
         .ApiPutDataMapRequest(ApiConstant.BASE_URL + "UpdatePost", postLoad.toJson());
     print('the request is ${json.encode(postLoad.toJson())}');
-    print('the resopnse is ${response.response}');
+    print('the resopnse is ${response.statusCode}');
     if (response.statusCode == 200) {
       showSimpleNotification(
           Text("Post Edited Successfully",style: TextStyle(color: Colors.white),),
           background: Colors.black
       );
-      Navigator.pop(context);
+     //nch  Navigator.pop(context);
       Navigator.pop(context, 1);
     } else {
       showSimpleNotification(
@@ -336,9 +360,9 @@ class EditPostLoadProvider extends ChangeNotifier {
         checkdropDown(selectedPayment) &&
         checkdropDown(sourceCity) &&
         checkdropDown(destinationCity)) {
-      enbleButton = true;
+      enableButton = true;
     } else {
-      enbleButton = false;
+      enableButton = false;
     }
     notifyListeners();
   }
@@ -445,9 +469,9 @@ class EditPostLoadProvider extends ChangeNotifier {
 
   checkValidation(BuildContext context) {
     if (vehicleSizeController.text.isEmpty) {
-      vehicaleSize = false;
+      vehicleSize = false;
     } else {
-      vehicaleSize = true;
+      vehicleSize = true;
     }
     if (loadWeightController.text.isEmpty) {
       loadWieght = false;
@@ -482,7 +506,7 @@ class EditPostLoadProvider extends ChangeNotifier {
                 background: Colors.black
             );
           } else {
-            if (loadWieght && vehicaleSize) {
+            if (loadWieght && vehicleSize) {
               editPost(context,0);
             } else {
               showSimpleNotification(
@@ -499,9 +523,9 @@ class EditPostLoadProvider extends ChangeNotifier {
 
   checkVehicaleValidation(BuildContext context) {
     if (vehicleSizeController.text.isEmpty) {
-      vehicaleSize = false;
+      vehicleSize = false;
     } else {
-      vehicaleSize = true;
+      vehicleSize = true;
     }
     if (loadWeightController.text.isEmpty) {
       loadWieght = false;
@@ -532,7 +556,7 @@ class EditPostLoadProvider extends ChangeNotifier {
                 background: Colors.black
             );
           } else {
-            if (loadWieght && vehicaleSize) {
+            if (loadWieght && vehicleSize) {
               editVehiclePost(context,0);
             } else {
               showSimpleNotification(

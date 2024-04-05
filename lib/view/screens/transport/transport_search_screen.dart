@@ -99,7 +99,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
   TextEditingController _controller = TextEditingController();
   final routeProvider = locator<RouteProvider>();
   final transportProvider = locator<TransportProvider>();
-  int selectedPageNumber = 1;
+  int selectedPageNumber = 0;
   ScrollController _scrollController = ScrollController();
   String? selectedFromCity = '', selectedToCity = "";
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -287,7 +287,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                               SizedBox(
                                                 width: 10,
                                               ),
-                                              model.transportSearchList[index]
+                                             /* model.transportSearchList[index]
                                                           .verified ==
                                                       0
                                                   ? SizedBox.shrink()
@@ -295,7 +295,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                       'assets/images/membership.png',
                                                       width: 15,
                                                       height: 15,
-                                                    ),
+                                                    ),*/
                                               Stack(
                                                 children: [
                                                   Align(
@@ -374,7 +374,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                               horizontal: 10, vertical: 0),
                                           child:
                                               Text(
-                                                  '${model.transportSearchList[index].city}, ${model.transportSearchList[index].state}',
+                                                  '${model.transportSearchList[index].city}',
                                                   style: Style.contentHeading),
                                         ),
                                         Padding(
@@ -481,13 +481,13 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: fliterdirectory(),
+    //  bottomNavigationBar: fliterdirectory(),
     );
   }
 
   Widget imageDialog(text, path, context,transportSearchData) {
     return Dialog(
-      // backgroundColor: Colors.transparent,
+       backgroundColor: ThemeColor.baground,
       // elevation: 0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -763,14 +763,28 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      transportSearchData.companyName??'',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          transportSearchData.companyName??'',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          transportSearchData.mobileNumber.toString()??'',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 4),
                     SizedBox(
@@ -954,11 +968,12 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
     switch(val){
       case 0:
         hintSearch='Search by Name';
-        transportProvider.getBySearchData(_controller.value.text);
+        transportProvider.getByNameData(_controller.value.text);
         break;
       case 1:
         hintSearch='Search by Location';
-        transportProvider.getByLocData(_controller.value.text);
+      //  transportProvider.getByLocData(_controller.value.text);
+        transportProvider.getByNameData(_controller.value.text);
         break;
       case 2:
         hintSearch='Search by Company Name';
@@ -966,7 +981,8 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
         break;
       case 3:
         hintSearch='Search by City';
-        transportProvider.getByRoutesData(_controller.value.text,_controller.value.text);
+        transportProvider.getByNameData(_controller.value.text);
+       // transportProvider.getByRoutesData(_controller.value.text,_controller.value.text);
         break;
     }
   }

@@ -6,7 +6,9 @@ import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
+import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 
 import '../../../locator.dart';
@@ -45,11 +47,11 @@ class EditGroupState extends State<EditGroupScreen> {
   @override
   Widget build(BuildContext context) {
     String img = groupListProvider.changeImageUrl.replaceAll('"', '');
-    ;
+
     return Consumer<GroupListProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-         // appBar: AppBarCommon(context, title: "Group Info").appBar(),
+          backgroundColor: ThemeColor.baground,
           appBar: AppBarCommon(context, title: "Group Info").appBarWithDeleteButton(() async {
             showDialog(
                 context: context,
@@ -108,7 +110,7 @@ class EditGroupState extends State<EditGroupScreen> {
                   ],
                 ));
           }),
-          backgroundColor: ColorResources.HOME_BG,
+          //backgroundColor: ColorResources.HOME_BG,
           body: Column(
             children: [
               Center(
@@ -187,6 +189,7 @@ class EditGroupState extends State<EditGroupScreen> {
   }
 
   groupTile(int index) {
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -194,10 +197,7 @@ class EditGroupState extends State<EditGroupScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: <Widget>[
-                Icon(
-                  Icons.account_circle,
-                  size: 64.0,
-                ),
+                BaseWidget().getImageclip('', height: 40 , width: 40 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

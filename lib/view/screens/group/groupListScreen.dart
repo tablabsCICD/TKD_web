@@ -6,6 +6,7 @@ import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
@@ -48,7 +49,7 @@ class GroupListState extends State<GroupList> {
     return Consumer<GroupListProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-
+          backgroundColor: ThemeColor.baground,
           appBar: AppBarCommon(context, title: "Group").appBarWithNewButton(() {
             Navigator.push(
                 context,
@@ -78,8 +79,11 @@ class GroupListState extends State<GroupList> {
                         return InkWell(onTap: () {
                           Navigator.push(
                               context,
+                              MaterialPageRoute(builder: (context) => EditGroupScreen(groupContent: groupListProvider.listGroup[index]!)));
+                         /* Navigator.push(
+                              context,
                               MaterialPageRoute(builder: (context) => ChatPage(groupListProvider.listGroup[index]!,)));
-
+*/
                         }, child: groupTile(groupListProvider.listGroup[index ]));
                       }),
                 ),
@@ -87,7 +91,7 @@ class GroupListState extends State<GroupList> {
               ],
             ),
           ),
-          backgroundColor: ColorResources.HOME_BG,
+        //  backgroundColor: ColorResources.HOME_BG,
         );
       },
     );
@@ -117,7 +121,7 @@ class GroupListState extends State<GroupList> {
               NetworkImage(objectGroup.groupName==null?img:objectGroup.groupName!),
              // backgroundColor: Colors.transparent,
             ),*/
-            BaseWidget().getImageclip(objectGroup.imageUrl!, height: 50 , width: 50 ),
+            BaseWidget().getImageclip(img, height: 50 , width: 50 ),
             SizedBox(width: 10,),
             Expanded(
               child: Padding(

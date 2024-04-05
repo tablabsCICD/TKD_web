@@ -31,7 +31,6 @@ class ApiHelper {
 
   ApiGetData(String URL) async{
     var req = await http.get(Uri.parse(URL));
-
     var response = json.decode(req.body);
     print('$URL response ${response}');
     return response;

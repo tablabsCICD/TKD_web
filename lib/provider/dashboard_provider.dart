@@ -8,13 +8,17 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/model/group_added_member.dart';
+import 'package:tkd_app/model/group_list_model.dart';
 import 'package:tkd_app/model/request/genral_post.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
  import 'package:http/http.dart' as http;
+import 'package:tkd_app/model/verified_user.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
+import 'package:tkd_app/widgets/bottomsheet.dart';
 
 class DashboardProvider extends ChangeNotifier{
   String? selectedSampleData = '';
@@ -206,14 +210,126 @@ class DashboardProvider extends ChangeNotifier{
     }
   }*/
 
-  List<String> allVerifiedUserList = [];
+  List<GroupContent> groupListByUserId = [];
+  List<String> groupListName = [];
+  List<String> listOptionShow = ["All User", "Group", "Verified user"];
+  List<GroupMemberContent> listAddedMember = [];
+  List<int> addedMemberIdList = [];
+  String selectedGroup = "Select One";
+
+  selecteGroup(int index) async {
+    addedMemberIdList.clear();
+    selectedGroup = groupListByUserId[index].groupName!;
+    await getGroupMember(groupListByUserId[index].id!);
+  }
+  getGroupMember(int groupId)async{
+    listAddedMember.clear();
+    isLoading=true;
+    //showLoader(context);
+    ApiHelper apiHelper=ApiHelper();
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_MEMBER_LIST+groupId!.toString());
+    GroupMemberModel groupListModel=GroupMemberModel.fromJson(response);
+
+    listAddedMember.addAll(groupListModel.content!);
+    isLoading=false;
+    //showLoader(context);
+    notifyListeners();
+  }
+
+  getAllGroup(int? userId,context)async{
+    print('the id is +${ApiConstant.USER_OBJECT.id}');
+    isLoading=true;
+    //showLoader(context);
+    ApiHelper apiHelper=ApiHelper();
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString());
+   // listGroup.addAll(groupListModel.content!);
+    if (response.status == 200) {
+      GroupListModel groupListModel=GroupListModel.fromJson(response);
+
+      groupListByUserId.clear();
+      groupListName.clear();
+      groupListByUserId
+          .addAll(groupListModel.content as Iterable<GroupContent>);
+      groupListByUserId.forEach((element) {
+        groupListName.add(element.groupName!);
+      });
+    }
+    isLoading=false;
+    //showLoader(context);
+    notifyListeners();
+
+  }
+
+
+  selecteOptiontoShow(int index, BuildContext context, String sourceCity) async {
+    notifyListeners();
+    switch (index) {
+      case 0:
+        addedMemberIdList.clear();
+        selectedGroup = listOptionShow[index];
+        return;
+      case 1:
+        if (groupListName.isEmpty) {
+          await getAllGroup(authProvider.userDetailList[0].id!,context);
+        }
+        ItemBottomSheet itemBottomSheet = ItemBottomSheet();
+        int a = await itemBottomSheet.showIteamHieght(
+            context, groupListName, "Select Group");
+
+        selecteGroup(a);
+
+        selectedGroup = listOptionShow[index];
+        notifyListeners();
+        return;
+
+      case 2:
+        if (sourceCity == "Select One") {
+          showSimpleNotification(
+              Text("Please select the source city ",style: TextStyle(color: Colors.white),),
+              background: Colors.black
+          );
+        } else {
+
+         /* if (selectedUserList.isNotEmpty) {
+            addedMemberIdList.clear();
+            for (int i = 0; i < verfiedUserList.length; i++) {
+              addedMemberIdList.add(verfiedUserList[i].id!);
+            }
+            selectedGroup = listOptionShow[index];
+          }*/
+        }
+
+        return;
+    }
+  }
+
+  getListOfVefiyUser(String selectedFromCity) async {
+    String myUrl = ApiConstant.GET_USER_SOURCE_LIST(selectedFromCity);
+    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(myUrl);
+    if(apiResponse.statusCode==200){
+      VerifiedUser verifiedUser =VerifiedUser.fromJson(jsonDecode(apiResponse.response));
+      allVerifiedUserList.addAll(verifiedUser.data!);
+      allVerifiedUserList.forEach((element) {
+        allUserNameList.add('${element.firstName} ${element.lastName}');
+        if(element.isPaid != 0) {
+          allVerifiedUserNameList.add('${element.firstName} ${element.lastName}\n${element.companyName}');
+        }
+      });
+      print(allVerifiedUserNameList.length.toString() + "length ");
+    }
+    notifyListeners();
+  }
+
+  List<UserVerifiedData> allVerifiedUserList = [];
+ List<String> allVerifiedUserNameList = [];
   getAllUserList({int currentPage = 0}) async {
     isLoading = true;
     notifyListeners();
     if(currentPage == 0){
       isFirstLoading = true;
-      truckLoadTypeList.clear();
+      allUserList.clear();
     }
+
 
     String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${currentPage}&size=6000';
     print(myUrl);
@@ -227,11 +343,11 @@ class DashboardProvider extends ChangeNotifier{
       allUserList.forEach((element) {
         allUserNameList.add('${element.firstName} ${element.lastName}');
         if(element.isPaid != 0) {
-          allVerifiedUserList.add('${element.firstName} ${element.lastName}\n${element.companyName}');
+          allVerifiedUserNameList.add('${element.firstName} ${element.lastName}\n${element.companyName}');
         }
       });
       print(allUserNameList.length.toString() + "length sacsczcscscscscscscscscscscscscscscscs");
-      notifyListeners();
+    //  notifyListeners();
     }
   }
 
@@ -240,9 +356,9 @@ class DashboardProvider extends ChangeNotifier{
     selectedUserList.clear();
     for(int i=0;i<selectedItems.length;i++){
       final selectedItem=selectedItems.elementAt(i);
-      for(var i = 0; i < allUserList.length; i++){
-        if(selectedItem == "${allUserList[i].firstName} ${allUserList[i].lastName}"){
-          selectedUserList.add(allUserList[i].id!);
+      for(var i = 0; i < allVerifiedUserList.length; i++){
+        if(selectedItem == "${allVerifiedUserList[i].firstName} ${allVerifiedUserList[i].lastName}"){
+          selectedUserList.add(allVerifiedUserList[i].id!);
         }
       }
     }
@@ -262,11 +378,12 @@ class DashboardProvider extends ChangeNotifier{
 
   savePost({int? mobile,String? destination,int? dnd,String? email,String? fullLoadChoice,int? id,String? instruction,User? userList,
     String? loadWeight,String? name,String? mainTag,String? os,String? otherDetails,String? source,int? partLoad,
-    int? privatePost,double? rating,String? customerName, String? type,String? typeOfCargo,String? vehicleSize, String? typeOfPayment,int? userId}) async {
+    int? privatePost,double? rating,String? customerName, String? type,String? typeOfCargo,String? vehicleSize, String? typeOfPayment,int? userId,List<int>? selectedUserList}) async {
 
     String myUrl = selectedSampleData == "Show to All" ? ApiConstant.BASE_URL + "fullTruckLoad" : ApiConstant.POST_FULL_LOAD;
     print(myUrl);
     Uri uri = Uri.parse(myUrl);
+
     Map<String, dynamic> data = {
     "contactNumber": mobile?? 0,
     //"date": "2022-07-04T08:55:23.783Z",
@@ -295,6 +412,7 @@ class DashboardProvider extends ChangeNotifier{
     "vehicleSize": vehicleSize,
    // "userId": userId
     };
+
     var body = json.encode(data);
     print("request : ${data}");
     final response = await http.post(uri,
@@ -343,39 +461,6 @@ class DashboardProvider extends ChangeNotifier{
     response = json.decode(req.body);
     var type = TruckLoadType.fromJson(response);
     truckLoadTypeList = type.content;
-    notifyListeners();
-  }
-
-
-  void createGeneralPost(BuildContext context,String title,String description)async {
-    GeneralPost generalPost=GeneralPost();
-    generalPost.images=[];
-    generalPost.description=description;
-    generalPost.title=title;
-    generalPost.typeName="General Post";
-    generalPost.comment=0;
-    generalPost.likes=0;
-    generalPost.loggedUserName=authProvider.userDetailList[0].id!;
-    generalPost.disLikes=0;
- //  ApiResponse apiResponse=await ApiHelper().postParameter(ApiConstant.BASE_URL+"GeneralPost/save", generalPost.toJson());
-    final response = await http.post(Uri.parse(ApiConstant.BASE_URL+"GeneralPost/save"),
-        headers: {"Content-Type": "application/json"}, body: json.encode(generalPost.toJson()));
-    print("response : ${response.statusCode}" + " --- " + response.body.toString());
-    if(response.statusCode==200){
-      showSimpleNotification(
-          Text("Post submitted successfully!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
-      getFullLoadTruckList("All", "All",currentPage:  0);
-      Navigator.pop(context);
-      Navigator.pop(context);
-
-    } else{
-      showSimpleNotification(
-          Text("Please try again!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
-    }
     notifyListeners();
   }
 

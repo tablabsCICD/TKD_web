@@ -11,6 +11,7 @@ import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
+import 'package:tkd_app/provider/general_post_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/provider/group/groupListProvider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
@@ -49,6 +50,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => CommentProvider());
   locator.registerLazySingleton(() => RatingProvider());
   locator.registerLazySingleton(() => EditPostLoadProvider());
+  locator.registerLazySingleton(() => GeneralPostProvider());
   locator.registerLazySingleton(() => LocalizationProvider(sharedPreferences: locator()));
 
   final sharedPreferences = await SharedPreferences.getInstance();

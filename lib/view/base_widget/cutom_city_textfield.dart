@@ -63,11 +63,12 @@ class CustomCityTextField extends StatelessWidget {
             hintText: hintText,
             filled: true,
             errorStyle: TextStyle(color: Colors.red),
-            fillColor: isFromProfile==false?ColorResources.TEXTFEILD_COLOR:ColorResources.WHITE,
+            labelStyle: TextStyle(color: Colors.black),
+            fillColor: isFromProfile==false?ColorResources.WHITE:ColorResources.WHITE,
             hintStyle: Style.searchHint,
             border:isFromProfile==false?OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide.none) :OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black54)) :OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey)),
           ),

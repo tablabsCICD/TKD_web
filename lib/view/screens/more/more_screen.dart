@@ -29,6 +29,7 @@ import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/delete_interface.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
+import 'package:tkd_app/provider/general_post_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
@@ -76,13 +77,14 @@ import '../../../model/discussion_model.dart';
 class MoreScreen extends StatefulWidget {
   final moreProvider = locator<MoreProvider>();
   final authProvider = locator<AuthProvider>();
+  final generalPostProvider = locator<GeneralPostProvider>();
 
   MoreScreen({Key? key}) : super(key: key) {
     moreProvider.getOwnJobList(authProvider.userDetailList[0].id.toString());
     moreProvider.getOwnPostList(authProvider.userDetailList[0].id.toString());
     moreProvider.getPoolPurchaseList(
         authProvider.userDetailList[0].userName.toString());
-    moreProvider.callGeneralPostApi();
+    generalPostProvider.callGeneralPostApi();
     moreProvider.getGalleryList(authProvider.userDetailList[0].id.toString());
     moreProvider
         .getDiscussionList(authProvider.userDetailList[0].userName.toString());
@@ -440,11 +442,11 @@ class _MyBuySellCardState extends State<MyBuySellCard>
                     itemBuilder: (context, index) {
                       return InkWell(
                           onTap: () {
-                            Navigator.push(
+                           /* Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (builder) => BuySellDetailsScreen(
-                                        widget.buySellList[index])));
+                                        widget.buySellList[index])));*/
                           },
                           child: AllCards().cardSellBuyPost(
                               index, context, widget.buySellList[index], this,
@@ -620,11 +622,11 @@ class _MyRequirementCardState extends State<MyRequirementCard>
                   itemBuilder: (context, index) {
                     return InkWell(
                         onTap: () {
-                          Navigator.push(
+                         /* Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (builder) => RequirementDetails(
-                                      widget.loadTypeList[index])));
+                                      widget.loadTypeList[index])));*/
                         },
                         child: DashbordCards().cardLoadHome(
                             index,
@@ -789,7 +791,7 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return Consumer<MoreProvider>(
+    return Consumer<GeneralPostProvider>(
       builder: (context, model, child) => Container(
         margin: ResponsiveWidget.isDesktop(context)
             ? EdgeInsets.symmetric(horizontal: 35, vertical: 10)
@@ -811,7 +813,7 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
                     mainAxisSpacing: 12,
                     itemCount: model.listOwnPost.length,
                     itemBuilder: (context, index) {
-                      return generalPost(model.listOwnPost[index], context);
+                      return generalPost(model.listOwnPost[index], context,index);
                     },
                     //physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -823,7 +825,7 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
     );
   }
 
-  generalPost(GernralPostOwnData generalPostOwnData,BuildContext context) {
+  generalPost(GernralPostOwnData generalPostOwnData,BuildContext context,int index) {
     return Container(
       width: 335,
 
@@ -848,28 +850,96 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            transform: Matrix4.translationValues(0.0, -25.0, 00),
             child:BaseWidget()
                 .heading(generalPostOwnData.title!,generalPostOwnData.description!) ,),
-          Divider(),
           SizedBox(
             height: 5,
           ),
-        //  BaseWidget().likeComment(truckLoad,context,likeCount: 0,commentCount: 0)
+          SizedBox(height: 8,),
+          BaseWidget().deleteMyPostButton((val) async{
+            if (val == 10) {
+              Future.delayed(
+                  Duration.zero,
+                      () => this.deleteOwnPost(generalPostOwnData.id!, index)//_showMyDialog(index)
+              );
+
+            }
+            if(val==1){
+
+              Future.delayed(
+                  Duration.zero,
+                      () => this.deleteOwnPost(generalPostOwnData.id!, index)
+              );
+
+
+            }
+            if(val==3){
+              TruckLoad load = new TruckLoad(
+                  id: 0,
+                  userId: authProvider.userDetailList[0].id,
+                  nameOfPerson:"${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}",
+                companyName: authProvider.userDetailList[0].companyName,
+                type:generalPostOwnData.typeName,
+                postingTime: generalPostOwnData.typeName,
+                tableName: generalPostOwnData.typeName,
+                topicName: generalPostOwnData.typeName,
+                content: generalPostOwnData.description,
+                partLoadOrNot: 0,
+                privatePost: 0,
+                mainTag: generalPostOwnData.typeName,
+                mobileNumber:authProvider.userDetailList[0].mobileNumber,
+                source: '',
+                deviceId: '',
+                destination: '',
+                estPrice: '',
+                association: '',
+                alterativeNumber: '',
+                companyDetailsName: '',
+                companyLogo: '',
+                comment: '',
+                companyRating: "4.5",
+                dnd: 0,
+                isPaid: 0,
+                isverified: authProvider.userDetailList[0].isUserVerifiedByCompany,
+                isVerifiedByCompany: authProvider.userDetailList[0].isUserVerifiedByCompany.toString(),
+                likes: '',
+                makerName: '',
+                loadWeight: '',
+                mfgYear: '',
+                modelName: '',
+                otherDetails: '',
+                postImages: [],
+                ratings: 4.5,
+                reminderUserName: '',
+                sharableLink: '',
+                transporterOrAgent: authProvider.userDetailList[0].transporterOrAgent,
+                typeOfCargo: '',
+                typeOfPayment: '',
+                userList: '',
+                vehicleSize: '', website: '',
+
+
+              );
+
+              await Utils().callShareFunction('',load,context);
+            }
+          })
+
         ],
       ),
     );
   }
 
+  final generalPostProvider = locator<GeneralPostProvider>();
   @override
   void deleteOwnPost(
     int postId,
     int index,
   ) {
-    _showMyDialog(index, postId, moreProvider);
+    _showMyDialog(index, postId, generalPostProvider);
   }
 
-  Future<void> _showMyDialog(int index, int id, MoreProvider provider) async {
+  Future<void> _showMyDialog(int index, int id, GeneralPostProvider provider) async {
     return showDialog(
         context: context,
         builder: (_) => new CupertinoAlertDialog(
@@ -882,7 +952,7 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
                   child: CustomText(getTranslated('yes', context)!,
                       style: Style.okButton),
                   onPressed: () {
-                    provider.deleteFullLoad(id, index).then((value) => {
+                    provider.deleteGeneralPost(id, index,context).then((value) => {
                           showAnimatedDialog(
                               context,
                               MyDialog(
@@ -972,7 +1042,7 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
   }
 
   void getData() async {
-   await moreProvider.callGeneralPostApi();
+   await generalPostProvider.callGeneralPostApi();
   }
 }
 

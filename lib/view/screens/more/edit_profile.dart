@@ -99,11 +99,13 @@ class EditProfileState extends State<EditProfileScreen>{
               isValidator: false,
             ),
             CustomTextBoxField(
+              readOnly: true,
               hintText: 'Mobile Number',
               controller: mobileController,
               textInputType: TextInputType.number,
             ),
             CustomTextBoxField(
+              readOnly: true,
               hintText: 'Enter Email Id',
               controller: emailController,
               textInputType: TextInputType.number,

@@ -8,16 +8,16 @@ import '../model/auth_api.dart';
 class ApiConstant {
 
   static final String APP_VERSION="2.0.10";//40
- // static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
+  static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
   //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Production Url
   // static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
-  static String BASE_URL = "http://ec2-13-201-134-254.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
+ // static String BASE_URL = "http://ec2-13-201-134-254.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
 
   static String LOGIN = BASE_URL + "authLogin/emailId";
   static String REGISTRATION = BASE_URL + "companyRegistration";
   static String GENERIC_DATA = BASE_URL + "/get/allCards";
   static String POST_JOB = BASE_URL + "/postJob";
-  static String POST_FULL_LOAD = BASE_URL + "saveAndSendNotificaions";
+  static String POST_FULL_LOAD = BASE_URL + "fullTruckLoad";
   static String POST_EMPTY_LOAD = BASE_URL + "emptyTruckLoad";
   static String POST_BUY_SELL = BASE_URL + "buySell";
   static String GET_REMINDER = BASE_URL + "getReminders/save";
@@ -64,7 +64,8 @@ class ApiConstant {
   static String FULL_LOAD_ALL_CARD = BASE_URL + "dashboard/homepage/posts";
 
 
-
+  static String GET_USER_SOURCE_LIST(cityName) =>
+      BASE_URL + "UserBySource?source=$cityName";
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
   static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";

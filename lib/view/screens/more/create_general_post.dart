@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
@@ -14,9 +18,13 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
+import 'package:tkd_app/provider/general_post_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
+import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
+import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
@@ -26,6 +34,8 @@ import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
+
+import '../../base_widget/home_base_widgets.dart';
 
 class CreateGeneralPost extends StatefulWidget {
 
@@ -57,6 +67,7 @@ class _CreateGeneralPostState extends State<CreateGeneralPost> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: ThemeColor.baground,
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Text("General Post requirement",style: Style.appheading,),
@@ -69,7 +80,7 @@ class _CreateGeneralPostState extends State<CreateGeneralPost> {
         body: Container(
           child: Form(
             key: _formKey,
-            child: Consumer<DashboardProvider>(
+            child: Consumer<GeneralPostProvider>(
               builder: (context, model, child) => Container(
                // margin: ResponsiveWidget.isDesktop(context)? EdgeInsets.symmetric(horizontal: 50,vertical: 10):EdgeInsets.symmetric(horizontal: 0,vertical: 0),
                 child: SingleChildScrollView(
@@ -90,13 +101,70 @@ class _CreateGeneralPostState extends State<CreateGeneralPost> {
                       textInputType: TextInputType.text,
                       validatorMsg: 'Please enter some thing',
                   ),
+                  model.images.length>0? BaseWidget().carouseImage(model.images):SizedBox(),
+                      InkWell(
+                          onTap: () {
+                            model.uploadImages(context);
+                          },
+                          child: SvgPicture.asset(Images.add_image)),
+                      Text(
+                        "Add images at just ₹0",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF001E49),
+                          fontSize: 12,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  SizedBox(height: 16,),
                   CustomButton(
                       onTap: (){
                         if (_formKey.currentState!.validate()) {
-                          model.createGeneralPost(
-                          context,
-                            titleController.text,
-                            descController.text
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('General Post',style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: GoogleFonts.poppins().fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                ),),
+                                content: Text('Are you sure you want to post this requirement?',style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontFamily: GoogleFonts.poppins().fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                ),),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Close the dialog
+                                    },
+                                    child: Text('No',style: TextStyle(color: ThemeColor.theme_blue, fontSize: 12,
+                                      fontFamily: GoogleFonts.poppins().fontFamily,
+                                      fontWeight: FontWeight.w600,),),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      model.createGeneralPost(
+                                          context,
+                                          titleController.text,
+                                          descController.text
+                                      );
+                                    },
+                                    child: Text(
+                                      'Yes',
+                                      style: TextStyle(color: Colors.green, fontSize: 12,
+                                        fontFamily: GoogleFonts.poppins().fontFamily,
+                                        fontWeight: FontWeight.w600,),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         }},
                       buttonText: "Post Load")

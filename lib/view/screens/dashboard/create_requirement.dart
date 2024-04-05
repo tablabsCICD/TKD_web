@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
@@ -15,6 +16,7 @@ import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
@@ -22,8 +24,11 @@ import 'package:tkd_app/view/base_widget/custom_dropdown_search_multi_selection.
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/screens/dashboard/show_option_dropdown.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
+import 'package:tkd_app/widgets/bottomsheet.dart';
+import 'package:tkd_app/widgets/drop_down.dart';
 
 class CreateRequirement extends StatefulWidget {
 
@@ -48,7 +53,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
   String selectedFromCity = '';
   String selectedToCity = '';
   final _formKey = GlobalKey<FormState>();
-
+  List<int> userIdList = [];
   TextEditingController selectedVehicleSizeController = TextEditingController();
   TextEditingController loadWeightController = TextEditingController();
   TextEditingController instructionController = TextEditingController();
@@ -57,7 +62,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
   bool privateSwitch = false;
   bool disturbSwitch = false;
   List<RadioModel> sampleData = <RadioModel>[
-    RadioModel(true, 'Show to only your preferred Transporters'),
+    RadioModel(true, 'Show to only Group'),
     RadioModel(false, 'Show to only verified Transporters'),
     RadioModel(false, 'Show to All')
   ];
@@ -65,8 +70,8 @@ class _CreateRequirementState extends State<CreateRequirement> {
   @override
   void initState() {
     selectedPostType = widget.postType;
-    provider.getAllUserList();
-      sampleData.add(new RadioModel(true, 'Show to only your preferred Transporters'));
+
+      sampleData.add(new RadioModel(true, 'Show to only Group'));
       sampleData.add(new RadioModel(false, 'Show to only verified Transporters'));
      super.initState();
   }
@@ -81,6 +86,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: ThemeColor.baground,
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Text("Post load/vehicle requirement",style: Style.appheading,),
@@ -134,6 +140,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                           builder: (BuildContext context){
                             return CustomCityListDialog(
                                 onTap : (String value){
+                                  provider.getListOfVefiyUser(selectedFromCity);
                                   setState(() {
                                     selectedFromCity = value;
                                   });
@@ -228,6 +235,63 @@ class _CreateRequirementState extends State<CreateRequirement> {
                       });
                     },
                   ),
+                 Container(
+                   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                   height: 50,
+                   decoration: ShapeDecoration(
+                     color: Colors.white,
+                     shape: RoundedRectangleBorder(
+                       side: BorderSide(width: 1, color: Colors.black54),
+                       borderRadius: BorderRadius.circular(8),
+                     ),
+                   ),
+                   child: TextFormField(
+                      decoration:InputDecoration(
+                        hintText: "Show Post To",
+                        border: InputBorder.none,
+                      ),
+                     controller: TextEditingController(
+                         text: userIdList.isEmpty?"All Users":"Groups"),
+                     readOnly: true,
+                     style: TextStyle(
+                       fontSize: 12,
+                       fontFamily: GoogleFonts.poppins().fontFamily,
+                       color: Colors.black
+                     ),
+                     onTap: ()  async{
+                       userIdList = await showDialog(context: context,
+                           builder: (BuildContext context){
+                             return ShowOptionDropDown(selectedFromCity);
+                           }
+                       );
+                       print(userIdList.length);
+                       setState(() {
+                       });
+                     },
+                   ),
+                 ),
+
+                 /*     Text("Show Post To:",style: TextStyle(fontFamily: GoogleFonts.poppins().fontFamily,fontSize: 16),),
+                      CustomTextField(
+                        hintText: 'Show Post To',
+                        controller: TextEditingController(
+                            text: userIdList==[]?"All Users":"Groups"),
+                        textInputType: TextInputType.emailAddress,
+                        readOnly: true,
+                        onValueChange: ()  {
+                          setState(()async {
+                          userIdList = await showDialog(context: context,
+                              builder: (BuildContext context){
+                                return ShowOptionDropDown(selectedFromCity);
+                              }
+                          );
+                          print(userIdList.length);
+
+                          });
+                        },
+
+                      ),*/
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                     height: 25,
@@ -243,16 +307,8 @@ class _CreateRequirementState extends State<CreateRequirement> {
                           inactiveTextColor: Colors.red,
                           value: identitySwitch,
                           onToggle: (val) {
-                            setState(() {
-                              identitySwitch = model.selectedSampleData == "Show To All"? false : val;
-                              if(identitySwitch == true){
-                                showDialog(context: context,
-                                    builder: (BuildContext context){
-                                      return CustomDropdownSearchMultiSelection(labelText: "Select Transporters", itemList: model.allUserNameList, selectedItems: model.searchingList,allUserList : model.allUserList);
-                                    }
-                                ) as List<String> ;
-
-                              }
+                            setState(() async {
+                              identitySwitch = val;
                             });
                           },
                         ),
@@ -307,6 +363,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             typeOfCargo: selectedCargoType,
                             typeOfPayment: selectedTypeOfPayment,
                             vehicleSize: selectedVehicleSizeController.text,
+                            selectedUserList: userIdList
                             //   userId: authProvider.userDetailList[0].id
                           ).then((value) => {
                             showAnimatedDialog(
@@ -365,7 +422,7 @@ class RadioItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width -165,
+           // width: MediaQuery.of(context).size.width -165,
             margin: EdgeInsets.only(left: 5.0),
             child:  Text(_item.text,style: TextStyle(fontSize: 14,fontWeight: FontWeight.normal),maxLines: 2,),
           ),

@@ -840,14 +840,28 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                     load.companyName??'',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                         load.companyName??'',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          load.mobileNumber.toString()??'',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 4),
                     SizedBox(
@@ -974,7 +988,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
 
   Widget imageDialog(text, path, context,load) {
     return Dialog(
-      // backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       // elevation: 0,
       child: Column(
         mainAxisSize: MainAxisSize.min,

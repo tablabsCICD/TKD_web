@@ -27,7 +27,7 @@ class Style{
  static TextStyle addUser= TextStyle(fontSize: 18,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xFFC3262C),);
 
  static TextStyle appbarheading = TextStyle(fontSize: 22,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Color(0xffffffff));
- static TextStyle heading = TextStyle(fontSize: 20,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold);
+ static TextStyle heading = TextStyle(fontSize: 16,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold);
  static TextStyle profilename = TextStyle(fontSize: 20,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.w600);
  static TextStyle headingBack = TextStyle(fontSize: 20,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Color(0xff555555));
 
@@ -38,7 +38,7 @@ class Style{
  static TextStyle okButton = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff6ea106));
  static TextStyle cancelButton = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xffea6935));
 
- static TextStyle dropdownValue = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold);
+ static TextStyle dropdownValue = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold,color: Colors.black,);
  static TextStyle filtterHeading = TextStyle(fontSize: 14,fontFamily: GoogleFonts.poppins().fontFamily,fontWeight: FontWeight.bold);
  static TextStyle filtterContent = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Color(0xff010101));
  static TextStyle loadHeading = TextStyle(fontSize: 12,fontFamily: GoogleFonts.poppins().fontFamily,color: Colors.white);

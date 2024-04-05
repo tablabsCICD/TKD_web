@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/model/verified_user.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
+import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
@@ -15,14 +18,14 @@ class CustomDropdownSearchMultiSelection extends StatefulWidget {
   final String labelText;
   final List<String> itemList;
   final List<String> selectedItems;
-
+  String sourceCity;
   final int? maxLimit;
   final bool? required;
-  List<User> allUserList;
+  List<UserVerifiedData> allUserList;
 
   CustomDropdownSearchMultiSelection(
       { required this.labelText, required this.itemList, required this.selectedItems,
-        this.maxLimit, this.required, Key? key, required this.allUserList})
+        this.maxLimit, this.required, Key? key, required this.allUserList, required this.sourceCity})
       : super(key: key);
 
   @override
@@ -34,12 +37,12 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
 
   List<RadioModel> sampleData = <RadioModel>[
     RadioModel(true, 'Show to All'),
-    RadioModel(false, 'Show to only your preferred Transporters'),
+    RadioModel(false, 'Show to only Groups'),
     RadioModel(false, 'Show to only verified Transporters')
 
   ];
 
-  List<String> allVerifiedUserList = [];
+  /*List<String> allVerifiedUserList = [];
 
   getList(){
     widget.allUserList.forEach((element) {
@@ -47,9 +50,10 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
         allVerifiedUserList.add('${element.firstName} ${element.lastName}');
       }
     });
-  }
+  }*/
 
-  final dashboardProvider = locator<DashboardProvider>();
+  final editProvider = locator<EditPostLoadProvider>();
+  final authProvider = locator<AuthProvider>();
   ScrollController _scrollController = ScrollController();
   var selectedPageNumber = 0;
 
@@ -59,7 +63,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        dashboardProvider.getAllUserList(currentPage: selectedPageNumber);
+        editProvider.getAllUserList(currentPage: selectedPageNumber);
         selectedPageNumber++;
       }
     });
@@ -89,6 +93,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                           sampleData.forEach((element) => element.isSelected = false);
                           sampleData[index].isSelected = true;
                           model.selectedSampleData = sampleData[index].text;
+                          model.selecteOptiontoShow(index, context,widget.sourceCity);
                         });
                       },
                       child: new RadioItem(sampleData[index]),
@@ -117,7 +122,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                     ),
                   ),
                 ),
-                items: sampleData[2].isSelected == true ? model.allVerifiedUserList : model.allUserNameList,
+                items: sampleData[2].isSelected == true ? model.allVerifiedUserNameList : model.groupListName,
 
                 popupProps: const PopupPropsMultiSelection.menu(
                   title: Center(child: Text("Search here")),
@@ -127,10 +132,12 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   textStyle: TextStyle(fontSize: 14),
                 ),
                 onChanged: (value) {
+
                   widget.selectedItems.clear();
                   widget.selectedItems.addAll(value);
                   model.searchingList.clear();
                   model.searchingList.addAll(value);
+
                 },
                 /*dropdownBuilder: (context, value) {
                   return Wrap(
@@ -152,7 +159,8 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                 "Ok",
               ),
               onPressed: () {
-                model.getSelectedUserId(widget.selectedItems);
+                if(sampleData[2]==true){
+                model.getSelectedUserId(widget.selectedItems);}
                 Navigator.of(context).pop(widget.selectedItems);
               },
             ),

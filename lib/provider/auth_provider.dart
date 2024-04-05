@@ -225,7 +225,7 @@ class  AuthProvider extends ChangeNotifier{
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
     if(req.statusCode==200){
-      start=150;
+      start=60;
       startTimer();
       //.show(context, "OTP resend Successfully");
     }

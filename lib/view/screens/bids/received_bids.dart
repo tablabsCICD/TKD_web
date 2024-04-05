@@ -105,7 +105,14 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
         ),
         child: Column(
           children: [
-            model.myOwnPostList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,):
+            model.myOwnPostList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,child: Container(
+                alignment: Alignment.center,
+                height: screenSize.height,
+                width: screenSize.width,
+                child: Text(
+                    getTranslated(
+                        'no_post', context)!,
+                    style: Style.heading)),):
             Expanded(
                 child: StaggeredGridView.countBuilder(
                   crossAxisCount: ResponsiveWidget.isDesktop(context)
