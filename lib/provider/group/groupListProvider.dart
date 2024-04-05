@@ -117,12 +117,12 @@ class GroupListProvider extends ChangeNotifier{
 
     };
     ApiResponse response=await apiHelper.ApiAddPostDataMapRequestCall(ApiConstant.GROUP,parameter);
+    isLoading=false;
+    showLoader(context);
     if(response.statusCode==200){
       GroupCreateModel model=GroupCreateModel.fromJson(response.response);
       callGroupMember(model.id,userId,context,false);
     }else{
-      isLoading=false;
-      showLoader(context);
       notifyListeners();
     }
   }
@@ -144,21 +144,20 @@ class GroupListProvider extends ChangeNotifier{
     };
     var response=await apiHelper.ApiAddPostDataMapRequest(ApiConstant.GROUP_MEMBER_BULK,parameter);
     if(response==200){
-      isLoading=false;
       createGroup=true;
 
       if(isFrom==true){
         getGroupMember(groupId!);
       }else{
         await getAllGroup(userId, context);
-        showLoader(context);
-        goToNextPage(context);
+       // showLoader(context);
+      //  goToNextPage(context);
       }
 
       //notifyListeners();
     }else{
       isLoading=false;
-      showLoader(context);
+    // showLoader(context);
       notifyListeners();
 
     }
@@ -219,12 +218,12 @@ class GroupListProvider extends ChangeNotifier{
     }
   }
   goToNextPage(BuildContext context){
-    int count = 0;
+   /* int count = 0;
     Navigator.popUntil(context, (route) {
       return count++ == 2;
-    });
-
-
+    });*/
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
   
   getAllGroup(int? userId,context)async{
@@ -234,9 +233,10 @@ class GroupListProvider extends ChangeNotifier{
     //showLoader(context);
     ApiHelper apiHelper=ApiHelper();
     var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString());
+    isLoading=false;
+
     GroupListModel groupListModel=GroupListModel.fromJson(response);
     listGroup.addAll(groupListModel.content!);
-    isLoading=false;
     //showLoader(context);
     notifyListeners();
 

@@ -231,6 +231,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                getLogoutFunction();
               } else
               if (value == Group) {
+                selectedTab = Dashboard;
               setState(() {});
               Navigator.push(
                 context,

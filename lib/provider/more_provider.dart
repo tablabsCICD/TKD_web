@@ -215,7 +215,6 @@ class MoreProvider extends ChangeNotifier {
         ? myFullLoadTypeList.removeAt(index)
         : myPartLoadTypeList.removeAt(index);
    await getOwnPostList(authProvider.userDetailList[0].id.toString());
-
     print("delete response: "+deleteResponse);
     notifyListeners();
   }

@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/group_list_model.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/search_widget.dart';
 import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
 import 'package:tkd_app/view/screens/discussion/discussion_new.dart';
+import 'package:tkd_app/view/screens/group/groupListScreen.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
 
 import '../localization/language_constrants.dart';
 import '../screens/group/editGroupScreen.dart';
@@ -17,7 +21,7 @@ class AppBarCommon {
   final BuildContext context;
    final String appBarWord;
 
-  const AppBarCommon(this.context,{this.appBarWord="New",required this.title});
+  AppBarCommon(this.context,{this.appBarWord="New",required this.title});
 
   AppBar appBar(){
     return AppBar(
@@ -76,12 +80,17 @@ class AppBarCommon {
     );
   }
 
+  final userProvider = locator<AuthProvider>();
   AppBar appBarWithNewButton(Function ontap){
     return AppBar(
       title: Text(title,style:Style.appheading,),
       backgroundColor: Colors.white,
       leading: IconButton(icon:Icon(Icons.arrow_back_ios_new,color: Colors.black,),onPressed:(){
-        Navigator.pop(context);
+        if(title=="Group"){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>MenuPage(userDetailList: userProvider.userDetailList,)));
+        }else{
+          Navigator.pop(context);
+        }
       } ,
       ),
       actions: [

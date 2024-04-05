@@ -77,7 +77,7 @@ class GroupDetailsState extends State<GroupDetailsScreen>{
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }else{
               await groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) =>GroupList()));
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>GroupList()),(Route<dynamic> route) => true,);
             }
           },child: Text("Create",style: Style.creategroup,))
         ],
@@ -193,7 +193,7 @@ class GroupDetailsState extends State<GroupDetailsScreen>{
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }else{
             await groupListProvider.callCreateGroupApi(userProvider.userDetailList[0].id,_controller.text,context);
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>GroupList()));
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>GroupList()),(Route<dynamic> route) => true,);
           }
         }
             ,child: Text("Create Group",style: Style.button,)),

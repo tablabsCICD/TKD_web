@@ -94,8 +94,7 @@ class EditGroupState extends State<EditGroupScreen> {
                            .pop();
                        Navigator.of(context)
                            .pop();
-                       Navigator.of(context)
-                           .pop();
+
                       },
                     ),
                     TextButton(
