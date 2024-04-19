@@ -179,7 +179,8 @@ class GroupListProvider extends ChangeNotifier{
        var imageBytes = result.files.first.bytes;
         print(fileName);
         var docs =  await uploadGroupPhoto(imageFilePath: fileName,imageBytes: imageBytes,objectFile: objFile);
-        print(docs);
+        print("Uploaded Img:"+docs.toString());
+       imageUrl=docs.toString();
 
       } catch (ex) {
         throw Exception("Exception Occurred ${ex.toString()}");

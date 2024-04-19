@@ -210,7 +210,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 ),
                                 InkWell(
                                   onTap:(){
-                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368168541-termsadnCondition.pdf";
+                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1713253757588-1711368168541-termsadnCondition_(1).pdf";
                                     html.window.open(url,"_blank"/*,"_self"*/);
 
                                   },
@@ -222,7 +222,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 ),
                                 InkWell(
                                   onTap:(){
-                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368127989-privacyPolicy.pdf";
+                                    String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1713253703520-1711368127989-privacyPolicy_(1).pdf";
                                     html.window.open(url,"_blank"/*,"_self"*/);
 
                                   },
