@@ -819,6 +819,16 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                 ),
               ),
             ),
+         //   SizedBox(height: 8),
+            Text(
+              load.companyName!,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 8),
             imageLoad(load),
             InkWell(

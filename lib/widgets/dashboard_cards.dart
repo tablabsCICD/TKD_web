@@ -150,8 +150,8 @@ class DashbordCards {
               ),
             ),
           ),
-          SizedBox(width: 8),
-          BaseWidget().profileWithUser(
+          SizedBox(height: load.privatePost==1?10:5),
+         load.privatePost==1?SizedBox.shrink(): BaseWidget().profileWithUser(
               load.companyLogo!, load.nameOfPerson!, load.companyName!,
               verify: load.isverified!,transporterOrAgent: load.transporterOrAgent!),
           BaseWidget().routes(load.source!, load.destination!),

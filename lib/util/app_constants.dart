@@ -50,7 +50,7 @@ class ApiConstant {
   static String VERIFY_OTP_ON_MAIL = BASE_URL + "verifyOTPEmail";
   static String SEND_OTP = BASE_URL + "sendOtp";
   static String ADD_CITY = BASE_URL + "/set/cities/db";
-  static String DIRECTORY = BASE_URL + "directory/allDirectoryUser";
+  static String DIRECTORY = BASE_URL + "directory/allDirectoryUser2";
   static String SHARE_POST_BASE_URL = "http://www.tkdost.com/tkd/";
   static String BID_TO_POST = BASE_URL + "biding";
   static String BID_FOR_USER = BASE_URL + "GetAllBidsForUser";

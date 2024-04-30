@@ -5,7 +5,7 @@ class TransportSearchModel {
   bool? last;
   int? totalElements;
   int? totalPages;
-  Null? sort;
+  //Null? sort;
   bool? first;
   int? numberOfElements;
   int? size;
@@ -16,7 +16,7 @@ class TransportSearchModel {
         this.last,
         this.totalElements,
         this.totalPages,
-        this.sort,
+        //this.sort,
         this.first,
         this.numberOfElements,
         this.size,
@@ -32,7 +32,7 @@ class TransportSearchModel {
     last = json['last'];
     totalElements = json['totalElements'];
     totalPages = json['totalPages'];
-    sort = json['sort'];
+   // sort = json['sort'];
     first = json['first'];
     numberOfElements = json['numberOfElements'];
     size = json['size'];
@@ -47,7 +47,7 @@ class TransportSearchModel {
     data['last'] = this.last;
     data['totalElements'] = this.totalElements;
     data['totalPages'] = this.totalPages;
-    data['sort'] = this.sort;
+  //  data['sort'] = this.sort;
     data['first'] = this.first;
     data['numberOfElements'] = this.numberOfElements;
     data['size'] = this.size;
