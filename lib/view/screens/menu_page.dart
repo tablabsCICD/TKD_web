@@ -29,6 +29,7 @@ import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/search_widget.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
+import 'package:tkd_app/view/payment/razor_pay.dart';
 import 'package:tkd_app/view/screens/bids/my_bids_screen.dart';
 import 'package:tkd_app/view/screens/bids/received_bids.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_vehicles.dart';
@@ -206,6 +207,7 @@ class _MenuPageState extends State<MenuPage> {
                                               CustomButton(
                                                 onTap: (){
                                                   getLogoutFunction();
+
                                                 },
                                                 buttonText: "Logout",
                                               ),
@@ -517,6 +519,42 @@ class _MenuPageState extends State<MenuPage> {
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
                             else
+                            Divider(),
+                            InkWell(
+                              child: Text("Package Change"),
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16.0),
+                                      ),
+                                      elevation: 0.0,
+                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
+                                      backgroundColor: Colors.white,
+                                      child: Container(
+                                        height: 500,
+                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
+                                        child: Stack(
+                                          children: [
+                                            CreateJob(),
+                                            Positioned(
+                                              top: 7,
+                                              right: 7,
+                                              child: IconButton(
+                                                icon: Icon(Icons.close,size: 18,),
+                                                onPressed: (){
+                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                );
+                              },
+                            ),
                             Divider(),
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)

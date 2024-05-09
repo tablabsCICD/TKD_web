@@ -41,17 +41,32 @@ class ApiHelper {
     var response = json.decode(req.body);
     return response;
   }
-  ApiPostData(String URL) async{
+
+  Future<ApiResponse> ApiPostData(String URL) async{
     var req = await http.post(Uri.parse(URL));
-    var response = json.decode(req.body);
-    print("Post response:::"+response);
-    return response;
+    print("Post response:::"+req.body);
+    ApiResponse apiResponseHelper = returnResponse(req);
+   print("Post response:::"+apiResponseHelper.response);
+    return apiResponseHelper;
   }
   ApiPutData(String URL) async{
     var req = await http.put(Uri.parse(URL));
     var response = json.decode(req.body);
     return response;
   }
+
+  ApiResponse returnResponse<T>(Response request){
+    if(request.statusCode==200||request.statusCode==400||request.statusCode==201){
+      var response1 = request.body;
+      print("**************************************${response1}");
+      ApiResponse apiResponseHelper = ApiResponse(request.statusCode!, request.body);
+      return apiResponseHelper;
+    }else{
+      ApiResponse apiResponseHelper = ApiResponse(request.statusCode!, request.body);
+      return apiResponseHelper;
+    }
+  }
+
 
   ApiDeleteData(String URL) async{
     var req = await http.delete(Uri.parse(URL));
