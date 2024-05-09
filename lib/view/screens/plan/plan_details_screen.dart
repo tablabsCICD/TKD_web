@@ -17,7 +17,7 @@ class PlanDetailsScreen extends StatefulWidget{
  final String subtitle;
  final String amount;
 
-  const PlanDetailsScreen(Key key,{ required this.listLaugaes, required this.selectLang, required this.image, required this.subtitle, required this.amount});
+  const PlanDetailsScreen({ required this.listLaugaes, required this.selectLang, required this.image, required this.subtitle, required this.amount});
 
   @override
   State<StatefulWidget> createState() {

@@ -47,6 +47,7 @@ import 'package:tkd_app/view/screens/insuranceAndFinance.dart';
 import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/job/job_screen.dart';
 import 'package:tkd_app/view/screens/more/create_general_post.dart';
+import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
 import 'auth/login_screen.dart';
 import 'package:tkd_app/view/screens/more/more_screen.dart';
 import 'package:tkd_app/view/screens/more/my_profile.dart';
@@ -476,6 +477,7 @@ class _MenuPageState extends State<MenuPage> {
                                 );
                               },
                             ),
+
                             Divider(),
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
@@ -520,42 +522,7 @@ class _MenuPageState extends State<MenuPage> {
                               SizedBox.shrink()
                             else
                             Divider(),
-                            InkWell(
-                              child: Text("Package Change"),
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                      ),
-                                      elevation: 0.0,
-                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                      backgroundColor: Colors.white,
-                                      child: Container(
-                                        height: 500,
-                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                        child: Stack(
-                                          children: [
-                                            CreateJob(),
-                                            Positioned(
-                                              top: 7,
-                                              right: 7,
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,size: 18,),
-                                                onPressed: (){
-                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                );
-                              },
-                            ),
-                            Divider(),
+
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
                                 widget.userDetailList![0].transporterOrAgent == 3)
                               SizedBox.shrink()
@@ -817,6 +784,9 @@ class _MenuPageState extends State<MenuPage> {
         break;
       case "Insurance_Finance":
         container = InsuranceAndFinanceScreen();
+        break;
+      case "Package Change":
+        container = SelectPlanScreen();
         break;
       case "Jobs":
         container = JobScreen();

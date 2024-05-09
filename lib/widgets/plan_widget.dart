@@ -13,7 +13,7 @@ class PlanWidget extends StatelessWidget{
   String subtitle;
   Function? onClick;
 
-  PlanWidget(Key key,{required this.isSelected, required this.title, required this.amount, required this.image,required this.subtitle,this.onClick});
+  PlanWidget({required this.isSelected, required this.title, required this.amount, required this.image,required this.subtitle,this.onClick});
 
 
   @override

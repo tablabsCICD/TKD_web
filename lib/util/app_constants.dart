@@ -44,7 +44,8 @@ class ApiConstant {
   static String CITY_NEW_API = BASE_URL + "get/advanced/details";
   static String CITY_NEW_API_DB = BASE_URL + "/get/cities/db";
   static String SEND_MESSAGE = BASE_URL + "/sendGeneralSMS";
-
+  static String UPDATE_YOUR_PLAN(id, planId) =>
+      BASE_URL + "updateValidTill?id=$id&plan=$planId";
 
   static String SEND_OTP_ON_MAIL = BASE_URL + "SendOTPOnEmailId";
   static String VERIFY_OTP_ON_MAIL = BASE_URL + "verifyOTPEmail";

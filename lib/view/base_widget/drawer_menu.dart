@@ -35,6 +35,7 @@ const My_Plans = 'Plans';
 const Company = 'Company';
 const Discussion = 'Discussion';
 const Fleets = 'Fleets';
+const Package_Change = "Package Change";
 const Chat = 'Chats';
 const Received_Quotes = 'Received Quotes';
 const Logout = 'Logout';
@@ -106,6 +107,9 @@ class _DrawerMenuState extends State<DrawerMenu> {
             else
               getTile('assets/images/navigation_image/jobs.png', Job_Page,
                   context, 'Jobs', (selectedTab == Job_Page)),
+            getDivider(),
+            getTile('assets/images/navigation_image/jobs.png', Package_Change,
+                context, 'Package Change', (selectedTab == Package_Change)),
             authProvider.userDetailList[0].transporterOrAgent == 3 ||
                     authProvider.userDetailList[0].transporterOrAgent == 2
                 ? SizedBox.shrink()

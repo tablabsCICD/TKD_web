@@ -11,6 +11,7 @@ import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/view/payment/razor_pay.dart';
 import 'package:tkd_app/widgets/button.dart';
+import 'package:tkd_app/widgets/linear_progress.dart';
 import 'package:tkd_app/widgets/plan_widget.dart';
 import 'package:tkd_app/widgets/toast.dart';
 

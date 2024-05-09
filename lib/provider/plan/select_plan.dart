@@ -2,8 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/api_response.dart';
+import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/network/api_call.dart';
+import 'package:tkd_app/util/app_constants.dart';
+import 'package:tkd_app/view/base_widget/app_constant.dart';
+import 'package:tkd_app/view/screens/auth/login_screen.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
+import 'package:tkd_app/view/screens/plan/plan_details_screen.dart';
+import 'package:tkd_app/widgets/toast.dart';
 
-class SelectPlanProvider{
+import '../auth_provider.dart';
+
+class SelectPlanProvider extends ChangeNotifier{
   SelectPlanProvider(){
     checkPlan();
   }
@@ -34,11 +47,12 @@ class SelectPlanProvider{
     planAmount = 0;
     notifyListeners();
   }
-
+  User? user;
+  final authProvider = locator<AuthProvider>();
   checkPlan()async{
-    User user=await LocalSharePreferences().getLoginData();
-    previousPlan=user.content!.first.isPaid!;
-    previousPlanCheck=user.content!.first.isPaid!;
+    user=await authProvider.getLoginData();
+    previousPlan=user!.isPaid!;
+    previousPlanCheck=user!.isPaid!;
 
     selectedPlanCode=previousPlan;
     planAmount = 0;
@@ -131,7 +145,7 @@ class SelectPlanProvider{
         });
   }
 
-  void showBootomSheet(BuildContext context) {
+  /*void showBootomSheet(BuildContext context) {
     showModalBottomSheet<void>(
         isScrollControlled: true,
         context: context,
@@ -139,30 +153,32 @@ class SelectPlanProvider{
           return FractionallySizedBox(heightFactor: 0.7, child: KYCScreenOne());
         });
   }
-
+*/
   goHome(BuildContext context) async {
-    bool isLogin =
-        await LocalSharePreferences().getBool(AppConstant.LOGIN_BOOl);
+    bool isLogin = (await authProvider.getVisitingFlag())!;
     if (isLogin) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, AppRoutes.home, (route) => false);
+      /*Navigator.pushNamedAndRemoveUntil(
+          context, AppRoutes.home, (route) => false);*/
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: [user!],)), (route) => false);
     } else {
-      Navigator.pushNamedAndRemoveUntil(
-          context, AppRoutes.login, (route) => false);
+     /* Navigator.pushNamedAndRemoveUntil(
+          context, AppRoutes.login, (route) => false);*/
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>Login_Screen()), (route) => false);
     }
   }
 
 
 
   selectedPlan(BuildContext context) async {
-    User user=await LocalSharePreferences().getLoginData();
-    ApiResponse apiResponse = await ApiHelper().apiPutDat(ApiConstant.UPDATE_YOUR_PLAN(user.content!.first.id,selectedPlanCode));
-    if (apiResponse.status == 200) {
-   User user=User.fromJson(apiResponse.response);
-      if(user.content!.length>0){
-        LocalSharePreferences localSharePreferences=LocalSharePreferences();
-        localSharePreferences.setBool(AppConstant.LOGIN_BOOl, true);
-        localSharePreferences.setString(AppConstant.LOGIN_KEY, jsonEncode(apiResponse.response));
+    User user=await authProvider.getLoginData();
+    ApiResponse apiResponse = await ApiHelper().ApiPutData(ApiConstant.UPDATE_YOUR_PLAN(user.id,selectedPlanCode));
+    if (apiResponse.statusCode == 200) {
+      var list = AuthApi.fromJson(jsonDecode(apiResponse.response));
+  // User user=User.fromJson(apiResponse.response);
+      if(list.content!.length>0){
+        SharedPreferences preferences=await SharedPreferences.getInstance();
+        preferences.setBool(AppConstant.LOGIN_BOOl, true);
+        preferences.setString(AppConstant.LOGIN_KEY, jsonEncode(apiResponse.response));
         ToastMessage.show(context, "Plan Update Sucesss");
 
       }
