@@ -8,6 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/auth_api.dart';
+import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/group_added_member.dart';
 import 'package:tkd_app/model/group_list_model.dart';
 import 'package:tkd_app/model/request/genral_post.dart';
@@ -47,7 +48,7 @@ class DashboardProvider extends ChangeNotifier{
       notifyListeners();
     }
     isLoading = true;
-    if(fromCity=="All" && toCity=="All"){
+    if(fromCity=="From" && toCity=="To"){
 
       // bool  bool fla = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false; = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false;
       if(!fla && !pla && !flr & !plr &!gp & ! buy_sell  &!jobs){
@@ -77,9 +78,9 @@ class DashboardProvider extends ChangeNotifier{
       }
 
     }else{
-      if(fromCity != "All" && toCity!="All"){
+      if(fromCity != "From" && toCity!="To"){
         url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else if(fromCity != "All" && toCity=="All"){
+      }else if(fromCity != "From" && toCity=="To"){
         url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       }else{
         url = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
@@ -108,37 +109,73 @@ class DashboardProvider extends ChangeNotifier{
     //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
     var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}"));
     if(apiResponse.statusCode==200){
-      await getFullLoadTruckList("All", "All",currentPage: 0);
-      showSimpleNotification(
-          Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
+
      // Navigator.pop(context,1);
+      var jsonData = jsonDecode(apiResponse.body);
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if(commonResponse.isSuccess == true){
+        await getFullLoadTruckList("From", "To",currentPage: 0);
+        showSimpleNotification(
+            Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
+            background: Colors.black
+        );}
+      else{
+        showSimpleNotification(
+            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+            background: Colors.orange
+        );
+        Navigator.of(context).pop();
+      }
+      return commonResponse.isSuccess;
+    }else if(apiResponse.statusCode == 402){
+      showSimpleNotification(
+          Text("Please update your package",style: TextStyle(color: Colors.white),),
+          background: Colors.orange
+      );
+      return false;
     }else{
       showSimpleNotification(
-          Text("Please try again",style: TextStyle(color: Colors.white),),
-          background: Colors.black
+          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
+          background: Colors.red
       );
+      return false;
     }
-    notifyListeners();
   }
 
   interChnageSendPost(BuildContext context,TruckLoad postBidData) async{
     // var apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}");
     var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}"));
     if(apiResponse.statusCode==200){
-      await getFullLoadTruckList("All", "All",currentPage: 0);
+
+      var jsonData = jsonDecode(apiResponse.body);
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if(commonResponse.isSuccess == true){
+        await getFullLoadTruckList("From", "To",currentPage: 0);
+        showSimpleNotification(
+            Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
+            background: Colors.black
+        );
+      }
+      else{
+        showSimpleNotification(
+            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+            background: Colors.orange
+        );
+        Navigator.of(context).pop();
+      }
+
+    }else if(response.statusCode == 402){
       showSimpleNotification(
-          Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
+          Text("Please update your package",style: TextStyle(color: Colors.white),),
+          background: Colors.orange
       );
-   //   Navigator.pop(context,1);
     }else{
       showSimpleNotification(
-          Text("Please try again",style: TextStyle(color: Colors.white),),
+          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
           background: Colors.red
       );
     }
+
     notifyListeners();
   }
 
@@ -241,7 +278,7 @@ class DashboardProvider extends ChangeNotifier{
     isLoading=true;
     //showLoader(context);
     ApiHelper apiHelper=ApiHelper();
-    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString());
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString()+"?page=0&size=1000");
    // listGroup.addAll(groupListModel.content!);
     if (response.status == 200) {
       GroupListModel groupListModel=GroupListModel.fromJson(response);
@@ -376,7 +413,7 @@ class DashboardProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  savePost({int? mobile,String? destination,int? dnd,String? email,String? fullLoadChoice,int? id,String? instruction,User? userList,
+  savePost(BuildContext context,{int? mobile,String? destination,int? dnd,String? email,String? fullLoadChoice,int? id,String? instruction,User? userList,
     String? loadWeight,String? name,String? mainTag,String? os,String? otherDetails,String? source,int? partLoad,
     int? privatePost,double? rating,String? customerName, String? type,String? typeOfCargo,String? vehicleSize, String? typeOfPayment,int? userId,List<int>? selectedUserList}) async {
 
@@ -420,22 +457,40 @@ class DashboardProvider extends ChangeNotifier{
     print("response : ${response.statusCode}" + " --- " + response.body.toString());
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if(commonResponse.isSuccess == true){
+      var jsonData = jsonDecode(response.body);
       TruckLoad dataObj = TruckLoad.fromJson(jsonData);
       print(dataObj);
       truckLoadTypeList.add(dataObj);
-
       showSimpleNotification(
           Text("Post submitted successfully!",style: TextStyle(color: Colors.white),),
           background: Colors.black
       );
+      Navigator.of(context).pop();}
+      else{
+        showSimpleNotification(
+            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+            background: Colors.orange
+        );
+        Navigator.of(context).pop();
+      }
+      return commonResponse.isSuccess;
+    }else if(response.statusCode == 402){
+      showSimpleNotification(
+          Text("Please update your package",style: TextStyle(color: Colors.white),),
+          background: Colors.orange
+      );
+      Navigator.of(context).pop();
+      return false;
     }else{
       showSimpleNotification(
           Text("Please Try Again!",style: TextStyle(color: Colors.white),),
           background: Colors.red
       );
+      Navigator.of(context).pop();
+      return false;
     }
-
-    notifyListeners();
   }
 
   SharedPostModel? truckLoad;

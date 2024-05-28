@@ -138,7 +138,7 @@ class EditPostLoadProvider extends ChangeNotifier {
   getGroupListByUserId() async {
     User user = authProvider.userDetailList[0];
     ApiHelper apiHelper=ApiHelper();
-    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+user.id!.toString());
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+user.id!.toString()+"?page=0&size=1000");
     GroupListModel groupListModel=GroupListModel.fromJson(response);
     groupListByUserId.addAll(groupListModel.content!);
     if (response.status == 200) {

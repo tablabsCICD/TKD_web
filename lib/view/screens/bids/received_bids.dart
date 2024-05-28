@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
@@ -10,6 +12,7 @@ import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/dialog/received_bids_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/bid_model.dart';
+import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/multi_select.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -19,7 +22,10 @@ import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/more_provider.dart';
 import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/show_bid.dart';
+import 'package:tkd_app/util/colors.dart';
+import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
@@ -29,6 +35,9 @@ import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/view/screens/more/repeat_post_dialog.dart';
+import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
+import 'package:tkd_app/widgets/base_widgets.dart';
+import 'package:tkd_app/widgets/toast.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +59,7 @@ class ReceivedBidsScreen extends StatefulWidget {
 
   ReceivedBidsScreen({Key? key}) : super(key: key) {
     print('UserName : ${authProvider.userDetailList[0].userName.toString()}');
-    moreProvider.getList(authProvider.userDetailList[0].userName.toString());
+    bidProvider.getReceivedBidingList();
   }
 
   @override
@@ -85,6 +94,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
 
   final langProvider = locator<LocalizationProvider>();
   final bidProvider = locator<BidProvider>();
+  final authProvider = locator<AuthProvider>();
   String? langCode;
 
   @override
@@ -92,456 +102,370 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
     super.initState();
     langCode = langProvider.selectedlangCode;
   }
+
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final screenSize = MediaQuery
+        .of(context)
+        .size;
 //    TruckLoad truckLoad = dashboardProvider.truckLoadTypeList[0];
-    return Consumer<MoreProvider>(
-      builder: (context, model, child) => Container(
-        margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
-            horizontal: 35,vertical: 10
-        ):EdgeInsets.symmetric(
-            horizontal: 10,vertical: 10
-        ),
-        child: Column(
-          children: [
-            model.myOwnPostList.isEmpty ? SizedBox(height: MediaQuery.of(context).size.height/2.5,child: Container(
-                alignment: Alignment.center,
-                height: screenSize.height,
-                width: screenSize.width,
-                child: Text(
-                    getTranslated(
-                        'no_post', context)!,
-                    style: Style.heading)),):
-            Expanded(
-                child: StaggeredGridView.countBuilder(
-                  crossAxisCount: ResponsiveWidget.isDesktop(context)
-                      ? 3
-                      : ResponsiveWidget.isMobile(context)
-                      ? 1
-                      : 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 12,
-                  itemCount: model.myOwnPostList.length,
-                  itemBuilder: (context, index) {
-                    bidProvider.getReceivedBidingList(model.myOwnPostList[index].mainTag!, model.myOwnPostList[index].id!);
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (builder) => RequirementDetails(
-                                    model.myOwnPostList[index])));
-                      },
-                      child: Card(
-                        elevation: 5,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 140,
-                                    height: 20,
-                                    alignment: Alignment.center,
-                                    decoration: new BoxDecoration(
-                                        color: model.myOwnPostList[index].mainTag ==
-                                            "Full load required"
-                                            ? ColorResources.FULL_LOAD_REQUIRED
-                                            : model.myOwnPostList[index].mainTag ==
-                                            "Part load required"
-                                            ? ColorResources.PART_LOAD_REQUIRED
-                                            : model.myOwnPostList[index]
-                                            .mainTag ==
-                                            "Full load available"
-                                            ? ColorResources
-                                            .FULL_LOAD_AVAILABLE
-                                            : ColorResources
-                                            .PART_LOAD_AVAILABLE,
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(5),
-                                            bottomRight: Radius.circular(10))),
-                                    child: CustomText(Utils().mainTag(model.myOwnPostList[index].mainTag
-                                        .toString())
-                                        ,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: 'RobotoMedium',
-                                            color: model.myOwnPostList[index]
-                                                .mainTag ==
-                                                "Full load required"
-                                                ? ColorResources.FLR_TEXT
-                                                : model.myOwnPostList[index]
-                                                .mainTag ==
-                                                "Part load required"
-                                                ? ColorResources.PLR_TEXT
-                                                : model.myOwnPostList[index]
-                                                .mainTag ==
-                                                "Full load available"
-                                                ? ColorResources.FLA_TEXT
-                                                : ColorResources.PLA_TEXT)),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        ConvertStringToDate(model.myOwnPostList[index].postingTime
-                                            .toString()),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        StarDisplay(
-                                            value:double.parse( model.myOwnPostList[index].ratings!
-                                                .toString())),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              ListTile(
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 5),
-                                horizontalTitleGap: 5,
-                                minVerticalPadding: 0,
-                                leading: Stack(
-                                  children: [
-                                    getImage(model.myOwnPostList[index].companyLogo
-                                        .toString()),
-                                    /*Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: Image.asset(
-                                        model.myOwnPostList[index].isPaid == 30
-                                            ? 'assets/images/diamond.png'
-                                            : model.myOwnPostList[index].isPaid ==
-                                            20
-                                            ? 'assets/images/gold_badge.png'
-                                            : 'assets/images/ruby_badge.png',
-                                        width: 15,
-                                        height: 20,
-                                      ),
-                                    )*/
-                                  ],
-                                ),
-                                title: Row(
-                                  children: [
-                                    CustomText(
-                                        model.myOwnPostList[index].nameOfPerson
-                                            .toString(),
-                                        style: Style.title),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    model.myOwnPostList[index]
-                                        .isverified ==0
-                                        ? Image.asset(
-                                      'assets/images/membership.png',
-                                      width: 15,
-                                      height: 15,
-                                    )
-                                        : Image.asset(
-                                      'assets/images/membership.png',
-                                      width: 15,
-                                      height: 15,
-                                    )
-                                  ],
-                                ),
-                                subtitle: CustomText(
-                                    model.myOwnPostList[index].companyName
-                                        .toString(),
-                                    style: Style.subtitle),
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.symmetric(horizontal: 45),
-                                height: 30,
-                                decoration: new BoxDecoration(
-                                    color: Color(0xfff0f0f0),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                        model.myOwnPostList[index].source
-                                            .toString(),
-                                        style: Style.cityHeading),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Image.asset('assets/images/two_way_arrow.png',height: 15,width: 25,),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                        model.myOwnPostList[index].destination
-                                            .toString(),
-                                        style: Style.cityHeading),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 7),
-                                child: langCode == 'en'?Text(model.myOwnPostList[index].topicName.toString(),
-                                    style: Style.contentHeading)
-                                    :CustomText(
-                                    model.myOwnPostList[index].topicName.toString(),
-                                    style: Style.contentHeading),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10.0, bottom: 10, right: 10),
-                                child: langCode == 'en'?Text(model.myOwnPostList[index].content.toString(),
-                                  style: Style.content,)
-                                    :CustomText(
-                                  model.myOwnPostList[index].content.toString(),
-                                  style: Style.content,
-                                ),
-                              ),
-                              Divider(
-                                height: 1.5,
-                                thickness: 1.5,
-                              ),
-                              /*Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () async {
-                                        openwhatsapp(
-                                            context,
-                                            model.myOwnPostList[index]
-                                                .mobileNumber
-                                                .toString(),
-                                            'please contact for more details');
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/chat.png',
-                                            color: ColorResources.PRIMARY_COLOR,
-                                            height: 15,
-                                            width: 15,
-                                          ),
-                                          SizedBox(
-                                            width: ResponsiveWidget.isDesktop(context)? 10 : 5,
-                                          ),
-                                          Text(getTranslated('chat', context)!,
-                                            style: Style.bottomHeading,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 1.5,
-                                      height: 30,
-                                      color: Colors.grey,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (_) =>
-                                            new RepeatDialogBox(model.myOwnPostList[index]));
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.repeat_one,
-                                            color: ColorResources.PRIMARY_COLOR,
-                                            size: 16,
-                                          ),
-                                          SizedBox(
-                                            width: ResponsiveWidget.isDesktop(context)? 10 : 5,                                      ),
-                                          Text('Repeat Post',
-                                              style: Style.bottomHeading)
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 1.5,
-                                      height: 30,
-                                      color: Colors.grey,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        _showMultiSelect(context,model.myOwnPostList[index]);
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.feedback,
-                                            color: ColorResources.PRIMARY_COLOR,
-                                            size: 16,
-                                          ),
-                                          SizedBox(
-                                            width: ResponsiveWidget.isDesktop(context)? 10 : 5,
-                                          ),
-                                          Text('Feedback',
-                                              style: Style.bottomHeading)
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 1.5,
-                                      height: 30,
-                                      color: Colors.grey,
-                                    ),
-                                    InkWell(
-                                      onTap: () async {
-                                        //share_data(widget.loadTypeList[index]);
-                                        showDialog(
-                                            context: context,
-                                            builder: (_) =>
-                                            new CupertinoAlertDialog(
-                                              title: CustomText(
-                                                'Are you sure want to deleted your post?',
-                                                style: Style.heading,
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'yes', context)!,
-                                                      style: Style.okButton),
-                                                  onPressed: () {
-                                                    model
-                                                        .deleteFullLoad(
-                                                        model.myOwnPostList[
-                                                        index])
-                                                        .then((value) => {
-                                                      showAnimatedDialog(
-                                                          context,
-                                                          MyDialog(
-                                                            icon: Icons
-                                                                .check,
-                                                            title:
-                                                            'Post Delete',
-                                                            description:
-                                                            'Your post deleted successfully',
-                                                            isFailed:
-                                                            false,
-                                                          ),
-                                                          dismissible:
-                                                          false,
-                                                          isFlip: false)
-                                                    });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text(
-                                                      getTranslated(
-                                                          'no', context)!,
-                                                      style:
-                                                      Style.cancelButton),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: ColorResources.PRIMARY_COLOR,
-                                            size: 16,
-                                          ),
-                                          SizedBox(
-                                            width: ResponsiveWidget.isDesktop(context)? 10 : 5,
-                                          ),
-                                          CustomText(
-                                            "Delete",
-                                            style: Style.bottomHeading,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Divider(
-                                height: 1.5,
-                                thickness: 1.5,
-                              ),*/
-                              Center(child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
-                                    elevation: 3,
-                                    side: BorderSide(color: Colors.black, width: 2),
-                                  ),
-                                  onPressed: () {
-                                    showDialog(context: context,
-                                        builder: (BuildContext context){
-                                          return ReceivedBidsDialogBox(
-                                            model.myOwnPostList[index],
-                                          );
-                                        }
-                                    );
+    return Consumer<BidProvider>(
+      builder: (context, model, child) =>
+          Container(
+            margin: ResponsiveWidget.isDesktop(context) ? EdgeInsets.symmetric(
+                horizontal: 35, vertical: 10
+            ) : EdgeInsets.symmetric(
+                horizontal: 10, vertical: 10
+            ),
+            child: Column(
+              children: [
+                model.ownBidPostList.isEmpty ? SizedBox(height: MediaQuery
+                    .of(context)
+                    .size
+                    .height / 2.5, child: Container(
+                    alignment: Alignment.center,
+                    height: screenSize.height,
+                    width: screenSize.width,
+                    child: Text(
+                        getTranslated(
+                            'no_post', context)!,
+                        style: Style.heading)),) :
+                Expanded(
+                    child: StaggeredGridView.countBuilder(
+                      crossAxisCount: ResponsiveWidget.isDesktop(context)
+                          ? 3
+                          : ResponsiveWidget.isMobile(context)
+                          ? 1
+                          : 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 12,
+                      itemCount: model.ownBidPostList.length,
 
-                                  },
-                                  child: CustomText("See Received Bids",style: Style.button),
-                                )
-                              )),
-                              Divider(
-                                height: 1.5,
-                                thickness: 1.5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  shrinkWrap: true,
-                  staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                )),
-          ],
+                      itemBuilder: (context, i) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 12, left: 20, right: 20),
+                          child: iteamMyPost(model.ownBidPostList[i], i),);
+                      },
+                      shrinkWrap: true,
+                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                    )),
+              ],
+            ),
+          ),
+    );
+  }
+
+  iteamMyPost(PostBidData postBidData, int index) {
+    return Container(
+      width: 335,
+      // height: 417.h,
+      padding: EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x114A5568),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              width: 130,
+              height: 18,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: Color(0xFF2C8FEA),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: Text(
+                  postBidData.genericCardsDto!.mainTag!,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8,),
+          BaseWidget().headingWithoutDate(
+              postBidData.genericCardsDto!.topicName!,
+              postBidData.genericCardsDto!.content!),
+          SizedBox(height: 8,),
+          BaseWidget().routes(postBidData.genericCardsDto!.source!,
+              postBidData.genericCardsDto!.destination!),
+          SizedBox(height: 8,),
+          iteams(postBidData, index),
+          SizedBox(height: 8,),
+          BaseWidget().showBidButton((val) async {
+            if (val == 0) {
+              if (postBidData.bidings!.length > 0) {
+                //showBootomSheet(context,postBidData.bidings);
+                authProvider.userDetailList[0].isPaid == 0 ? Navigator
+                    .pushReplacement(
+                    context, MaterialPageRoute(builder: (builder) => MenuPage(
+                  userDetailList: authProvider.userDetailList,
+                  selectedTab: "Package Change",))) : showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ReceivedBidsDialogBox(
+                          postBidData.bidings!
+                      );
+                    }
+                );
+              } else {
+                ToastMessage.show(context, "There are no bids to show ");
+              }
+            }
+            if (val == 3) {
+              String description = "${postBidData.genericCardsDto!.mobileNumber
+                  .toString()}'Type : ${postBidData.genericCardsDto!
+                  .type}, \nSubject : ${postBidData.genericCardsDto!
+                  .content}, \nSource : ${postBidData.genericCardsDto!
+                  .source}, \nDestination : ${postBidData.genericCardsDto!
+                  .destination}, \nLink : https://api.tkdost.com/bids/?id=${postBidData
+                  .genericCardsDto!.id}'";
+              TruckLoad truckLoad = TruckLoad(
+                  id: postBidData.genericCardsDto!.id,
+                  userId: postBidData.genericCardsDto!.userId,
+                  type: postBidData.genericCardsDto!.type,
+                  postingTime: postBidData.genericCardsDto!.postingTime,
+                  companyName: postBidData.genericCardsDto!.companyName,
+                  nameOfPerson: postBidData.genericCardsDto!.nameOfPerson,
+                  content: postBidData.genericCardsDto!.content,
+                  topicName: postBidData.genericCardsDto!.topicName,
+                  tableName: postBidData.genericCardsDto!.tableName,
+                  partLoadOrNot: postBidData.genericCardsDto!.partLoadOrNot,
+                  sharableLink: postBidData.genericCardsDto!.sharableLink,
+                  deviceId: postBidData.genericCardsDto!.deviceId,
+                  ratings: postBidData.genericCardsDto!.ratings,
+                  mobileNumber: postBidData.genericCardsDto!.mobileNumber,
+                  source: postBidData.genericCardsDto!.source,
+                  destination: postBidData.genericCardsDto!.destination,
+                  mainTag: postBidData.genericCardsDto!.mainTag,
+                  privatePost: postBidData.genericCardsDto!.privatePost,
+                  dnd: postBidData.genericCardsDto!.dnd,
+                  vehicleSize: postBidData.genericCardsDto!.vehicleSize,
+                  association: '',
+                  isPaid: int.parse(postBidData.genericCardsDto!.isPaid.toString()),
+                  website: postBidData.genericCardsDto!.website,
+                  companyDetailsName: postBidData.genericCardsDto!.companyName);
+              await Utils().callShareFunction(description, truckLoad, context);
+            }
+          }, true)
+
+
+        ],
       ),
     );
   }
 
-  Set<int>? selectedValues = [1,].toSet();
-
-  void _showMultiSelect(BuildContext context, TruckLoad object) async {
-    final items = <MultiSelectDialogItem<int>>[
-      MultiSelectDialogItem(1, 'I RECEIVED VERY GOOD RESPONSE BY CALLS.'),
-      MultiSelectDialogItem(2, 'I RECEIVED MANY BIDS.'),
-      MultiSelectDialogItem(3, 'THANKS MY WORK WAS DONE.'),
-      MultiSelectDialogItem(4, 'WE SAVED ON TRANSPORTATION.'),
-      MultiSelectDialogItem(5, 'WE DID NOT GET ANY RESPONSE.'),
-    ];
-
-    selectedValues = await showDialog<Set<int>>(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelectDialog(
-          items: items,
-          initialSelectedValues: selectedValues,
-          obj: object,
+  iteams(PostBidData postBidData, int index) {
+    if (postBidData.bidings!.length == 0) {
+      return Container();
+    } else {
+      if (postBidData.bidings!.length == 1) {
+        return iteamBid(postBidData.bidings![0], true, index);
+      } else if (postBidData.bidings!.length == 2) {
+        List<Widget>list = [
+          iteamBid(postBidData.bidings![0], false, index),
+          iteamBid(postBidData.bidings![1], true, index)];
+        return Column(
+          children: list,
         );
-      },
-    );
-    print(selectedValues!.length);
-    print(selectedValues);
+      } else {
+        List<Widget>list = [
+          iteamBid(postBidData.bidings![0], false, index),
+          iteamBid(postBidData.bidings![1], false, index),
+          iteamBid(postBidData.bidings![2], true, index)];
+        return Column(
+          children: list,
+        );
+      }
+    }
   }
+
+  iteamBid(Bidings bidings, bool isLast, int index) {
+    return Container(
+      width: 311,
+      //  height: 69.h,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            width: 1,
+            color: isLast ? Colors.white : Color(0x332C363F),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  BaseWidget().getImage(
+                      bidings.profileImage != null ? bidings.profileImage! : "",
+                      height: 28, width: 28)
+                  ,
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  bidings.firstName! + " " + bidings.lastName!,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 10,
+                                    fontFamily: AppConstant.FONTFAMILY,
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Visibility(
+                                  visible: bidings.isPaid != 0 ? true : false,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: BoxDecoration(),
+                                    child: Stack(
+                                      children: [
+                                        SvgPicture.asset(Images.verified)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              bidings.companyName!,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 10,
+                                fontFamily: AppConstant.FONTFAMILY,
+                                fontWeight: FontWeight.w400,
+                                height: 0,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '₹ ${bidings.bidings!.amount!}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontFamily: AppConstant.FONTFAMILY,
+                                    fontWeight: FontWeight.w600,
+                                    height: 0,
+
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: ShapeDecoration(
+              color: Colors.white.withOpacity(0.07999999821186066),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    // widget.provider.deleteBid(index, bidings);
+                    Utils().callFunction(
+                        context, "${bidings.bidings!.mobileNumber}");
+                  }
+                  , child: Container(
+                  width: 22,
+                  height: 22,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        child: Stack(children: [
+                          SvgPicture.asset(
+                            Images.call_white, color: ThemeColor.theme_blue,
+                            height: 25,
+                            width: 25,)
+
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }

@@ -1,14 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/date_converter.dart';
 
-class BuySellProvider extends ChangeNotifier{
+class BuySellProvider extends ChangeNotifier {
   List<TruckLoad> buyVehicleList = [];
   var response;
   List<TruckLoad> sellVehicleList = [];
@@ -17,16 +20,17 @@ class BuySellProvider extends ChangeNotifier{
   int totalPages = 0;
   bool isLoadingForBuyVehicles = false;
   bool isLoadingForSellVehicles = false;
-  bool isLoding=true;
+  bool isLoding = true;
   late TruckLoad truckLoadNotification;
 
   Future<TruckLoadType> getBuyVehicles({int currentPage = 0}) async {
     isLoadingForBuyVehicles = true;
     notifyListeners();
-    if(currentPage == 0){
+    if (currentPage == 0) {
       buyVehicleList.clear();
     }
-    String myUrl = ApiConstant.BUY_SELL_ALL_CARD +'?type=Buy&&page=${currentPage}';
+    String myUrl =
+        ApiConstant.BUY_SELL_ALL_CARD + '?type=Buy&&page=${currentPage}';
     var req = await http.get(Uri.parse(myUrl));
     isLoadingForBuyVehicles = false;
     response = json.decode(req.body);
@@ -39,9 +43,11 @@ class BuySellProvider extends ChangeNotifier{
   Future<TruckLoadType> getSellVehicles({int currentPage = 0}) async {
     isLoadingForSellVehicles = true;
     notifyListeners();
-    if(currentPage==0){
-    sellVehicleList.clear();}
-    String myUrl = ApiConstant.BUY_SELL_ALL_CARD +'?type=Sell&page=${currentPage}';
+    if (currentPage == 0) {
+      sellVehicleList.clear();
+    }
+    String myUrl =
+        ApiConstant.BUY_SELL_ALL_CARD + '?type=Sell&page=${currentPage}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoadingForSellVehicles = false;
@@ -57,7 +63,7 @@ class BuySellProvider extends ChangeNotifier{
     isLoadingForSellVehicles = true;
     notifyListeners();
     sellVehicleList.clear();
-    String myUrl = ApiConstant.BUY_SELL_SINGLE_CARD +'${id}';
+    String myUrl = ApiConstant.BUY_SELL_SINGLE_CARD + '${id}';
     var req = await http.get(Uri.parse(myUrl));
     print('req $myUrl');
     isLoadingForSellVehicles = false;
@@ -69,10 +75,31 @@ class BuySellProvider extends ChangeNotifier{
     return type1;
   }
 
-  createBuySell({int? userId,String? description,String? agentName,String? bodyType,String? buySellType,String? city,String? conditionOfTyre,
-    String? ConOfVehicle,int? mobile,String? date,String? price,int? id,String? image,String? insurancePaidDate,String? mainTag,String? maker,String? mfgYear,
-    String? model,String? lUserName,String? owner,String? postingTime,String? type,String? registrationNumber,String? yearOfBuying
-  }) async {
+  createBuySell(
+      {int? userId,
+      String? description,
+      String? agentName,
+      String? bodyType,
+      String? buySellType,
+      String? city,
+      String? conditionOfTyre,
+      String? ConOfVehicle,
+      int? mobile,
+      String? date,
+      String? price,
+      int? id,
+      String? image,
+      String? insurancePaidDate,
+      String? mainTag,
+      String? maker,
+      String? mfgYear,
+      String? model,
+      String? lUserName,
+      String? owner,
+      String? postingTime,
+      String? type,
+      String? registrationNumber,
+      String? yearOfBuying}) async {
     String myUrl = ApiConstant.POST_BUY_SELL;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -106,7 +133,7 @@ class BuySellProvider extends ChangeNotifier{
       "tableName": "string",
       "topicName": "string",
       "type": type,
-      "userId":userId,
+      "userId": userId,
       "vehicleRegistrationNumber": registrationNumber,
       "yearOfBuying": yearOfBuying
     };
@@ -114,32 +141,65 @@ class BuySellProvider extends ChangeNotifier{
     print(data);
     var createResponse = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
-    print("${createResponse.statusCode}" + " --- " + createResponse.body.toString());
-    var jsonData = jsonDecode(createResponse.body);
-    if(type=='Buy Vehicle'){
-      TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-      buyVehicleList.add(dataObj);
+    print("${createResponse.statusCode}" +
+        " --- " +
+        createResponse.body.toString());
+    if (createResponse.statusCode == 200) {
+      var jsonData = jsonDecode(createResponse.body);
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if(commonResponse.isSuccess == true){
+        var jsonData = jsonDecode(createResponse.body);
+        if (type == 'Buy Vehicle') {
+          TruckLoad dataObj = TruckLoad.fromJson(jsonData);
+          buyVehicleList.add(dataObj);
+        } else {
+          TruckLoad dataObj = TruckLoad.fromJson(jsonData);
+          sellVehicleList.add(dataObj);
+        }
+      }
+      else{
+        showSimpleNotification(
+            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+            background: Colors.orange
+        );
+      }
+      notifyListeners();
+      return commonResponse.isSuccess;
+    } else if (createResponse.statusCode == 402) {
+      showSimpleNotification(
+          Text(
+            "Please update your package",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.orange);
+      notifyListeners();
+      return false;
+    } else {
+      showSimpleNotification(
+          Text(
+            "Please Try Again!",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.red);
+      notifyListeners();
+      return false;
     }
-    else{
-      TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-      sellVehicleList.add(dataObj);
-    }
-    notifyListeners();
+
+    //return createResponse;
   }
 
   final dashBoardProvider = locator<DashboardProvider>();
-  deleteBuySell(int id,int index,bool isBuy) async {
-    String myUrl = ApiConstant.POST_BUY_SELL +'?id=${id}';
+  deleteBuySell(int id, int index, bool isBuy) async {
+    String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
-    if(isBuy){
+    if (isBuy) {
       buyVehicleList.removeAt(index);
-    }
-    else{
+    } else {
       sellVehicleList.removeAt(index);
     }
     dashBoardProvider.notifyListeners();
-    dashBoardProvider.getFullLoadTruckList("All", "All");
+    dashBoardProvider.getFullLoadTruckList("From", "To");
     notifyListeners();
-    }
+  }
 }

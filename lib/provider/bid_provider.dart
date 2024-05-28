@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/bid_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/model/biding_user_model.dart';
+import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -13,6 +16,7 @@ import 'package:tkd_app/util/app_constants.dart';
 class BidProvider extends ChangeNotifier{
   List<BidingUser> allBidingList = [];
   List<Bidings> receivedBidingList = [];
+  List<PostBidData> ownBidPostList = [];
   var response;
   int totalPages = 0;
   bool isLoading = false;
@@ -41,10 +45,11 @@ class BidProvider extends ChangeNotifier{
   List<TruckLoad> allPostList = [];
   List<TruckLoad> myOwnPostList = [];
 
+/*
   getList(String userName) async {
     allPostList.clear();
     myOwnPostList.clear();
-    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}';
+    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}&page=0&size=100';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -58,9 +63,10 @@ class BidProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+*/
 
 
-  getReceivedBidingList(String type1,int postId) async {
+  getReceivedBidingList() async {
     isLoading = true;
     notifyListeners();
     String myUrl = ApiConstant.BASE_URL +'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}';
@@ -70,6 +76,8 @@ class BidProvider extends ChangeNotifier{
     response = json.decode(req.body);
     print(response);
     var type = MyPostBids.fromJson(response);
+    ownBidPostList.clear();
+    ownBidPostList = type.content!;
     receivedBidingList.clear();
     receivedBidingList=type.content![0].bidings!;
     receivedBidingList.sort((a, b) => int.parse(a.bidings!.amount!).compareTo(int.parse(b.bidings!.amount!)));
@@ -111,11 +119,35 @@ class BidProvider extends ChangeNotifier{
     };
     var body = json.encode(data);
     print(data);
+
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
     print("${response.statusCode}" + " --- " + response.body.toString());
+    if(response.statusCode==200){
     var jsonData = jsonDecode(response.body);
-    BidingUser dataObj = BidingUser.fromJson(jsonData);
+    CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+    if(commonResponse.isSuccess == true){
+      var jsonData = jsonDecode(response.body);
+      BidingUser dataObj = BidingUser.fromJson(jsonData);
+    }
+    else{
+      showSimpleNotification(
+          Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+          background: Colors.orange
+      );
+    }
+    }else if(response.statusCode == 402){
+      showSimpleNotification(
+          Text("Please update your package",style: TextStyle(color: Colors.white),),
+          background: Colors.orange
+      );
+    }else{
+      showSimpleNotification(
+          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
+          background: Colors.red
+      );
+    }
+
     //allBidingList.add(dataObj);
     notifyListeners();
   }

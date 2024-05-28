@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
+import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/comments_model.dart';
 import 'package:tkd_app/model/feedback_model.dart';
 import 'package:tkd_app/model/gallary_model.dart';
@@ -90,8 +91,8 @@ class MoreProvider extends ChangeNotifier {
       myBuyVehicleList.clear();
     }
 
-    String myUrl = ApiConstant.GET_OWNPOST + '?userId=${userName}';
-    print(myUrl);
+    String myUrl = ApiConstant.GET_OWNPOST + '?userId=${userName}&page=$currentPage&size=100';
+    print("OwnPost::"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isMoreFirstLoading= false;
     isMoreLoading = false;
@@ -134,22 +135,40 @@ class MoreProvider extends ChangeNotifier {
 
   reSendPost(BuildContext context,TruckLoad postBidData)async {
   //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
-    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}"));
+    String myUrl = ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}";
+    print(myUrl);
+    var apiResponse=await http.post(Uri.parse(myUrl));
     if(apiResponse.statusCode==200){
-      await getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
-      showSimpleNotification(
-          Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
 
-     // Navigator.pop(context,1);
+      // Navigator.pop(context,1);
+      var jsonData = jsonDecode(apiResponse.body);
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if(commonResponse.isSuccess == true){
+        await getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
+        showSimpleNotification(
+            Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
+            background: Colors.black
+        );}
+      else{
+        showSimpleNotification(
+            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
+            background: Colors.orange
+        );
+      }
+      return commonResponse.isSuccess;
+    }else if(apiResponse.statusCode == 402){
+      showSimpleNotification(
+          Text("Please update your package",style: TextStyle(color: Colors.white),),
+          background: Colors.orange
+      );
+      return false;
     }else{
       showSimpleNotification(
-          Text("Please try again",style: TextStyle(color: Colors.white),),
-          background: Colors.black
+          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
+          background: Colors.red
       );
+      return false;
     }
-    notifyListeners();
   }
 
   interChnageSendPost(BuildContext context,TruckLoad postBidData) async{

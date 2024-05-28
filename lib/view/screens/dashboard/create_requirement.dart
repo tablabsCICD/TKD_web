@@ -341,7 +341,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                   CustomButton(
                       onTap: () async{
                         if (_formKey.currentState!.validate()) {
-                          var result = await model.savePost(
+                          var result = await model.savePost(context,
                             mobile: authProvider.userDetailList[0].mobileNumber ,
                             destination: selectedToCity,
                             email: authProvider.userDetailList[0].emailId,
@@ -366,6 +366,10 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             selectedUserList: userIdList
                             //   userId: authProvider.userDetailList[0].id
                           ).then((value) => {
+
+                          });
+                          if(result == true) {
+
                             showAnimatedDialog(
                                 context,
                                 MyDialog(
@@ -378,12 +382,10 @@ class _CreateRequirementState extends State<CreateRequirement> {
                                   isFromPost: true,
                                 ),
                                 dismissible: false,
-                                isFlip: false),
-                          });
-                          if(result) {
+                                isFlip: false);
 
+                          }else{
                             Navigator.of(context).pop();
-
                           }
                         }},
                       buttonText: "Post Load")

@@ -79,7 +79,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       int? empid = await authProvider.getEmpId();
       if(empid != null){
         userDetailList = await authProvider.getUserDetails(empid);
-        Navigator.push(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userDetailList)));
+        Navigator.push(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userDetailList,selectedTab: "Board",)));
       }
     }
   }

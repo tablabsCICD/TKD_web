@@ -98,7 +98,7 @@ class EntryState extends State<EntryScreen> {
             context,
             MaterialPageRoute(
                 builder: (builder) =>
-                    MenuPage(userDetailList: userDetailList)));
+                    MenuPage(userDetailList: userDetailList,selectedTab:"Board")));
       }else{
         Navigator.pushReplacement(
             context,

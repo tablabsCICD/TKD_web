@@ -37,7 +37,9 @@ class GroupListProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     if(allUserList.length==0){
-      String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${0}&size=6000';
+      //String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${0}&size=6000';
+      String myUrl = ApiConstant.CHAT_USER_LIST_COMPANY(' ');
+      print(myUrl);
       var responseBody=await ApiHelper().ApiGetData(myUrl);
       isFirstLoading= false;
       var type = AuthApi.fromJson(responseBody);
@@ -233,7 +235,7 @@ class GroupListProvider extends ChangeNotifier{
     isLoading=true;
     //showLoader(context);
     ApiHelper apiHelper=ApiHelper();
-    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString());
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString()+"?page=0&size=1000");
     isLoading=false;
 
     GroupListModel groupListModel=GroupListModel.fromJson(response);

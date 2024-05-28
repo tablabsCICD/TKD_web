@@ -163,7 +163,7 @@ class RazorPayClass {
         List<User> userList = [];
         userList.add(user);
        // Navigator.pushNamedAndRemoveUntil(context,AppRoutes.home, (route) => true);
-          Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userList)) , (route) => false);
+          Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userList,selectedTab: "Board",)) , (route) => false);
           }
         else{
         showAlertDialog(

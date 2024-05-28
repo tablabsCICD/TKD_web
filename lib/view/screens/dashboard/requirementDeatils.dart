@@ -37,7 +37,7 @@ class RequirementDetails extends StatefulWidget {
   final bidProvider = locator<BidProvider>();
 
   RequirementDetails(this.truckLoad,{Key? key}) : super(key: key) {
-    bidProvider.getReceivedBidingList(truckLoad.mainTag!, truckLoad.id!);
+   // bidProvider.getReceivedBidingList(truckLoad.mainTag!, truckLoad.id!);
   }
 
   @override

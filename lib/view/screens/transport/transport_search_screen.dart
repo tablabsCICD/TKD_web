@@ -743,6 +743,16 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
               ),
             ),
             SizedBox(height: 8),
+            Text(
+              transportSearchData.companyName??'',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 8),
             imageLoad(transportSearchData),
             InkWell(
               onTap: ()async{

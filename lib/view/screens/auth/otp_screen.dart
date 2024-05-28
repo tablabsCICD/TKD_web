@@ -602,7 +602,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                             print(model.userDetailList[0].userName);
                             print("OTP IS  :::::: "+model.userDetailList[0].otp.toString());
                             model.setUserName(model.userDetailList[0].userName!);
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: model.userDetailList)));
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: model.userDetailList,selectedTab: "Board",)));
                           }else {
                            showSimpleNotification(
                                Text(result,style: TextStyle(color: Colors.white),),

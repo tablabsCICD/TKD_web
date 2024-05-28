@@ -56,7 +56,7 @@ class MyDialog extends StatelessWidget {
                      Navigator.pop(context)
                    }else{
                      Navigator.of(context).pushAndRemoveUntil(
-                         MaterialPageRoute(builder: (c) => MenuPage(userDetailList:authProvider.userDetailList)),
+                         MaterialPageRoute(builder: (c) => MenuPage(userDetailList:authProvider.userDetailList,selectedTab: "Board",)),
                              (route) => false)
                    }
                 } ),

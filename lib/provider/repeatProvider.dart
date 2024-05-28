@@ -55,7 +55,7 @@ class RepeatProvider extends ChangeNotifier {
   final dashboardProvider = locator<DashboardProvider>();
   final authProvider = locator<AuthProvider>();
 
-  checkRepeatTim() async {
+  checkRepeatTim(context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? allRepeatePostList = await prefs.getString('AllRepeatPostList');
     final List<RepeatModel> repeat = RepeatModel.decode(allRepeatePostList!);
@@ -78,7 +78,7 @@ class RepeatProvider extends ChangeNotifier {
           print('id'+element.postId.toString());
           Load load = await getFullLoadTruckById(element.postId!);
           print('object'+ load.transporterOrCustomerName.toString());
-          dashboardProvider.savePost(
+          dashboardProvider.savePost(context,
             mobile: authProvider.userDetailList[0].mobileNumber ,
             destination: load.destination,
             dnd: 0,

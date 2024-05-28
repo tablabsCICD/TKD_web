@@ -71,7 +71,7 @@ class DashBoardScreen extends StatefulWidget {
   final dashboardProvider = locator<DashboardProvider>();
 
   DashBoardScreen({Key? key}) : super(key: key) {
-    dashboardProvider.getFullLoadTruckList("All","All");
+    dashboardProvider.getFullLoadTruckList("From","To");
   }
 
   @override
@@ -115,7 +115,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
   var selectedPageNumber = 1;
   final dashboardProvider = locator<DashboardProvider>();
   ScrollController _scrollController = ScrollController();
-  String? selectedFromCity = "All", selectedToCity = "All";
+  String? selectedFromCity = "From", selectedToCity = "To";
   final _formKey = GlobalKey<FormState>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
@@ -1119,47 +1119,49 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                       context)!,
                   style:
                   Style.okButton),
-              onPressed: () {
-                isCityInterchange? dashboardProvider.interChnageSendPost(context, truckLoad)
-                    .then((value) => {
-                  showAnimatedDialog(
-                      context,
-                      MyDialog(
-                        icon:
-                        Icons.check,
-                        title:
-                        'City Interchange Post',
-                        description:
-                        'Your post submitted successfully',
-                        isFailed:
-                        false,
-                      ),
-                      dismissible:
+              onPressed: () async{
+               bool res =  isCityInterchange?  await dashboardProvider.interChnageSendPost(context, truckLoad)
+                      :await dashboardProvider.reSendPost(context, truckLoad);
+
+                if(res){
+
+                isCityInterchange? showAnimatedDialog(
+                context,
+                MyDialog(
+                  icon:
+                  Icons.check,
+                  title:
+                  'City Interchange Post',
+                  description:
+                  'Your post submitted successfully',
+                  isFailed:
+                  false,
+                ),
+                dismissible:
+                false,
+                isFlip:
+                false) : showAnimatedDialog(
+                    context,
+                    MyDialog(
+                      icon:
+                      Icons.check,
+                      title:
+                      'Re Submit Post',
+                      description:
+                      'Your post submitted successfully',
+                      isFailed:
                       false,
-                      isFlip:
-                      false)
-                })
-                    :dashboardProvider.reSendPost(context, truckLoad)
-                    .then((value) => {
-                  showAnimatedDialog(
-                      context,
-                      MyDialog(
-                        icon:
-                        Icons.check,
-                        title:
-                        'Re Submit Post',
-                        description:
-                        'Your post submitted successfully',
-                        isFailed:
-                        false,
-                      ),
-                      dismissible:
-                      false,
-                      isFlip:
-                      false)
-                });
+                    ),
+                    dismissible:
+                    false,
+                    isFlip:
+                    false);
+
                 Navigator.of(context)
-                    .pop();
+                    .pop();}else{
+                  Navigator.of(context)
+                      .pop();
+                }
               },
             ),
             TextButton(

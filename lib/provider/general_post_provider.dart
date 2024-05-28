@@ -21,19 +21,27 @@ class GeneralPostProvider extends ChangeNotifier{
   final dashboardProvider = locator<DashboardProvider>();
   final moreProvider = locator<MoreProvider>();
   List<GernralPostOwnData> listOwnPost=[];
+  bool isLoading = false;
 
-  callGeneralPostApi() async{
-    listOwnPost.clear();
+  callGeneralPostApi({int currentPage = 0}) async{
+    isLoading = true;
+    notifyListeners();
+    if(currentPage == 0){
+      listOwnPost.clear();
+    }
+
     String url="${ApiConstant.BASE_URL}getBuySellByUserId?userId=${authProvider.userDetailList[0].id}";
     print("the url ${url}");
     var apiResponse=await http.get(Uri.parse(url));
     print("the url ${apiResponse.body}");
+    isLoading = false;
     if(apiResponse.statusCode==200){
       OwnGenralPostList ownGenralPostList=OwnGenralPostList.fromJson(jsonDecode(apiResponse.body));
       listOwnPost.addAll(ownGenralPostList.data!);
       print('the lenghth is ${listOwnPost.length}');
       notifyListeners();
     }else{
+      notifyListeners();
     }
   }
 
@@ -67,7 +75,7 @@ class GeneralPostProvider extends ChangeNotifier{
           Text("Post submitted successfully!",style: TextStyle(color: Colors.white),),
           background: Colors.black
       );
-      dashboardProvider.getFullLoadTruckList("All", "All",currentPage:  0);
+      dashboardProvider.getFullLoadTruckList("From", "To",currentPage:  0);
       callGeneralPostApi();
       Navigator.pop(context);
       Navigator.pop(context);

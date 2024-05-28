@@ -77,7 +77,7 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
             context,
             MaterialPageRoute(
                 builder: (builder) =>
-                    MenuPage(userDetailList: userDetailList)));
+                    MenuPage(userDetailList: userDetailList,selectedTab: "Board",)));
         return false;
       },
       child: Scaffold(

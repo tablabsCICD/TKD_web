@@ -13,6 +13,8 @@ import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/screens/group/createNewGroup.dart';
 import 'package:tkd_app/view/screens/group/groupChatScreen.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
+import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
 
 import '../../../locator.dart';
 import '../../../model/group_list_model.dart';
@@ -51,7 +53,7 @@ class GroupListState extends State<GroupList> {
         return Scaffold(
           backgroundColor: ThemeColor.baground,
           appBar: AppBarCommon(context, title: "Group").appBarWithNewButton(() {
-            Navigator.push(
+            userProvider.userDetailList[0].isPaid==0 ? Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: userProvider.userDetailList,selectedTab: "Package Change",))):Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CreateNewGroup()));
           }),

@@ -46,8 +46,8 @@ const Privacy_Policy = "Privacy Policy";
 // ignore: must_be_immutable
 class DrawerMenu extends StatefulWidget {
   StringValue callBack;
-
-  DrawerMenu({Key? key, required this.callBack}) : super(key: key);
+  String selectedTab;
+  DrawerMenu({Key? key, required this.callBack, required this.selectedTab}) : super(key: key);
 
   @override
   _DrawerMenuState createState() => _DrawerMenuState();
@@ -55,10 +55,17 @@ class DrawerMenu extends StatefulWidget {
 
 class _DrawerMenuState extends State<DrawerMenu> {
   final authProvider = locator<AuthProvider>();
-  static String selectedTab = 'Board';
+  String selectedTab = "Board";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedTab = widget.selectedTab;
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Drawer(
       child: Container(
         //height: 50,//MediaQuery.of(context).size.height-70,

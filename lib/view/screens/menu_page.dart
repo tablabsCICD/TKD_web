@@ -64,8 +64,9 @@ import 'dart:html' as html;
 
 class MenuPage extends StatefulWidget {
   List<User>? userDetailList;
+  String selectedTab;
 
-  MenuPage({Key? key, this.userDetailList}) : super(key: key);
+  MenuPage({Key? key, this.userDetailList, required this.selectedTab }) : super(key: key);
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -82,7 +83,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    container = DashBoardScreen();
+    container = widget.selectedTab=="Board"?DashBoardScreen():SelectPlanScreen();
     routeProvider.addDataFromDummyListToRouteList();
     ApiConstant.languages
         .forEach((language) => _valueList.add(language.languageName!));
@@ -297,7 +298,7 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ],
             ),
-      drawer: DrawerMenu(callBack: menuCallBack),
+      drawer: DrawerMenu(callBack: menuCallBack,selectedTab: widget.selectedTab),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -396,7 +397,7 @@ class _MenuPageState extends State<MenuPage> {
                                               child: IconButton(
                                                 icon: Icon(Icons.close,size: 18,),
                                                 onPressed: (){
-                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
                                                 },
                                               ),
                                             )
@@ -466,7 +467,7 @@ class _MenuPageState extends State<MenuPage> {
                                               child: IconButton(
                                                 icon: Icon(Icons.close,size: 18,),
                                                 onPressed: (){
-                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
                                                 },
                                               ),
                                             )
@@ -518,13 +519,13 @@ class _MenuPageState extends State<MenuPage> {
                                 },
                               ),
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
+                                widget.userDetailList![0].transporterOrAgent == 3 || authProvider.userDetailList[0].isPaid != 30)
                               SizedBox.shrink()
                             else
                             Divider(),
 
                             if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
+                                widget.userDetailList![0].transporterOrAgent == 3 || authProvider.userDetailList[0].isPaid != 30)
                               SizedBox.shrink()
                             else
                               InkWell(
@@ -551,7 +552,7 @@ class _MenuPageState extends State<MenuPage> {
                                                 child: IconButton(
                                                   icon: Icon(Icons.close,size: 18,),
                                                   onPressed: (){
-                                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList)));
+                                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
                                                   },
                                                 ),
                                               )
@@ -719,6 +720,7 @@ class _MenuPageState extends State<MenuPage> {
                   flex: 1,
                   child: DrawerMenu(
                     callBack: menuCallBack,
+                    selectedTab: widget.selectedTab,
                   )),
             Expanded(flex: 5, child: container)
           ],

@@ -409,11 +409,20 @@ class _MyBuySellCardState extends State<MyBuySellCard>
   final authProvider = locator<AuthProvider>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
+  ScrollController _scrollController = ScrollController();
+  var selectedPageNumber = 1;
 
   @override
   void initState() {
     super.initState();
     langCode = langProvider.selectedlangCode;
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        moreProvider.getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: selectedPageNumber);
+        selectedPageNumber++;
+      }
+    });
   }
 
   @override
@@ -541,7 +550,7 @@ class _MyRequirementCardState extends State<MyRequirementCard>
   void repeatPostEvent() {
     Future.delayed(Duration(seconds: 5), () {
       var result = dashboardProvider
-          .savePost(
+          .savePost(context,
           mobile: authProvider.userDetailList[0].mobileNumber,
           destination: moreProvider.myFullLoadTypeList[0].destination,
           dnd: 0,
@@ -587,13 +596,24 @@ class _MyRequirementCardState extends State<MyRequirementCard>
 
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
+  ScrollController _scrollController = ScrollController();
+  var selectedPageNumber = 1;
+
 
   @override
   void initState() {
     super.initState();
     langCode = langProvider.selectedlangCode;
-    // repeatPostEvent();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        moreProvider.getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: selectedPageNumber);
+        selectedPageNumber++;
+      }
+    });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -618,7 +638,7 @@ class _MyRequirementCardState extends State<MyRequirementCard>
                       : 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 12,
-                  itemCount: widget.loadTypeList.length,
+                  itemCount: widget.loadTypeList[0].partLoadOrNot==0?model.myFullLoadTypeList.length:model.myPartLoadTypeList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                         onTap: () {
@@ -631,7 +651,7 @@ class _MyRequirementCardState extends State<MyRequirementCard>
                         child: DashbordCards().cardLoadHome(
                             index,
                             context,
-                            widget.loadTypeList[index],
+                            widget.loadTypeList[0].partLoadOrNot==0?model.myFullLoadTypeList[index]:model.myPartLoadTypeList[index],
                             authProvider.userDetailList[0].id!,
                             this,
                             dashboardProvider,
@@ -641,6 +661,7 @@ class _MyRequirementCardState extends State<MyRequirementCard>
                   shrinkWrap: true,
                   staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
                 )),
+            widget.loadTypeList.isEmpty? SizedBox.shrink():getLoader(model.isMoreLoading)
           ],
         ),
       ),
@@ -716,39 +737,48 @@ class _MyRequirementCardState extends State<MyRequirementCard>
             TextButton(
               child: CustomText(getTranslated('yes', context)!,
                   style: Style.okButton),
-              onPressed: () {
-                isCityInterchange
-                    ? moreProvider
-                    .interChnageSendPost(context, truckLoad)
-                    .then((value) => {
-                  showAnimatedDialog(
+              onPressed: () async{
+                bool res =  isCityInterchange?  await moreProvider.interChnageSendPost(context, truckLoad)
+                    :await moreProvider.reSendPost(context, truckLoad);
+
+                if(res){
+
+                  isCityInterchange? showAnimatedDialog(
                       context,
                       MyDialog(
-                        icon: Icons.check,
-                        title: 'City Interchange Post',
+                        icon:
+                        Icons.check,
+                        title:
+                        'City Interchange Post',
                         description:
                         'Your post submitted successfully',
-                        isFailed: false,
+                        isFailed:
+                        false,
                       ),
-                      dismissible: false,
-                      isFlip: false)
-                })
-                    : moreProvider
-                    .reSendPost(context, truckLoad)
-                    .then((value) => {
-                  showAnimatedDialog(
+                      dismissible:
+                      false,
+                      isFlip:
+                      false) : showAnimatedDialog(
                       context,
                       MyDialog(
-                        icon: Icons.check,
-                        title: 'Re-submit Post',
+                        icon:
+                        Icons.check,
+                        title:
+                        'Re Submit Post',
                         description:
                         'Your post submitted successfully',
-                        isFailed: false,
+                        isFailed:
+                        false,
                       ),
-                      dismissible: false,
-                      isFlip: false)
-                });
-                Navigator.of(context).pop();
+                      dismissible:
+                      false,
+                      isFlip:
+                      false);
+
+                  Navigator.of(context)
+                      .pop();}else{
+
+                }
               },
             ),
             TextButton(
@@ -766,9 +796,18 @@ class _MyRequirementCardState extends State<MyRequirementCard>
 class MyGeneralPostCard extends StatefulWidget {
 
   final moreProvider = locator<MoreProvider>();
+  final generalPostProvider = locator<GeneralPostProvider>();
+  ScrollController _scrollController = ScrollController();
+  var selectedPageNumber = 1;
 
   MyGeneralPostCard({Key? key}) : super(key: key) {
-   // moreProvider.callGeneralPostApi();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        generalPostProvider.callGeneralPostApi(currentPage: selectedPageNumber);
+        selectedPageNumber++;
+      }
+    });
   }
 
   @override

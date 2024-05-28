@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/locator.dart';
+import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
@@ -14,11 +15,11 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 
 class ReceivedBidsDialogBox extends StatefulWidget {
-  TruckLoad truckLoad;
+  List<Bidings> biddingList;
   final bidProvider = locator<BidProvider>();
 
-  ReceivedBidsDialogBox(this.truckLoad,{Key? key}) : super(key: key) {
-    bidProvider.getReceivedBidingList(truckLoad.mainTag!, truckLoad.id!);
+  ReceivedBidsDialogBox(this.biddingList,{Key? key}) : super(key: key) {
+   // bidProvider.getReceivedBidingList(truckLoad.mainTag!, truckLoad.id!);
   }
 
   @override
@@ -64,10 +65,10 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
               Consumer<BidProvider>(
                 builder: (context, model, child) => SizedBox(
                   height: 250,
-                  child: model.receivedBidingList.length>0?Container(
+                  child: widget.biddingList.length>0?Container(
                     child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: model.receivedBidingList.length,
+                    itemCount: widget.biddingList.length,
                     itemBuilder: (context,index){
                       return Card(
                         elevation: 3,
@@ -77,8 +78,8 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("${model.receivedBidingList[index].firstName.toString()} ${model.receivedBidingList[index].lastName.toString()}",style: Style.selectedMenuHeading,),
-                                Text(model.receivedBidingList[index].bidings!.mobileNumber.toString(),style: Style.selectedMenuHeading,),
+                                Text("${widget.biddingList[index].firstName.toString()} ${widget.biddingList[index].lastName.toString()}",style: Style.selectedMenuHeading,),
+                                Text(widget.biddingList[index].bidings!.mobileNumber.toString(),style: Style.selectedMenuHeading,),
                                 Row(
                                   children: [
                                     CustomText('Bid Amount Is : ',
@@ -87,7 +88,7 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                                                 .PRIMARY_COLOR,
                                             fontWeight: FontWeight.bold)),
                                     CustomText(
-                                        model.receivedBidingList[index].bidings!.amount
+                                        widget.biddingList[index].bidings!.amount
                                             .toString(),
                                         style: TextStyle(
                                             color: ColorResources
@@ -95,7 +96,7 @@ class _ReceivedBidsDialogBoxState extends State<ReceivedBidsDialogBox> {
                                             fontWeight: FontWeight.bold)),
                                   ],
                                 ),
-                                Text(model.receivedBidingList[index].bidings!.description.toString(),style: Style.selectedMenuHeading,),
+                                Text(widget.biddingList[index].bidings!.description.toString(),style: Style.selectedMenuHeading,),
                               ]
                           ),
 

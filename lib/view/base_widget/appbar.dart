@@ -87,7 +87,7 @@ class AppBarCommon {
       backgroundColor: Colors.white,
       leading: IconButton(icon:Icon(Icons.arrow_back_ios_new,color: Colors.black,),onPressed:(){
         if(title=="Group"){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>MenuPage(userDetailList: userProvider.userDetailList,)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>MenuPage(userDetailList: userProvider.userDetailList,selectedTab: "Board",)));
         }else{
           Navigator.pop(context);
         }

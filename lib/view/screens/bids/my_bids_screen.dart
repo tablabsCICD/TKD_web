@@ -29,6 +29,7 @@ import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
+import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
   final dashboardProvider = locator<DashboardProvider>();*/
 
   final langProvider = locator<LocalizationProvider>();
+  final authProvider = locator<AuthProvider>();
   String? langCode;
 
   @override

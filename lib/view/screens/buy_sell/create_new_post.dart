@@ -310,23 +310,26 @@ class _CreateNewBuySellPostState extends State<CreateNewBuySellPost> {
                             type: selectedPostType,
                             registrationNumber: vehicleRno.text,
                             yearOfBuying: selectedYear).then((value) => {
-                          showAnimatedDialog(
-                              context,
-                              MyDialog(
-                                icon: Icons.check,
-                                title:
-                                'New Post',
-                                description:
-                                'Your post submitted successfully',
-                                isFailed: false,
-                                isFromPost: true,
-                              ),
-                              dismissible: false,
-                              isFlip: false),
+
                         });
-                       //if(result) {
+                       if(result) {
+                         showAnimatedDialog(
+                             context,
+                             MyDialog(
+                               icon: Icons.check,
+                               title:
+                               'New Post',
+                               description:
+                               'Your post submitted successfully',
+                               isFailed: false,
+                               isFromPost: true,
+                             ),
+                             dismissible: false,
+                             isFlip: false);
                          Navigator.of(context).pop();
-                       //}
+                       }else{
+                         Navigator.of(context).pop();
+                       }
                       }},
                     buttonText: "Post")
               ],

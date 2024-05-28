@@ -159,7 +159,7 @@ class SelectPlanProvider extends ChangeNotifier{
     if (isLogin) {
       /*Navigator.pushNamedAndRemoveUntil(
           context, AppRoutes.home, (route) => false);*/
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: [user!],)), (route) => false);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: [user!],selectedTab: "Board",)), (route) => false);
     } else {
      /* Navigator.pushNamedAndRemoveUntil(
           context, AppRoutes.login, (route) => false);*/
