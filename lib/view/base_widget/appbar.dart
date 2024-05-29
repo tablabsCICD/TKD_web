@@ -38,10 +38,11 @@ class AppBarCommon {
     //TextEditingController _controller = TextEditingController();
     return AppBar(
       leadingWidth: 25,
+      centerTitle: true,
       title: Container(
             alignment: Alignment.center,
 
-            width: MediaQuery.of(context).size.width ,
+            width: 500 ,
             child: TextField(
               controller: _controller,
              decoration: InputDecoration(
