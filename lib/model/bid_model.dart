@@ -25,7 +25,7 @@ class BidModel {
     totalPages = json['totalPages'];
     totalElements = json['totalElements'];
     last = json['last'];
-    size = json['size'];
+    size = json['size']??0;
     number = json['number'];
     sort = json['sort']?? '';
     first = json['first'];
