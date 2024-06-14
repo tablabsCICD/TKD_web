@@ -385,7 +385,12 @@ class _CreateRequirementState extends State<CreateRequirement> {
                                 isFlip: false);
 
                           }else{
-                            Navigator.of(context).pop();
+                            //Navigator.of(context).pop();
+                            Navigator
+                                .pushReplacement(
+                                context, MaterialPageRoute(builder: (builder) => MenuPage(
+                              userDetailList: authProvider.userDetailList,
+                              selectedTab: "Package Change",)));
                           }
                         }},
                       buttonText: "Post Load")

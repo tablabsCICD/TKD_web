@@ -498,7 +498,7 @@ class _RequirementsState extends State<Requirements> {
                                                                       .number),
                                                               CustomButton(
                                                                   onTap: () {
-                                                                    bidProvider.generateBid(
+                                                                    bidProvider.generateBid(context,
                                                                         mobile: model
                                                                             .truckLoadTypeList[
                                                                         index]

@@ -464,7 +464,7 @@ class _RequirementDetailsState extends State<RequirementDetails> {
                                                 if (_formKey.currentState!.validate()) {
 
                                                   bidProvider
-                                                      .generateBid(
+                                                      .generateBid(context,
                                                       mobile:
                                                       authProvider.userDetailList[0].mobileNumber,
                                                       description: descriptionController.text,

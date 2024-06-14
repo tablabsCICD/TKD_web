@@ -12,6 +12,7 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/rating_dailog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
@@ -67,50 +68,53 @@ class Utils {
 
 
 
+  final authProvider = locator<AuthProvider>();
   callFunction(BuildContext context,String mobile)async{
-
-   /* final call = Uri.parse('tel:+91$mobile');
-    if (await canLaunchUrl(call)) {
-      launchUrl(call);
-    } else {
-      throw 'Could not launch $call';
-    }*/
-    showDialog(
-        context: context,
-        builder: (_) =>
-        new CupertinoAlertDialog(
-          title: CustomText(
-              'Contact Number : $mobile',
-              style: TextStyle(
-                  color:
-                  ColorResources
-                      .BOTTOM_HEADING,
-                  fontSize: 18,
-                  fontWeight:
-                  FontWeight
-                      .bold)),
-          actions: <Widget>[
-            TextButton(
-              child: Padding(
-                padding:
-                const EdgeInsets
-                    .all(10.0),
-                child: Text(
-                    "Ok",
-                    style: TextStyle(
-                        color:
-                        ColorResources
-                            .GREEN,
-                        fontSize:
-                        18)),
+    if(authProvider.userDetailList[0].isPaid==0){
+      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):Navigator
+          .pushReplacement(
+          context, MaterialPageRoute(builder: (builder) => MenuPage(
+        userDetailList: authProvider.userDetailList,
+        selectedTab: "Package Change",)));
+    }else{
+      showDialog(
+          context: context,
+          builder: (_) =>
+          new CupertinoAlertDialog(
+            title: CustomText(
+                'Contact Number : $mobile',
+                style: TextStyle(
+                    color:
+                    ColorResources
+                        .BOTTOM_HEADING,
+                    fontSize: 18,
+                    fontWeight:
+                    FontWeight
+                        .bold)),
+            actions: <Widget>[
+              TextButton(
+                child: Padding(
+                  padding:
+                  const EdgeInsets
+                      .all(10.0),
+                  child: Text(
+                      "Ok",
+                      style: TextStyle(
+                          color:
+                          ColorResources
+                              .GREEN,
+                          fontSize:
+                          18)),
+                ),
+                onPressed: () {
+                  Navigator.of(context)
+                      .pop();
+                },
               ),
-              onPressed: () {
-                Navigator.of(context)
-                    .pop();
-              },
-            ),
-          ],
-        ));
+            ],
+          ));
+    }
+
   }
 
   callShareFunction(String des,TruckLoad load,context){
@@ -124,19 +128,109 @@ class Utils {
     );
   }
 
+  getAdminSupportDailog(BuildContext context){
+    showDialog(
+        context: context,
+        builder: (_) =>
+        new CupertinoAlertDialog(
+          title: CustomText(
+              'For Upgrade Plan please connect To the below contact',
+              style: TextStyle(
+                  color:
+                  Colors.black,
+                  fontSize: 16,
+                  fontWeight:
+                  FontWeight
+                      .bold)),
+          content: Column(
+            children: [
+              SizedBox(height:16),
+              CustomText(
+                  'Email Id :',
+                  style: TextStyle(
+                      color:
+                      Colors.black,
+                      fontSize: 14,
+                      fontWeight:
+                      FontWeight
+                          .w700)),
+              SizedBox(height:10),
+              CustomText(
+                  'support@tkdconnect.in',
+                  style: TextStyle(
+                      color:
+                      ColorResources
+                          .PRIMARY_COLOR,
+                      fontSize: 14,
+                      fontWeight:
+                      FontWeight
+                          .bold)),
+              SizedBox(height:15),
+              CustomText(
+                  'Mobile Number',
+                  style: TextStyle(
+                      color:
+                      Colors.black,
+                      fontSize: 14,
+                      fontWeight:
+                      FontWeight
+                          .w700)),
+              SizedBox(height:10),
+              CustomText(
+                  '(+91) 8123006888 / (+91) 8123004666',
+                  style: TextStyle(
+                      color:
+                      ColorResources
+                          .PRIMARY_COLOR,
+                      fontSize: 14,
+                      fontWeight:
+                      FontWeight
+                          .bold)),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Padding(
+                padding:
+                const EdgeInsets
+                    .all(10.0),
+                child: Text(
+                    "Ok",
+                    style: TextStyle(
+                        color:
+                        Colors.black,
+                        fontSize:
+                        18)),
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop();
+              },
+            ),
+          ],
+        ));
+  }
 
-
-  Future openwhatsapp(BuildContext context,int number,String text,) async{
+  Future openwhatsapp(BuildContext context,int number,String text) async{
     final link = WhatsAppUnilink(
       phoneNumber: "+91 ${number}",
       text: text,
     );
-    await launch('$link');
+    
+    if(authProvider.userDetailList[0].isPaid==0){
+      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):Navigator
+          .pushReplacement(
+          context, MaterialPageRoute(builder: (builder) => MenuPage(
+        userDetailList: authProvider.userDetailList,
+        selectedTab: "Package Change",)));
+    }else{
+      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):await launch('$link');
+    }
   }
 
   final _formKey = GlobalKey<FormState>();
   final bidProvider = locator<BidProvider>();
-  final authProvider = locator<AuthProvider>();
+
   TextEditingController bidAmtController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   openMenu(int a,TruckLoad load,BuildContext context)async{
@@ -199,7 +293,7 @@ class Utils {
                                   if (_formKey.currentState!.validate()) {
 
                                     bidProvider
-                                        .generateBid(
+                                        .generateBid(context,
                                         mobile:
                                         authProvider.userDetailList[0].mobileNumber,
                                         description: "test",

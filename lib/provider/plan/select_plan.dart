@@ -128,7 +128,7 @@ class SelectPlanProvider extends ChangeNotifier{
   }
 
   onDeatilsPlan(BuildContext context, List<String> listLaugaes,
-      List<bool> selectLang, String image, String Title, String amount) {
+      List<bool> selectLang, String image, String Title, String amount, String period) {
     showModalBottomSheet<void>(
         isScrollControlled: true,
         context: context,
@@ -141,6 +141,7 @@ class SelectPlanProvider extends ChangeNotifier{
                 image: image,
                 subtitle: Title,
                 amount: amount,
+                period: period
               ));
         });
   }

@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
+import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 
 import '../../../dialog/CustomCityListDialog.dart';
 import '../../../dialog/CustomStateListDialog.dart';
@@ -42,6 +44,7 @@ class EditProfileState extends State<EditProfileScreen>{
   TextEditingController companyNameController = new TextEditingController();
   TextEditingController aadharController = TextEditingController();
   TextEditingController panController = TextEditingController();
+  TextEditingController transpoterOrAgentController = TextEditingController();
   String? selectedCity, selectedState;
   Uint8List? imageBytes;
   final authProvider = locator<AuthProvider>();
@@ -67,14 +70,21 @@ class EditProfileState extends State<EditProfileScreen>{
     selectedState = authProvider.userDetailList[0].state.toString();
     panController.text=authProvider.userDetailList[0].panCardForVerification.toString();
     aadharController.text=authProvider.userDetailList[0].aadharCard.toString();
+    transpoterOrAgentController.text = Utils().getTranport(authProvider.userDetailList[0].transporterOrAgent!);
     super.initState();
   }
 
+  List<String> itemList = <String>[
+    'Agent/Broker',
+    'Transporter',
+    'Packers and Movers',
+    'Manufacturer/Distributor/Trade',
+  ];
+  var selectedPostType = ' ';
+
   @override
   Widget build(BuildContext context) {
-
-
-    return Scaffold(
+   return Scaffold(
 
       appBar: AppBarCommon(context, title: "Edit Profile").appBar(),
       backgroundColor: ColorResources.PROFILE_BG,
@@ -120,11 +130,17 @@ class EditProfileState extends State<EditProfileScreen>{
               controller: websiteController,
               textInputType: TextInputType.text,
             ),
-            /* CustomTextField(
-                                          hintText: 'Member Name',
-                                          controller: memberController,
-                                          textInputType: TextInputType.text,
-                                        ),*/
+            CustomDropdownList(
+              hintText: "Select Type",
+              items: itemList,
+              selectedType: selectedPostType,
+              onChange: (String value) {
+                setState(() {
+                  selectedPostType = value;
+                  transpoterOrAgentController.text = selectedPostType;
+                });
+              },
+            ),
             CustomTextBoxField(
               hintText: 'Address',
               controller: addressController,
@@ -221,7 +237,14 @@ class EditProfileState extends State<EditProfileScreen>{
                     website:
                     websiteController.text,
                     aadharCard: aadharController.text,
-                    panCardForVerification: panController.text
+                    panCardForVerification: panController.text,
+                    transporterOrAgent: transpoterOrAgentController.text == "Agent/Broker"
+                        ? 0
+                        : transpoterOrAgentController.text == "Transporter"
+                        ? 1
+                        : transpoterOrAgentController.text == "Packers and Movers"
+                        ? 2
+                        : 3,
 
                   )
                       .then((value) => {
@@ -301,5 +324,7 @@ class EditProfileState extends State<EditProfileScreen>{
       }
     }
   }
+
+
 
 }

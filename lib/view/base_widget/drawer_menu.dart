@@ -114,13 +114,13 @@ class _DrawerMenuState extends State<DrawerMenu> {
             else
               getTile('assets/images/navigation_image/jobs.png', Job_Page,
                   context, 'Jobs', (selectedTab == Job_Page)),
-            getDivider(),
-            getTile('assets/images/navigation_image/jobs.png', Package_Change,
-                context, 'Package Change', (selectedTab == Package_Change)),
-            authProvider.userDetailList[0].transporterOrAgent == 3 ||
-                    authProvider.userDetailList[0].transporterOrAgent == 2
+
+            authProvider.userDetailList[0].transporterOrAgent == 3
                 ? SizedBox.shrink()
                 : getDivider(),
+            getTile('assets/images/navigation_image/jobs.png', Package_Change,
+                context, 'Package Change', (selectedTab == Package_Change)),
+            getDivider(),
             getTile('assets/images/navigation_image/icn_account_off.png',
                 My_Account, context, 'My Profile', (selectedTab == My_Account)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', My_Post,

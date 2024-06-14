@@ -71,20 +71,18 @@ class DashBoardScreen extends StatefulWidget {
   final dashboardProvider = locator<DashboardProvider>();
 
   DashBoardScreen({Key? key}) : super(key: key) {
-    dashboardProvider.getFullLoadTruckList("From","To");
+    dashboardProvider.getFullLoadTruckList("From", "To");
   }
 
   @override
   _DashBoardScreenState createState() => _DashBoardScreenState();
 }
 
-class _DashBoardScreenState extends State<DashBoardScreen>{
-
+class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child:
-      Container(
+      child: Container(
           color: ColorResources.HOME_BG,
           child: ResponsiveWidget(
             desktop: WebScreenDashBoard(),
@@ -93,8 +91,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
           )),
     );
   }
-
-
 }
 
 class WebScreenDashBoard extends StatefulWidget {
@@ -102,7 +98,8 @@ class WebScreenDashBoard extends StatefulWidget {
   _WebScreenDashBoardState createState() => _WebScreenDashBoardState();
 }
 
-class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements DeletePostInf{
+class _WebScreenDashBoardState extends State<WebScreenDashBoard>
+    implements DeletePostInf {
   final bidProvider = locator<BidProvider>();
   final authProvider = locator<AuthProvider>();
   TextEditingController bidAmtController = TextEditingController();
@@ -127,7 +124,9 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        dashboardProvider.getFullLoadTruckList(selectedFromCity!,selectedToCity!,currentPage: selectedPageNumber);
+        dashboardProvider.getFullLoadTruckList(
+            selectedFromCity!, selectedToCity!,
+            currentPage: selectedPageNumber);
         selectedPageNumber++;
       }
     });
@@ -138,145 +137,22 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
     final screenSize = MediaQuery.of(context).size;
     return Consumer<DashboardProvider>(
       builder: (context, model, child) => Container(
-
           child: Column(children: [
-            ResponsiveWidget.isDesktop(context)
-                ? Container(
-              height: 120,
-              padding: ResponsiveWidget.isDesktop(context)
-                  ? EdgeInsets.symmetric(horizontal: 35)
-                  : EdgeInsets.symmetric(horizontal: 10),
-              width: MediaQuery.of(context).size.width - 200,
-              color: ThemeColor.baground,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 40,
-                    margin: EdgeInsets.fromLTRB(5,10,5,0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color:  Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          offset: Offset(0, 0),
-                          blurRadius: 5,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    width: 400,
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomSearchCityTextField(
-                            hintText: 'From',
-                            controller: selectedFromCity!,
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomCityListDialog(
-                                        onTap: (String value) {
-                                          setState(() {
-                                            selectedFromCity = value;
-                                          });
-                                        });
-                                  });
-                            },
-                          ),
-                          Container(
-                            height: 40,
-                            width: 0.2,
-                            color: Colors.grey[200],
-                          ),
-                          CustomSearchCityTextField(
-                            hintText: 'To',
-                            controller: selectedToCity!,
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomCityListDialog(
-                                        onTap: (String value) {
-                                          setState(() {
-                                            selectedToCity = value;
-                                          });
-                                        });
-                                  });
-                            },
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              model.getFullLoadTruckList(
-                                  selectedFromCity!, selectedToCity!);
-
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
-                              elevation: 1,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(5))),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 0),
-                              child: CustomText("Search",
-                                  style: Style.button),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 62,
-                    padding: EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      children: [
-                        getCircularContainer(
-                            "All Requirement", (selectedTab == "All Requirement"), 0),
-                        getCircularContainer("Full Load Required",
-                            (selectedTab == "Full Load Required"), 1),
-                        getCircularContainer("Full Vehicle Required",
-                            (selectedTab == "Full Vehicle Required"), 2),
-                        getCircularContainer("Part Load Required",
-                            (selectedTab == "Part Load Required"), 3),
-                        getCircularContainer("Part Vehicle Required",
-                            (selectedTab == "Part Vehicle Required"), 4),
-                        getCircularContainer("General Post",
-                            (selectedTab == "General Post"), 5),
-                        getCircularContainer("Sell Buy Post",
-                            (selectedTab == "Sell Buy Post"), 6),
-                        getCircularContainer("Jobs",
-                            (selectedTab == "Jobs"), 7),
-
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-                : Container(
-              height: 105,
-              width: MediaQuery.of(context).size.width,
-              color:ThemeColor.baground,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        ResponsiveWidget.isDesktop(context)
+            ? Container(
+                height: 120,
+                padding: ResponsiveWidget.isDesktop(context)
+                    ? EdgeInsets.symmetric(horizontal: 35)
+                    : EdgeInsets.symmetric(horizontal: 10),
+                width: MediaQuery.of(context).size.width - 200,
+                color: ThemeColor.baground,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       height: 40,
-                      width: ResponsiveWidget.isMobile(context)?screenSize.width : screenSize.width-200,
+                      margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
@@ -289,7 +165,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                           ),
                         ],
                       ),
-
+                      width: 400,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Row(
@@ -304,10 +180,10 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                                     builder: (BuildContext context) {
                                       return CustomCityListDialog(
                                           onTap: (String value) {
-                                            setState(() {
-                                              selectedFromCity = value;
-                                            });
-                                          });
+                                        setState(() {
+                                          selectedFromCity = value;
+                                        });
+                                      });
                                     });
                               },
                             ),
@@ -325,48 +201,47 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                                     builder: (BuildContext context) {
                                       return CustomCityListDialog(
                                           onTap: (String value) {
-                                            setState(() {
-                                              selectedToCity = value;
-                                            });
-                                          });
+                                        setState(() {
+                                          selectedToCity = value;
+                                        });
+                                      });
                                     });
                               },
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 model.getFullLoadTruckList(
-                                     selectedFromCity!, selectedToCity!);
+                                    selectedFromCity!, selectedToCity!);
                               },
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white, backgroundColor: ColorResources.THEME_COLOR,
-                                elevation: 3,
+                                foregroundColor: Colors.white,
+                                backgroundColor: ColorResources.THEME_COLOR,
+                                elevation: 1,
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
+                                        BorderRadius.all(Radius.circular(5))),
                               ),
-                              child: Container(
-                                height: 40,
+                              child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: 0, horizontal: 0),
                                 child:
-                                CustomText("SEARCH", style: Style.boardButton),
+                                    CustomText("Search", style: Style.button),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-
                     Container(
-                      height: 40,
-                      color:ColorResources.HOME_BG,
-                      padding: EdgeInsets.only(left: 5,top: 10),
+                      height: 62,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: [
-                          getCircularContainer(
-                              "All Loads", (selectedTab == "All Loads"), 0),
+                          getCircularContainer("All Requirement",
+                              (selectedTab == "All Requirement"), 0),
                           getCircularContainer("Full Load Required",
                               (selectedTab == "Full Load Required"), 1),
                           getCircularContainer("Full Vehicle Required",
@@ -375,78 +250,218 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                               (selectedTab == "Part Load Required"), 3),
                           getCircularContainer("Part Vehicle Required",
                               (selectedTab == "Part Vehicle Required"), 4),
+                          getCircularContainer("General Post",
+                              (selectedTab == "General Post"), 5),
                           getCircularContainer("Sell Buy Post",
-                              (selectedTab == "Sell Buy Post"), 5),
-                          getCircularContainer("Jobs",
-                              (selectedTab == "Jobs"), 6),
+                              (selectedTab == "Sell Buy Post"), 6),
+                          getCircularContainer(
+                              "Jobs", (selectedTab == "Jobs"), 7),
                         ],
                       ),
                     ),
                   ],
                 ),
+              )
+            : Container(
+                height: 105,
+                width: MediaQuery.of(context).size.width,
+                color: ThemeColor.baground,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 40,
+                        width: ResponsiveWidget.isMobile(context)
+                            ? screenSize.width
+                            : screenSize.width - 200,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              offset: Offset(0, 0),
+                              blurRadius: 5,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomSearchCityTextField(
+                                hintText: 'From',
+                                controller: selectedFromCity!,
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomCityListDialog(
+                                            onTap: (String value) {
+                                          setState(() {
+                                            selectedFromCity = value;
+                                          });
+                                        });
+                                      });
+                                },
+                              ),
+                              Container(
+                                height: 40,
+                                width: 0.2,
+                                color: Colors.grey[200],
+                              ),
+                              CustomSearchCityTextField(
+                                hintText: 'To',
+                                controller: selectedToCity!,
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomCityListDialog(
+                                            onTap: (String value) {
+                                          setState(() {
+                                            selectedToCity = value;
+                                          });
+                                        });
+                                      });
+                                },
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  model.getFullLoadTruckList(
+                                      selectedFromCity!, selectedToCity!);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: ColorResources.THEME_COLOR,
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
+                                ),
+                                child: Container(
+                                  height: 40,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 0),
+                                  child: CustomText("SEARCH",
+                                      style: Style.boardButton),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 40,
+                        color: ColorResources.HOME_BG,
+                        padding: EdgeInsets.only(left: 5, top: 10),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          children: [
+                            getCircularContainer(
+                                "All Loads", (selectedTab == "All Loads"), 0),
+                            getCircularContainer("Full Load Required",
+                                (selectedTab == "Full Load Required"), 1),
+                            getCircularContainer("Full Vehicle Required",
+                                (selectedTab == "Full Vehicle Required"), 2),
+                            getCircularContainer("Part Load Required",
+                                (selectedTab == "Part Load Required"), 3),
+                            getCircularContainer("Part Vehicle Required",
+                                (selectedTab == "Part Vehicle Required"), 4),
+                            getCircularContainer("Sell Buy Post",
+                                (selectedTab == "Sell Buy Post"), 5),
+                            getCircularContainer(
+                                "Jobs", (selectedTab == "Jobs"), 6),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            model.truckLoadTypeList.isEmpty && model.isLoading == false
-                ? Container(
+        model.truckLoadTypeList.isEmpty && model.isLoading == false
+            ? Container(
                 child: Container(
                     height: MediaQuery.of(context).size.height - 300,
                     child: Center(
                         child: Text(
-                          getTranslated('no_post', context)!,
-                          style: Style.heading,
-                        ))))
-                : model.truckLoadTypeList.isEmpty && model.isLoading ? Container(
-                child: Container(
-                    height: MediaQuery.of(context).size.height - 300,
-                    child: Center(
-                        child: CircularProgressIndicator())))
+                      getTranslated('no_post', context)!,
+                      style: Style.heading,
+                    ))))
+            : model.truckLoadTypeList.isEmpty && model.isLoading
+                ? Container(
+                    child: Container(
+                        height: MediaQuery.of(context).size.height - 300,
+                        child: Center(child: CircularProgressIndicator())))
                 : Expanded(
-              child: Padding(
-                padding: ResponsiveWidget.isDesktop(context)
-                    ? EdgeInsets.symmetric(horizontal: 35)
-                    : EdgeInsets.symmetric(horizontal: 10),
-                child: StaggeredGridView.countBuilder(
-                    controller: _scrollController,
-                    physics: ScrollPhysics(),
-                    staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                    shrinkWrap: true,
-                    crossAxisCount: ResponsiveWidget.isDesktop(context)
-                        ? 3
-                        : ResponsiveWidget.isMobile(context)
-                        ? 1
-                        : 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                    itemCount: model.truckLoadTypeList.length,
-                    itemBuilder: (context, index) {
-                      print("Index: ${index}");
-                      print("Date: ${model
-                          .truckLoadTypeList[index]
-                          .postingTime
-                          .toString()}");
-                      return model.truckLoadTypeList[index].type=="Advertisement"
-                          ?getAdvCard(context,model.truckLoadTypeList[index])
-                     : model.truckLoadTypeList[index].type=="Buy/Sell"
-                          ?AllCards().cardSellBuyPost(index,context,model.truckLoadTypeList[index],this,userId: 0,isDashBoard: true)
-                      :model.truckLoadTypeList[index].type=="Jobs"
-                          ?AllCards().cardJobPost(index,context,model.truckLoadTypeList[index],this)
-                          :model.truckLoadTypeList[index].type=="General Post"
-                          ?DashbordCards().generalPost(model.truckLoadTypeList[index],context)
-                      :DashbordCards().cardLoadHome(index,context,model.truckLoadTypeList[index],authProvider.userDetailList[0].id!,this,model,false);
-                    }),
-              ),
-            ),
-            model.truckLoadTypeList.isEmpty? SizedBox.shrink():getLoader(model.isLoading)
-
-          ])),
+                    child: Padding(
+                      padding: ResponsiveWidget.isDesktop(context)
+                          ? EdgeInsets.symmetric(horizontal: 35)
+                          : EdgeInsets.symmetric(horizontal: 10),
+                      child: StaggeredGridView.countBuilder(
+                          controller: _scrollController,
+                          physics: ScrollPhysics(),
+                          staggeredTileBuilder: (int index) =>
+                              StaggeredTile.fit(1),
+                          shrinkWrap: true,
+                          crossAxisCount: ResponsiveWidget.isDesktop(context)
+                              ? 3
+                              : ResponsiveWidget.isMobile(context)
+                                  ? 1
+                                  : 2,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                          itemCount: model.truckLoadTypeList.length,
+                          itemBuilder: (context, index) {
+                            print("Index: ${index}");
+                            print(
+                                "Date: ${model.truckLoadTypeList[index].postingTime.toString()}");
+                            return model.truckLoadTypeList[index].type ==
+                                    "Advertisement"
+                                ? getAdvCard(
+                                    context, model.truckLoadTypeList[index])
+                                : model.truckLoadTypeList[index].type ==
+                                        "Buy/Sell"
+                                    ? AllCards().cardSellBuyPost(index, context,
+                                        model.truckLoadTypeList[index], this,
+                                        userId: 0, isDashBoard: true)
+                                    : model.truckLoadTypeList[index].type ==
+                                            "Jobs"
+                                        ? AllCards().cardJobPost(
+                                            index,
+                                            context,
+                                            model.truckLoadTypeList[index],
+                                            this)
+                                        : model.truckLoadTypeList[index].type ==
+                                                "General Post"
+                                            ? DashbordCards().generalPost(
+                                                model.truckLoadTypeList[index],
+                                                context)
+                                            : DashbordCards().cardLoadHome(
+                                                index,
+                                                context,
+                                                model.truckLoadTypeList[index],
+                                                authProvider
+                                                    .userDetailList[0].id!,
+                                                this,
+                                                model,
+                                                false);
+                          }),
+                    ),
+                  ),
+        model.truckLoadTypeList.isEmpty
+            ? SizedBox.shrink()
+            : getLoader(model.isLoading)
+      ])),
     );
   }
 
-
-
   Set<int>? selectedValues = [1, 2, 3, 4, 5].toSet();
-
-
 
   String getText(Set<int>? selectedValues) {
     int count = selectedValues!.length;
@@ -473,28 +488,28 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
             model.gp = false;
             model.buy_sell = false;
             model.jobs = false;
-            if(selectedTab == 'Full Load Required'){
+            if (selectedTab == 'Full Load Required') {
               model.flr = true;
             }
-            if(selectedTab == 'Part Load Required'){
+            if (selectedTab == 'Part Load Required') {
               model.plr = true;
             }
-            if(selectedTab == 'Full Vehicle Required'){
+            if (selectedTab == 'Full Vehicle Required') {
               model.fla = true;
             }
-            if(selectedTab == 'Part Vehicle Required'){
+            if (selectedTab == 'Part Vehicle Required') {
               model.pla = true;
             }
-            if(selectedTab == 'General Post'){
+            if (selectedTab == 'General Post') {
               model.gp = true;
             }
-            if(selectedTab == 'Sell Buy Post'){
+            if (selectedTab == 'Sell Buy Post') {
               model.buy_sell = true;
             }
-            if(selectedTab == 'Jobs'){
+            if (selectedTab == 'Jobs') {
               model.jobs = true;
             }
-            if(selectedTab == 'All Requirement'){
+            if (selectedTab == 'All Requirement') {
               model.pla = false;
               model.plr = false;
               model.fla = false;
@@ -504,7 +519,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
               model.jobs = false;
             }
           });
-          model.getFullLoadTruckList(selectedFromCity!,selectedToCity!);
+          model.getFullLoadTruckList(selectedFromCity!, selectedToCity!);
           /* selectedValuesList.add(i);
           setState(() {
             isSelected = !isSelected;
@@ -538,16 +553,19 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
             borderRadius: BorderRadius.circular(15),
           ),
           child: Container(
-            height: ResponsiveWidget.isDesktop(context)?30:25,
+            height: ResponsiveWidget.isDesktop(context) ? 30 : 25,
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(vertical: 3, horizontal: 20),
             child: CustomText(
               title,
-              style: isSelected?Style.filterSelectedHeading:Style.filterHeading,
+              style: isSelected
+                  ? Style.filterSelectedHeading
+                  : Style.filterHeading,
               textAlign: TextAlign.center,
             ),
             decoration: BoxDecoration(
-              color: isSelected ? ColorResources.PRIMARY_COLOR : Color(0xffffffff),
+              color:
+                  isSelected ? ColorResources.PRIMARY_COLOR : Color(0xffffffff),
               border: isSelected ? null : Border.all(color: Color(0xffd1ccc4)),
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
@@ -566,29 +584,30 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
   }
 
   String getSendingData(TruckLoad truckLoadTypeList) {
-    String type,text,subject,weight,source,des;
-    type = 'Type : ${truckLoadTypeList.type} Subject : ${truckLoadTypeList.content} Source : ${truckLoadTypeList.source} Destination : ${truckLoadTypeList.deviceId}';
+    String type, text, subject, weight, source, des;
+    type =
+        'Type : ${truckLoadTypeList.type} Subject : ${truckLoadTypeList.content} Source : ${truckLoadTypeList.source} Destination : ${truckLoadTypeList.deviceId}';
     return type;
   }
 
-  imageLoad(TruckLoad load){
-    if(load.postImages!.length==0){
-      return    Column(
+  imageLoad(TruckLoad load) {
+    if (load.postImages!.length == 0) {
+      return Column(
         children: [
           SizedBox(
             height: 0,
           ),
-
         ],
       );
-    }else if(load.postImages!.length==1){
+    } else if (load.postImages!.length == 1) {
       return Column(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
               imageUrl: load.postImages!.first,
-              placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+              placeholder: (context, url) =>
+                  SvgPicture.asset("assets/svg/logo.svg"),
               errorWidget: (context, url, error) => ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
@@ -607,35 +626,33 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
           ),
         ],
       );
-    }else{
-
+    } else {
       return Column(
         children: [
           Container(
               transform: Matrix4.translationValues(0.0, -25.0, 00),
               child: Container(
                   child: CarouselSlider(
-                    options: CarouselOptions(
-                      padEnds: false,
-                      pageSnapping: false,
-                      enableInfiniteScroll: false,
-                    ),
-                    items: load.postImages!
-                        .map((item) => Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: imageLink(item!)),
-                      ),
-                    ))
-                        .toList(),
-                  ))),
+                options: CarouselOptions(
+                  padEnds: false,
+                  pageSnapping: false,
+                  enableInfiniteScroll: false,
+                ),
+                items: load.postImages!
+                    .map((item) => Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(child: imageLink(item!)),
+                          ),
+                        ))
+                    .toList(),
+              ))),
           SizedBox(
             height: 9,
           ),
         ],
       );
     }
-
   }
 
   Widget imageLink(String link) {
@@ -740,37 +757,30 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
     );
   }*/
 
-
-
-
-  getDateObject(String? dateTime){
-    try{
+  getDateObject(String? dateTime) {
+    try {
       DateTime formatedDate = DateTime.parse(dateTime!);
       // print(formatedDate);
       var date1 = DateFormat("yyyy-MM-dd").format(formatedDate);
       var todayDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      if(date1 == todayDate){
+      if (date1 == todayDate) {
         date1 = DateFormat("H:mm").format(formatedDate);
       }
       return date1;
-    }catch(e){
+    } catch (e) {
       return dateTime;
     }
-
   }
 
-
-
-  getAdvCard(BuildContext context,TruckLoad load) {
+  getAdvCard(BuildContext context, TruckLoad load) {
     return GestureDetector(
-      onTap: (){
-       // print('the deds');
+      onTap: () {
+        // print('the deds');
         showDialog(
           context: context,
-          builder: (_) => imageDialog(load.companyName,load.postImages!.first,context,load),
+          builder: (_) => imageDialog(
+              load.companyName, load.postImages!.first, context, load),
         );
-
-
       },
       child: Container(
         width: 335,
@@ -819,7 +829,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                 ),
               ),
             ),
-         //   SizedBox(height: 8),
+            //   SizedBox(height: 8),
             Text(
               load.companyName!,
               style: TextStyle(
@@ -832,7 +842,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
             SizedBox(height: 8),
             imageLoad(load),
             InkWell(
-              onTap: ()async{
+              onTap: () async {
                 final url = Uri.parse(
                   'http://${load.website}',
                 );
@@ -843,7 +853,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
 
                 //  await  launchUrl(url);
               },
-              child:  Container(
+              child: Container(
                 padding: EdgeInsets.all(4),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -854,7 +864,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                         load.companyName??'',
+                          load.companyName ?? '',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
@@ -863,7 +873,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                           ),
                         ),
                         Text(
-                          load.mobileNumber.toString()??'',
+                          load.mobileOrLandline.toString() ?? '',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
@@ -877,7 +887,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        load.website??'',
+                        load.website ?? '',
                         style: TextStyle(
                           color: Color(0x99001E49),
                           fontSize: 12,
@@ -890,14 +900,11 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
                 ),
               ),
             )
-
           ],
         ),
       ),
     );
   }
-
-
 
   /*Future<void> _showMyDialog(int index,int id,DashboardProvider myPostProvider) async {
     return showDialog<void>(
@@ -935,68 +942,53 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
   }*/
 
   @override
-  void deleteOwnPost(int postId,int index,) {
-    _showMyDialog(index, postId,dashboardProvider);
+  void deleteOwnPost(
+    int postId,
+    int index,
+  ) {
+    _showMyDialog(index, postId, dashboardProvider);
   }
 
-
-  Future<void> _showMyDialog(int index,int id,DashboardProvider provider) async {
-    return   showDialog(
+  Future<void> _showMyDialog(
+      int index, int id, DashboardProvider provider) async {
+    return showDialog(
         context: context,
-        builder: (_) =>
-        new CupertinoAlertDialog(
-          title: CustomText(
-            'Are you sure want to deleted your post?',
-            style: Style.title,
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: CustomText(
-                  getTranslated('yes',
-                      context)!,
-                  style:
-                  Style.okButton),
-              onPressed: () {
-                provider
-                    .deleteFullLoad(
-                    id,index)
-                    .then((value) => {
-                  showAnimatedDialog(
-                      context,
-                      MyDialog(
-                        icon:
-                        Icons.check,
-                        title:
-                        'Post Delete',
-                        description:
-                        'Your post deleted successfully',
-                        isFailed:
-                        false,
-                      ),
-                      dismissible:
-                      false,
-                      isFlip:
-                      false)
-                });
-                Navigator.of(context)
-                    .pop();
-              },
-            ),
-            TextButton(
-              child: CustomText('no',
-                  style: Style
-                      .cancelButton),
-              onPressed: () {
-                Navigator.of(context)
-                    .pop();
-              },
-            ),
-          ],
-        ));
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to deleted your post?',
+                style: Style.title,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () {
+                    provider.deleteFullLoad(id, index).then((value) => {
+                          showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon: Icons.check,
+                                title: 'Post Delete',
+                                description: 'Your post deleted successfully',
+                                isFailed: false,
+                              ),
+                              dismissible: false,
+                              isFlip: false)
+                        });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
   }
 
-
-  Widget imageDialog(text, path, context,load) {
+  Widget imageDialog(text, path, context, load) {
     return Dialog(
       backgroundColor: Colors.white,
       // elevation: 0,
@@ -1023,38 +1015,37 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
               ],
             ),
           ),
-          imageLoadAdd(load,context),
+          imageLoadAdd(load, context),
         ],
       ),
-    );}
+    );
+  }
 
-
-
-  imageLoadAdd(TruckLoad load,BuildContext context){
-    if(load.postImages!.length==0){
-      return    Column(
+  imageLoadAdd(TruckLoad load, BuildContext context) {
+    if (load.postImages!.length == 0) {
+      return Column(
         children: [
           SizedBox(
             height: 0,
           ),
-
         ],
       );
-    }else if(load.postImages!.length==1){
+    } else if (load.postImages!.length == 1) {
       return Column(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: CachedNetworkImage(
               imageUrl: load.postImages!.first,
-              placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
+              placeholder: (context, url) =>
+                  SvgPicture.asset("assets/svg/logo.svg"),
               errorWidget: (context, url, error) => ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
                     "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
                     fit: BoxFit.fill,
-                    width: MediaQuery.of(context).size.width-100,
-                    height: MediaQuery.of(context).size.height-100,
+                    width: MediaQuery.of(context).size.width - 100,
+                    height: MediaQuery.of(context).size.height - 100,
                   )),
               fit: BoxFit.fill,
               width: 500,
@@ -1066,115 +1057,111 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>  implements Del
           ),
         ],
       );
-    }else{
-
+    } else {
       return Column(
         children: [
           Container(
               transform: Matrix4.translationValues(0.0, -25.0, 00),
               child: Container(
                   child: CarouselSlider(
-                    options: CarouselOptions(
-                      padEnds: false,
-                      pageSnapping: false,
-                      enableInfiniteScroll: false,
-                    ),
-                    items: load.postImages!
-                        .map((item) => Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: imageLink(item!)),
-                      ),
-                    ))
-                        .toList(),
-                  ))),
+                options: CarouselOptions(
+                  padEnds: false,
+                  pageSnapping: false,
+                  enableInfiniteScroll: false,
+                ),
+                items: load.postImages!
+                    .map((item) => Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(child: imageLink(item!)),
+                          ),
+                        ))
+                    .toList(),
+              ))),
           SizedBox(
             height: 9,
           ),
         ],
       );
     }
-
   }
 
   @override
   void rePost(TruckLoad truckLoad, bool isCityInterchange) {
     // TODO: implement rePost
-    _showRepostDialog(truckLoad,isCityInterchange);
+    _showRepostDialog(truckLoad, isCityInterchange);
   }
 
-  Future<void> _showRepostDialog(TruckLoad truckLoad, bool isCityInterchange) async {
-    return   showDialog(
+  Future<void> _showRepostDialog(
+      TruckLoad truckLoad, bool isCityInterchange) async {
+    return showDialog(
         context: context,
-        builder: (_) =>
-        new CupertinoAlertDialog(
-          title: CustomText(
-            'Are you sure want to ${isCityInterchange?"City Interchange and Re-submit":"Re-submit"} your post?',
-            style: Style.title,
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: CustomText(
-                  getTranslated('yes',
-                      context)!,
-                  style:
-                  Style.okButton),
-              onPressed: () async{
-               bool res =  isCityInterchange?  await dashboardProvider.interChnageSendPost(context, truckLoad)
-                      :await dashboardProvider.reSendPost(context, truckLoad);
-
-                if(res){
-
-                isCityInterchange? showAnimatedDialog(
-                context,
-                MyDialog(
-                  icon:
-                  Icons.check,
-                  title:
-                  'City Interchange Post',
-                  description:
-                  'Your post submitted successfully',
-                  isFailed:
-                  false,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                'Are you sure want to ${isCityInterchange ? "City Interchange and Re-submit" : "Re-submit"} your post?',
+                style: Style.title,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: CustomText(getTranslated('yes', context)!,
+                      style: Style.okButton),
+                  onPressed: () async {
+                    if (isCityInterchange) {
+                      bool res = await dashboardProvider.interChnageSendPost(
+                          context, truckLoad);
+                      res == true
+                          ? showAnimatedDialog(
+                              context,
+                              MyDialog(
+                                icon: Icons.check,
+                                title: 'City Interchange Post',
+                                description: 'Your post submitted successfully',
+                                isFailed: false,
+                              ),
+                              dismissible: false,
+                              isFlip: false)
+                          : Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => MenuPage(
+                                        userDetailList:
+                                            authProvider.userDetailList,
+                                        selectedTab: "Package Change",
+                                      )));
+                    } else {
+                      bool res = await dashboardProvider.reSendPost(
+                          context, truckLoad);
+                      if (res) {
+                        showAnimatedDialog(
+                            context,
+                            MyDialog(
+                              icon: Icons.check,
+                              title: 'Re Submit Post',
+                              description: 'Your post submitted successfully',
+                              isFailed: false,
+                            ),
+                            dismissible: false,
+                            isFlip: false);
+                      } else {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => MenuPage(
+                                      userDetailList:
+                                          authProvider.userDetailList,
+                                      selectedTab: "Package Change",
+                                    )));
+                      }
+                    }
+                  },
                 ),
-                dismissible:
-                false,
-                isFlip:
-                false) : showAnimatedDialog(
-                    context,
-                    MyDialog(
-                      icon:
-                      Icons.check,
-                      title:
-                      'Re Submit Post',
-                      description:
-                      'Your post submitted successfully',
-                      isFailed:
-                      false,
-                    ),
-                    dismissible:
-                    false,
-                    isFlip:
-                    false);
-
-                Navigator.of(context)
-                    .pop();}else{
-                  Navigator.of(context)
-                      .pop();
-                }
-              },
-            ),
-            TextButton(
-              child: CustomText('no',
-                  style: Style
-                      .cancelButton),
-              onPressed: () {
-                Navigator.of(context)
-                    .pop();
-              },
-            ),
-          ],
-        ));
+                TextButton(
+                  child: CustomText('no', style: Style.cancelButton),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
   }
-
 }

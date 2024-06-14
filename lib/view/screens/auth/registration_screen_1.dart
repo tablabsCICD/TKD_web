@@ -52,11 +52,10 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
   Uint8List? imageBytes;
   String? fileName;
   List<String> itemList = <String>[
-    'Transporter',
     'Agent/Broker',
+    'Transporter',
     'Packers and Movers',
     'Manufacturer/Distributor/Trade',
-
   ];
 
   var _current = 0;

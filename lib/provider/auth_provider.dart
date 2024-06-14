@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:http/http.dart' as http;
@@ -195,9 +197,10 @@ class  AuthProvider extends ChangeNotifier{
       print(myUrl);
       var req = await http.post(Uri.parse(myUrl));
       print(req);
-      response = await json.decode(req.body);
+
 
       if(req.statusCode== 200){
+        response = await json.decode(req.body);
         try{
           userDetailList.clear();
           var list = AuthApi.fromJson(response);
@@ -210,7 +213,13 @@ class  AuthProvider extends ChangeNotifier{
         notifyListeners();
         return userDetailList;
       }else{
-        print('');
+        showSimpleNotification(
+            Text(
+              req.body.toString(),
+              style: TextStyle(color: Colors.white),
+            ),
+            background: Colors.red);
+        print(req.body.toString());
       }
 
     }
@@ -534,10 +543,26 @@ class  AuthProvider extends ChangeNotifier{
         headers: {"Content-Type": "application/json"}, body: body);
     print("${createResponse.statusCode}" + " --- " + createResponse.body.toString());
     print(createResponse.body);
-    var response = await json.decode(createResponse.body);
-    var list = AuthApi.fromJson(response);
-    userDetailList = list.content!;
+   if(createResponse.statusCode==200){
+     var response = await json.decode(createResponse.body);
+     var list = AuthApi.fromJson(response);
+     userDetailList = list.content!;
+     showSimpleNotification(
+         Text(
+           "Post edited successfully!",
+           style: TextStyle(color: Colors.white),
+         ),
+         background: Colors.black);
+   }else{
+     showSimpleNotification(
+         Text(
+           "Something Went Wrong!",
+           style: TextStyle(color: Colors.white),
+         ),
+         background: Colors.black);
+   }
     notifyListeners();
+    return createResponse.statusCode;
   }
 
   deleteUser(User user) async {

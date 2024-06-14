@@ -273,7 +273,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                       TextInputType.number),
                                   CustomButton(
                                       onTap: () {
-                                        bidProvider.generateBid(
+                                        bidProvider.generateBid(context,
                                             mobile: widget.job.mobileNumber,
                                             description: descriptionController.text,
                                             id: 0,

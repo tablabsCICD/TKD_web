@@ -102,7 +102,7 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                               style: Style.appsubtitle,
                             )),
                         CustomDropdownList(
-                          hintText: "Select Requirement",
+                          hintText: model.selectedRequriment,//"Select Requirement",
                           items: model.requirementList,
                           selectedType: model.selectedRequriment,
                           onChange: (String value) {
@@ -113,7 +113,7 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                           },
                         ),
                         CustomDropdownList(
-                          hintText: "Select Post Type",
+                          hintText: model.selectedPostType,//"Select Post Type",
                           items: model.postTypeList,
                           selectedType: model.selectedPostType,
                           onChange: (String value) {
@@ -155,7 +155,7 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                           },
                         ),
                         CustomDropdownList(
-                          hintText: "Select Cargo Type",
+                          hintText: model.selectedCargo,//"Select Cargo Type",
                           items: model.cargoList,
                           selectedType: model.selectedCargo,
                           onChange: (String value) {
@@ -203,7 +203,7 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                           },
                         ),
                         CustomDropdownList(
-                          hintText: "Select Type Of Payment",
+                          hintText: model.selectedPayment,//"Select Type Of Payment",
                           items: model.paymentList,
                           selectedType: model.selectedPayment,
                           onChange: (String value) {

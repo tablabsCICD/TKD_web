@@ -16,8 +16,9 @@ class PlanDetailsScreen extends StatefulWidget{
  final String image;
  final String subtitle;
  final String amount;
+ final String period;
 
-  const PlanDetailsScreen({ required this.listLaugaes, required this.selectLang, required this.image, required this.subtitle, required this.amount});
+  const PlanDetailsScreen({ required this.listLaugaes, required this.selectLang, required this.image, required this.subtitle, required this.amount, required this.period});
 
   @override
   State<StatefulWidget> createState() {
@@ -63,7 +64,7 @@ class _PlanDetailsScreen extends State<PlanDetailsScreen>{
                 ),
               ),
               SizedBox(height: 24,),
-              selectedPlan( widget.image, widget.subtitle, widget.amount),
+              selectedPlan( widget.image, widget.subtitle, widget.amount,widget.period),
 
               Expanded(
                 child: ListView.builder(
@@ -142,7 +143,7 @@ class _PlanDetailsScreen extends State<PlanDetailsScreen>{
     );
   }
 
-  selectedPlan(String image,String title,String amount){
+  selectedPlan(String image,String title,String amount, String period){
     return Container(
       width: 335,
       height: 80,
@@ -227,7 +228,7 @@ class _PlanDetailsScreen extends State<PlanDetailsScreen>{
                                   ),
                                 ),
                                 Text(
-                                  amount,
+                                    amount+"/$period",
                                   textAlign: TextAlign.right,
                                   style: TextStyle(
                                     color: Colors.black,

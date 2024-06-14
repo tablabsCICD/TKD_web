@@ -21,6 +21,7 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
+import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
@@ -49,12 +50,18 @@ class _MyProfileState extends State<MyProfile> {
   TextEditingController websiteController = new TextEditingController();
   TextEditingController lastNameController = new TextEditingController();
   TextEditingController companyNameController = new TextEditingController();
+  TextEditingController transpoterOrAgentController = TextEditingController();
   String? selectedCity, selectedState;
   final authProvider = locator<AuthProvider>();
 
   @override
   void initState() {
     authProvider.getUserDetails(authProvider.userDetailList[0].id!);
+    setData();
+    super.initState();
+  }
+
+  setData(){
     firstNameController.text =
         authProvider.userDetailList[0].firstName.toString();
     lastNameController.text =
@@ -70,8 +77,20 @@ class _MyProfileState extends State<MyProfile> {
     memberController.text = '';
     selectedCity = authProvider.userDetailList[0].city.toString();
     selectedState = authProvider.userDetailList[0].state.toString();
-    super.initState();
+    transpoterOrAgentController.text = Utils().getTranport(authProvider.userDetailList[0].transporterOrAgent!);
+    selectedPostType = transpoterOrAgentController.text;
+    setState(() {
+    });
   }
+
+  List<String> itemList = <String>[
+    'Agent/Broker',
+    'Transporter',
+    'Packers and Movers',
+    'Manufacturer/Distributor/Trade',
+  ];
+  String? selectedPostType;
+
 
   @override
   Widget build(BuildContext context) {
@@ -413,11 +432,17 @@ class _MyProfileState extends State<MyProfile> {
                           controller: websiteController,
                           textInputType: TextInputType.text,
                         ),
-                        /* CustomTextField(
-                                          hintText: 'Member Name',
-                                          controller: memberController,
-                                          textInputType: TextInputType.text,
-                                        ),*/
+                        CustomDropdownList(
+                          hintText: selectedPostType!,//"Select Type",
+                          items: itemList,
+                          selectedType: selectedPostType!,
+                          onChange: (String value) {
+                            setState(() {
+                              selectedPostType = value;
+                              transpoterOrAgentController.text = selectedPostType!;
+                            });
+                          },
+                        ),
                         CustomTextField(
                           hintText: 'Address',
                           controller: addressController,
@@ -479,22 +504,20 @@ class _MyProfileState extends State<MyProfile> {
                                 city: selectedCity,
                                 website:
                                 websiteController.text,
-                              )
-                                  .then((value) => {
-                                showAnimatedDialog(
-                                    context,
-                                    MyDialog(
-                                      icon: Icons.check,
-                                      title:
-                                      'Edit Profile',
-                                      description:
-                                      'Your Profile Updated successfully',
-                                      isFailed: false,
-                                    ),
-                                    dismissible: false,
-                                    isFlip: false),
-                              });
-                              if(result) {
+                                transporterOrAgent: transpoterOrAgentController.text == "Agent/Broker"
+                                    ? 0
+                                    : transpoterOrAgentController.text == "Transporter"
+                                    ? 1
+                                    : transpoterOrAgentController.text == "Packers and Movers"
+                                    ? 2
+                                    : 3,
+                              );
+
+                              if(result==200) {
+                                print("In success");
+                                Navigator.of(context).pop();
+                              }else{
+                                print("In error");
                                 Navigator.of(context).pop();
                               }
                             },

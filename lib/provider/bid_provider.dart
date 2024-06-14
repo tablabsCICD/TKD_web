@@ -12,6 +12,7 @@ import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
+import 'package:tkd_app/view/screens/menu_page.dart';
 
 class BidProvider extends ChangeNotifier{
   List<BidingUser> allBidingList = [];
@@ -100,7 +101,7 @@ class BidProvider extends ChangeNotifier{
   }
 
 
-  generateBid({int? mobile,String? description,int? id,String? email,String? amount,int? idOfPost,String? bidderUserName,
+  generateBid(BuildContext context,{int? mobile,String? description,int? id,String? email,String? amount,int? idOfPost,String? bidderUserName,
     String? userName,String? type,String? loggedUserName}) async {
     String myUrl = ApiConstant.BID_TO_POST;
     Uri uri = Uri.parse(myUrl);
@@ -135,12 +136,22 @@ class BidProvider extends ChangeNotifier{
           Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
           background: Colors.orange
       );
+      Navigator
+          .pushReplacement(
+          context, MaterialPageRoute(builder: (builder) => MenuPage(
+        userDetailList: authProvider.userDetailList,
+        selectedTab: "Package Change",)));
     }
-    }else if(response.statusCode == 402){
+    }else if(response.statusCode == 401){
       showSimpleNotification(
           Text("Please update your package",style: TextStyle(color: Colors.white),),
           background: Colors.orange
       );
+      Navigator
+          .pushReplacement(
+          context, MaterialPageRoute(builder: (builder) => MenuPage(
+        userDetailList: authProvider.userDetailList,
+        selectedTab: "Package Change",)));
     }else{
       showSimpleNotification(
           Text("Please Try Again!",style: TextStyle(color: Colors.white),),

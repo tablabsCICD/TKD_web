@@ -58,35 +58,21 @@ class CustomDropdownList extends StatelessWidget {
             ),
           ),
           child: FormBuilderDropdown(
-              name: hintText,
-             // initialValue: selectedType??'',
-             // allowClear: true,
+             name: hintText,
+              initialValue: selectedType,
               isDense: false ,
               decoration: InputDecoration.collapsed(
-                hintText: '',
-               /* filled: true,
-                fillColor: ColorResources.TEXTFEILD_COLOR,*/
+                hintText: "  $hintText",
+                hintStyle: Style.searchHint,
                 border:OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(6.0),
                     borderSide: BorderSide.none
                 ),
               ),
-              // hint: Container(
-              //   //height: 60,
-              //   padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 15),
-              //   child: Text(
-              //     hintText,
-              //     style: Style.searchHint,
-              //   ),
-              // ),
-              // validator: FormBuilderValidators.compose(
-              //     [FormBuilderValidators.required(context)]),
-
               items: items
                   .map((value) => DropdownMenuItem(
                         value: value,
                         child: Container(  
-                         // height: 50,
                           padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 15),
                           child: Text(
                             '$value',

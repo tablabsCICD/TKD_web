@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
+import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/delete_interface.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
@@ -15,7 +16,7 @@ import 'package:tkd_app/view/base_widget/utils.dart';
 class AllCards {
 
 final buysellProvider = locator<BuySellProvider>();
-
+final authProvider = locator<AuthProvider>();
 
   cardSellBuyPost(int index, BuildContext context, TruckLoad load, DeletePostInf postDelete,{int? userId,bool? isDashBoard}) {
     return Container(

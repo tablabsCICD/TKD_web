@@ -70,14 +70,15 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                           title: 'Clear pearl',
                           amount: '0',
                           image: Images.pearls,
-                          subtitle: 'CURRENT PLAN',
+                          subtitle: provider.selectPlan,
+                          period: "Month",
                           onClick: () {
                             List<String> listLaugaes = [
-                              "Post a Load/Post a Vechlie (Only 5 Post)",
+                              "Post a Load/Post a Vehicle (Only 5 Post)",
                               'Email Notifications',
                               'SMS Notifications',
                               'WHATSAPP Notifications',
-                              'Sponsered Ad/Google ad+ User posted add',
+                              'Sponsored Ad/Google ad+ User posted add',
                               'SELL POST (Only 1 Post)',
                               'DIRECTORY ACCESS',
                               'JOB POSTING',
@@ -104,7 +105,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                               false
                             ];
                             provider.onDeatilsPlan(context, listLaugaes,
-                                selectLang, Images.pearls, "Clear pearl", "0");
+                                selectLang, Images.pearls, "Clear pearl", "0","Month");
                           },
                         )),
                     SizedBox(
@@ -117,40 +118,35 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                         child: PlanWidget(
                           isSelected: provider.bluePearl,
                           title: 'Blue pearl',
-                          amount: '1',
+                          amount: '2000',
                           image: Images.pearls_blue,
-                          subtitle: 'RECOMMENDED',
+                          subtitle: provider.selectPlan,
+                          period: "Month",
                           onClick: () {
                             List<String> listLaugaes = [
-                              "Post a Load/Post a Vechlie (Only 50)",
-                              'Email Notifications',
+                              "View Unlimited Client Loads",
+                              'Post Unlimited Loads',
                               'SMS Notifications',
                               'WHATSAPP Notifications',
-                              'Sponsered Ad/Google ad+ User posted add',
-                              'SELL POST Only(5)',
+                              'Add Your company Website Link With Visiting',
+                              'One Month Color Advertisement',
                               'DIRECTORY ACCESS',
                               'JOB POSTING',
-                              'BIDDING Only (50)',
                               "PRIORITY DIRECTORY",
-                              "VERIFIED GREEN MARK",
-                              "VERIFIED BLUE MARK(TRUSTED)",
-                              "GOOGLE Business SET UP"
+                              "VERIFIED GREEN MARK"
                             ];
 
                             List<bool> selectLang = [
                               true,
-                              false,
-                              false,
-                              false,
                               true,
                               true,
                               true,
-                              false,
                               true,
-                              false,
-                              false,
-                              false,
-                              false
+                              true,
+                              true,
+                              true,
+                              true,
+                              true
                             ];
                             provider.onDeatilsPlan(
                                 context,
@@ -158,7 +154,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                                 selectLang,
                                 Images.pearls_blue,
                                 "Blue pearl",
-                                "1");
+                                "2000","Month");
                           },
                         )),
                     SizedBox(
@@ -171,40 +167,35 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                         child: PlanWidget(
                           isSelected: provider.redPearl,
                           title: 'Red pearl',
-                          amount: '349',
+                          amount: '2500',
                           image: Images.pearls_red,
                           subtitle: provider.selectPlan,
+                          period: "Half Year",
                           onClick: () {
                             List<String> listLaugaes = [
-                              "Post a Load/Post a Vechlie (Only 100 Post)",
-                              'Email Notifications',
+                              "View Unlimited Client Loads / Transporters",
+                              'Post Unlimited Loads',
                               'SMS Notifications',
                               'WHATSAPP Notifications',
-                              'Sponsered Ad/Google ad+ User posted add',
-                              'SELL POST (Only 10 Post)',
+                              'Add Your Company Website Link With Visiting',
+                              'Six Month Color Advertisement',
                               'DIRECTORY ACCESS',
                               'JOB POSTING',
-                              'BIDDING (Only 100 Post)',
                               "PRIORITY DIRECTORY",
-                              "VERIFIED GREEN MARK",
-                              "VERIFIED BLUE MARK(TRUSTED)",
-                              "GOOGLE Business SET UP"
+                              "VERIFIED GREEN MARK"
                             ];
 
                             List<bool> selectLang = [
                               true,
                               true,
                               true,
-                              false,
                               true,
                               true,
                               true,
-                              false,
                               true,
-                              false,
-                              false,
-                              false,
-                              false
+                              true,
+                              true,
+                              true
                             ];
 
                             provider.onDeatilsPlan(
@@ -213,7 +204,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                                 selectLang,
                                 Images.pearls_red,
                                 "Red pearl",
-                                "349");
+                                "2500","Half Year");
                           },
                         )),
                     SizedBox(
@@ -226,31 +217,24 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                         child: PlanWidget(
                           isSelected: provider.blackPearl,
                           title: 'Black pearl',
-                          amount: '449',
+                          amount: '5000',
                           image: Images.pearls_black,
                           subtitle: provider.selectPlan,
+                          period: "Annual",
                           onClick: () {
                             List<String> listLaugaes = [
-                              "Post a Load/Post a Vechlie (Unlimited Post)",
-                              'Email Notifications',
+                              "View Unlimited Client Loads / Transporters",
+                              'Post Unlimited Loads',
                               'SMS Notifications',
-                              'WHATSAPP Notifications',
-                              'Sponsered Ad/Google ad+ User posted add',
-                              'SELL POST (Only 20 Post)',
-                              'DIRECTORY ACCESS',
+                              'Get More Loads with Verified Listing',
+                              'Add Your company Website Link With Visiting',
+                              'Be Top On Search In Transport Directory',
                               'JOB POSTING',
-                              'BIDDING (Unlimited Post)',
                               "PRIORITY DIRECTORY",
-                              "VERIFIED GREEN MARK",
-                              "VERIFIED BLUE MARK(TRUSTED)",
-                              "GOOGLE Business SET UP"
+                              "VERIFIED GREEN MARK"
                             ];
 
                             List<bool> selectLang = [
-                              true,
-                              true,
-                              true,
-                              true,
                               true,
                               true,
                               true,
@@ -267,7 +251,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                                 selectLang,
                                 Images.pearls_black,
                                 "Black pearl",
-                                "449");
+                                "5000","Annual");
                           },
                         )),
                     SizedBox(

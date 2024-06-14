@@ -92,7 +92,9 @@ class TruckLoad {
     this.postImages,
     this.transporterOrAgent,
     this.userList,
-    this.isverified
+    this.isverified,
+    this.mobileOrLandline
+
   });
   late final int? id;
   late final int? userId;
@@ -138,7 +140,7 @@ class TruckLoad {
   late final int? transporterOrAgent;
   late final String? userList;
   late final int? isverified;
-
+  late final String? mobileOrLandline;
 
 
   TruckLoad.fromJson(Map<String, dynamic> json){
@@ -188,6 +190,7 @@ class TruckLoad {
     postImages=json['images']??[];
     userList=json['userList']??'';
     isverified=json['isverified'];
+    mobileOrLandline=json['mobileOrLandline']??'';
   }
 
   Map<String, dynamic> toJson() {
@@ -236,7 +239,7 @@ class TruckLoad {
     _data['transporterOrAgent'] = transporterOrAgent;
     _data['userList'] = userList;
     _data['isverified'] = isverified;
-
+    _data['mobileOrLandline'] = mobileOrLandline;
     return _data;
   }
 }

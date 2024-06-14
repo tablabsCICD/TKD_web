@@ -12,14 +12,15 @@ class PlanWidget extends StatelessWidget{
   String image;
   String subtitle;
   Function? onClick;
+  String period;
 
-  PlanWidget({required this.isSelected, required this.title, required this.amount, required this.image,required this.subtitle,this.onClick});
+  PlanWidget({required this.isSelected, required this.title, required this.amount, required this.image,required this.subtitle,this.onClick,required this.period});
 
 
   @override
   Widget build(BuildContext context) {
     return Container(
-     width: 335,
+     width: 400,
      height: 80,
      padding: EdgeInsets.only(left: 12,right: 12,top: 12,bottom: 12),
      clipBehavior: Clip.antiAlias,
@@ -114,7 +115,7 @@ class PlanWidget extends StatelessWidget{
                                  ),
                                ),
                                Text(
-                                 amount+"/Month",
+                                 amount+"/$period",
                                  textAlign: TextAlign.right,
                                  style: TextStyle(
                                    color: Colors.black,

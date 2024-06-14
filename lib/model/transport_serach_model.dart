@@ -86,6 +86,7 @@ class TransportSearchData {
   String? mainTag;
   List<String>? images;
   String? type;
+  String? mobileOrLandline;
 
   TransportSearchData(
       {this.id,
@@ -116,7 +117,7 @@ class TransportSearchData {
         this.title,
         this.mainTag,
         this.images,
-        this.type});
+        this.type,this.mobileOrLandline});
 
   TransportSearchData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -159,6 +160,7 @@ class TransportSearchData {
       });
     }
     type = json['type'];
+    mobileOrLandline = json['mobileOrLandline'];
   }
 
   Map<String, dynamic> toJson() {
@@ -195,6 +197,7 @@ class TransportSearchData {
     data['mainTag'] = this.mainTag;
     data['images'] = this.images;
     data['type'] = this.type;
+    data['mobileOrLandline'] = this.mobileOrLandline;
     return data;
   }
 }

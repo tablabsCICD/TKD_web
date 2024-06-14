@@ -36,6 +36,7 @@ import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/base_widget/search_widget.dart';
+import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -303,12 +304,11 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                                                         Alignment.centerLeft,
                                                     child: IconButton(
                                                       onPressed: () async {
-                                                        String _url = "tel:${model.transportSearchList[index].mobileNumber}";
+                                                       /* String _url = "tel:${model.transportSearchList[index].mobileNumber}";
                                                         if (!await launchUrl(Uri.parse(_url))) {
                                                         throw Exception('Could not launch $_url');
-                                                        }
-                                                        /*launch(
-                                                            "tel:${model.transportSearchList[index].mobileNumber}");*/
+                                                        }*/
+                                                        Utils().openwhatsapp(context, model.transportSearchList[index].mobileNumber!, "Message");
                                                       },
                                                       icon: Image.asset(
                                                           "assets/images/call.png"),
@@ -786,7 +786,7 @@ class _TransportWebScreenState extends State<TransportWebScreen> {
                           ),
                         ),
                         Text(
-                          transportSearchData.mobileNumber.toString()??'',
+                          transportSearchData.mobileOrLandline.toString()??'',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
