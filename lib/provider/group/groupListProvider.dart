@@ -9,6 +9,7 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/create_group.dart';
 import 'package:tkd_app/model/group_list_model.dart';
+import 'package:tkd_app/model/searchUserResponse.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -32,7 +33,6 @@ class GroupListProvider extends ChangeNotifier{
   final authProvider = locator<AuthProvider>();
 
   getAllUserList(bool isFromEdit) async {
-
     selectedUsers=[];
     isLoading = true;
     notifyListeners();
@@ -42,8 +42,8 @@ class GroupListProvider extends ChangeNotifier{
       print(myUrl);
       var responseBody=await ApiHelper().ApiGetData(myUrl);
       isFirstLoading= false;
-      var type = AuthApi.fromJson(responseBody);
-      allUserList.addAll(type.content!);
+      var type = SearchApiResponse.fromJson(responseBody);
+      allUserList.addAll(type.data!);
     }
     isLoading = false;
     //filterByName.addAll(allUserList);

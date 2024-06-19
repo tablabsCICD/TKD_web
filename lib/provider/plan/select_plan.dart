@@ -62,7 +62,7 @@ class SelectPlanProvider extends ChangeNotifier{
     blackPearl = false;
     switch(previousPlanCheck){
       case 0:clearPearl=true;
-      notifyListeners();
+           notifyListeners();
             return;
       case 10:
         bluePearl=true;
@@ -82,7 +82,7 @@ class SelectPlanProvider extends ChangeNotifier{
 
   }
 
-  selectBlue() {
+  selectBlue(int amount) {
     selectedPlanCode=10;
     if(selectedPlanCode==previousPlanCheck){
       selectPlan = "CURRENT PLAN";
@@ -93,11 +93,11 @@ class SelectPlanProvider extends ChangeNotifier{
     bluePearl = true;
     redPearl = false;
     blackPearl = false;
-    planAmount = 1;
+    planAmount = amount;
     notifyListeners();
   }
 
-  selectRed() {
+  selectRed(int amount) {
     if(selectedPlanCode==previousPlanCheck){
       selectPlan = "CURRENT PLAN";
     }else{
@@ -108,11 +108,11 @@ class SelectPlanProvider extends ChangeNotifier{
     bluePearl = false;
     redPearl = true;
     blackPearl = false;
-    planAmount = 349;
+    planAmount = amount;
     notifyListeners();
   }
 
-  selectBlack() {
+  selectBlack(int amount) {
     if(selectedPlanCode==previousPlanCheck){
       selectPlan = "CURRENT PLAN";
     }else{
@@ -123,7 +123,7 @@ class SelectPlanProvider extends ChangeNotifier{
     bluePearl = false;
     redPearl = false;
     blackPearl = true;
-    planAmount = 449;
+    planAmount = amount;
     notifyListeners();
   }
 
@@ -180,7 +180,7 @@ class SelectPlanProvider extends ChangeNotifier{
         SharedPreferences preferences=await SharedPreferences.getInstance();
         preferences.setBool(AppConstant.LOGIN_BOOl, true);
         preferences.setString(AppConstant.LOGIN_KEY, jsonEncode(apiResponse.response));
-        ToastMessage.show(context, "Plan Update Sucesss");
+        ToastMessage.show(context, "Plan Update Successs");
 
       }
       goHome(context);

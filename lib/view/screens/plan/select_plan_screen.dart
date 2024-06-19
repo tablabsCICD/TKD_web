@@ -113,7 +113,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                     ),
                     InkWell(
                         onTap: () {
-                          provider.selectBlue();
+                          provider.selectBlue(2000);
                         },
                         child: PlanWidget(
                           isSelected: provider.bluePearl,
@@ -162,7 +162,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                     ),
                     InkWell(
                         onTap: () {
-                          provider.selectRed();
+                          provider.selectRed(2500);
                         },
                         child: PlanWidget(
                           isSelected: provider.redPearl,
@@ -212,7 +212,7 @@ class _SelectPlanScreen extends State<SelectPlanScreen> {
                     ),
                     InkWell(
                         onTap: () {
-                          provider.selectBlack();
+                          provider.selectBlack(5000);
                         },
                         child: PlanWidget(
                           isSelected: provider.blackPearl,

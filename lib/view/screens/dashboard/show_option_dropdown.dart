@@ -135,7 +135,8 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
               sampleData[0].isSelected==true ? SizedBox.shrink()
                   :DropdownSearch<String>.multiSelection(
                 key: _multiKey,
-                dropdownSearchDecoration: InputDecoration(
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(12, 12, 30, 30),
                   border: const OutlineInputBorder(),
                   labelStyle: const TextStyle(fontSize: 14),
@@ -146,7 +147,7 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
                       text: "Show to",
                       style: const TextStyle( fontSize: 14, color: Colors.grey),
                     ),
-                  ),
+                  ),),
                 ),
                 items: sampleData[2].isSelected == true ? verifiedUserNameList : groupNameList,
 
@@ -155,7 +156,7 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
                   searchFieldProps: TextFieldProps(),
                   showSelectedItems: true,
                   showSearchBox: true,
-                  textStyle: TextStyle(fontSize: 14),
+                //  textStyle: TextStyle(fontSize: 14),
                 ),
                 onChanged: (value) {
                   selectedVerifiedUserNameList.clear();
@@ -174,8 +175,8 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
                 dropdownBuilder: null,
                 selectedItems: sampleData[2].isSelected == true ?selectedVerifiedUserNameList:selectedGroupNameList,
                // onBeforeChange: (list1, list2) => checkBeforeChange(list1, list2),*/
-                dropdownSearchTextStyle:
-                const TextStyle(fontSize: 14,color: Colors.black,backgroundColor: Colors.grey),
+               /* dropdownSearchTextStyle:
+                const TextStyle(fontSize: 14,color: Colors.black,backgroundColor: Colors.grey),*/
               ),
             ],
           ),

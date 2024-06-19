@@ -104,7 +104,9 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
               sampleData[0].isSelected==true ? SizedBox.shrink()
               :DropdownSearch<String>.multiSelection(
                 key: _multiKey,
-                dropdownSearchDecoration: InputDecoration(
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration:
+                  InputDecoration(
                   contentPadding: const EdgeInsets.fromLTRB(12, 12, 30, 30),
                   border: const OutlineInputBorder(),
                   labelStyle: const TextStyle(fontSize: 14),
@@ -121,7 +123,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                       ],
                     ),
                   ),
-                ),
+                ),),
                 items: sampleData[2].isSelected == true ? model.allVerifiedUserNameList : model.groupListName,
 
                 popupProps: const PopupPropsMultiSelection.menu(
@@ -129,7 +131,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   searchFieldProps: TextFieldProps(),
                   showSelectedItems: true,
                   showSearchBox: true,
-                  textStyle: TextStyle(fontSize: 14),
+                  //textStyle: TextStyle(fontSize: 14),
                 ),
                 onChanged: (value) {
 
@@ -147,8 +149,8 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                 dropdownBuilder: null,
                 selectedItems: widget.selectedItems,
                 onBeforeChange: (list1, list2) => checkBeforeChange(list1, list2),
-                dropdownSearchTextStyle:
-                    const TextStyle(fontSize: 14,color: Colors.black,backgroundColor: Colors.grey),
+               /* dropdownSearchTextStyle:
+                    const TextStyle(fontSize: 14,color: Colors.black,backgroundColor: Colors.grey),*/
               ),
             ],
           ),
