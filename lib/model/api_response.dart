@@ -4,4 +4,6 @@ class ApiResponse {
 
   ApiResponse(this.statusCode, this.response);
 
+  get status => null;
+
 }

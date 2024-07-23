@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:getwidget/components/progress_bar/gf_progress_bar.dart';
 import 'package:tkd_app/loading_page.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';

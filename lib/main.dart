@@ -19,6 +19,7 @@ import 'package:tkd_app/provider/gallery_provider.dart';
 import 'package:tkd_app/provider/general_post_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/provider/group/groupListProvider.dart';
+import 'package:tkd_app/provider/help_support_provider.dart';
 import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
@@ -33,6 +34,7 @@ import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/localization/app_localization.dart';
+import 'package:tkd_app/view/screens/HelpSupportScreen.dart';
 import 'model/auth_api.dart';
 import 'view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
@@ -71,6 +73,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => locator<EditPostLoadProvider>()),
         ChangeNotifierProvider(create: (_) => locator<GeneralPostProvider>()),
         ChangeNotifierProvider(create: (_) => locator<SelectPlanProvider>()),
+        ChangeNotifierProvider(create: (_) => locator<HelpSupportProvider>()),
+
       ],
       child: MyApp(),
   )));
@@ -111,7 +115,7 @@ class MyApp extends StatelessWidget {
             ),
 
           ),
-          home:EntryScreen()
+          home:HelpSupportScreen()
       // home: UpgradeAlert(
       //   upgrader: Upgrader(showIgnore: false,showLater: false),
       //     child: EntryScreen(),
