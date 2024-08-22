@@ -1,11 +1,9 @@
-import 'package:tkd_app/model/transport_model.dart';
 
 class TransportSearchModel {
   List<TransportSearchData>? content;
   bool? last;
   int? totalElements;
   int? totalPages;
-  //Null? sort;
   bool? first;
   int? numberOfElements;
   int? size;
@@ -16,7 +14,6 @@ class TransportSearchModel {
         this.last,
         this.totalElements,
         this.totalPages,
-        //this.sort,
         this.first,
         this.numberOfElements,
         this.size,

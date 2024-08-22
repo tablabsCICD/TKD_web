@@ -3,7 +3,7 @@ class NewTruckLoadModel {
   bool? last;
   int? totalElements;
   int? totalPages;
-  Null? sort;
+  String? sort;
   bool? first;
   int? numberOfElements;
   int? size;

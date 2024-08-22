@@ -97,7 +97,7 @@ class PoolPurchaseProvider extends ChangeNotifier{
   deletePoolPurchase(PoolPurchase obj) async {
     String myUrl = ApiConstant.BULK_DATA +'?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     poolPurchaseList.remove(obj);
     notifyListeners();
   }

@@ -24,7 +24,6 @@ class _LoadingPageState extends State<LoadingPage> {
   final orgProvider = locator<OrgProvider>();
   bool companyLogin=false,userLogin=true;
   List<Organization> orgList = [];
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {

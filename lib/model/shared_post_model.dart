@@ -1,52 +1,58 @@
 class SharedPost {
-  SharedPost({
-    required this.content,
-    required this.totalElements,
-    required this.totalPages,
-    required this.last,
-    required this.size,
-    required this.number,
-    this.sort,
-    required this.first,
-    required this.numberOfElements,
-  });
-  late final List<SharedPostModel> content;
-  late final int totalElements;
-  late final int totalPages;
-  late final bool last;
-  late final int size;
-  late final int number;
-  late final String? sort;
-  late final bool first;
-  late final int numberOfElements;
+  List<SharedPostModel>? content;
+  bool? last;
+  int? totalElements;
+  int? totalPages;
+  String? sort;
+  bool? first;
+  int? numberOfElements;
+  int? size;
+  int? number;
 
-  SharedPost.fromJson(Map<String, dynamic> json){
-    content = List.from(json['content']).map((e)=>SharedPostModel.fromJson(e)).toList();
+  SharedPost(
+      {this.content,
+        this.last,
+        this.totalElements,
+        this.totalPages,
+        this.sort,
+        this.first,
+        this.numberOfElements,
+        this.size,
+        this.number});
+
+  SharedPost.fromJson(Map<String, dynamic> json) {
+    if (json['content'] != null) {
+      content = <SharedPostModel>[];
+      json['content'].forEach((v) {
+        content!.add(new SharedPostModel.fromJson(v));
+      });
+    }
+    last = json['last'];
     totalElements = json['totalElements'];
     totalPages = json['totalPages'];
-    last = json['last'];
-    size = json['size'];
-    number = json['number'];
-    sort = json['sort']?? '';
+    sort = json['sort'];
     first = json['first'];
     numberOfElements = json['numberOfElements'];
+    size = json['size'];
+    number = json['number'];
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['content'] = content.map((e)=>e.toJson()).toList();
-    _data['totalElements'] = totalElements;
-    _data['totalPages'] = totalPages;
-    _data['last'] = last;
-    _data['size'] = size;
-    _data['number'] = number;
-    _data['sort'] = sort;
-    _data['first'] = first;
-    _data['numberOfElements'] = numberOfElements;
-    return _data;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.content != null) {
+      data['content'] = this.content!.map((v) => v.toJson()).toList();
+    }
+    data['last'] = this.last;
+    data['totalElements'] = this.totalElements;
+    data['totalPages'] = this.totalPages;
+    data['sort'] = this.sort;
+    data['first'] = this.first;
+    data['numberOfElements'] = this.numberOfElements;
+    data['size'] = this.size;
+    data['number'] = this.number;
+    return data;
   }
 }
-
 
 class SharedPostModel {
   int? id;
@@ -69,15 +75,21 @@ class SharedPostModel {
   int? privatePost;
   int? dnd;
   String? typeOfPayment;
+  String? image;
   String? tableName;
   String? mainTag;
   String? postingTime;
   String? type;
   String? topicName;
-  String? rating;
-  String? listOfUserIds;
+  int? rating;
+  List<int>? listOfUserIds;
+  List<String>? images;
+  String? material;
+  String? expireDate;
+  String? transporterType;
+  String? userList;
 
-  SharedPostModel(
+  SharedPostModel.SharedPostModel(
       {this.id,
         this.fullLoadChoice,
         this.transporterOrCustomerName,
@@ -98,42 +110,64 @@ class SharedPostModel {
         this.privatePost,
         this.dnd,
         this.typeOfPayment,
+        this.image,
         this.tableName,
         this.mainTag,
         this.postingTime,
         this.type,
         this.topicName,
         this.rating,
-        this.listOfUserIds});
+        this.listOfUserIds,
+        this.images,
+        this.material,
+        this.expireDate,
+        this.transporterType,
+        this.userList});
 
   SharedPostModel.fromJson(Map<String, dynamic> json) {
-    id = json['id']??0;
-    fullLoadChoice = json['fullLoadChoice']??'';
-    transporterOrCustomerName = json['transporterOrCustomerName']??'';
-    contactNumber = json['contactNumber']??0;
-    emailId = json['emailId']??'';
-    source = json['source']??'';
-    destination = json['destination']??'';
-    typeOfCargo = json['typeOfCargo']??'';
-    otherDetails = json['otherDetails']??'';
-    vehicleSize = json['vehicleSize']??'';
-    loadWeight = json['loadWeight']??'';
-    instructions = json['instructions']??'';
-    partLoad = json['partLoad']??0;
-    date = json['date']??'';
-    os = json['os']??'';
-    loggedUserName = json['loggedUserName']??'';
-    loggedTime = json['loggedTime']??0;
-    privatePost = json['privatePost']??0;
-    dnd = json['dnd']??0;
-    typeOfPayment = json['typeOfPayment']??'';
-    tableName = json['tableName']??'';
-    mainTag = json['mainTag']??'';
-    postingTime = json['postingTime']??'';
-    type = json['type']??'';
-    topicName = json['topicName']??'';
-    rating = json['rating']??'';
-    listOfUserIds = json['listOfUserIds']??'';
+    id = json['id'];
+    fullLoadChoice = json['fullLoadChoice'];
+    transporterOrCustomerName = json['transporterOrCustomerName'];
+    contactNumber = json['contactNumber'];
+    emailId = json['emailId'];
+    source = json['source'];
+    destination = json['destination'];
+    typeOfCargo = json['typeOfCargo'];
+    otherDetails = json['otherDetails'];
+    vehicleSize = json['vehicleSize'];
+    loadWeight = json['loadWeight'];
+    instructions = json['instructions'];
+    partLoad = json['partLoad'];
+    date = json['date'];
+    os = json['os'];
+    loggedUserName = json['loggedUserName'];
+    loggedTime = json['loggedTime'];
+    privatePost = json['privatePost'];
+    dnd = json['dnd'];
+    typeOfPayment = json['typeOfPayment'];
+    image = json['image']??"";
+    tableName = json['tableName'];
+    mainTag = json['mainTag'];
+    postingTime = json['postingTime'];
+    type = json['type'];
+    topicName = json['topicName'];
+    rating = json['rating'];
+    if (json['listOfUserIds'] != null) {
+      listOfUserIds = <int>[];
+      json['listOfUserIds'].forEach((v) {
+        listOfUserIds!.add(v);
+      });
+    }
+    if (json['images'] != null) {
+      images = <String>[];
+      json['images'].forEach((v) {
+        images!.add((v));
+      });
+    }
+    material = json['material']??"";
+    expireDate = json['expireDate']??"";
+    transporterType = json['transporterType']??"";
+    userList = json['userList']??"";
   }
 
   Map<String, dynamic> toJson() {
@@ -158,13 +192,24 @@ class SharedPostModel {
     data['privatePost'] = this.privatePost;
     data['dnd'] = this.dnd;
     data['typeOfPayment'] = this.typeOfPayment;
+    data['image'] = this.image;
     data['tableName'] = this.tableName;
     data['mainTag'] = this.mainTag;
     data['postingTime'] = this.postingTime;
     data['type'] = this.type;
     data['topicName'] = this.topicName;
     data['rating'] = this.rating;
-    data['listOfUserIds'] = this.listOfUserIds;
+    if (this.listOfUserIds != null) {
+      data['listOfUserIds'] =
+          this.listOfUserIds!.map((v) => v).toList();
+    }
+    if (this.images != null) {
+      data['images'] = this.images!.map((v) => v).toList();
+    }
+    data['material'] = this.material;
+    data['expireDate'] = this.expireDate;
+    data['transporterType'] = this.transporterType;
+    data['userList'] = this.userList;
     return data;
   }
 }

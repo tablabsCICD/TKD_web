@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tkd_app/util/colors.dart';
 
-class LinearProgressBar extends StatelessWidget{
-
+class LinearProgressBar extends StatelessWidget {
   final double fillValue;
 
   const LinearProgressBar({required this.fillValue});
@@ -46,6 +45,4 @@ class LinearProgressBar extends StatelessWidget{
       ),
     );
   }
-
-
 }

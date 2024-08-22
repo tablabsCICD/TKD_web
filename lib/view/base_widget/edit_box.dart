@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
@@ -26,35 +24,32 @@ class CustomTextBoxField extends StatelessWidget {
 
   CustomTextBoxField(
       {required this.controller,
-        required this.hintText,
-        required this.textInputType,
-        this.maxLine = 1,
-        this.validatorMsg,
-        this.isPhoneNumber = false,
-        this.isValidator = true,
-        this.isEmail = false,
-        this.isName = false,
-        this.isDigits = false,
-        this.capitalization = TextCapitalization.none,
-        this.iconData,
-        this.obsecure,
-        this.readOnly,
-        this.onTap,
-        this.onValueChange});
+      required this.hintText,
+      required this.textInputType,
+      this.maxLine = 1,
+      this.validatorMsg,
+      this.isPhoneNumber = false,
+      this.isValidator = true,
+      this.isEmail = false,
+      this.isName = false,
+      this.isDigits = false,
+      this.capitalization = TextCapitalization.none,
+      this.iconData,
+      this.obsecure,
+      this.readOnly,
+      this.onTap,
+      this.onValueChange});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-       margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-      // padding: EdgeInsets.symmetric(vertical: 0, horizontal: 1),
-
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
       alignment: Alignment.center,
-      // height: 45,
       child: TextFormField(
         onTap: () {
           onTap!();
         },
-        onChanged: (vale){
+        onChanged: (vale) {
           onValueChange;
         },
         controller: controller,
@@ -66,55 +61,60 @@ class CustomTextBoxField extends StatelessWidget {
         style: Style.dropdownValue,
         validator: isPhoneNumber
             ? Validators.compose([
-          Validators.required('Phone number is required'),
-          Validators.minLength(
-              10, 'Mobile number cannot be less than 10 digit'),
-          Validators.maxLength(
-              10, 'Mobile number cannot be greater than 10 digits'),
-        ])
+                Validators.required('Phone number is required'),
+                Validators.minLength(
+                    10, 'Mobile number cannot be less than 10 digit'),
+                Validators.maxLength(
+                    10, 'Mobile number cannot be greater than 10 digits'),
+              ])
             : isEmail
-            ? Validators.compose([
-          Validators.required('Email is required'),
-          Validators.email('Invalid email address'),
-        ])
-            : isName
-            ? Validators.compose([
-          Validators.patternString(
-              r"^[A-Za-z]+$", 'Only alphabets are allowed'),
-          Validators.required('${hintText} is required'),
-        ])
-            : isDigits
-            ? Validators.compose([
-          Validators.patternRegExp(
-              RegExp(r"^[0-9]*$"), 'Only digits are allowed'),
-          Validators.required('${hintText} is required'),
-        ])
-            : isValidator
-            ? Validators.required('This field is required')
-            : null,
+                ? Validators.compose([
+                    Validators.required('Email is required'),
+                    Validators.email('Invalid email address'),
+                  ])
+                : isName
+                    ? Validators.compose([
+                        Validators.patternString(
+                            r"^[A-Za-z]+$", 'Only alphabets are allowed'),
+                        Validators.required('${hintText} is required'),
+                      ])
+                    : isDigits
+                        ? Validators.compose([
+                            Validators.patternRegExp(
+                                RegExp(r"^[0-9]*$"), 'Only digits are allowed'),
+                            Validators.required('${hintText} is required'),
+                          ])
+                        : isValidator
+                            ? Validators.required('This field is required')
+                            : null,
         readOnly: readOnly == null ? false : true,
         decoration: InputDecoration(
-          hintText: hintText,
-          filled: true,
-          fillColor: ColorResources.WHITE,
-          hintStyle: Style.searchHint,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey)),
-          focusedBorder:  OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey)),
-          enabledBorder:  OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey,width: 0.5)),
-
-          enabled: true
-
-        ),
-
-
+            hintText: hintText,
+            filled: true,
+            fillColor: ColorResources.WHITE,
+            hintStyle: Style.searchHint,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                    strokeAlign: BorderSide.strokeAlignInside,
+                    style: BorderStyle.solid,
+                    color: Colors.grey)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                    strokeAlign: BorderSide.strokeAlignInside,
+                    style: BorderStyle.solid,
+                    color: Colors.grey)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                    strokeAlign: BorderSide.strokeAlignInside,
+                    style: BorderStyle.solid,
+                    color: Colors.grey,
+                    width: 0.5)),
+            enabled: true),
         keyboardType:
-        textInputType != null ? textInputType : TextInputType.text,
+            textInputType != null ? textInputType : TextInputType.text,
       ),
     );
   }

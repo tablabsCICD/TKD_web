@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/style.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -49,7 +46,6 @@ class CustomTextField extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 1),
       alignment: Alignment.center,
-      // height: 45,
       child: TextFormField(
         onTap: () {
           onTap!();

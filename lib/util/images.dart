@@ -31,7 +31,6 @@ class Images {
   static String add = "assets/images/add.svg";
   static String notification = "assets/images/notification.svg";
 
- // static String profilepicture = "assets/images/profilepicture.svg";
   static String profilepicture = "assets/images/profile_pic.svg";
 
   static String route_return_home = "assets/images/route_return_home.svg";

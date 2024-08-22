@@ -1,24 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-/*Future<void> share_data(TruckLoad loadTypeList) async {
-
-  var shareData = {
-    "title": loadTypeList.nameOfPerson,
-    "text": loadTypeList.mobileNumber,
-    "url": loadTypeList.sharableLink,
-  };
-
-  try{
-    await html.window.navigator.share(shareData);
-  }catch(e){
-    print(e);
-  }
-
-}*/
 
 Future shareSocialMedia(TruckLoad loadTypeList, SocialMedia socialMedia) async {
 
@@ -30,19 +12,6 @@ Future shareSocialMedia(TruckLoad loadTypeList, SocialMedia socialMedia) async {
           '\nDestination : ${loadTypeList.destination}'
           '\nSubject : ${loadTypeList.content}, ';
   final urlShare =  Uri.encodeComponent(loadTypeList.sharableLink.toString());
-
- /* final urls = {
-    SocialMedia.facebook:'https://www.facebook.com/sharer/sharer.php?u=${urlShare}&t=${text}',
-    SocialMedia.whatsapp:'https://api.whatsapp.com/send?text=${text}',
-    SocialMedia.email:'mailto:?subject=${subject}&body=${text}\n\n$urlShare',
-    SocialMedia.twitter:'https://twitter.com/intent/tweet?url=${urlShare}&text=${text}\n$urlShare',
-    SocialMedia.linkedin:'https://www.linkedin.com/shareArticle?url=$urlShare&title=$text',
-    //'https://www.linkedin.com/shareArtical?mini=true&url=${urlShare}'
-  };
-
-  Map<SocialMedia,String>? socialPlatform;
-
-  final url = urls[socialPlatform]!;*/
 
   switch(socialMedia){
     case SocialMedia.facebook :

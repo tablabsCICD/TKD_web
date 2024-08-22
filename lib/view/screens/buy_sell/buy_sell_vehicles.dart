@@ -1,47 +1,28 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
-import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/delete_interface.dart';
-import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
-import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:http/http.dart' as http;
-import 'package:tkd_app/util/date_converter.dart';
-import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/all_cards.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
-import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
-import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
-import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_details_screen.dart';
-import 'package:tkd_app/view/screens/buy_sell/create_new_post.dart';
-import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
-
-import 'package:universal_html/html.dart' as html;
 
 class BuySellVehicles extends StatefulWidget {
   final buySellProvider = locator<BuySellProvider>();
@@ -58,7 +39,6 @@ class BuySellVehicles extends StatefulWidget {
 class _BuySellVehiclesState extends State<BuySellVehicles> {
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: ColorResources.HOME_BG,
       body: Container(

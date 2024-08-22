@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
-import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 
 
@@ -43,7 +42,6 @@ class CustomSearchCityTextField extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-       // height: 30,
         width: 120,
 
         child: TextFormField(

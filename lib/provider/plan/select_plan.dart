@@ -16,8 +16,8 @@ import 'package:tkd_app/widgets/toast.dart';
 
 import '../auth_provider.dart';
 
-class SelectPlanProvider extends ChangeNotifier{
-  SelectPlanProvider(){
+class SelectPlanProvider extends ChangeNotifier {
+  SelectPlanProvider() {
     checkPlan();
   }
 
@@ -27,17 +27,16 @@ class SelectPlanProvider extends ChangeNotifier{
   bool blackPearl = false;
   String selectPlan = "CURRENT PLAN";
   int planAmount = 0;
-  int selectedPlanCode=0;
-  int previousPlan=0;
-  static int previousPlanCheck=0;
-  String expDate="";
+  int selectedPlanCode = 0;
+  int previousPlan = 0;
+  static int previousPlanCheck = 0;
+  String expDate = "";
 
   selectClearPerl() {
-
-    selectedPlanCode=0;
-    if(selectedPlanCode==previousPlanCheck){
+    selectedPlanCode = 0;
+    if (selectedPlanCode == previousPlanCheck) {
       selectPlan = "CURRENT PLAN";
-    }else{
+    } else {
       selectPlan = "You Select this";
     }
     clearPearl = true;
@@ -47,46 +46,46 @@ class SelectPlanProvider extends ChangeNotifier{
     planAmount = 0;
     notifyListeners();
   }
+
   User? user;
   final authProvider = locator<AuthProvider>();
-  checkPlan()async{
-    user=await authProvider.getLoginData();
-    previousPlan=user!.isPaid!;
-    previousPlanCheck=user!.isPaid!;
 
-    selectedPlanCode=previousPlan;
+  checkPlan() async {
+    user = await authProvider.getLoginData();
+    previousPlan = user!.isPaid!;
+    previousPlanCheck = user!.isPaid!;
+
+    selectedPlanCode = previousPlan;
     planAmount = 0;
     clearPearl = false;
     bluePearl = false;
     redPearl = false;
     blackPearl = false;
-    switch(previousPlanCheck){
-      case 0:clearPearl=true;
-           notifyListeners();
-            return;
+    switch (previousPlanCheck) {
+      case 0:
+        clearPearl = true;
+        notifyListeners();
+        return;
       case 10:
-        bluePearl=true;
+        bluePearl = true;
         notifyListeners();
         return;
       case 20:
-        redPearl=true;
+        redPearl = true;
         notifyListeners();
         return;
       case 30:
-        blackPearl=true;
+        blackPearl = true;
         notifyListeners();
         return;
     }
-
-
-
   }
 
   selectBlue(int amount) {
-    selectedPlanCode=10;
-    if(selectedPlanCode==previousPlanCheck){
+    selectedPlanCode = 10;
+    if (selectedPlanCode == previousPlanCheck) {
       selectPlan = "CURRENT PLAN";
-    }else{
+    } else {
       selectPlan = "You Select this";
     }
     clearPearl = false;
@@ -98,12 +97,12 @@ class SelectPlanProvider extends ChangeNotifier{
   }
 
   selectRed(int amount) {
-    if(selectedPlanCode==previousPlanCheck){
+    if (selectedPlanCode == previousPlanCheck) {
       selectPlan = "CURRENT PLAN";
-    }else{
+    } else {
       selectPlan = "You Select this";
     }
-    selectedPlanCode=20;
+    selectedPlanCode = 20;
     clearPearl = false;
     bluePearl = false;
     redPearl = true;
@@ -113,12 +112,12 @@ class SelectPlanProvider extends ChangeNotifier{
   }
 
   selectBlack(int amount) {
-    if(selectedPlanCode==previousPlanCheck){
+    if (selectedPlanCode == previousPlanCheck) {
       selectPlan = "CURRENT PLAN";
-    }else{
+    } else {
       selectPlan = "You Select this";
     }
-    selectedPlanCode=30;
+    selectedPlanCode = 30;
     clearPearl = false;
     bluePearl = false;
     redPearl = false;
@@ -127,8 +126,14 @@ class SelectPlanProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  onDeatilsPlan(BuildContext context, List<String> listLaugaes,
-      List<bool> selectLang, String image, String Title, String amount, String period) {
+  onDeatilsPlan(
+      BuildContext context,
+      List<String> listLaugaes,
+      List<bool> selectLang,
+      String image,
+      String Title,
+      String amount,
+      String period) {
     showModalBottomSheet<void>(
         isScrollControlled: true,
         context: context,
@@ -136,52 +141,46 @@ class SelectPlanProvider extends ChangeNotifier{
           return FractionallySizedBox(
               heightFactor: 0.9,
               child: PlanDetailsScreen(
-                listLaugaes: listLaugaes,
-                selectLang: selectLang,
-                image: image,
-                subtitle: Title,
-                amount: amount,
-                period: period
-              ));
+                  listLaugaes: listLaugaes,
+                  selectLang: selectLang,
+                  image: image,
+                  subtitle: Title,
+                  amount: amount,
+                  period: period));
         });
   }
 
-  /*void showBootomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return FractionallySizedBox(heightFactor: 0.7, child: KYCScreenOne());
-        });
-  }
-*/
   goHome(BuildContext context) async {
     bool isLogin = (await authProvider.getVisitingFlag())!;
     if (isLogin) {
-      /*Navigator.pushNamedAndRemoveUntil(
-          context, AppRoutes.home, (route) => false);*/
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: [user!],selectedTab: "Board",)), (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (builder) => MenuPage(
+                    userDetailList: [user!],
+                    selectedTab: "Board",
+                  )),
+          (route) => false);
     } else {
-     /* Navigator.pushNamedAndRemoveUntil(
-          context, AppRoutes.login, (route) => false);*/
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder)=>Login_Screen()), (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (builder) => Login_Screen()),
+          (route) => false);
     }
   }
 
-
-
   selectedPlan(BuildContext context) async {
-    User user=await authProvider.getLoginData();
-    ApiResponse apiResponse = await ApiHelper().ApiPutData(ApiConstant.UPDATE_YOUR_PLAN(user.id,selectedPlanCode));
+    User user = await authProvider.getLoginData();
+    ApiResponse apiResponse = await ApiHelper()
+        .ApiPutData(ApiConstant.UPDATE_YOUR_PLAN(user.id, selectedPlanCode));
     if (apiResponse.statusCode == 200) {
       var list = AuthApi.fromJson(jsonDecode(apiResponse.response));
-  // User user=User.fromJson(apiResponse.response);
-      if(list.content!.length>0){
-        SharedPreferences preferences=await SharedPreferences.getInstance();
+      if (list.content!.length > 0) {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setBool(AppConstant.LOGIN_BOOl, true);
-        preferences.setString(AppConstant.LOGIN_KEY, jsonEncode(apiResponse.response));
+        preferences.setString(
+            AppConstant.LOGIN_KEY, jsonEncode(apiResponse.response));
         ToastMessage.show(context, "Plan Update Successs");
-
       }
       goHome(context);
     } else {

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'dart:ui';
 import 'dart:html' as html;
 import 'package:carousel_slider/carousel_slider.dart';
@@ -21,18 +19,14 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/organization_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
-import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
-import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/open_url.dart';
-import '../company/company_menu/company_dashboard.dart';
 import 'package:tkd_app/view/screens/company/company_menu_page.dart';
 import 'login_screen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
-import 'registration_screen_1.dart';
 
 
 class OTP_Screen extends StatefulWidget {
@@ -675,7 +669,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
               mergeMode: true,
               onGetText: (double value) {
                 return Text(
-                  '${provider!.timeRemaning}',
+                  '${provider.timeRemaning}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: ColorResources.THEME_COLOR,

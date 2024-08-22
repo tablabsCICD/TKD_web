@@ -46,7 +46,6 @@ class CustomCityTextField extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         padding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
         alignment: Alignment.center,
-      //  height: 47,
         child: TextFormField(
           controller: TextEditingController(text: controller),
           enabled: false,

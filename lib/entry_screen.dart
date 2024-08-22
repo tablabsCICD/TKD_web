@@ -1,31 +1,18 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tkd_app/loading_page.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/model/version.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
-import 'package:tkd_app/show_bid.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
-import 'package:tkd_app/view/screens/auth/registration_screen_1.dart';
-import 'package:tkd_app/view/screens/company/company_drawer_menu.dart';
-import 'package:tkd_app/view/screens/company/company_menu/company_dashboard.dart';
-import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
-import 'package:tkd_app/view/screens/transport/transport_search_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uni_links/uni_links.dart';
 import 'locator.dart';
@@ -50,12 +37,12 @@ class EntryState extends State<EntryScreen> {
   bool companyLogin = false, userLogin = true;
   List<Organization> orgList = [];
   bool isDebug=true;
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
-    //super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_){
       if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS){
         if(isDebug==true){
@@ -77,7 +64,6 @@ class EntryState extends State<EntryScreen> {
     Version version=Version.fromJson(result);
     print('the version is ${version.version}');
     if(version.version! == ApiConstant.APP_VERSION){
-     // loginOrHome();
       await initUniLinks();
     }else{
       upDateDailog();
@@ -124,18 +110,21 @@ class EntryState extends State<EntryScreen> {
                   Login_Screen()));
     }
 
-   /* visitingFlag = (await authProvider.getVisitingFlag())!;
+  }
+
+  SharedPostModel? truckLoad;
+  loginOrDetails(String postId) async {
+    visitingFlag = (await authProvider.getVisitingFlag())!;
     if (visitingFlag == true) {
       int? empid = await authProvider.getEmpId();
-
       if (empid != null) {
-        userDetailList = await authProvider.getUserDetails(empid);
-        AppConstants.USER_OBJECT=authProvider.userDetailList[0];
+        truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
+        authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (builder) =>
-                    MenuPage(userDetailList: userDetailList)));
+                    SharedPostDetails(truckLoad!)));
       }else{
         Navigator.pushReplacement(
             context,
@@ -144,41 +133,14 @@ class EntryState extends State<EntryScreen> {
                     Login_Screen()));
       }
     }else {
+      truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
+      authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (builder) =>
-                  Login_Screen()));
-    }*/
-  }
-
-  SharedPostModel? truckLoad;
-  loginOrDetails(String postId) async {
-   /* visitingFlag = (await authProvider.getVisitingFlag())!;
-    if (visitingFlag == true) {
-      int? empid = await authProvider.getEmpId();
-      if (empid != null) {
-        truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
-       // authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');*/
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) =>
-                    SharedPostDetails(truckLoad!)));
-     /* }else{
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) =>
-                    Login_Screen()));
-      }
-    }else {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (builder) =>
-                  Login_Screen()));
-    }*/
+                  SharedPostDetails(truckLoad!)));
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -212,14 +174,10 @@ class EntryState extends State<EntryScreen> {
   }
 
   Future<void> initUniLinks() async {
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    String postId='175509';
+    String postId='0';
     try {
-      final initialLink = "https://tkdost.com/tkd/?id=175509";//await getInitialLink();
+      final initialLink = await getInitialLink();//"https://tkdost.com/tkd/?id=175509";//await getInitialLink();
       final initialUri = await getInitialUri();
-      // Parse the link and warn the user, if it is not correct,
-      // but keep in mind it could be `null`.
-
       debugPrint('LINK::::$initialLink');
       debugPrint('$initialUri');
       if(initialLink==null){
@@ -234,20 +192,11 @@ class EntryState extends State<EntryScreen> {
             postId = v;
           }
         });
-
-        loginOrDetails(postId);
+        await loginOrDetails(postId);
       }
-
     } on PlatformException {
-      // Handle exception by warning the user their action did not succeed
-      // return?
-    }
 
-    StreamSubscription _sub = uriLinkStream.listen((Uri? uri) {
-      // Use the uri and warn the user, if it is not correct
-    }, onError: (err) {
-      // Handle exception by warning the user their action did not succeed
-    });
+    }
   }
 }
 

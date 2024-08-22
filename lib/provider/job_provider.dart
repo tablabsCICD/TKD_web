@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/job_model.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +36,6 @@ int jobPages = 0;
     jobList.addAll(res.content);
     jobPages = res.totalPages;
     notifyListeners();
-   // return type;
   }
 
   getCandidates({int currentPage = 0}) async {
@@ -55,7 +52,6 @@ int jobPages = 0;
     candidateList.addAll(res.content);
     totalpages = res.totalPages;
     notifyListeners();
-   // return type;
   }
 
   deleteJob(Job job) async {
@@ -85,8 +81,8 @@ int jobPages = 0;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "companyName": model!.userDetailList[0].companyName,
-      "contactNumber": model!.userDetailList[0].mobileNumber,
-      "emailId": model!.userDetailList[0].emailId,
+      "contactNumber": model.userDetailList[0].mobileNumber,
+      "emailId": model.userDetailList[0].emailId,
       "experience": experience,
       "isSalaryNegotiable": 1,
       "isSelected": 0,
@@ -95,7 +91,7 @@ int jobPages = 0;
       "jobLocation": "city",
       "jobType": position,
       "loggedTime":'',// DateFormat("dd/MM/yyyy hh:mm").format(DateTime.now()), //+" "+DateTime.now().hour.toString() +":" +DateTime.now().minute.toString() ,
-      "loggedUserName":model!.userDetailList[0].userName,
+      "loggedUserName":model.userDetailList[0].userName,
       "mainTag": "Job Seeker",
       "message": description,
       "os": "window",
@@ -127,9 +123,6 @@ int jobPages = 0;
           background: Colors.red
       );
     }
-   // var jsonData = jsonDecode(response.body);
-  //  JobData dataObj = JobData.fromJson(jsonData);
-  //  jobList.add(dataObj.postJob);
     notifyListeners();
   }
 
@@ -165,6 +158,4 @@ int jobPages = 0;
       }
     });
   }
-
-
 }

@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 
 class CustomDropdownList extends StatelessWidget {
-  //final String controller;
   final String hintText;
   String selectedType;
   List<String> items;

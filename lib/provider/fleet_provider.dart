@@ -23,7 +23,6 @@ class FleetProvider extends ChangeNotifier{
     response = json.decode(req.body);
     var type = FeetModel.fromJson(response);
     fleetList.addAll(type.content);
-   // totalPages = type.totalPages;
     notifyListeners();
   }
 
@@ -55,7 +54,7 @@ class FleetProvider extends ChangeNotifier{
   deleteFleet(Fleet obj) async {
     String myUrl = ApiConstant.BASE_URL + 'Fleet?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+   json.decode(req.body);
     fleetList.remove(obj);
     notifyListeners();
   }

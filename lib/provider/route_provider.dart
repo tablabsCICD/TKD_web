@@ -1,11 +1,8 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/model/route_model.dart';
-import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 class RouteProvider extends ChangeNotifier{
@@ -31,10 +28,6 @@ class RouteProvider extends ChangeNotifier{
         createRoute(
             userName : uname,source: element.source,destination: element.destination,
             id: 1,userId: id);
-        /*routeList.addAll(
-           createRoute(
-                userName : uname,source: element.source,destination: element.destination,
-                id: 1,userId: id));*/
       });
       print("Dummy Route List Length : "+dummyRouteList.length.toString());
       dummyRouteList = [];
@@ -76,7 +69,7 @@ class RouteProvider extends ChangeNotifier{
   deleteRoute(RouteData obj) async {
     String myUrl = ApiConstant.ROUTE +'?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     routeList.remove(obj);
     notifyListeners();
   }

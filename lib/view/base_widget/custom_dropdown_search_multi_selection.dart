@@ -1,16 +1,13 @@
 
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/verified_user.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 
@@ -42,16 +39,6 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
 
   ];
 
-  /*List<String> allVerifiedUserList = [];
-
-  getList(){
-    widget.allUserList.forEach((element) {
-      if(element.isUserVerifiedByCompany == 1) {
-        allVerifiedUserList.add('${element.firstName} ${element.lastName}');
-      }
-    });
-  }*/
-
   final editProvider = locator<EditPostLoadProvider>();
   final authProvider = locator<AuthProvider>();
   ScrollController _scrollController = ScrollController();
@@ -59,7 +46,7 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
 
   @override
   void initState() {
-   // getList();
+    super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -86,7 +73,6 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   itemCount: sampleData.length,
                   itemBuilder: (BuildContext context, int index) {
                     return new InkWell(
-                      //highlightColor: Colors.red,
                       splashColor: Colors.blueAccent,
                       onTap: () {
                         setState(() {
@@ -131,7 +117,6 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   searchFieldProps: TextFieldProps(),
                   showSelectedItems: true,
                   showSearchBox: true,
-                  //textStyle: TextStyle(fontSize: 14),
                 ),
                 onChanged: (value) {
 
@@ -141,16 +126,9 @@ class _CustomDropdownSearchMultiSelectionState extends State<CustomDropdownSearc
                   model.searchingList.addAll(value);
 
                 },
-                /*dropdownBuilder: (context, value) {
-                  return Wrap(
-                    children: value.map((e) => _getMultiSelectedWidget(e)).toList(),
-                  );
-                },*/
                 dropdownBuilder: null,
                 selectedItems: widget.selectedItems,
                 onBeforeChange: (list1, list2) => checkBeforeChange(list1, list2),
-               /* dropdownSearchTextStyle:
-                    const TextStyle(fontSize: 14,color: Colors.black,backgroundColor: Colors.grey),*/
               ),
             ],
           ),

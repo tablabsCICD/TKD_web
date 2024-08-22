@@ -5,12 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/images.dart';
-import 'package:tkd_app/util/textview.dart';
-import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
@@ -36,21 +33,13 @@ class BaseWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Container(
-                //   width: 40 ,
-                //   height: 40 ,
-                //   child: Image.network(profileLink),
-                // ),
-                //getImage(profileLink,height: 40 ,width: 40 )
-                getImageclip(profileLink, height: 40 , width: 40 )
-              ],
+              children: [getImageclip(profileLink, height: 40, width: 40)],
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           Expanded(
             child: Container(
-              height: 52 ,
+              height: 52,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,9 +72,9 @@ class BaseWidget {
                                           children: [
                                             Text(
                                               name,
-                                              style:TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 14  ,
+                                                fontSize: 14,
                                                 fontFamily:
                                                     GoogleFonts.poppins()
                                                         .fontFamily,
@@ -93,27 +82,23 @@ class BaseWidget {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: 4 ,
+                                              width: 4,
                                             ),
                                             Visibility(
                                               visible:
-                                              verify != 0 ? true : false,
-                                              // child: SvgPicture.asset(
-                                              //   Images.verified,
-                                              //   height: 12.h,
-                                              //   width: 12.w,
-                                              // ))
-                                              child: VerifiedTag().onVeriedTag(),
+                                                  verify != 0 ? true : false,
+                                              child:
+                                                  VerifiedTag().onVeriedTag(),
                                             )
                                           ],
                                         ),
                                         SizedBox(
                                           width: double.infinity,
                                           child: Text(
-                                             companyName,
-                                            style:TextStyle(
+                                            companyName,
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
-                                              fontSize: 10  ,
+                                              fontSize: 10,
                                               fontFamily: GoogleFonts.poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
@@ -178,21 +163,12 @@ class BaseWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Container(
-                //   width: 40 ,
-                //   height: 40 ,
-                //   child: Image.network(profileLink),
-                // ),
-                //getImage(profileLink,height: 40 ,width: 40 )
-                getImageclip(profileLink, height: 40 , width: 40 )
-              ],
+              children: [getImageclip(profileLink, height: 40, width: 40)],
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           Expanded(
             child: Container(
-              // height: 52 ,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,9 +201,9 @@ class BaseWidget {
                                           children: [
                                             Text(
                                               name,
-                                              style:TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 14  ,
+                                                fontSize: 14,
                                                 fontFamily:
                                                     GoogleFonts.poppins()
                                                         .fontFamily,
@@ -235,27 +211,23 @@ class BaseWidget {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: 4 ,
+                                              width: 4,
                                             ),
                                             Visibility(
                                               visible:
-                                              verify != 0 ? true : false,
-                                              // child: SvgPicture.asset(
-                                              //   Images.verified,
-                                              //   height: 12.h,
-                                              //   width: 12.w,
-                                              // ))
-                                              child: VerifiedTag().onVeriedTag(),
+                                                  verify != 0 ? true : false,
+                                              child:
+                                                  VerifiedTag().onVeriedTag(),
                                             )
                                           ],
-                                         ),
+                                        ),
                                         SizedBox(
                                           width: double.infinity,
                                           child: Text(
                                             companyName,
                                             style: TextStyle(
                                               color: Color(0x99001E49),
-                                              fontSize: 10  ,
+                                              fontSize: 10,
                                               fontFamily: GoogleFonts.poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
@@ -267,9 +239,9 @@ class BaseWidget {
                                           child: Text(
                                             Utils().getTranport(
                                                 transporterOrAgent),
-                                            style:TextStyle(
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
-                                              fontSize: 10  ,
+                                              fontSize: 10,
                                               fontFamily: GoogleFonts.poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
@@ -335,20 +307,13 @@ class BaseWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Container(
-                //   width: 40 ,
-                //   height: 40 ,
-                //   child: Image.network(profileLink),
-                // ),
-                getImageclip(profileLink, height: 56 , width: 40 )
-              ],
+              children: [getImageclip(profileLink, height: 56, width: 40)],
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           Expanded(
             child: Container(
-              height: 52 ,
+              height: 52,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -381,9 +346,9 @@ class BaseWidget {
                                           children: [
                                             Text(
                                               name,
-                                              style:TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 14  ,
+                                                fontSize: 14,
                                                 fontFamily:
                                                     GoogleFonts.poppins()
                                                         .fontFamily,
@@ -391,17 +356,13 @@ class BaseWidget {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: 4 ,
+                                              width: 4,
                                             ),
                                             Visibility(
                                               visible:
-                                              verify != 0 ? true : false,
-                                              // child: SvgPicture.asset(
-                                              //   Images.verified,
-                                              //   height: 12.h,
-                                              //   width: 12.w,
-                                              // ))
-                                              child: VerifiedTag().onVeriedTag(),
+                                                  verify != 0 ? true : false,
+                                              child:
+                                                  VerifiedTag().onVeriedTag(),
                                             )
                                           ],
                                         ),
@@ -409,12 +370,12 @@ class BaseWidget {
                                           width: double.infinity,
                                           child: Text(
                                             companyName,
-                                           style: TextStyle(
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
-                                              fontSize: 10  ,
+                                              fontSize: 10,
                                               fontFamily: GoogleFonts.poppins()
                                                   .fontFamily,
-                                              fontWeight:  FontWeight.w400,
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                         ),
@@ -460,10 +421,10 @@ class BaseWidget {
   Widget routes(String fromCity, String toCity) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 8 ),
+      padding: EdgeInsets.symmetric(vertical: 8),
       decoration: ShapeDecoration(
         color: Color(0xFFF4F6F6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8 )),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -477,9 +438,9 @@ class BaseWidget {
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: Color(0xCC001E49),
-                  fontSize: 12  ,
+                  fontSize: 12,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -500,9 +461,9 @@ class BaseWidget {
                 toCity,
                 style: TextStyle(
                   color: Color(0xCC001E49),
-                  fontSize: 12  ,
+                  fontSize: 12,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -539,7 +500,7 @@ class BaseWidget {
                           title,
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
@@ -550,7 +511,7 @@ class BaseWidget {
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: Color(0x99001E49),
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
@@ -558,16 +519,16 @@ class BaseWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 4 ),
+                  SizedBox(height: 4),
                   SizedBox(
                     width: double.infinity,
                     child: Text(
                       subTitle,
                       style: TextStyle(
                         color: Color(0x99001E49),
-                        fontSize: 12  ,
+                        fontSize: 12,
                         fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight:  FontWeight.w400,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -607,22 +568,22 @@ class BaseWidget {
                           title,
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 14  ,
+                            fontSize: 14,
                             fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 4 ),
+                  SizedBox(height: 4),
                   SizedBox(
                     width: double.infinity,
                     child: Text(
                       subTitle,
                       style: TextStyle(
                         color: Color(0x99001E49),
-                        fontSize: 12  ,
+                        fontSize: 12,
                         fontFamily: GoogleFonts.poppins().fontFamily,
                         fontWeight: FontWeight.w400,
                       ),
@@ -640,7 +601,7 @@ class BaseWidget {
   Widget bidButton(Function(int) onMenuTap) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -651,13 +612,13 @@ class BaseWidget {
               onMenuTap(0);
             },
             child: Container(
-              height: 38 ,
-              width: 253 ,
-              padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -670,9 +631,9 @@ class BaseWidget {
                     "Quote Now",
                     style: TextStyle(
                       color: Color(0xFF001E49),
-                      fontSize: 12  ,
+                      fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight:  FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SvgPicture.asset(Images.bid)
@@ -680,17 +641,17 @@ class BaseWidget {
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           InkWell(onTap: () {}, child: popUpmenu(onMenuTap))
         ],
       ),
     );
   }
 
-  Widget deleteButton(Function(int) onMenuTap,{bool isOwnPost=false}) {
+  Widget deleteButton(Function(int) onMenuTap, {bool isOwnPost = false}) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -701,13 +662,13 @@ class BaseWidget {
               onMenuTap(10);
             },
             child: Container(
-              height: 38 ,
-              width: 253 ,
-              padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -720,9 +681,9 @@ class BaseWidget {
                     "Delete",
                     style: TextStyle(
                       color: ThemeColor.red,
-                      fontSize: 12  ,
+                      fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight:  FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SvgPicture.asset(Images.delete)
@@ -730,8 +691,12 @@ class BaseWidget {
               ),
             ),
           ),
-          SizedBox(width: 8 ),
-          InkWell(onTap: () {}, child: isOwnPost?popUpmenuForMyPost(onMenuTap):popUpmenuForOwnPost(onMenuTap))
+          SizedBox(width: 8),
+          InkWell(
+              onTap: () {},
+              child: isOwnPost
+                  ? popUpmenuForMyPost(onMenuTap)
+                  : popUpmenuForOwnPost(onMenuTap))
         ],
       ),
     );
@@ -740,7 +705,7 @@ class BaseWidget {
   Widget deleteMyPostButton(Function(int) onMenuTap) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -751,13 +716,13 @@ class BaseWidget {
               onMenuTap(10);
             },
             child: Container(
-              height: 38 ,
-              width: 253 ,
-              padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -770,9 +735,9 @@ class BaseWidget {
                     "Delete",
                     style: TextStyle(
                       color: ThemeColor.red,
-                      fontSize: 12  ,
+                      fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight:  FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SvgPicture.asset(Images.delete)
@@ -780,7 +745,7 @@ class BaseWidget {
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           InkWell(onTap: () {}, child: popUpmenuOwnPost(onMenuTap))
         ],
       ),
@@ -790,7 +755,7 @@ class BaseWidget {
   Widget buyOnlyDeleteButton(Function(int) onMenuTap, bool isDeleteVisible) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -803,13 +768,13 @@ class BaseWidget {
                 onMenuTap(10);
               },
               child: Container(
-                height: 38 ,
-                width: 253 ,
-                padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+                height: 38,
+                width: 253,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                    side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -822,9 +787,9 @@ class BaseWidget {
                       "Delete",
                       style: TextStyle(
                         color: ThemeColor.red,
-                        fontSize: 12  ,
+                        fontSize: 12,
                         fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight:  FontWeight.w600,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     SvgPicture.asset(Images.delete)
@@ -833,7 +798,7 @@ class BaseWidget {
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
         ],
       ),
     );
@@ -842,7 +807,7 @@ class BaseWidget {
   Widget buyDeleteButton(Function(int) onMenuTap, bool isDeleteVisible) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -855,13 +820,13 @@ class BaseWidget {
                 onMenuTap(10);
               },
               child: Container(
-                height: 38 ,
-                width: 253 ,
-                padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+                height: 38,
+                width: 253,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                    side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -874,9 +839,9 @@ class BaseWidget {
                       "Delete",
                       style: TextStyle(
                         color: ThemeColor.red,
-                        fontSize: 12  ,
+                        fontSize: 12,
                         fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight:  FontWeight.w600,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     SvgPicture.asset(Images.delete)
@@ -885,7 +850,7 @@ class BaseWidget {
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           InkWell(onTap: () {}, child: popUpmenu(onMenuTap))
         ],
       ),
@@ -895,7 +860,7 @@ class BaseWidget {
   Widget showBidButton(Function(int) onMenuTap, bool isBid) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -906,13 +871,13 @@ class BaseWidget {
               onMenuTap(0);
             },
             child: Container(
-              height: 38 ,
-              width: 253 ,
-              padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -925,16 +890,16 @@ class BaseWidget {
                     "Show All Quotes",
                     style: TextStyle(
                       color: Color(0xFF001E49),
-                      fontSize: 12  ,
+                      fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight:  FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           InkWell(
               onTap: () {},
               child: isBid
@@ -948,8 +913,8 @@ class BaseWidget {
   popUpmenuOwnPost(Function(int) onMenuTap) {
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Color(0x332C363F)),
-        borderRadius: BorderRadius.circular(8 ),
+        side: BorderSide(width: 1, color: Color(0x332C363F)),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
       onSelected: (dynamic val) {
@@ -965,24 +930,24 @@ class BaseWidget {
               SvgPicture.asset(
                 Images.delete,
                 color: Colors.black,
-                width: 20 ,
-                height: 20 ,
+                width: 20,
+                height: 20,
               ),
               SizedBox(
-                width: 12 ,
+                width: 12,
               ),
               Text(
                 "Delete",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14  ,
+                  fontSize: 14,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                   height: 0,
                 ),
               ),
               SizedBox(
-                width: 13 ,
+                width: 13,
               ),
             ],
           ),
@@ -996,19 +961,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.share_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   "Share",
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1021,7 +986,7 @@ class BaseWidget {
   Widget showBidRepostButton(Function(int) onMenuTap, bool isBid) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(right: 8 ),
+      padding: EdgeInsets.only(right: 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1032,13 +997,13 @@ class BaseWidget {
               onMenuTap(0);
             },
             child: Container(
-              height: 38 ,
-              width: 253 ,
-              padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+              height: 38,
+              width: 253,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -1051,16 +1016,16 @@ class BaseWidget {
                     "Show All Quotes",
                     style: TextStyle(
                       color: Color(0xFF001E49),
-                      fontSize: 12  ,
+                      fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight:  FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           InkWell(
               onTap: () {},
               child: isBid
@@ -1075,8 +1040,8 @@ class BaseWidget {
     return PopupMenuButton(
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Colors.white),
-        borderRadius: BorderRadius.circular(8 ),
+        side: BorderSide(width: 1, color: Colors.white),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
       onSelected: (dynamic val) {
@@ -1092,24 +1057,24 @@ class BaseWidget {
               SvgPicture.asset(
                 Images.delete,
                 color: Colors.black,
-                width: 20 ,
-                height: 20 ,
+                width: 20,
+                height: 20,
               ),
               SizedBox(
-                width: 12 ,
+                width: 12,
               ),
               Text(
                 getTranslated("delete", context)!,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14  ,
+                  fontSize: 14,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                   height: 0,
                 ),
               ),
               SizedBox(
-                width: 13 ,
+                width: 13,
               ),
             ],
           ),
@@ -1123,19 +1088,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.share_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1150,19 +1115,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.share_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated("re_post", context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1176,8 +1141,8 @@ class BaseWidget {
     return PopupMenuButton(
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Colors.white),
-        borderRadius: BorderRadius.circular(8 ),
+        side: BorderSide(width: 1, color: Colors.white),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
       onSelected: (dynamic val) {
@@ -1193,19 +1158,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.share_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated("share", context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1214,6 +1179,7 @@ class BaseWidget {
       ],
     );
   }
+
   popUpmenuForMyPost(Function(int) onMenuTap) {
     return PopupMenuButton(
       color: Colors.white,
@@ -1486,8 +1452,8 @@ class BaseWidget {
     return PopupMenuButton(
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1 , color: Colors.white),
-        borderRadius: BorderRadius.circular(8 ),
+        side: BorderSide(width: 1, color: Colors.white),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: SvgPicture.asset(Images.post_menu)),
       onSelected: (dynamic val) {
@@ -1503,24 +1469,24 @@ class BaseWidget {
               SvgPicture.asset(
                 Images.message,
                 color: Colors.black,
-                width: 20 ,
-                height: 20 ,
+                width: 20,
+                height: 20,
               ),
               SizedBox(
-                width: 12 ,
+                width: 12,
               ),
               Text(
                 getTranslated('chat', context)!,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14  ,
+                  fontSize: 14,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                   height: 0,
                 ),
               ),
               SizedBox(
-                width: 13 ,
+                width: 13,
               ),
             ],
           ),
@@ -1534,19 +1500,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.call_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated('call', context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1561,19 +1527,19 @@ class BaseWidget {
                 SvgPicture.asset(
                   Images.share_white,
                   color: Colors.black,
-                  width: 20 ,
-                  height: 20 ,
+                  width: 20,
+                  height: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated('share', context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1588,18 +1554,18 @@ class BaseWidget {
                 Icon(
                   Icons.star_border,
                   color: Colors.black,
-                  size: 20 ,
+                  size: 20,
                 ),
                 SizedBox(
-                  width: 12 ,
+                  width: 12,
                 ),
                 Text(
                   getTranslated('rating', context)!,
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 14  ,
+                    fontSize: 14,
                     fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight:  FontWeight.w400,
+                    fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
@@ -1615,13 +1581,13 @@ class BaseWidget {
         onTab();
       },
       child: Container(
-        height: 38 ,
+        height: 38,
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 24 , vertical: 10 ),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 0.50 , color: Color(0x33001E49)),
+            side: BorderSide(width: 0.50, color: Color(0x33001E49)),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -1634,9 +1600,9 @@ class BaseWidget {
               "Withdraw Quotes",
               style: TextStyle(
                 color: Color(0xFF001E49),
-                fontSize: 12  ,
+                fontSize: 12,
                 fontFamily: GoogleFonts.poppins().fontFamily,
-                fontWeight:  FontWeight.w600,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -1646,20 +1612,6 @@ class BaseWidget {
   }
 
   Widget image({String image = ""}) {
-    // return Container(
-    //   width: 311 ,
-    //   height: 200 ,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //         image,
-    //       ),fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
       child: CachedNetworkImage(
@@ -1670,32 +1622,17 @@ class BaseWidget {
             child: Image.network(
               "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
               fit: BoxFit.fill,
-              width: 311 ,
-              height: 200 ,
+              width: 311,
+              height: 200,
             )),
         fit: BoxFit.fill,
-        width: 311 ,
-        height: 200 ,
+        width: 311,
+        height: 200,
       ),
     );
   }
 
   Widget imageLink(String link) {
-    // return Container(
-    //   width: 311 ,
-    //   height: 200 ,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //           link),
-    //       fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
-
     return image(image: link);
   }
 
@@ -1757,54 +1694,41 @@ class BaseWidget {
   }
 
   Widget imageLinkDelete(String link) {
-    // return Container(
-    //   width: 311 ,
-    //   height: 200 ,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //           link),
-    //       fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
-
     return image(image: link);
   }
 
-  Widget likeComment(TruckLoad truckLoad,BuildContext context,
+  Widget likeComment(TruckLoad truckLoad, BuildContext context,
       {int likeCount = 0, int commentCount = 0}) {
     return InkWell(
-      onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (builder) => PostCommentList(truckLoad)));
       },
       child: Container(
-        height: 20 ,
+        height: 20,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              width: 155.50 ,
-              height: 18 ,
+              width: 155.50,
+              height: 18,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 16 ,
-                    height: 16 ,
+                    width: 16,
+                    height: 16,
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (builder) => PostCommentList(truckLoad)));
                       },
                       child: Container(
-                        width: 16 ,
-                        height: 16 ,
+                        width: 16,
+                        height: 16,
                         child: SvgPicture.asset(Images.like),
                       ),
                     ),
@@ -1815,9 +1739,9 @@ class BaseWidget {
                       "Like",
                       style: TextStyle(
                         color: Color(0xFF001E49),
-                        fontSize: 12  ,
+                        fontSize: 12,
                         fontFamily: GoogleFonts.poppins().fontFamily,
-                        fontWeight:  FontWeight.w600,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -1826,21 +1750,22 @@ class BaseWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (builder) => PostCommentList(truckLoad)));
               },
               child: Container(
-                width: 155.50 ,
-                height: 18 ,
+                width: 155.50,
+                height: 18,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 16 ,
-                      height: 16 ,
-                      child: Stack(
-                          children: [SvgPicture.asset(Images.message)]),
+                      width: 16,
+                      height: 16,
+                      child:
+                          Stack(children: [SvgPicture.asset(Images.message)]),
                     ),
                     SizedBox(width: 8),
                     Container(
@@ -1853,21 +1778,12 @@ class BaseWidget {
                             "Comment",
                             style: TextStyle(
                               color: Color(0xFF001E49),
-                              fontSize: 12  ,
+                              fontSize: 12,
                               fontFamily: GoogleFonts.poppins().fontFamily,
-                              fontWeight:  FontWeight.w600,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 2),
-                          // Text(
-                          //   '( ${commentCount} )',
-                          //   style: TextStyle(
-                          //     color: Color(0xFF001E49),
-                          //     fontSize: 12  ,
-                          //     fontFamily: GoogleFonts.poppins().fontFamily,
-                          //     fontWeight:  FontWeight.w400,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -1881,25 +1797,26 @@ class BaseWidget {
     );
   }
 
-  Widget likeCommentDetails(TruckLoad truckLoad,BuildContext context,Function onTabLikeCount,
+  Widget likeCommentDetails(
+      TruckLoad truckLoad, BuildContext context, Function onTabLikeCount,
       {int likeCount = 0, int commentCount = 0}) {
     return Container(
-      height: 20 ,
+      height: 20,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            width: 155.50 ,
-            height: 18 ,
+            width: 155.50,
+            height: 18,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: 16 ,
-                  height: 16 ,
+                  width: 16,
+                  height: 16,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1907,15 +1824,13 @@ class BaseWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          // provider.likeIncreamentApi(truckLoad.id!, context);
                           onTabLikeCount();
-
                         },
                         child: Container(
-                          width: 16 ,
-                          height: 16 ,
-                          child: Stack(
-                              children: [SvgPicture.asset(Images.like)]),
+                          width: 16,
+                          height: 16,
+                          child:
+                              Stack(children: [SvgPicture.asset(Images.like)]),
                         ),
                       ),
                     ],
@@ -1924,10 +1839,9 @@ class BaseWidget {
                 SizedBox(width: 8),
                 Container(
                   child: InkWell(
-                    onTap: (){
+                    onTap: () {
                       print('this is like ');
                       onTabLikeCount();
-
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1938,9 +1852,9 @@ class BaseWidget {
                           "Like",
                           style: TextStyle(
                             color: Color(0xFF001E49),
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(width: 2),
@@ -1948,9 +1862,9 @@ class BaseWidget {
                           '( ${likeCount} )',
                           style: TextStyle(
                             color: Color(0xFF001E49),
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w400,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
@@ -1962,27 +1876,28 @@ class BaseWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (builder) => PostCommentList(truckLoad)));
             },
             child: Container(
-              width: 155.50 ,
-              height: 18 ,
+              width: 155.50,
+              height: 18,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 16 ,
-                    height: 16 ,
+                    width: 16,
+                    height: 16,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 16 ,
-                          height: 16 ,
+                          width: 16,
+                          height: 16,
                           child: Stack(
                               children: [SvgPicture.asset(Images.message)]),
                         ),
@@ -2000,9 +1915,9 @@ class BaseWidget {
                           "Comment",
                           style: TextStyle(
                             color: Color(0xFF001E49),
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(width: 2),
@@ -2010,9 +1925,9 @@ class BaseWidget {
                           '( ${commentCount} )',
                           style: TextStyle(
                             color: Color(0xFF001E49),
-                            fontSize: 12  ,
+                            fontSize: 12,
                             fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight:  FontWeight.w400,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
@@ -2080,8 +1995,8 @@ class BaseWidget {
   appBar(BuildContext context, String title) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(left: 20 ),
-      height: 50 ,
+      padding: EdgeInsets.only(left: 20),
+      height: 50,
       color: Colors.white,
       child: Stack(
         children: [
@@ -2097,13 +2012,13 @@ class BaseWidget {
               },
               child: SvgPicture.asset(
                 Images.arrow_back,
-                height: 24 ,
-                width: 24 ,
+                height: 24,
+                width: 24,
               ),
             ),
           ),
-          SizedBox(width: 8 ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
+          SizedBox(width: 8),
         ],
       ),
     );
@@ -2112,9 +2027,7 @@ class BaseWidget {
   appBarSearchFilter(BuildContext context, String title) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      // padding: EdgeInsets.only(left: 20 ),
-
-      height: 50 ,
+      height: 50,
       color: Colors.white,
       child: Stack(
         children: [
@@ -2129,16 +2042,16 @@ class BaseWidget {
                 Navigator.pop(context);
               },
               child: Padding(
-                padding: EdgeInsets.only(left: 20 ),
+                padding: EdgeInsets.only(left: 20),
                 child: SvgPicture.asset(
                   Images.arrow_back,
-                  height: 24 ,
-                  width: 24 ,
+                  height: 24,
+                  width: 24,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8 ),
+          SizedBox(width: 8),
           Align(
             alignment: Alignment.centerRight,
             child: Row(
@@ -2146,9 +2059,9 @@ class BaseWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 //SvgPicture.asset(Images.search_normal),
-                SizedBox(width: 20 ),
+                SizedBox(width: 20),
                 // SvgPicture.asset(Images.filter),
-                SizedBox(width: 20 ),
+                SizedBox(width: 20),
               ],
             ),
           )
@@ -2163,9 +2076,9 @@ class BaseWidget {
         title,
         style: TextStyle(
           color: Colors.black,
-          fontSize: 14  ,
+          fontSize: 14,
           fontFamily: GoogleFonts.poppins().fontFamily,
-          fontWeight:  FontWeight.w600,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -2174,10 +2087,10 @@ class BaseWidget {
   Widget jobHeading(String fromCity) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 8 ),
+      padding: EdgeInsets.symmetric(vertical: 8),
       decoration: ShapeDecoration(
         color: Color(0xFFF4F6F6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8 )),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -2191,9 +2104,9 @@ class BaseWidget {
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: Color(0xCC001E49),
-                  fontSize: 12  ,
+                  fontSize: 12,
                   fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight:  FontWeight.w400,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),

@@ -12,7 +12,6 @@ getLoader(bool loading){
           SizedBox(height: 10,),
           SpinKitCircle(
             color: Colors.grey,
-           // size: 50.0,
           )
          ],
       )

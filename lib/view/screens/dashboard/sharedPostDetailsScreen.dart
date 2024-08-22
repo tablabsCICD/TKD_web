@@ -124,7 +124,7 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
             minVerticalPadding: 0,
             leading: Stack(
               children: [
-                getImage(widget.truckLoad.topicName.toString()),
+                getImage(widget.truckLoad.image.toString()),
 
               ],
             ),

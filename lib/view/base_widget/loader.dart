@@ -22,6 +22,4 @@ class Loader {
   dismissLoader(BuildContext context){
     Navigator.pop(context);
   }
-
-
 }

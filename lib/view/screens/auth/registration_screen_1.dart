@@ -6,26 +6,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tkd_app/dialog/CustomCityListDialog.dart';
-import 'package:tkd_app/dialog/CustomStateListDialog.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
-import 'package:tkd_app/provider/gallery_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
-import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
-import 'package:tkd_app/view/base_widget/open_url.dart';
 import 'package:tkd_app/view/screens/auth/registration_screen_3.dart';
-import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 import 'package:universal_html/html.dart';
 import 'login_screen.dart';
-import 'package:tkd_app/view/screens/menu_page.dart';
 import 'registration_screen_2.dart';
 
 class RegistrationScreen1 extends StatefulWidget {
@@ -83,7 +75,6 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      //  getDetails(),
                       getCart(),
                     ],
                   ),
@@ -222,6 +213,7 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                     print("In pickfile response");
                     print(value);
                   });
+                  print(doc);
                 },
               ),
               ),
@@ -237,6 +229,7 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                     print("In pickfile response");
                     print(value);
                   });
+                  print(doc);
                 },
               )),
               CustomDropdownList(

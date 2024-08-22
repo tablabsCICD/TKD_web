@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:tkd_app/model/truck_load_model.dart';
 
 class RepeatModel{
   final int? postId;

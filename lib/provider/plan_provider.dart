@@ -9,7 +9,6 @@ import 'package:tkd_app/util/app_constants.dart';
 class PlanProvider extends ChangeNotifier{
   List<TruckLoad> truckLoadTypeList = [];
   var response;
-  // int currentPage = 1;
   int totalPages = 0;
   bool fla = false,pla = false,flr = false,plr = false;
 
@@ -39,7 +38,6 @@ class PlanProvider extends ChangeNotifier{
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "contactNumber": mobile?? 0,
-      //"date": '',
       "destination": destination,
       "dnd": dnd?? 0,
       "emailId": email,

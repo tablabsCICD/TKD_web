@@ -6,7 +6,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
@@ -18,12 +17,12 @@ import 'package:tkd_app/widgets/verified_tag.dart';
 class BaseWidget {
 
 
-
-  Widget likeComment(TruckLoad truckLoad,BuildContext context,
+  Widget likeComment(TruckLoad truckLoad, BuildContext context,
       {int likeCount = 0, int commentCount = 0}) {
     return InkWell(
-      onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (builder) => PostCommentList(truckLoad)));
       },
       child: Container(
         height: 20,
@@ -49,13 +48,17 @@ class BaseWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (builder) =>
+                                    PostCommentList(truckLoad)));
                           },
                           child: Container(
                             width: 16,
                             height: 16,
                             child: Stack(
-                                children: [SvgPicture.asset("assets/svg/like.svg")]),
+                                children: [
+                                  SvgPicture.asset("assets/svg/like.svg")
+                                ]),
                           ),
                         ),
                       ],
@@ -73,20 +76,13 @@ class BaseWidget {
                           style: TextStyle(
                             color: Color(0xFF001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(width: 2),
-                        // Text(
-                        //   '( ${likeCount} )',
-                        //   style: TextStyle(
-                        //     color: Color(0xFF001E49),
-                        //     fontSize: 12,
-                        //     fontFamily: GoogleFonts.poppins().fontFamily,
-                        //     fontWeight: FontWeight.w400,
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -95,7 +91,8 @@ class BaseWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (builder) => PostCommentList(truckLoad)));
               },
               child: Container(
                 width: 155.50,
@@ -117,7 +114,9 @@ class BaseWidget {
                             width: 16,
                             height: 16,
                             child: Stack(
-                                children: [SvgPicture.asset("assets/svg/message.svg")]),
+                                children: [
+                                  SvgPicture.asset("assets/svg/message.svg")
+                                ]),
                           ),
                         ],
                       ),
@@ -134,20 +133,13 @@ class BaseWidget {
                             style: TextStyle(
                               color: Color(0xFF001E49),
                               fontSize: 12,
-                              fontFamily: GoogleFonts.poppins().fontFamily,
+                              fontFamily: GoogleFonts
+                                  .poppins()
+                                  .fontFamily,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 2),
-                          // Text(
-                          //   '( ${commentCount} )',
-                          //   style: TextStyle(
-                          //     color: Color(0xFF001E49),
-                          //     fontSize: 12,
-                          //     fontFamily: GoogleFonts.poppins().fontFamily,
-                          //     fontWeight: FontWeight.w400,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -181,12 +173,6 @@ class BaseWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Container(
-                //   width: 40,
-                //   height: 40,
-                //   child: Image.network(profileLink),
-                // ),
-                //getImage(profileLink,height: 40,width: 40.w)
                 getImageclip(profileLink, height: 40, width: 40)
               ],
             ),
@@ -227,11 +213,12 @@ class BaseWidget {
                                           children: [
                                             Text(
                                               name,
-                                              style:TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
                                                 fontFamily:
-                                                GoogleFonts.poppins()
+                                                GoogleFonts
+                                                    .poppins()
                                                     .fontFamily,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -242,12 +229,8 @@ class BaseWidget {
                                             Visibility(
                                               visible:
                                               verify != 0 ? true : false,
-                                              // child: SvgPicture.asset(
-                                              //   Images.verified,
-                                              //   height: 12.h,
-                                              //   width: 12.w,
-                                              // ))
-                                              child: VerifiedTag().onVeriedTag(),
+                                              child: VerifiedTag()
+                                                  .onVeriedTag(),
                                             )
                                           ],
                                         ),
@@ -255,10 +238,11 @@ class BaseWidget {
                                           width: double.infinity,
                                           child: Text(
                                             companyName,
-                                            style:TextStyle(
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
                                               fontSize: 10,
-                                              fontFamily: GoogleFonts.poppins()
+                                              fontFamily: GoogleFonts
+                                                  .poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -274,11 +258,12 @@ class BaseWidget {
                                           itemCount: 5,
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 1.0),
-                                          itemBuilder: (context, _) => Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 5,
-                                          ),
+                                          itemBuilder: (context, _) =>
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                                size: 5,
+                                              ),
                                           onRatingUpdate: (rating) {
                                             print(rating);
                                           },
@@ -304,35 +289,40 @@ class BaseWidget {
     );
   }
 
-Widget heading(String title,String subTitle){
- return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 12,
-          fontFamily: GoogleFonts.poppins().fontFamily,
-          fontWeight: FontWeight.w600,
+  Widget heading(String title, String subTitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontFamily: GoogleFonts
+                .poppins()
+                .fontFamily,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-      SizedBox(height:5),
-      Text(
-        subTitle,
-        style: TextStyle(
-          color: Color(0x99001E49),
-          fontSize: 12,
-          fontFamily: GoogleFonts.poppins().fontFamily,
-          fontWeight: FontWeight.w400,
+        SizedBox(height: 5),
+        Text(
+          subTitle,
+          style: TextStyle(
+            color: Color(0x99001E49),
+            fontSize: 12,
+            fontFamily: GoogleFonts
+                .poppins()
+                .fontFamily,
+            fontWeight: FontWeight.w400,
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
 
-  Widget likeCommentDetails(TruckLoad truckLoad,BuildContext context,Function onTabLikeCount,
+  Widget likeCommentDetails(TruckLoad truckLoad, BuildContext context,
+      Function onTabLikeCount,
       {int likeCount = 0, int commentCount = 0}) {
     return Container(
       height: 20,
@@ -358,15 +348,15 @@ Widget heading(String title,String subTitle){
                     children: [
                       InkWell(
                         onTap: () {
-                          // provider.likeIncreamentApi(truckLoad.id!, context);
                           onTabLikeCount();
-
                         },
                         child: Container(
-                          width: 16,
-                          height: 16,
-                          child: Stack(
-                              children: [SvgPicture.asset("assets/images/like.svg"),])
+                            width: 16,
+                            height: 16,
+                            child: Stack(
+                                children: [
+                                  SvgPicture.asset("assets/images/like.svg"),
+                                ])
                         ),
                       ),
                     ],
@@ -375,10 +365,9 @@ Widget heading(String title,String subTitle){
                 SizedBox(width: 8),
                 Container(
                   child: InkWell(
-                    onTap: (){
+                    onTap: () {
                       print('this is like ');
                       onTabLikeCount();
-
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -390,7 +379,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0xFF001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -400,7 +391,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0xFF001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -413,7 +406,8 @@ Widget heading(String title,String subTitle){
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PostCommentList(truckLoad)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (builder) => PostCommentList(truckLoad)));
             },
             child: Container(
               width: 155.50,
@@ -435,7 +429,9 @@ Widget heading(String title,String subTitle){
                           width: 16,
                           height: 16,
                           child: Stack(
-                              children: [SvgPicture.asset("assets/images/message.svg")]),
+                              children: [
+                                SvgPicture.asset("assets/images/message.svg")
+                              ]),
                         ),
                       ],
                     ),
@@ -452,7 +448,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0xFF001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -462,7 +460,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0xFF001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -513,7 +513,6 @@ Widget heading(String title,String subTitle){
         : CircleAvatar(
       radius: width == null ? 35 : width / 2,
       backgroundColor: Colors.white,
-      // borderRadius: BorderRadius.circular(width==null?35:width),
 
       child: ClipOval(
         child: CachedNetworkImage(
@@ -530,7 +529,10 @@ Widget heading(String title,String subTitle){
 
   appBar(BuildContext context, String title) {
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       padding: EdgeInsets.only(left: 20),
       height: 50,
       color: Colors.white,
@@ -562,9 +564,10 @@ Widget heading(String title,String subTitle){
 
   appBarSearchFilter(BuildContext context, String title) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      // padding: EdgeInsets.only(left: 20.w),
-
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       height: 50,
       color: Colors.white,
       child: Stack(
@@ -614,7 +617,9 @@ Widget heading(String title,String subTitle){
         style: TextStyle(
           color: Colors.black,
           fontSize: 14,
-          fontFamily: GoogleFonts.poppins().fontFamily,
+          fontFamily: GoogleFonts
+              .poppins()
+              .fontFamily,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -642,7 +647,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Color(0xCC001E49),
                   fontSize: 12,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -654,33 +661,20 @@ Widget heading(String title,String subTitle){
   }
 
   Widget image({String image = ""}) {
-    // return Container(
-    //   width: 311 ,
-    //   height: 200.h,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //         image,
-    //       ),fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
       child: CachedNetworkImage(
         imageUrl: image,
         placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
-        errorWidget: (context, url, error) => ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Image.network(
-              "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
-              fit: BoxFit.fill,
-              width: 311,
-              height: 200,
-            )),
+        errorWidget: (context, url, error) =>
+            ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+                  fit: BoxFit.fill,
+                  width: 311,
+                  height: 200,
+                )),
         fit: BoxFit.fill,
         width: 311,
         height: 200,
@@ -689,21 +683,6 @@ Widget heading(String title,String subTitle){
   }
 
   Widget imageLink(String link) {
-    // return Container(
-    //   width: 311 ,
-    //   height: 200.h,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //           link),
-    //       fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
-
     return image(image: link);
   }
 
@@ -716,17 +695,19 @@ Widget heading(String title,String subTitle){
             enableInfiniteScroll: false,
           ),
           items: imgList
-              .map((item) => Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(child: imageLink(item!)),
-            ),
-          ))
+              .map((item) =>
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(child: imageLink(item!)),
+                ),
+              ))
               .toList(),
         ));
   }
 
-  Widget headingWithDescription(String title, String date, String field1,String field2,String field3,bool isJobPost) {
+  Widget headingWithDescription(String title, String date, String field1,
+      String field2, String field3, bool isJobPost) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -754,7 +735,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -765,7 +748,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0x99001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -781,11 +766,13 @@ Widget heading(String title,String subTitle){
                         Row(
                           children: [
                             Text(
-                              isJobPost?"Experience : ":"Mfg Year : ",
+                              isJobPost ? "Experience : " : "Mfg Year : ",
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -794,7 +781,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -803,11 +792,13 @@ Widget heading(String title,String subTitle){
                         Row(
                           children: [
                             Text(
-                              isJobPost?"Role : ":"Model : ",
+                              isJobPost ? "Role : " : "Model : ",
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -816,20 +807,24 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
                         ),
-                        isJobPost?SizedBox.shrink():Row(
+                        isJobPost ? SizedBox.shrink() : Row(
                           children: [
                             Text(
                               "Price : ",
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -838,7 +833,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -856,7 +853,8 @@ Widget heading(String title,String subTitle){
     );
   }
 
-  Widget jobHeadingWithDescription(String title, String date, String exp,String role,String desc,bool isJobPost) {
+  Widget jobHeadingWithDescription(String title, String date, String exp,
+      String role, String desc, bool isJobPost) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -884,7 +882,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -895,7 +895,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0x99001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -915,7 +917,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -924,7 +928,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -937,7 +943,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -946,7 +954,9 @@ Widget heading(String title,String subTitle){
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
-                                fontFamily: GoogleFonts.poppins().fontFamily,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -957,7 +967,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -966,7 +978,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0x99001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -1016,7 +1030,9 @@ Widget heading(String title,String subTitle){
                     style: TextStyle(
                       color: Color(0xFF001E49),
                       fontSize: 12,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontFamily: GoogleFonts
+                          .poppins()
+                          .fontFamily,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1032,8 +1048,7 @@ Widget heading(String title,String subTitle){
     );
   }
 
-  Widget deleteButton(Function(int) onMenuTap,bool isOwnPost) {
-
+  Widget deleteButton(Function(int) onMenuTap, bool isOwnPost) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(right: 8),
@@ -1067,7 +1082,9 @@ Widget heading(String title,String subTitle){
                     style: TextStyle(
                       color: ColorResources.PRIMARY_COLOR,
                       fontSize: 12,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontFamily: GoogleFonts
+                          .poppins()
+                          .fontFamily,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1077,7 +1094,9 @@ Widget heading(String title,String subTitle){
             ),
           ),
           SizedBox(width: 8),
-          InkWell(onTap: () {}, child: isOwnPost?popUpmenuForOwnPost(onMenuTap):popUpmenu(onMenuTap))
+          InkWell(onTap: () {},
+              child: isOwnPost ? popUpmenuForOwnPost(onMenuTap) : popUpmenu(
+                  onMenuTap))
         ],
       ),
     );
@@ -1103,12 +1122,6 @@ Widget heading(String title,String subTitle){
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Container(
-                //   width: 40.w,
-                //   height: 40.h,
-                //   child: Image.network(profileLink),
-                // ),
-                //getImage(profileLink,height: 40.h,width: 40.w)
                 getImageclip(profileLink, height: 40, width: 40)
               ],
             ),
@@ -1116,7 +1129,6 @@ Widget heading(String title,String subTitle){
           SizedBox(width: 8),
           Expanded(
             child: Container(
-              // height: 52.h,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1149,11 +1161,12 @@ Widget heading(String title,String subTitle){
                                           children: [
                                             Text(
                                               name,
-                                              style:TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
                                                 fontFamily:
-                                                GoogleFonts.poppins()
+                                                GoogleFonts
+                                                    .poppins()
                                                     .fontFamily,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -1164,12 +1177,8 @@ Widget heading(String title,String subTitle){
                                             Visibility(
                                               visible:
                                               verify != 0 ? true : false,
-                                              // child: SvgPicture.asset(
-                                              //   Images.verified,
-                                              //   height: 12.h,
-                                              //   width: 12.w,
-                                              // ))
-                                              child: VerifiedTag().onVeriedTag(),
+                                              child: VerifiedTag()
+                                                  .onVeriedTag(),
                                             )
                                           ],
                                         ),
@@ -1177,10 +1186,11 @@ Widget heading(String title,String subTitle){
                                           width: double.infinity,
                                           child: Text(
                                             companyName,
-                                            style:TextStyle(
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
                                               fontSize: 10,
-                                              fontFamily: GoogleFonts.poppins()
+                                              fontFamily: GoogleFonts
+                                                  .poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -1191,10 +1201,11 @@ Widget heading(String title,String subTitle){
                                           child: Text(
                                             getTranport(
                                                 transporterOrAgent),
-                                            style:TextStyle(
+                                            style: TextStyle(
                                               color: Color(0x99001E49),
                                               fontSize: 10,
-                                              fontFamily: GoogleFonts.poppins()
+                                              fontFamily: GoogleFonts
+                                                  .poppins()
                                                   .fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -1210,11 +1221,12 @@ Widget heading(String title,String subTitle){
                                           itemCount: 5,
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 1.0),
-                                          itemBuilder: (context, _) => Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 5,
-                                          ),
+                                          itemBuilder: (context, _) =>
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                                size: 5,
+                                              ),
                                           onRatingUpdate: (rating) {
                                             print(rating);
                                           },
@@ -1250,7 +1262,8 @@ Widget heading(String title,String subTitle){
       onSelected: (dynamic val) {
         onMenuTap(val);
       },
-      itemBuilder: (context) => [
+      itemBuilder: (context) =>
+      [
         PopupMenuItem(
           onTap: () {
             onMenuTap(1);
@@ -1271,7 +1284,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
@@ -1302,7 +1317,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1329,7 +1346,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1355,7 +1374,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1378,7 +1399,8 @@ Widget heading(String title,String subTitle){
       onSelected: (dynamic val) {
         onMenuTap(val);
       },
-      itemBuilder: (context) => [
+      itemBuilder: (context) =>
+      [
         PopupMenuItem(
           onTap: () {
             onMenuTap(1);
@@ -1399,7 +1421,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
@@ -1430,7 +1454,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1457,7 +1483,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1483,7 +1511,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
@@ -1509,39 +1539,16 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),
                 )
               ],
             )),
-        /*PopupMenuItem(
-            onTap: () {
-              onMenuTap(6);
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.edit_outlined,
-                  color: Colors.black,
-                  size: 20.w,
-                ),
-                SizedBox(
-                  width: 12.w,
-                ),
-                Text(
-                  S().edit,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14.sp,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                  ),
-                )
-              ],
-            )),*/
+
       ],
     );
   }
@@ -1580,12 +1587,14 @@ Widget heading(String title,String subTitle){
                     style: TextStyle(
                       color: Color(0xFF001E49),
                       fontSize: 12,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontFamily: GoogleFonts
+                          .poppins()
+                          .fontFamily,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(width: 5,),
-                  Icon(Icons.call,size:15)
+                  Icon(Icons.call, size: 15)
                 ],
               ),
             ),
@@ -1597,8 +1606,8 @@ Widget heading(String title,String subTitle){
     );
   }
 
-  String getTranport(int val){
-    switch(val){
+  String getTranport(int val) {
+    switch (val) {
       case 0:
         return "Transporters";
 
@@ -1616,9 +1625,6 @@ Widget heading(String title,String subTitle){
       default:
         return "";
     }
-
-
-
   }
 
 
@@ -1643,7 +1649,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Color(0xCC001E49),
                   fontSize: 12,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -1666,7 +1674,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Color(0xCC001E49),
                   fontSize: 12,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -1706,7 +1716,9 @@ Widget heading(String title,String subTitle){
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 12,
-                              fontFamily: GoogleFonts.poppins().fontFamily,
+                              fontFamily: GoogleFonts
+                                  .poppins()
+                                  .fontFamily,
                               fontWeight: FontWeight.w600,
                             ),
                             // overflow: TextOverflow.ellipsis,
@@ -1719,7 +1731,9 @@ Widget heading(String title,String subTitle){
                           style: TextStyle(
                             color: Color(0x99001E49),
                             fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontFamily: GoogleFonts
+                                .poppins()
+                                .fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -1734,7 +1748,9 @@ Widget heading(String title,String subTitle){
                       style: TextStyle(
                         color: Color(0x99001E49),
                         fontSize: 12,
-                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontFamily: GoogleFonts
+                            .poppins()
+                            .fontFamily,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -1774,7 +1790,9 @@ Widget heading(String title,String subTitle){
               style: TextStyle(
                 color: Color(0xFF001E49),
                 fontSize: 12,
-                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontFamily: GoogleFonts
+                    .poppins()
+                    .fontFamily,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1818,7 +1836,9 @@ Widget heading(String title,String subTitle){
                     style: TextStyle(
                       color: ThemeColor.red,
                       fontSize: 12,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontFamily: GoogleFonts
+                          .poppins()
+                          .fontFamily,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1844,7 +1864,8 @@ Widget heading(String title,String subTitle){
       onSelected: (dynamic val) {
         onMenuTap(val);
       },
-      itemBuilder: (context) => [
+      itemBuilder: (context) =>
+      [
         PopupMenuItem(
           onTap: () {
             onMenuTap(1);
@@ -1865,7 +1886,9 @@ Widget heading(String title,String subTitle){
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontFamily: GoogleFonts
+                      .poppins()
+                      .fontFamily,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
@@ -1896,7 +1919,9 @@ Widget heading(String title,String subTitle){
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
+                    fontFamily: GoogleFonts
+                        .poppins()
+                        .fontFamily,
                     fontWeight: FontWeight.w400,
                     height: 0,
                   ),

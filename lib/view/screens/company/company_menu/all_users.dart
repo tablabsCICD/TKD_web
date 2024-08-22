@@ -4,29 +4,23 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
-import 'package:tkd_app/dialog/custom-dialogBox.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/organization_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
-import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import '../../auth/login_screen.dart';
 
 class AllUsers extends StatefulWidget {
   Organization organization;
@@ -45,9 +39,7 @@ class _AllUsersState extends State<AllUsers> {
   String selectedTab = "All Users";
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery
-        .of(context)
-        .size;
+
     return Scaffold(
       backgroundColor: ColorResources.HOME_BG,
       body: Consumer<OrgProvider>(

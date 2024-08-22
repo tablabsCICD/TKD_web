@@ -3,7 +3,7 @@ class GroupMemberModel {
   bool? last;
   int? totalPages;
   int? totalElements;
-  Null? sort;
+  String? sort;
   bool? first;
   int? numberOfElements;
   int? size;

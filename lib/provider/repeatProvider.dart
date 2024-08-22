@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/feedback_model.dart';
-import 'package:tkd_app/model/gallary_model.dart';
-import 'package:tkd_app/model/job_model.dart';
 import 'package:tkd_app/model/load_model.dart';
-import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/repeat_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:http/http.dart' as http;
@@ -36,7 +32,6 @@ class RepeatProvider extends ChangeNotifier {
     return repeat;
   }
 
-
   addToRepeatList(TruckLoad? obj) async {
     repeatPostList.add(RepeatModel(postId: obj!.id, startDate: resFromDateCnt, endDate: resToDateCnt, time: TimeCnt, isRepeat: true));
     print("Length : "+repeatPostList.length.toString());
@@ -45,10 +40,6 @@ class RepeatProvider extends ChangeNotifier {
     TimeCnt = '';
 
     setRepeatList(repeatPostList);
-   /* final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String encodedData = RepeatModel.encode(repeatPostList);
-    await prefs.setString('AllRepeatPostList', encodedData);*/
-    // Fetch and decode data
     notifyListeners();
   }
 
@@ -111,7 +102,6 @@ class RepeatProvider extends ChangeNotifier {
   startTimer(){
     if(timer== null) {
       timer = Timer.periodic(Duration(minutes: 1), (timer) {
-        //checkRepeatTime();
       });
     }
   }

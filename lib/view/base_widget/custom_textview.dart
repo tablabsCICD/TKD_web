@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tkd_app/provider/language_translation_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:translator/translator.dart';

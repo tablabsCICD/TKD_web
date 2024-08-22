@@ -13,7 +13,6 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
-import 'package:tkd_app/view/base_widget/open_url.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/auth/registration_screen_2.dart';
@@ -47,10 +46,6 @@ class _RegistrationScreen3State extends State<RegistrationScreen3> {
     ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your own business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
     ImageCarousel('assets/images/man_01.png','assets/images/truck_01.png',"Grow your tkd business","Multiply you business by getting vehicles at\n the right price at the right time.Also, do'nt loose any\n business which is not in your regular route of operations."),
   ];
-  @override
-  void initState() {
-    // routeProvider.getRouteListByUserId(authProvider.userDetailList[0].id!);
-  }
 
   @override
   Widget build(BuildContext context) {

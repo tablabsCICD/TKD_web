@@ -7,12 +7,9 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/comman_response.dart';
-import 'package:tkd_app/model/comments_model.dart';
 import 'package:tkd_app/model/feedback_model.dart';
 import 'package:tkd_app/model/gallary_model.dart';
-import 'package:tkd_app/model/job_model.dart';
 import 'package:tkd_app/model/my_job_list.dart';
-import 'package:tkd_app/model/own_genral_post.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:http/http.dart' as http;
@@ -58,26 +55,6 @@ class MoreProvider extends ChangeNotifier {
   DashboardProvider dashboardProvider = locator<DashboardProvider>();
   BuySellProvider buySellProvider = locator<BuySellProvider>();
   AuthProvider authProvider = locator<AuthProvider>();
- /* List<GernralPostOwnData> listOwnPost=[];
-
-
-  callGeneralPostApi() async{
-    listOwnPost.clear();
-    String url="${ApiConstant.BASE_URL}getBuySellByUserId?userId=${authProvider.userDetailList[0].id}";
-    print("the url ${url}");
-    var apiResponse=await http.get(Uri.parse(url));
-    print("the url ${apiResponse.body}");
-    if(apiResponse.statusCode==200){
-      OwnGenralPostList ownGenralPostList=OwnGenralPostList.fromJson(jsonDecode(apiResponse.body));
-      listOwnPost.addAll(ownGenralPostList.data!);
-      print('the lenghth is ${listOwnPost.length}');
-
-    }else{
-   }
-  }
-*/
-
-
 
   getOwnPostList(String userName,{int currentPage = 0}) async {
     isMoreLoading = true;
@@ -87,7 +64,6 @@ class MoreProvider extends ChangeNotifier {
       allPostList.clear();
       myFullLoadTypeList.clear();
       myPartLoadTypeList.clear();
-
       myBuyVehicleList.clear();
     }
 
@@ -127,20 +103,15 @@ class MoreProvider extends ChangeNotifier {
       myJobList.addAll(jobList.data!);
       print('the lenghth is ${myJobList.length}');
     }else{
-
-
     }
     notifyListeners();
   }
 
   reSendPost(BuildContext context,TruckLoad postBidData)async {
-  //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
     String myUrl = ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}";
     print(myUrl);
     var apiResponse=await http.post(Uri.parse(myUrl));
     if(apiResponse.statusCode==200){
-
-      // Navigator.pop(context,1);
       var jsonData = jsonDecode(apiResponse.body);
       CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
       if(commonResponse.isSuccess == true){
@@ -172,7 +143,6 @@ class MoreProvider extends ChangeNotifier {
   }
 
   interChnageSendPost(BuildContext context,TruckLoad postBidData) async{
-   // var apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}");
     var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}"));
     if(apiResponse.statusCode==200){
       getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
@@ -180,7 +150,6 @@ class MoreProvider extends ChangeNotifier {
           Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
           background: Colors.black
       );
-     // Navigator.pop(context,1);
     }else{
       showSimpleNotification(
           Text("Please try again",style: TextStyle(color: Colors.white),),
@@ -227,7 +196,6 @@ class MoreProvider extends ChangeNotifier {
   deleteFullLoad(int id,int index) async {
     TruckLoad truckLoad = await getRequirementDetails(id);
     String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${id}';
-
     var req = await http.delete(Uri.parse(myUrl));
     var deleteResponse = json.decode(req.body);
     truckLoad.type == 'Full Load'
@@ -250,13 +218,10 @@ class MoreProvider extends ChangeNotifier {
     return truckLoad;
   }
 
-
-
-
   deleteBuySell(int id,int index) async {
     String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     notifyListeners();
     myBuyVehicleList.removeAt(index);
     buySellProvider.notifyListeners();
@@ -265,15 +230,14 @@ class MoreProvider extends ChangeNotifier {
   deleteMultipleBuySell() async {
     String myUrl = ApiConstant.POST_BUY_SELL + '/deleteMultiple';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
-    // myBuyVehicleList.remove();
+    json.decode(req.body);
     notifyListeners();
   }
 
   deleteGallery(Gallery gallery) async {
     String myUrl = ApiConstant.GALLERY + '?id=${gallery.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     myGalleryList.remove(gallery);
     notifyListeners();
   }
@@ -281,7 +245,7 @@ class MoreProvider extends ChangeNotifier {
   deletePoolPurchase(PoolPurchase obj) async {
     String myUrl = ApiConstant.BULK_DATA + '?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     myPoolPurchaseList.remove(obj);
     notifyListeners();
   }
@@ -289,7 +253,7 @@ class MoreProvider extends ChangeNotifier {
   deleteFeedback(FeedBack obj) async {
     String myUrl = ApiConstant.BASE_URL + 'Feedback?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     feedbackList.remove(obj);
     notifyListeners();
   }
@@ -347,7 +311,6 @@ class MoreProvider extends ChangeNotifier {
   final now = new DateTime.now();
 
   saveFeedback({int? id,String? feedbackDetails,int? postId,int? userId,String? type,int? rating}) async {
-    String date = DateFormat.yMMMMd('en_US').format(now);
     String myUrl = ApiConstant.BASE_URL + 'Feedback';
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {

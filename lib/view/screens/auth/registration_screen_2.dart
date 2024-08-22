@@ -22,11 +22,8 @@ import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
-import 'package:tkd_app/view/base_widget/open_url.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/my_routes/get_state_list.dart';
 import 'login_screen.dart';
-import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 import 'otp_screen.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'dart:html' as html;
@@ -103,7 +100,6 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
   }
   @override
   Widget build(BuildContext context) {
-    GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
 
     return Scaffold(
       body: Container(
@@ -273,7 +269,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                   controller: langController.text,
                   textInputType: TextInputType.text,
                   onTap: () {
-                    final information = showDialog(
+                    showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return Container(

@@ -1,12 +1,8 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
-import 'package:path/path.dart';
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:tkd_app/model/gallary_model.dart';
 import 'package:tkd_app/util/app_constants.dart';
@@ -61,17 +57,12 @@ class GalleryProvider extends ChangeNotifier{
       imageList.add(routeData);
       notifyListeners();
     });
-
-   /* var jsonData = jsonDecode(response.body);
-    Gallery routeData = Gallery.fromJson(jsonData);
-    imageList.add(routeData);*/
-
   }
 
   deleteGallery(Gallery gallery) async {
     String myUrl = ApiConstant.GALLERY +'?id=${gallery.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     imageList.remove(gallery);
     notifyListeners();
   }

@@ -8,9 +8,7 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
-import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
-
 import '../screens/discussion/discussion_dashboard.dart';
 import '../screens/group/groupListScreen.dart';
 import '../screens/transport/transport_search_screen.dart';
@@ -43,11 +41,12 @@ const Call = "Call";
 const Group = "Group";
 const Privacy_Policy = "Privacy Policy";
 
-// ignore: must_be_immutable
 class DrawerMenu extends StatefulWidget {
   StringValue callBack;
   String selectedTab;
-  DrawerMenu({Key? key, required this.callBack, required this.selectedTab}) : super(key: key);
+
+  DrawerMenu({Key? key, required this.callBack, required this.selectedTab})
+      : super(key: key);
 
   @override
   _DrawerMenuState createState() => _DrawerMenuState();
@@ -56,6 +55,7 @@ class DrawerMenu extends StatefulWidget {
 class _DrawerMenuState extends State<DrawerMenu> {
   final authProvider = locator<AuthProvider>();
   String selectedTab = "Board";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -65,10 +65,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
       child: Container(
-        //height: 50,//MediaQuery.of(context).size.height-70,
         width: ResponsiveWidget.isDesktop(context) ? 270 : null,
         color: Colors.white,
         child: ListView(
@@ -114,7 +112,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
             else
               getTile('assets/images/navigation_image/jobs.png', Job_Page,
                   context, 'Jobs', (selectedTab == Job_Page)),
-
             authProvider.userDetailList[0].transporterOrAgent == 3
                 ? SizedBox.shrink()
                 : getDivider(),
@@ -141,15 +138,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   context,
                   'Received Quotes',
                   (selectedTab == Received_Quotes)),
-            //  getTile('assets/images/navigation_image/icn_bullet_01.png', Company, context, 'Company', (selectedTab == Company)),
-            /* if (authProvider.userDetailList[0].transporterOrAgent == 3) SizedBox.shrink()
-            else getTile('assets/images/navigation_image/icn_bullet_01.png', Fleets, context, 'Owner Data', (selectedTab == Fleets)),
-            getTile('assets/images/navigation_image/icn_bullet_01.png', Discussion, context, 'Discussion', (selectedTab == Discussion)),*/
             getTile('assets/images/navigation_image/icn_bullet_01.png', Group,
                 context, 'Group', (selectedTab == Group)),
-
-            //   getTile('assets/images/navigation_image/icn_bullet_01.png',Feedback , context, 'Feedback', (selectedTab == Feedback)),
-
             getDivider(),
             getTile('assets/images/call.png', Call, context, 'Call To Support',
                 (selectedTab == Call)),
@@ -228,39 +218,27 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 context,
                 MaterialPageRoute(builder: (context) => DiscussionDashboard()),
               );
-            } else
-              if (value == Transport) {
-                selectedTab = Dashboard;
+            } else if (value == Transport) {
+              selectedTab = Dashboard;
               setState(() {});
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => TransportSearchScreen()),
               );
-            } else
-              if (value == Logout) {
-               getLogoutFunction();
-              } else
-              if (value == Group) {
-                selectedTab = Dashboard;
+            } else if (value == Logout) {
+              getLogoutFunction();
+            } else if (value == Group) {
+              selectedTab = Dashboard;
               setState(() {});
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => GroupList()),
               );
-            }
-              else {
+            } else {
               widget.callBack(value);
             }
           }
-
-          /*setState(() {
-            if(value== Call){
-            calltoSupport(context);
-            }
-                selectedTab = value;
-
-          });*/
         },
         child: Row(
           children: [
@@ -276,7 +254,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
             SizedBox(
               width: 20,
             ),
-            //Image.asset(img,width: 20,height: 20,),
             Row(
               children: [
                 Image.asset(img,
@@ -296,9 +273,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 ),
                 CustomText(
                   text,
-                  /*style: isSelected
-                      ? img == 'assets/images/navigation_image/icn_bullet_01.png'? Style.selectedArrowMenuHeading :Style.selectedMenuHeading
-                      : img == 'assets/images/navigat ion_image/icn_bullet_01.png'? Style.menuArrowHeading : Style.menuHeading,),*/
                   style:
                       img == 'assets/images/navigation_image/icn_bullet_01.png'
                           ? isSelected
@@ -329,12 +303,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50.0),
                   child: CustomButton(
-                    buttonText:'Ok' ,
+                    buttonText: 'Ok',
                     onTap: () {
-                      /* widget.callBack("Back");
-                  setState(() {
-
-                  });*/
                       Navigator.pop(context);
                     },
                   ),

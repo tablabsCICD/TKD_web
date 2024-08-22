@@ -7,45 +7,39 @@ import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/rating_model.dart';
 import 'package:tkd_app/model/rating_request.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/widgets/toast.dart';
-import '../../model/api_response.dart';
 
 class RatingProvider extends ChangeNotifier {
-  bool isLoading=true;
-  RatingProvider(
-      ):super(){
+  bool isLoading = true;
 
-
-  }
+  RatingProvider() : super() {}
 
   int rating = 0;
   TextEditingController commentController = TextEditingController();
-  bool buttonEnable=false;
- final authProvider = locator<AuthProvider>();
+  bool buttonEnable = false;
+  final authProvider = locator<AuthProvider>();
 
-  changeRating(int rating){
+  changeRating(int rating) {
     this.rating = rating;
     notifyListeners();
   }
 
-  callSetState(){
+  callSetState() {
     notifyListeners();
   }
 
   postRatingRaviews(BuildContext context, TruckLoad? load) async {
     User user = authProvider.userDetailList[0];
-   // String myUrl = AppConstants.BASE_URL+"companyRegistration/${load!.userId}";
     User? userData;
-   // var req = await APIHelper().ApiPostData(myUrl);
-    String myUrl = ApiConstant.REGISTRATION +'/${load!.userId}';
+    String myUrl = ApiConstant.REGISTRATION + '/${load!.userId}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     var response = await json.decode(req.body);
-print(response);
-    if(req.statusCode== 200){      // try{
+    print(response);
+    if (req.statusCode == 200) {
+      // try{
       var list = AuthApi.fromJson(response);
       userData = list.content![0];
     }
@@ -56,15 +50,19 @@ print(response);
     ratingRequest.review = commentController.text;
     ratingRequest.companyId = userData!.companyId;
 
-    var apiResponse = await http.post(Uri.parse(ApiConstant.GIVE_RATING_REVIEWS),body:ratingRequest.toJson());
+    var apiResponse = await http.post(
+        Uri.parse(ApiConstant.GIVE_RATING_REVIEWS),
+        body: ratingRequest.toJson());
     print(apiResponse.body);
-    if(apiResponse.statusCode==200){
+    if (apiResponse.statusCode == 200) {
       print(apiResponse.body);
-      RatingModel ratingModel=RatingModel.fromJson(jsonDecode(apiResponse.body));
+      RatingModel ratingModel =
+          RatingModel.fromJson(jsonDecode(apiResponse.body));
+      debugPrint(ratingModel.message);
       ToastMessage.show(context, "Rating submitted");
-      isLoading=false;
+      isLoading = false;
       notifyListeners();
-    }else{
+    } else {
       ToastMessage.show(context, "Please Try Again");
     }
   }

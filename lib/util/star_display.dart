@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:tkd_app/util/color-resource.dart';
 class StarDisplay extends StatelessWidget {
   final double value;
   const StarDisplay({Key? key, this.value = 0})
@@ -26,15 +25,6 @@ class StarDisplay extends StatelessWidget {
       onRatingUpdate: (rating) {
         print(rating);
       },
-    ); /*Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (index) {
-        return Icon(
-          index < value ? Icons.star : Icons.star_border,
-          size: 10,
-          color: index < value ? Colors.amber : null,
-        );
-      }),
-    )*/;
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/dialog/share_dialog_box.dart';
@@ -20,34 +19,29 @@ import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 import '../../util/images.dart';
 
 class Utils {
+  String getTranport(int val) {
+    switch (val) {
+      case 0:
+        return "Agents/Brokers";
 
-  String getTranport(int val){
-    switch(val){
-    case 0:
-    //   return "Transporters";
-    return "Agents/Brokers";
+      case 1:
+        return "Transporters";
 
-    case 1:
-    // return "Agents/Brokers";
-    return "Transporters";
-
-    case 2:
-    return "PACKERS AND MOVERS";
-    case 3:
-    return "MANUFACTURERS";
-    case 4:
-    return "DISTRIBUTORS";
-    case 5:
-    return "CLEARING AND FORWARDING AGENTS";
-    default:
-    return "";
+      case 2:
+        return "PACKERS AND MOVERS";
+      case 3:
+        return "MANUFACTURERS";
+      case 4:
+        return "DISTRIBUTORS";
+      case 5:
+        return "CLEARING AND FORWARDING AGENTS";
+      default:
+        return "";
     }
+  }
 
-
-
-    }
-  String mainTag(String tag){
-    switch(tag){
+  String mainTag(String tag) {
+    switch (tag) {
       case 'Full load available':
         return 'Full vehicle required';
       case 'Part load available':
@@ -57,174 +51,132 @@ class Utils {
       case 'Part load required':
         return 'Part load required';
 
-
       case '':
-
     }
-
 
     return "";
   }
 
-
-
   final authProvider = locator<AuthProvider>();
-  callFunction(BuildContext context,String mobile)async{
-    if(authProvider.userDetailList[0].isPaid==0){
-      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):Navigator
-          .pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => MenuPage(
-        userDetailList: authProvider.userDetailList,
-        selectedTab: "Package Change",)));
-    }else{
+
+  callFunction(BuildContext context, String mobile) async {
+    if (authProvider.userDetailList[0].isPaid == 0) {
+      authProvider.userDetailList[0].transporterOrAgent == 3
+          ? getAdminSupportDailog(context)
+          : Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (builder) => MenuPage(
+                        userDetailList: authProvider.userDetailList,
+                        selectedTab: "Package Change",
+                      )));
+    } else {
       showDialog(
           context: context,
-          builder: (_) =>
-          new CupertinoAlertDialog(
-            title: CustomText(
-                'Contact Number : $mobile',
-                style: TextStyle(
-                    color:
-                    ColorResources
-                        .BOTTOM_HEADING,
-                    fontSize: 18,
-                    fontWeight:
-                    FontWeight
-                        .bold)),
-            actions: <Widget>[
-              TextButton(
-                child: Padding(
-                  padding:
-                  const EdgeInsets
-                      .all(10.0),
-                  child: Text(
-                      "Ok",
-                      style: TextStyle(
-                          color:
-                          ColorResources
-                              .GREEN,
-                          fontSize:
-                          18)),
-                ),
-                onPressed: () {
-                  Navigator.of(context)
-                      .pop();
-                },
-              ),
-            ],
-          ));
+          builder: (_) => new CupertinoAlertDialog(
+                title: CustomText('Contact Number : $mobile',
+                    style: TextStyle(
+                        color: ColorResources.BOTTOM_HEADING,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                actions: <Widget>[
+                  TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("Ok",
+                          style: TextStyle(
+                              color: ColorResources.GREEN, fontSize: 18)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ));
     }
-
   }
 
-  callShareFunction(String des,TruckLoad load,context){
-   // Share.share(des);
-    showDialog(context: context,
-        builder: (BuildContext context){
-          return ShareDialogBox(
-             load
-          );
-        }
-    );
-  }
-
-  getAdminSupportDailog(BuildContext context){
+  callShareFunction(String des, TruckLoad load, context) {
     showDialog(
         context: context,
-        builder: (_) =>
-        new CupertinoAlertDialog(
-          title: CustomText(
-              'For Upgrade Plan please connect To the below contact',
-              style: TextStyle(
-                  color:
-                  Colors.black,
-                  fontSize: 16,
-                  fontWeight:
-                  FontWeight
-                      .bold)),
-          content: Column(
-            children: [
-              SizedBox(height:16),
-              CustomText(
-                  'Email Id :',
-                  style: TextStyle(
-                      color:
-                      Colors.black,
-                      fontSize: 14,
-                      fontWeight:
-                      FontWeight
-                          .w700)),
-              SizedBox(height:10),
-              CustomText(
-                  'support@tkdconnect.in',
-                  style: TextStyle(
-                      color:
-                      ColorResources
-                          .PRIMARY_COLOR,
-                      fontSize: 14,
-                      fontWeight:
-                      FontWeight
-                          .bold)),
-              SizedBox(height:15),
-              CustomText(
-                  'Mobile Number',
-                  style: TextStyle(
-                      color:
-                      Colors.black,
-                      fontSize: 14,
-                      fontWeight:
-                      FontWeight
-                          .w700)),
-              SizedBox(height:10),
-              CustomText(
-                  '(+91) 8123006888 / (+91) 8123004666',
-                  style: TextStyle(
-                      color:
-                      ColorResources
-                          .PRIMARY_COLOR,
-                      fontSize: 14,
-                      fontWeight:
-                      FontWeight
-                          .bold)),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Padding(
-                padding:
-                const EdgeInsets
-                    .all(10.0),
-                child: Text(
-                    "Ok",
-                    style: TextStyle(
-                        color:
-                        Colors.black,
-                        fontSize:
-                        18)),
-              ),
-              onPressed: () {
-                Navigator.of(context)
-                    .pop();
-              },
-            ),
-          ],
-        ));
+        builder: (BuildContext context) {
+          return ShareDialogBox(load);
+        });
   }
 
-  Future openwhatsapp(BuildContext context,int number,String text) async{
+  getAdminSupportDailog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => new CupertinoAlertDialog(
+              title: CustomText(
+                  'For Upgrade Plan please connect To the below contact',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+              content: Column(
+                children: [
+                  SizedBox(height: 16),
+                  CustomText('Email Id :',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700)),
+                  SizedBox(height: 10),
+                  CustomText('support@tkdconnect.in',
+                      style: TextStyle(
+                          color: ColorResources.PRIMARY_COLOR,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold)),
+                  SizedBox(height: 15),
+                  CustomText('Mobile Number',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700)),
+                  SizedBox(height: 10),
+                  CustomText('(+91) 8123006888 / (+91) 8123004666',
+                      style: TextStyle(
+                          color: ColorResources.PRIMARY_COLOR,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text("Ok",
+                        style: TextStyle(color: Colors.black, fontSize: 18)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  Future openwhatsapp(BuildContext context, int number, String text) async {
     final link = WhatsAppUnilink(
       phoneNumber: "+91 ${number}",
       text: text,
     );
-    
-    if(authProvider.userDetailList[0].isPaid==0){
-      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):Navigator
-          .pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => MenuPage(
-        userDetailList: authProvider.userDetailList,
-        selectedTab: "Package Change",)));
-    }else{
-      authProvider.userDetailList[0].transporterOrAgent == 3 ?getAdminSupportDailog(context):await launch('$link');
+
+    if (authProvider.userDetailList[0].isPaid == 0) {
+      authProvider.userDetailList[0].transporterOrAgent == 3
+          ? getAdminSupportDailog(context)
+          : Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (builder) => MenuPage(
+                        userDetailList: authProvider.userDetailList,
+                        selectedTab: "Package Change",
+                      )));
+    } else {
+      authProvider.userDetailList[0].transporterOrAgent == 3
+          ? getAdminSupportDailog(context)
+          : await launch('$link');
     }
   }
 
@@ -233,17 +185,14 @@ class Utils {
 
   TextEditingController bidAmtController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  openMenu(int a,TruckLoad load,BuildContext context)async{
-    if(a==0){
+
+  openMenu(int a, TruckLoad load, BuildContext context) async {
+    if (a == 0) {
       showAnimatedDialog(
           context,
           Dialog(
             shape:
-            RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius
-                    .circular(
-                    10)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Form(
               key: _formKey,
               child: Container(
@@ -252,85 +201,76 @@ class Utils {
                 child: Stack(
                   children: [
                     Padding(
-                      padding:
-                      EdgeInsets.all(16),
-                      child: Column(
-                          children: [
-                            CustomText(
-                              'Place Your Quote',
-                              style: TextStyle(
-                                  fontSize:
-                                  18,
-                                  fontWeight:
-                                  FontWeight
-                                      .bold),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            CustomTextField(
-                                controller:
-                                bidAmtController,
-                                hintText:
-                                "Enter Your quote Amount",
-                                isDigits:true,
-                                textInputType:
-                                TextInputType
-                                    .number),
-                            Visibility(
-                              visible: false,
-                              child: CustomTextField(
-                                  controller:
-                                  descriptionController,
-                                  hintText:
-                                  "Comments/Descriptions",
-                                  textInputType:
-                                  TextInputType
-                                      .number),
-                            ),
-                            CustomButton(
-                                onTap: () {
-                                  if (_formKey.currentState!.validate()) {
-
-                                    bidProvider
-                                        .generateBid(context,
-                                        mobile:
-                                        authProvider.userDetailList[0].mobileNumber,
+                      padding: EdgeInsets.all(16),
+                      child: Column(children: [
+                        CustomText(
+                          'Place Your Quote',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        CustomTextField(
+                            controller: bidAmtController,
+                            hintText: "Enter Your quote Amount",
+                            isDigits: true,
+                            textInputType: TextInputType.number),
+                        Visibility(
+                          visible: false,
+                          child: CustomTextField(
+                              controller: descriptionController,
+                              hintText: "Comments/Descriptions",
+                              textInputType: TextInputType.number),
+                        ),
+                        CustomButton(
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                bidProvider
+                                    .generateBid(context,
+                                        mobile: authProvider
+                                            .userDetailList[0].mobileNumber,
                                         description: "test",
-                                        idOfPost:load.id,
-                                        email: authProvider.userDetailList[0].emailId,
+                                        idOfPost: load.id,
+                                        email: authProvider
+                                            .userDetailList[0].emailId,
                                         amount: bidAmtController.text,
                                         id: 0,
-                                        bidderUserName: authProvider.userDetailList[0].userName,
-                                        userName: authProvider.userDetailList[0].userName,
+                                        bidderUserName: authProvider
+                                            .userDetailList[0].userName,
+                                        userName: authProvider
+                                            .userDetailList[0].userName,
                                         type: load.mainTag,
-                                        loggedUserName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
-                                        .then((value) => {
-                                      showAnimatedDialog(
-                                          context,
-                                          MyDialog(
-                                            icon: Icons.check,
-                                            title: 'Generate Quote',
-                                            description: 'Your quote Created successfully',
-                                            isFailed: false,
-                                          ),
-                                          dismissible: false,
-                                          isFlip: false),
-                                    });
-                                    Navigator.of(
-                                        context)
-                                        .pop();
-                                  }},
-                                buttonText:
-                                "Submit")
-                          ]),
+                                        loggedUserName:
+                                            '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
+                                    .then((value) => {
+                                          showAnimatedDialog(
+                                              context,
+                                              MyDialog(
+                                                icon: Icons.check,
+                                                title: 'Generate Quote',
+                                                description:
+                                                    'Your quote Created successfully',
+                                                isFailed: false,
+                                              ),
+                                              dismissible: false,
+                                              isFlip: false),
+                                        });
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            buttonText: "Submit")
+                      ]),
                     ),
                     Positioned(
                       top: 10,
                       right: 10,
                       child: IconButton(
-                        icon: Icon(Icons.close,size: 18,),
-                        onPressed: (){
+                        icon: Icon(
+                          Icons.close,
+                          size: 18,
+                        ),
+                        onPressed: () {
                           Navigator.of(context).pop();
                         },
                       ),
@@ -340,33 +280,30 @@ class Utils {
               ),
             ),
           ));
+    } else {
+      String description =
+          "${load.mobileNumber.toString()}'Type : ${load.type}, \nSubject : ${load.content}, \nSource : ${load.source}, \nDestination : ${load.destination}, \nLink : https://api.tkdost.com/bids/?id=${load.id}'";
 
-    }else{
-      String description= "${load
-          .mobileNumber
-          .toString()}'Type : ${load.type}, \nSubject : ${load.content}, \nSource : ${load.source}, \nDestination : ${load.destination}, \nLink : https://api.tkdost.com/bids/?id=${load.id}'";
-
-      switch (a){
+      switch (a) {
         case 1:
-          Utils().openwhatsapp(context, load.mobileNumber!,description);
+          Utils().openwhatsapp(context, load.mobileNumber!, description);
           return;
         case 2:
-          await Utils().callFunction(context,"${load.mobileNumber}");
+          await Utils().callFunction(context, "${load.mobileNumber}");
           return;
 
         case 3:
-          Utils().callShareFunction(description,load,context);
+          Utils().callShareFunction(description, load, context);
           return;
 
         case 4:
-          Utils().callRatingAndReview(context,load);
+          Utils().callRatingAndReview(context, load);
           return;
       }
     }
-
   }
 
-  callRatingAndReview(context,TruckLoad load){
+  callRatingAndReview(context, TruckLoad load) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -374,12 +311,10 @@ class Utils {
           return FractionallySizedBox(
               heightFactor: 0.58, child: RatingDialog(load));
         });
-
   }
 
-
-  getSelectedPackageImage(int val){
-    switch(val){
+  getSelectedPackageImage(int val) {
+    switch (val) {
       case 0:
         return Images.pearls;
 
@@ -391,11 +326,10 @@ class Utils {
       case 30:
         return Images.pearls_black;
     }
-
   }
 
-  getSelectedPackageName(int val){
-    switch(val){
+  getSelectedPackageName(int val) {
+    switch (val) {
       case 0:
         return "Clear";
 
@@ -407,8 +341,5 @@ class Utils {
       case 30:
         return "Black";
     }
-
   }
-
-
 }

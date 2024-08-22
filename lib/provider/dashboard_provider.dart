@@ -126,11 +126,13 @@ class DashboardProvider extends ChangeNotifier {
               style: TextStyle(color: Colors.white),
             ),
             background: Colors.orange);
-        Navigator
-            .pushReplacement(
-            context, MaterialPageRoute(builder: (builder) => MenuPage(
-          userDetailList: authProvider.userDetailList,
-          selectedTab: "Package Change",)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => MenuPage(
+                      userDetailList: authProvider.userDetailList,
+                      selectedTab: "Package Change",
+                    )));
       }
       return commonResponse.isSuccess;
     } else if (apiResponse.statusCode == 401) {
@@ -173,11 +175,13 @@ class DashboardProvider extends ChangeNotifier {
               style: TextStyle(color: Colors.white),
             ),
             background: Colors.orange);
-        Navigator
-            .pushReplacement(
-            context, MaterialPageRoute(builder: (builder) => MenuPage(
-          userDetailList: authProvider.userDetailList,
-          selectedTab: "Package Change",)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => MenuPage(
+                      userDetailList: authProvider.userDetailList,
+                      selectedTab: "Package Change",
+                    )));
       }
     } else if (response.statusCode == 401) {
       showSimpleNotification(
@@ -186,11 +190,13 @@ class DashboardProvider extends ChangeNotifier {
             style: TextStyle(color: Colors.white),
           ),
           background: Colors.orange);
-      Navigator
-          .pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => MenuPage(
-        userDetailList: authProvider.userDetailList,
-        selectedTab: "Package Change",)));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (builder) => MenuPage(
+                    userDetailList: authProvider.userDetailList,
+                    selectedTab: "Package Change",
+                  )));
     } else {
       showSimpleNotification(
           Text(
@@ -221,7 +227,7 @@ class DashboardProvider extends ChangeNotifier {
     isLoading = true;
     ApiHelper apiHelper = ApiHelper();
     var response = await apiHelper.ApiGetData(
-        ApiConstant.GROUP_MEMBER_LIST + groupId!.toString());
+        ApiConstant.GROUP_MEMBER_LIST + groupId.toString());
     GroupMemberModel groupListModel = GroupMemberModel.fromJson(response);
 
     listAddedMember.addAll(groupListModel.content!);
@@ -402,7 +408,6 @@ class DashboardProvider extends ChangeNotifier {
 
     Map<String, dynamic> data = {
       "contactNumber": mobile ?? 0,
-      //"date": "2022-07-04T08:55:23.783Z",
       "destination": destination,
       "dnd": dnd,
       "emailId": email,
@@ -410,7 +415,6 @@ class DashboardProvider extends ChangeNotifier {
       "instructions": instruction,
       "listOfUserIds": selectedUserList,
       "loadWeight": loadWeight,
-      //"loggedTime": "2022-07-04T08:55:23.783Z",
       "loggedUserName": name,
       "mainTag": mainTag,
       "os": "Web",
@@ -450,21 +454,23 @@ class DashboardProvider extends ChangeNotifier {
               style: TextStyle(color: Colors.white),
             ),
             background: Colors.black);
-        await getFullLoadTruckList('From',"To");
+        await getFullLoadTruckList('From', "To");
         Navigator.of(context).pop();
         Navigator.of(context).pop();
-          } else {
+      } else {
         showSimpleNotification(
             Text(
               commonResponse.message.toString(),
               style: TextStyle(color: Colors.white),
             ),
             background: Colors.orange);
-        Navigator
-            .pushReplacement(
-            context, MaterialPageRoute(builder: (builder) => MenuPage(
-          userDetailList: authProvider.userDetailList,
-          selectedTab: "Package Change",)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => MenuPage(
+                      userDetailList: authProvider.userDetailList,
+                      selectedTab: "Package Change",
+                    )));
       }
       return commonResponse.isSuccess;
     } else if (response.statusCode == 401) {
@@ -496,8 +502,7 @@ class DashboardProvider extends ChangeNotifier {
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
     var list = SharedPost.fromJson(response);
-    truckLoad = list.content[0];
-    notifyListeners();
+    truckLoad = list.content![0];
     return truckLoad;
   }
 

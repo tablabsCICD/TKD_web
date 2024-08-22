@@ -134,8 +134,8 @@ class TruckLoad {
   late final String? loadWeight;
   late final String? typeOfCargo;
   late final String? otherDetails;
-  late final dynamic? likes;
-  late final dynamic? comment;
+  late final dynamic likes;
+  late final dynamic comment;
   late final List<dynamic>? postImages;
   late final int? transporterOrAgent;
   late final String? userList;

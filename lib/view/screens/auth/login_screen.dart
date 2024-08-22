@@ -1,8 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'dart:ui';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +6,8 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:overlay_support/overlay_support.dart';
-import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/organization_model.dart';
@@ -65,12 +58,8 @@ class _Login_ScreenState extends State<Login_Screen> {
   ];
 
   @override
-  // ignore: must_call_super
   void initState() {
-    super.initState();/*
-    loginOrHome();
-    companyLoginOrHome();
-*/
+    super.initState();
   }
 
   loginOrHome() async{
@@ -92,7 +81,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       print("visiting flag Id "+ orgId.toString());
       if(orgId != null){
         orgList  = await orgProvider.getCompanyDetails(orgId);
-
         Navigator.push(context, MaterialPageRoute(builder: (builder)=>CompanyMenuPage(orgList[0])));
       }
     }
@@ -118,7 +106,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      //  getDetails(),
                       getCart(model),
                     ],
                   ),
@@ -134,14 +121,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                             stops: [0.5, 0.5],
                             colors: [Colors.white, ColorResources.HOME_BG])),
                   ),
-                  /*Align(
-                      alignment: Alignment.topCenter,
-                      child: Image.asset(
-                        'assets/images/tkd.png',
-                        height: 150,
-                        width: 250,
-                      ),
-                    ),*/
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
@@ -251,16 +230,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                       SizedBox(height: 10,),
                                                       InkWell(
                                                         onTap: () async {
-                                                          /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "loadTypeList.sharableLink",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
                                                         },
                                                         child: Card(
                                                           child: Container(
@@ -274,16 +243,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                       SizedBox(height: 10,),
                                                       InkWell(
                                                         onTap: () async {
-                                                          /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
                                                         },
                                                         child: Card(
                                                           child: Container(
@@ -299,16 +258,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                       SizedBox(height: 10,),
                                                       InkWell(
                                                         onTap: () async {
-                                                          /* var shareData = {
-                                                              "title": "Email",
-                                                              "text": "For Contact",
-                                                              "url": "loadTypeList.sharableLink",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
                                                         },
                                                         child: Card(
                                                           child: Container(
@@ -322,16 +271,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                       SizedBox(height: 10,),
                                                       InkWell(
                                                         onTap: () async {
-                                                          /*  var shareData = {
-                                                              "title": "Mobile Number",
-                                                              "text": "For Contact",
-                                                              "url": "",
-                                                            };
-                                                            try{
-                                                              await html.window.navigator.share(shareData);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }*/
                                                         },
                                                         child: Card(
                                                           child: Container(
@@ -484,63 +423,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                   },
                   buttonText: 'SEND OTP'),
             ),
-            //  SizedBox(height: 50,),
-           /* Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  userLogin == true? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Login for?",
-                        style: Style.newheading,textAlign: TextAlign.center,),
-                      InkWell(
-                        onTap: (){
-                          setState(() {
-                            companyLogin = true;
-                            userLogin = false;
-                          });
-                        },
-                        child: Text(" Company",
-                            style: Style.aleaready,textAlign: TextAlign.center),
-                      ),
-                    ],
-                  ):Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Login for?",
-                          style: Style.newheading,textAlign: TextAlign.center),
-                      InkWell(
-                        onTap: (){
-                          setState(() {
-                            companyLogin = false;
-                            userLogin = true;
-                          });
-                        },
-                        child: Text(" User",
-                            style: Style.aleaready,textAlign: TextAlign.center),
-                      ),
-                    ],
-                  ),
-                  *//*Row(
-                  //  mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Continue as a?",
-                        style: Style.newheading,textAlign: TextAlign.center,),
-                      InkWell(
-                        onTap: (){
-                          // Navigator.pushReplacement(context,
-                          //     MaterialPageRoute(builder: (builder) => Registration()));
-                        },
-                        child: Text(" Guest",
-                            style: Style.aleaready,textAlign: TextAlign.center),
-                      ),
-                    ],
-                  )*//*
-                ],
-              ),
-            ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

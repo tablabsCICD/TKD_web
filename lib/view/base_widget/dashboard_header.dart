@@ -88,7 +88,6 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                 ],
               )
           ),
-          //ProfileCard()
         ],
       ),
     );

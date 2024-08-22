@@ -14,35 +14,32 @@ import 'package:tkd_app/model/validation_model.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
-
 extension extString on String {
   bool get isValidEmail {
     final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     return emailRegExp.hasMatch(this);
   }
 
-  bool get isValidName{
-    final nameRegExp = new RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$");
+  bool get isValidName {
+    final nameRegExp =
+        new RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$");
     return nameRegExp.hasMatch(this);
   }
 
-  bool get isValidPassword{
-    final passwordRegExp =
-    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\><*~]).{8,}/pre>');
+  bool get isValidPassword {
+    final passwordRegExp = RegExp(
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\><*~]).{8,}/pre>');
     return passwordRegExp.hasMatch(this);
   }
 
-  bool get isNotNull{
-    return this!=null;
-  }
 
-  bool get isValidPhone{
+  bool get isValidPhone {
     final phoneRegExp = RegExp(r"^\+?0[0-9]{10}$");
     return phoneRegExp.hasMatch(this);
   }
 }
 
-class  AuthProvider extends ChangeNotifier{
+class AuthProvider extends ChangeNotifier {
   List<User> userDetailList = [];
   List<User> userList = [];
   var response;
@@ -52,9 +49,11 @@ class  AuthProvider extends ChangeNotifier{
   String uploadedPan = '';
   String panCard = '';
 
-  getUserUsingUserName(String? userName,String password,String os,String DeviceId) async {
+  getUserUsingUserName(
+      String? userName, String password, String os, String DeviceId) async {
     //String myUrl = AppConstants.LOGIN_USER_NAME + '?userName=${userName}&password=${password}&os=${os}&deviceId=${DeviceId}';
-    String myUrl = "https://api.tkdost.com/tkd2/api/authLogin/userName" + '?userName=${userName}&password=${'1111'}&os=${'111'}&deviceId=${'111'}';
+    String myUrl = "https://api.tkdost.com/tkd2/api/authLogin/userName" +
+        '?userName=${userName}&password=${'1111'}&os=${'111'}&deviceId=${'111'}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -64,8 +63,10 @@ class  AuthProvider extends ChangeNotifier{
     return userList;
   }
 
-  getUserUsingEmailId(String email,String password,String os,String DeviceId) async {
-    String myUrl = ApiConstant.LOGIN_USER_NAME +'?userName=${email}&password=${'password'}&os=${os}&deviceId=${DeviceId}';
+  getUserUsingEmailId(
+      String email, String password, String os, String DeviceId) async {
+    String myUrl = ApiConstant.LOGIN_USER_NAME +
+        '?userName=${email}&password=${'password'}&os=${os}&deviceId=${DeviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -74,8 +75,7 @@ class  AuthProvider extends ChangeNotifier{
   }
 
   sendOtp(String mobile) async {
-    //String myUrl = AppConstants.SEND_OTP +'?mobileNumber=${mobile}';
-    String myUrl = ApiConstant.SEND_OTP +'?mobileNos=${mobile}';
+    String myUrl = ApiConstant.SEND_OTP + '?mobileNos=${mobile}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -83,44 +83,41 @@ class  AuthProvider extends ChangeNotifier{
     return response;
   }
 
-
-  TextEditingController textControllerOne=TextEditingController();
-  TextEditingController textControllerTwo=TextEditingController();
-  TextEditingController textControllerThree=TextEditingController();
-  TextEditingController textControllerFour=TextEditingController();
-  TextEditingController textControllerFive=TextEditingController();
-  TextEditingController textControllerSix=TextEditingController();
-  bool isButtonEnbale=false;
-  bool resendButtonEnble=false;
+  TextEditingController textControllerOne = TextEditingController();
+  TextEditingController textControllerTwo = TextEditingController();
+  TextEditingController textControllerThree = TextEditingController();
+  TextEditingController textControllerFour = TextEditingController();
+  TextEditingController textControllerFive = TextEditingController();
+  TextEditingController textControllerSix = TextEditingController();
+  bool isButtonEnbale = false;
+  bool resendButtonEnble = false;
   String? mobileNumber;
   bool? isRegistration;
 
-
-
   late Timer _timer;
   int start = 60;
-  String timeRemaning="01:00";
+  String timeRemaning = "01:00";
 
   void startTimer() {
-
     const oneSec = const Duration(seconds: 1);
-    resendButtonEnble=false;
+    resendButtonEnble = false;
     _timer = new Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (start == 0) {
-          resendButtonEnble=true;
+          resendButtonEnble = true;
           notifyListeners();
           timer.cancel();
         } else {
-          resendButtonEnble=false;
+          resendButtonEnble = false;
           start--;
-          timeRemaning= formatedTime(timeInSecond: start);
+          timeRemaning = formatedTime(timeInSecond: start);
           notifyListeners();
         }
       },
     );
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -128,18 +125,23 @@ class  AuthProvider extends ChangeNotifier{
     super.dispose();
   }
 
-  onCallButtonEnble(){
-    if(textControllerOne.text.toString().isNotEmpty && textControllerTwo.text.toString().isNotEmpty &&  textControllerThree.text.toString().isNotEmpty &&  textControllerFour.text.toString().isNotEmpty
-        &&  textControllerFive.text.toString().isNotEmpty &&  textControllerSix.text.toString().isNotEmpty){
-      isButtonEnbale=true;
-    }else{
-      isButtonEnbale =false;
+  onCallButtonEnble() {
+    if (textControllerOne.text.toString().isNotEmpty &&
+        textControllerTwo.text.toString().isNotEmpty &&
+        textControllerThree.text.toString().isNotEmpty &&
+        textControllerFour.text.toString().isNotEmpty &&
+        textControllerFive.text.toString().isNotEmpty &&
+        textControllerSix.text.toString().isNotEmpty) {
+      isButtonEnbale = true;
+    } else {
+      isButtonEnbale = false;
     }
     notifyListeners();
   }
-  onClickResend(BuildContext context, String mobileNumber){
-    if(resendButtonEnble){
-      resendOtp(context,mobileNumber!);
+
+  onClickResend(BuildContext context, String mobileNumber) {
+    if (resendButtonEnble) {
+      resendOtp(context, mobileNumber);
     }
   }
 
@@ -151,17 +153,21 @@ class  AuthProvider extends ChangeNotifier{
     return "$minute : $second";
   }
 
-  verifyOtp(String mobile,String otp,String deviceId) async {
-    if(mobile.compareTo("9420455551")==0){
-//      print("*************"+userStatis().staticUser );
-
-      //response =await json.decode(userStatis().staticUser);
+  verifyOtp(String mobile, String otp, String deviceId) async {
+    if (mobile.compareTo("9420455551") == 0) {
       userDetailList.clear();
-      //    var list = AuthApi.fromJson(response);
-      //  userDetailList = list.content!;
-      //print("***********");
-      userDetailList.add(User(id: 2763,userName: "user113146", firstName : "Digvijay",lastName: "z",emailId: "digvijayzite@gmail.com",mobileNumber: 9420455551,
-          companyName: "tablas",companyAddress: "kolhapur",city: "Kolhapur",state: "Maharashtra",country: "India",
+      userDetailList.add(User(
+          id: 2763,
+          userName: "user113146",
+          firstName: "Digvijay",
+          lastName: "z",
+          emailId: "digvijayzite@gmail.com",
+          mobileNumber: 9420455551,
+          companyName: "tablas",
+          companyAddress: "kolhapur",
+          city: "Kolhapur",
+          state: "Maharashtra",
+          country: "India",
           landlineNumber: null,
           mainBranch: null,
           idOfMainBranch: null,
@@ -186,33 +192,28 @@ class  AuthProvider extends ChangeNotifier{
           alternativeNumber: null,
           companyId: null,
           isUserVerifiedByCompany: null));
-
       return userDetailList;
-
-
-
-    }else{
-      // String myUrl = AppConstants.OTP_VERIFICATION +'?mobileNumber=${mobile}&otp=${otp}&deviceId=${deviceId}';
-      String myUrl = ApiConstant.BASE_URL + 'VerifyOtp?mobileNumber=${mobile}&otp=${otp}';
+    } else {
+      String myUrl =
+          ApiConstant.BASE_URL + 'VerifyOtp?mobileNumber=${mobile}&otp=${otp}';
       print(myUrl);
       var req = await http.post(Uri.parse(myUrl));
       print(req);
 
-
-      if(req.statusCode== 200){
+      if (req.statusCode == 200) {
         response = await json.decode(req.body);
-        try{
+        try {
           userDetailList.clear();
           var list = AuthApi.fromJson(response);
-          setLoginData( jsonEncode(list.content![0]));
-          userDetailList = list.content!;}
-        catch(e){
+          setLoginData(jsonEncode(list.content![0]));
+          userDetailList = list.content!;
+        } catch (e) {
           print(response['errorMessage']);
           return response['errorMessage'];
         }
         notifyListeners();
         return userDetailList;
-      }else{
+      } else {
         showSimpleNotification(
             Text(
               req.body.toString(),
@@ -221,29 +222,23 @@ class  AuthProvider extends ChangeNotifier{
             background: Colors.red);
         print(req.body.toString());
       }
-
     }
-
-
-
   }
 
-  resendOtp(BuildContext context,String mobileNumber) async{
-    String myUrl = ApiConstant.SEND_OTP +'?mobileNos=${mobileNumber}';
-    print("resend otp:"+myUrl);
+  resendOtp(BuildContext context, String mobileNumber) async {
+    String myUrl = ApiConstant.SEND_OTP + '?mobileNos=${mobileNumber}';
+    print("resend otp:" + myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
-    if(req.statusCode==200){
-      start=60;
+    if (req.statusCode == 200) {
+      start = 60;
       startTimer();
-      //.show(context, "OTP resend Successfully");
     }
     notifyListeners();
   }
 
-
   sendOtpUsingEmail(String email) async {
-    String myUrl = ApiConstant.SEND_OTP_ON_MAIL +'?emailId=${email}';
+    String myUrl = ApiConstant.SEND_OTP_ON_MAIL + '?emailId=${email}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = json.decode(req.body);
@@ -251,8 +246,9 @@ class  AuthProvider extends ChangeNotifier{
     return response;
   }
 
-  verifyOtpUsingEmail(String email,String otp,String deviceId) async {
-    String myUrl = ApiConstant.VERIFY_OTP_ON_MAIL +'?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
+  verifyOtpUsingEmail(String email, String otp, String deviceId) async {
+    String myUrl = ApiConstant.VERIFY_OTP_ON_MAIL +
+        '?emailId=${email}&otp=${otp}&deviceId=${deviceId}';
     print(myUrl);
     var req = await http.post(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -262,21 +258,20 @@ class  AuthProvider extends ChangeNotifier{
     return userDetailList;
   }
 
-  setLoginData(String val)async{
+  setLoginData(String val) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    _prefs.setString("LoginData",val);
+    _prefs.setString("LoginData", val);
   }
 
-  Future<User> getLoginData()async{
+  Future<User> getLoginData() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String data  = await _prefs.getString("LoginData")!;
-    User datas=User.fromJson(jsonDecode(data));
+    String data = await _prefs.getString("LoginData")!;
+    User datas = User.fromJson(jsonDecode(data));
     return datas;
   }
 
-
   setVisitingFlag(bool flag) async {
-    if(flag == false){
+    if (flag == false) {
       userDetailList = [];
       notifyListeners();
     }
@@ -287,28 +282,29 @@ class  AuthProvider extends ChangeNotifier{
 
   setEmpId(int id) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setInt("id", id );
+    await preferences.setInt("id", id);
   }
 
   setUserName(String uName) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString("userName", uName );
+    await preferences.setString("userName", uName);
   }
 
-  Future<bool?> getVisitingFlag() async{
-    SharedPreferences preferences=await SharedPreferences.getInstance();
-    bool? alreadyVisited = await preferences.getBool("Already Visited")?? false;
+  Future<bool?> getVisitingFlag() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool? alreadyVisited =
+        await preferences.getBool("Already Visited") ?? false;
     return alreadyVisited;
   }
 
-  Future<int?> getEmpId() async{
-    SharedPreferences preferences=await SharedPreferences.getInstance();
+  Future<int?> getEmpId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     int? id = await preferences.getInt("id")!;
     return id;
   }
 
   getUserDetails(int id) async {
-    String myUrl = ApiConstant.REGISTRATION +'/${id}';
+    String myUrl = ApiConstant.REGISTRATION + '/${id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     response = await json.decode(req.body);
@@ -318,27 +314,27 @@ class  AuthProvider extends ChangeNotifier{
     return userDetailList;
   }
 
-
   String? image;
-  Future setImage(img) async{
+
+  Future setImage(img) async {
     this.image = img;
     this.notifyListeners();
   }
 
-  uploadAadharCard({String? imageFilePath,
-    Uint8List? imageBytes,PlatformFile? objectFile}) async {
-
+  uploadAadharCard(
+      {String? imageFilePath,
+      Uint8List? imageBytes,
+      PlatformFile? objectFile}) async {
     String myUrl = ApiConstant.IMG_UPLOAD;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
 
-    Map<String,String> headers = {"Content-Type": "multipart/form-data"};
+    Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
     request.files.add(new http.MultipartFile(
         "profilePicture", objectFile!.readStream!, objectFile.size,
         filename: objectFile.name));
-
 
     request.headers.addAll(headers);
     var response = await request.send();
@@ -350,20 +346,20 @@ class  AuthProvider extends ChangeNotifier{
     return uploadedAadhar;
   }
 
-  uploadPanCard({String? imageFilePath,
-    Uint8List? imageBytes,PlatformFile? objectFile}) async {
-
+  uploadPanCard(
+      {String? imageFilePath,
+      Uint8List? imageBytes,
+      PlatformFile? objectFile}) async {
     String myUrl = ApiConstant.IMG_UPLOAD;
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
 
-    Map<String,String> headers = {"Content-Type": "multipart/form-data"};
+    Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
     request.files.add(new http.MultipartFile(
         "profilePicture", objectFile!.readStream!, objectFile.size,
         filename: objectFile.name));
-
 
     request.headers.addAll(headers);
     var response = await request.send();
@@ -375,16 +371,16 @@ class  AuthProvider extends ChangeNotifier{
     return uploadedPan;
   }
 
-
-  postProfilePicture(String userId,{String? imageFilePath,
-    Uint8List? imageBytes,PlatformFile? objectFile}) async {
-
+  postProfilePicture(String userId,
+      {String? imageFilePath,
+      Uint8List? imageBytes,
+      PlatformFile? objectFile}) async {
     String myUrl = ApiConstant.BASE_URL + "profilePicture";
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("POST", postUri);
 
-    Map<String,String> headers = {"Content-Type": "multipart/form-data"};
+    Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
     request.files.add(new http.MultipartFile(
         "profilePicture", objectFile!.readStream!, objectFile.size,
@@ -401,15 +397,18 @@ class  AuthProvider extends ChangeNotifier{
     });
   }
 
-  updateProfilePicture(String userId,{String? imageFilePath,
-    Uint8List? imageBytes,PlatformFile? objectFile,}) async {
-
+  updateProfilePicture(
+    String userId, {
+    String? imageFilePath,
+    Uint8List? imageBytes,
+    PlatformFile? objectFile,
+  }) async {
     String myUrl = ApiConstant.BASE_URL + "profilePicture";
 
     var postUri = Uri.parse(myUrl);
     var request = new http.MultipartRequest("PUT", postUri);
 
-    Map<String,String> headers = {"Content-Type": "multipart/form-data"};
+    Map<String, String> headers = {"Content-Type": "multipart/form-data"};
 
     request.files.add(new http.MultipartFile(
         "profilePicture", objectFile!.readStream!, objectFile.size,
@@ -432,13 +431,42 @@ class  AuthProvider extends ChangeNotifier{
     });
   }
 
-  saveUser({String? aadharCard,String? alternativeNumber,String? city,String? companyAddress,int? companyId,String? companyLogo,
-    String? companyName,String? country,String? deviceId,String? emailId,String? firstName,int? id,int? idOfMainBranch,int? isPaid,
-    int? isUserVerifiedByCompany,int? landlineNumber,String? lastName,String? loggedTime,String? loggedUserName,
-    int? mainBranch,int? mobileNumber ,int? numberOfTimesRating,
-    String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,int? rating,
-    int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
-  }) async {
+  saveUser(
+      {String? aadharCard,
+      String? alternativeNumber,
+      String? city,
+      String? companyAddress,
+      int? companyId,
+      String? companyLogo,
+      String? companyName,
+      String? country,
+      String? deviceId,
+      String? emailId,
+      String? firstName,
+      int? id,
+      int? idOfMainBranch,
+      int? isPaid,
+      int? isUserVerifiedByCompany,
+      int? landlineNumber,
+      String? lastName,
+      String? loggedTime,
+      String? loggedUserName,
+      int? mainBranch,
+      int? mobileNumber,
+      int? numberOfTimesRating,
+      String? os,
+      String? otp,
+      String? paidStartDate,
+      String? password,
+      int? preferredRouresEntered,
+      String? profilePicture,
+      int? rating,
+      int? transporterOrAgent,
+      int? verified,
+      String? state,
+      String? userName,
+      String? validTill,
+      String? website}) async {
     String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -446,7 +474,7 @@ class  AuthProvider extends ChangeNotifier{
       "alternativeNumber": alternativeNumber,
       "city": city,
       "companyAddress": companyAddress,
-      "companyId": companyId?? 0,
+      "companyId": companyId ?? 0,
       "companyLogo": companyLogo,
       "companyName": companyName,
       "country": country,
@@ -454,53 +482,86 @@ class  AuthProvider extends ChangeNotifier{
       "emailId": emailId,
       "firstName": firstName,
       "id": 0,
-      "idOfMainBranch": idOfMainBranch?? 0,
-      "isPaid": isPaid?? 0,
-      "isUserVerifiedByCompany": isUserVerifiedByCompany??0,
-      "landlineNumber": landlineNumber??0,
+      "idOfMainBranch": idOfMainBranch ?? 0,
+      "isPaid": isPaid ?? 0,
+      "isUserVerifiedByCompany": isUserVerifiedByCompany ?? 0,
+      "landlineNumber": landlineNumber ?? 0,
       "lastName": lastName,
       "loggedTime": " ",
       "loggedUserName": loggedUserName,
-      "mainBranch": mainBranch?? 0,
-      "mobileNumber": mobileNumber?? 0,
-      "numberOfTimesRating": numberOfTimesRating?? 0,
+      "mainBranch": mainBranch ?? 0,
+      "mobileNumber": mobileNumber ?? 0,
+      "numberOfTimesRating": numberOfTimesRating ?? 0,
       "os": os,
       "otp": otp,
-      "paidStartDate":paidStartDate,
+      "paidStartDate": paidStartDate,
       "password": password,
-      "preferredRouresEntered": preferredRouresEntered??0,
+      "preferredRouresEntered": preferredRouresEntered ?? 0,
       "profilePicture": profilePicture,
-      "ratings": rating?? 0,
+      "ratings": rating ?? 0,
       "state": state,
-      "transporterOrAgent": transporterOrAgent?? 0,
+      "transporterOrAgent": transporterOrAgent ?? 0,
       "userName": userName,
       "validTill": validTill,
-      "verified": verified??0,
+      "verified": verified ?? 0,
       "website": website
     };
     var body = json.encode(data);
     print(data);
     var createResponse = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
-    print("${createResponse.statusCode}" + " --- " + createResponse.body.toString());
+    print("${createResponse.statusCode}" +
+        " --- " +
+        createResponse.body.toString());
     var response = await json.decode(createResponse.body);
     var list = AuthApi.fromJson(response);
     userDetailList = list.content!;
     notifyListeners();
   }
 
-  updateUser({String? aadharCard,String? alternativeNumber,String? city,String? companyAddress,int? companyId,String? companyLogo,
-    String? companyName,String? country,String? deviceId,String? emailId,String? firstName,int? id,int? idOfMainBranch,int? isPaid,
-    int? isUserVerifiedByCompany,int? landlineNumber,String? lastName,String? loggedTime,String? loggedUserName,
-    int? mainBranch,int? mobileNumber ,int? numberOfTimesRating,
-    String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,double? rating,
-    int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
-    ,String? panCardForVerification }) async {
+  updateUser(
+      {String? aadharCard,
+      String? alternativeNumber,
+      String? city,
+      String? companyAddress,
+      int? companyId,
+      String? companyLogo,
+      String? companyName,
+      String? country,
+      String? deviceId,
+      String? emailId,
+      String? firstName,
+      int? id,
+      int? idOfMainBranch,
+      int? isPaid,
+      int? isUserVerifiedByCompany,
+      int? landlineNumber,
+      String? lastName,
+      String? loggedTime,
+      String? loggedUserName,
+      int? mainBranch,
+      int? mobileNumber,
+      int? numberOfTimesRating,
+      String? os,
+      String? otp,
+      String? paidStartDate,
+      String? password,
+      int? preferredRouresEntered,
+      String? profilePicture,
+      double? rating,
+      int? transporterOrAgent,
+      int? verified,
+      String? state,
+      String? userName,
+      String? validTill,
+      String? website,
+      String? panCardForVerification}) async {
     String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
       "aadharCard": aadharCard ?? userDetailList[0].aadharCard ?? '',
-      "alternativeNumber": alternativeNumber ?? userDetailList[0].alternativeNumber,
+      "alternativeNumber":
+          alternativeNumber ?? userDetailList[0].alternativeNumber,
       "city": city ?? userDetailList[0].city,
       "companyAddress": companyAddress ?? userDetailList[0].companyAddress,
       "companyId": companyId ?? userDetailList[0].companyId ?? 0,
@@ -510,57 +571,66 @@ class  AuthProvider extends ChangeNotifier{
       "deviceId": deviceId ?? userDetailList[0].deviceId,
       "emailId": emailId ?? userDetailList[0].emailId,
       "firstName": firstName ?? userDetailList[0].firstName,
-      "id": id ?? userDetailList[0].id?? 0 ,
+      "id": id ?? userDetailList[0].id ?? 0,
       "idOfMainBranch": idOfMainBranch ?? userDetailList[0].idOfMainBranch ?? 0,
       "isPaid": isPaid ?? userDetailList[0].isPaid ?? 0,
-      "isUserVerifiedByCompany": isUserVerifiedByCompany ?? userDetailList[0].isUserVerifiedByCompany ?? 0,
+      "isUserVerifiedByCompany": isUserVerifiedByCompany ??
+          userDetailList[0].isUserVerifiedByCompany ??
+          0,
       "landlineNumber": landlineNumber ?? userDetailList[0].landlineNumber ?? 0,
       "lastName": lastName ?? userDetailList[0].lastName,
       "loggedTime": '',
       "loggedUserName": loggedUserName ?? userDetailList[0].loggedUserName,
       "mainBranch": mainBranch ?? userDetailList[0].mainBranch ?? 0,
       "mobileNumber": mobileNumber ?? userDetailList[0].mobileNumber ?? 0,
-      "numberOfTimesRating": numberOfTimesRating ?? userDetailList[0].numberOfTimesRating ?? 0,
+      "numberOfTimesRating":
+          numberOfTimesRating ?? userDetailList[0].numberOfTimesRating ?? 0,
       "os": os ?? userDetailList[0].os,
       "otp": otp ?? userDetailList[0].otp,
-      "paidStartDate":paidStartDate ?? userDetailList[0].paidStartDate,
+      "paidStartDate": paidStartDate ?? userDetailList[0].paidStartDate,
       "password": password ?? userDetailList[0].password,
-      "preferredRouresEntered": preferredRouresEntered?? userDetailList[0].preferredRouresEntered ?? 0,
+      "preferredRouresEntered": preferredRouresEntered ??
+          userDetailList[0].preferredRouresEntered ??
+          0,
       "profilePicture": profilePicture ?? userDetailList[0].profilePicture,
       "ratings": rating ?? userDetailList[0].ratings ?? 0,
       "state": state ?? userDetailList[0].state,
-      "transporterOrAgent": transporterOrAgent ?? userDetailList[0].transporterOrAgent ?? 0,
+      "transporterOrAgent":
+          transporterOrAgent ?? userDetailList[0].transporterOrAgent ?? 0,
       "userName": userName ?? userDetailList[0].userName,
       "validTill": validTill ?? userDetailList[0].validTill,
       "verified": verified ?? userDetailList[0].verified ?? 0,
       "website": website ?? userDetailList[0].website,
-      "panCardForVerification":panCardForVerification ?? userDetailList[0].panCardForVerification ?? ''
-
+      "panCardForVerification": panCardForVerification ??
+          userDetailList[0].panCardForVerification ??
+          ''
     };
     var body = json.encode(data);
     print(data);
     var createResponse = await http.put(uri,
         headers: {"Content-Type": "application/json"}, body: body);
-    print("${createResponse.statusCode}" + " --- " + createResponse.body.toString());
+    print("${createResponse.statusCode}" +
+        " --- " +
+        createResponse.body.toString());
     print(createResponse.body);
-   if(createResponse.statusCode==200){
-     var response = await json.decode(createResponse.body);
-     var list = AuthApi.fromJson(response);
-     userDetailList = list.content!;
-     showSimpleNotification(
-         Text(
-           "Post edited successfully!",
-           style: TextStyle(color: Colors.white),
-         ),
-         background: Colors.black);
-   }else{
-     showSimpleNotification(
-         Text(
-           "Something Went Wrong!",
-           style: TextStyle(color: Colors.white),
-         ),
-         background: Colors.black);
-   }
+    if (createResponse.statusCode == 200) {
+      var response = await json.decode(createResponse.body);
+      var list = AuthApi.fromJson(response);
+      userDetailList = list.content!;
+      showSimpleNotification(
+          Text(
+            "Post edited successfully!",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.black);
+    } else {
+      showSimpleNotification(
+          Text(
+            "Something Went Wrong!",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.black);
+    }
     notifyListeners();
     return createResponse.statusCode;
   }
@@ -573,13 +643,44 @@ class  AuthProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  saveTestingUser({String? aadharCard,String? aadharCardForVerification,String? panCardForVerification,String? alternativeNumber,String? city,String? companyAddress,int? companyId,String? companyLogo,
-    String? companyName,String? country,String? deviceId,String? emailId,String? firstName,int? id,int? idOfMainBranch,int? isPaid,
-    int? isUserVerifiedByCompany,int? landlineNumber,String? lastName,String? loggedTime,String? loggedUserName,
-    int? mainBranch,int? mobileNumber ,int? numberOfTimesRating,
-    String? os,String? otp,String? paidStartDate,String? password,int? preferredRouresEntered,String? profilePicture,int? rating,
-    int? transporterOrAgent,int? verified,String? state,String? userName,String? validTill,String? website
-  }) async {
+  saveTestingUser(
+      {String? aadharCard,
+      String? aadharCardForVerification,
+      String? panCardForVerification,
+      String? alternativeNumber,
+      String? city,
+      String? companyAddress,
+      int? companyId,
+      String? companyLogo,
+      String? companyName,
+      String? country,
+      String? deviceId,
+      String? emailId,
+      String? firstName,
+      int? id,
+      int? idOfMainBranch,
+      int? isPaid,
+      int? isUserVerifiedByCompany,
+      int? landlineNumber,
+      String? lastName,
+      String? loggedTime,
+      String? loggedUserName,
+      int? mainBranch,
+      int? mobileNumber,
+      int? numberOfTimesRating,
+      String? os,
+      String? otp,
+      String? paidStartDate,
+      String? password,
+      int? preferredRouresEntered,
+      String? profilePicture,
+      int? rating,
+      int? transporterOrAgent,
+      int? verified,
+      String? state,
+      String? userName,
+      String? validTill,
+      String? website}) async {
     String myUrl = ApiConstant.REGISTRATION;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -601,7 +702,7 @@ class  AuthProvider extends ChangeNotifier{
       "isUserVerifiedByCompany": isUserVerifiedByCompany ?? 0,
       "landlineNumber": landlineNumber ?? 0,
       "lastName": lastName,
-      "loggedTime":loggedTime,
+      "loggedTime": loggedTime,
       "loggedUserName": loggedUserName,
       "mainBranch": mainBranch ?? 0,
       "mobileNumber": mobileNumber ?? 0,
@@ -620,31 +721,31 @@ class  AuthProvider extends ChangeNotifier{
       "validTill": validTill,
       "verified": verified ?? 0,
       "website": website
-
     };
     var body = json.encode(data);
     print(data);
     var createResponse = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
-    print("${createResponse.statusCode}" + " --- " + createResponse.body.toString());
+    print("${createResponse.statusCode}" +
+        " --- " +
+        createResponse.body.toString());
     var response = await json.decode(createResponse.body);
     var list = AuthApi.fromJson(response);
     userDetailList = list.content!;
     notifyListeners();
   }
 
-
-
-
-
-
   ValidationModel _email = ValidationModel(null, null);
   ValidationModel _password = ValidationModel(null, null);
   ValidationModel _phone = ValidationModel(null, null);
   ValidationModel _name = ValidationModel(null, null);
+
   ValidationModel get email => _email;
+
   ValidationModel get password => _password;
+
   ValidationModel get phone => _phone;
+
   ValidationModel get name => _name;
 
   void validateEmail(String? val) {
@@ -655,6 +756,7 @@ class  AuthProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+
   void validatePassword(String? val) {
     if (val != null && val.isValidPassword) {
       _password = ValidationModel(val, null);
@@ -664,6 +766,7 @@ class  AuthProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+
   void validateName(String? val) {
     if (val != null && val.isValidName) {
       _name = ValidationModel(val, null);
@@ -672,6 +775,7 @@ class  AuthProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+
   void validatePhone(String? val) {
     if (val != null && val.isValidPhone) {
       _phone = ValidationModel(val, null);
@@ -680,6 +784,7 @@ class  AuthProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+
   bool get validate {
     return _email.value != null &&
         _password.value != null &&
@@ -687,10 +792,11 @@ class  AuthProvider extends ChangeNotifier{
         _name.value != null;
   }
 
-  Future<DeleteUser> isUserDeleted(String mobileNumber)async{
-    ApiHelper apiHelper=ApiHelper();
-    response= await apiHelper.ApiGetData(ApiConstant.USER_FIND_BY_MOBILE+mobileNumber);
-    DeleteUser deleteUser=DeleteUser.fromJson(response);
+  Future<DeleteUser> isUserDeleted(String mobileNumber) async {
+    ApiHelper apiHelper = ApiHelper();
+    response = await apiHelper.ApiGetData(
+        ApiConstant.USER_FIND_BY_MOBILE + mobileNumber);
+    DeleteUser deleteUser = DeleteUser.fromJson(response);
     return deleteUser;
   }
 }

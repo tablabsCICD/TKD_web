@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 
@@ -15,7 +13,6 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20,vertical: 15),
-      // width: MediaQuery.of(context).size.width,
       height: 50,
       child: ElevatedButton(
         onPressed: (){

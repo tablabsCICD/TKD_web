@@ -1,5 +1,4 @@
 
-import 'dart:html';
 
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +27,6 @@ import 'package:tkd_app/provider/repeatProvider.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 
-//GetIt locator = GetIt.asNewInstance();
 GetIt locator = GetIt.instance;
 
 Future<void> setupLocator() async {

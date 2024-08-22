@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
@@ -10,9 +9,7 @@ import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/group_added_member.dart';
 import 'package:tkd_app/model/group_list_model.dart';
-import 'package:tkd_app/model/group_member_list.dart';
 import 'package:tkd_app/model/group_response.dart';
-import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/new_truckLod_model.dart';
 import 'package:tkd_app/model/request/post_load.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
@@ -22,7 +19,6 @@ import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/widgets/bottomsheet.dart';
 
 import '../view/screens/editPost/edit_post_load.dart';
@@ -159,7 +155,7 @@ class EditPostLoadProvider extends ChangeNotifier {
     listAddedMember.clear();
     addedMemberIdList.clear();
     ApiHelper apiHelper=ApiHelper();
-    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_MEMBER_LIST+groupId!.toString());
+    var response=await apiHelper.ApiGetData(ApiConstant.GROUP_MEMBER_LIST+groupId.toString());
     GroupMemberModel groupListModel=GroupMemberModel.fromJson(response);
 
     listAddedMember.addAll(groupListModel.content!);
@@ -253,6 +249,7 @@ class EditPostLoadProvider extends ChangeNotifier {
     if(newTruckLoad.userList==null){
     }else{
       var userList = getUserListFromString(newTruckLoad.userList!);
+      debugPrint(userList);
     }
     addedMemberIdList = addedUserListInPost;
   }
@@ -435,13 +432,7 @@ class EditPostLoadProvider extends ChangeNotifier {
               background: Colors.black
           );
         } else {
-          List<UserVerifiedData> verfiedUserList=[];/*await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => SelectUserForPostScreen(
-                        true,
-                        sourceCity,
-                      )));*/
+          List<UserVerifiedData> verfiedUserList=[];
           if (verfiedUserList.isNotEmpty) {
             addedMemberIdList.clear();
             for (int i = 0; i < verfiedUserList.length; i++) {
@@ -479,7 +470,6 @@ class EditPostLoadProvider extends ChangeNotifier {
       loadWieght = true;
     }
     String;
-    String selectedPayment = "Select One";
 
     String;
     if (selectedRequriment == "Select One") {

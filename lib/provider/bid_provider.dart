@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/bid_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/model/biding_user_model.dart';
 import 'package:tkd_app/model/comman_response.dart';
@@ -14,7 +13,7 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 
-class BidProvider extends ChangeNotifier{
+class BidProvider extends ChangeNotifier {
   List<BidingUser> allBidingList = [];
   List<Bidings> receivedBidingList = [];
   List<PostBidData> ownBidPostList = [];
@@ -24,11 +23,11 @@ class BidProvider extends ChangeNotifier{
   List<BidingUser> truckLoadTypeList = [];
   final authProvider = locator<AuthProvider>();
 
-  getAllBidingList(String userName,int isPublic) async {
+  getAllBidingList(String userName, int isPublic) async {
     isLoading = true;
     notifyListeners();
-   // https://api.tkdost.com/tkd2/api/GetPostsAndBidsForUser?userName=user327796&privatePost=0
-    String myUrl = ApiConstant.BID_OWN_POST +'?userName=${userName}&privatePost=${isPublic}';
+    String myUrl = ApiConstant.BID_OWN_POST +
+        '?userName=${userName}&privatePost=${isPublic}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -36,41 +35,24 @@ class BidProvider extends ChangeNotifier{
     print(response);
     var type = BidingUserModel.fromJson(response);
     allBidingList.clear();
-    allBidingList=type.content;
-    allBidingList.sort((a, b) => int.parse(a.amount!).compareTo(int.parse(b.amount!)));
+    allBidingList = type.content;
+    allBidingList
+        .sort((a, b) => int.parse(a.amount).compareTo(int.parse(b.amount)));
     print('Low to hight in biding amount: $allBidingList');
-    allBidingList.forEach((element) {print("amount : "+element.amount.toString());});
+    allBidingList.forEach((element) {
+      print("amount : " + element.amount.toString());
+    });
     notifyListeners();
   }
 
   List<TruckLoad> allPostList = [];
   List<TruckLoad> myOwnPostList = [];
 
-/*
-  getList(String userName) async {
-    allPostList.clear();
-    myOwnPostList.clear();
-    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}&page=0&size=100';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    response = json.decode(req.body);
-    var type = TruckLoadType.fromJson(response);
-    allPostList = type.content;
-    for (int i = 0; i < allPostList.length; i++) {
-      if (allPostList[i].tableName == 'FullTruckLoad')
-      {
-        myOwnPostList.add(allPostList[i]);
-      }
-    }
-    notifyListeners();
-  }
-*/
-
-
   getReceivedBidingList() async {
     isLoading = true;
     notifyListeners();
-    String myUrl = ApiConstant.BASE_URL +'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}';
+    String myUrl = ApiConstant.BASE_URL +
+        'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -80,10 +62,13 @@ class BidProvider extends ChangeNotifier{
     ownBidPostList.clear();
     ownBidPostList = type.content!;
     receivedBidingList.clear();
-    receivedBidingList=type.content![0].bidings!;
-    receivedBidingList.sort((a, b) => int.parse(a.bidings!.amount!).compareTo(int.parse(b.bidings!.amount!)));
+    receivedBidingList = type.content![0].bidings!;
+    receivedBidingList.sort((a, b) =>
+        int.parse(a.bidings!.amount!).compareTo(int.parse(b.bidings!.amount!)));
     print('Low to hight in biding amount: $receivedBidingList');
-    receivedBidingList.forEach((element) {print("amount : "+element.bidings!.amount.toString());});
+    receivedBidingList.forEach((element) {
+      print("amount : " + element.bidings!.amount.toString());
+    });
     notifyListeners();
     return receivedBidingList;
   }
@@ -100,9 +85,17 @@ class BidProvider extends ChangeNotifier{
     return truckLoadTypeList;
   }
 
-
-  generateBid(BuildContext context,{int? mobile,String? description,int? id,String? email,String? amount,int? idOfPost,String? bidderUserName,
-    String? userName,String? type,String? loggedUserName}) async {
+  generateBid(BuildContext context,
+      {int? mobile,
+      String? description,
+      int? id,
+      String? email,
+      String? amount,
+      int? idOfPost,
+      String? bidderUserName,
+      String? userName,
+      String? type,
+      String? loggedUserName}) async {
     String myUrl = ApiConstant.BID_TO_POST;
     Uri uri = Uri.parse(myUrl);
     Map<String, dynamic> data = {
@@ -115,7 +108,7 @@ class BidProvider extends ChangeNotifier{
       "loggedTime": "",
       "loggedUserName": loggedUserName,
       "mobileNumber": mobile,
-      "type":type,
+      "type": type,
       "userName": userName
     };
     var body = json.encode(data);
@@ -124,42 +117,47 @@ class BidProvider extends ChangeNotifier{
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
     print("${response.statusCode}" + " --- " + response.body.toString());
-    if(response.statusCode==200){
-    var jsonData = jsonDecode(response.body);
-    CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-    if(commonResponse.isSuccess == true){
+    if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      BidingUser dataObj = BidingUser.fromJson(jsonData);
-    }
-    else{
+      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      if (commonResponse.isSuccess == true) {
+      } else {
+        showSimpleNotification(
+            Text(
+              commonResponse.message.toString(),
+              style: TextStyle(color: Colors.white),
+            ),
+            background: Colors.orange);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => MenuPage(
+                      userDetailList: authProvider.userDetailList,
+                      selectedTab: "Package Change",
+                    )));
+      }
+    } else if (response.statusCode == 401) {
       showSimpleNotification(
-          Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
-          background: Colors.orange
-      );
-      Navigator
-          .pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => MenuPage(
-        userDetailList: authProvider.userDetailList,
-        selectedTab: "Package Change",)));
-    }
-    }else if(response.statusCode == 401){
+          Text(
+            "Please update your package",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.orange);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (builder) => MenuPage(
+                    userDetailList: authProvider.userDetailList,
+                    selectedTab: "Package Change",
+                  )));
+    } else {
       showSimpleNotification(
-          Text("Please update your package",style: TextStyle(color: Colors.white),),
-          background: Colors.orange
-      );
-      Navigator
-          .pushReplacement(
-          context, MaterialPageRoute(builder: (builder) => MenuPage(
-        userDetailList: authProvider.userDetailList,
-        selectedTab: "Package Change",)));
-    }else{
-      showSimpleNotification(
-          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
-          background: Colors.red
-      );
+          Text(
+            "Please Try Again!",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.red);
     }
-
-    //allBidingList.add(dataObj);
     notifyListeners();
   }
 

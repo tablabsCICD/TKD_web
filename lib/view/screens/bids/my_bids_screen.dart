@@ -2,48 +2,27 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/bid_model.dart';
 import 'package:tkd_app/model/biding_user_model.dart';
-import 'package:tkd_app/multi_select.dart';
-import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
-import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
-import 'package:tkd_app/share_data.dart';
-import 'package:tkd_app/show_bid.dart';
 import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
-import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
-import 'package:tkd_app/view/screens/menu_page.dart';
-import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:tkd_app/util/date_converter.dart';
-import 'package:tkd_app/util/star_display.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
-import 'package:tkd_app/view/screens/dashboard/allRequirement.dart';
-
 import '../../../util/app_constants.dart';
 
 class MyBidsScreen extends StatefulWidget {
@@ -82,8 +61,6 @@ class WebScreenForBid extends StatefulWidget {
 }
 
 class _WebScreenForBidState extends State<WebScreenForBid> {
- /* final authProvider = locator<AuthProvider>();
-  final dashboardProvider = locator<DashboardProvider>();*/
 
   final langProvider = locator<LocalizationProvider>();
   final authProvider = locator<AuthProvider>();
@@ -96,8 +73,6 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
   }
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-//    TruckLoad truckLoad = dashboardProvider.truckLoadTypeList[0];
     return Consumer<BidProvider>(
         builder: (context, model, child) => Container(
               margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(
@@ -442,7 +417,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
               ),
               child: Center(
                 child: Text(
-                  Utils().mainTag(bids.mainTag!)          ,
+                  Utils().mainTag(bids.mainTag)          ,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 9,
@@ -480,11 +455,11 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
               ],
             ),
           ),
-          BaseWidget().routes(bids.source!, bids.destination!),
+          BaseWidget().routes(bids.source, bids.destination),
           SizedBox(
             height: 12,
           ),
-          BaseWidget().heading1(bids.topicName!, bids.postingTime!.split(" ").first, bids.content!),
+          BaseWidget().heading1(bids.topicName, bids.postingTime.split(" ").first, bids.content!),
           BaseWidget().onlyBidButton((){
             showDialog(
               context: context,
@@ -610,10 +585,9 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
 
     String myUrl = ApiConstant.BID_TO_POST + '?id=$id';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
    if(req.statusCode==200){
      model.allBidingList.removeAt(index);
-     model.notifyListeners();
 
    }
   }

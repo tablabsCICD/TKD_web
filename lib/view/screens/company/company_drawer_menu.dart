@@ -6,7 +6,6 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
-import 'package:tkd_app/view/localization/language_constrants.dart';
 
 typedef StringValue = Function(String);
 const Company_Dashboard = 'Dashboard';

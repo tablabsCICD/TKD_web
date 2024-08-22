@@ -3,7 +3,7 @@ class UserModel {
   bool? last;
   int? totalPages;
   int? totalElements;
-  dynamic? sort;
+  dynamic sort;
   bool? first;
   int? numberOfElements;
   int? size;

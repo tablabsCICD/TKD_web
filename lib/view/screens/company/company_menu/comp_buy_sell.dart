@@ -1,29 +1,21 @@
-import 'dart:convert';
+
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
-import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/organization_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
-import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
-import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:http/http.dart' as http;
 import 'package:tkd_app/util/date_converter.dart';
 import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';

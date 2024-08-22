@@ -4,19 +4,15 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tkd_app/model/auth_api.dart';
-import 'package:tkd_app/model/biding_user_model.dart';
 import 'package:tkd_app/model/organization/org_biding_model.dart';
 import 'package:tkd_app/model/organization/org_buy_sell_model.dart';
 import 'package:tkd_app/model/organization/org_full_load_model.dart';
 import 'package:tkd_app/model/organization/org_pool_purchase_model.dart';
 import 'package:tkd_app/model/organization/org_static_data_model.dart';
 import 'package:tkd_app/model/organization_model.dart';
-import 'package:tkd_app/model/pool_purchase_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
 class OrgProvider extends ChangeNotifier{
@@ -245,7 +241,6 @@ class OrgProvider extends ChangeNotifier{
   getStaticData(int id) async {
     isLoading = true;
     notifyListeners();
-    //String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getStastitcs?organizationId=${id}";
     String myUrl = ApiConstant.BASE_URL+"/getStastitcs?organizationId=${id}";
     print("GET COUNT URL : "+myUrl);
     var req = await http.get(Uri.parse(myUrl));
@@ -270,7 +265,6 @@ class OrgProvider extends ChangeNotifier{
   getOrgBidingList(int id) async {
     isLoading = true;
     notifyListeners();
-  //  String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBiding/ForOrganisation?organizationId=26";
     String myUrl = ApiConstant.BASE_URL+ "/getBiding/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
@@ -288,7 +282,6 @@ class OrgProvider extends ChangeNotifier{
  getBuyVehicles(int id) async {
     isLoading = true;
     notifyListeners();
-   // String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBuySell/ForOrganisation?organizationId=26";
     String myUrl = ApiConstant.BASE_URL + "getBuySell/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
@@ -310,7 +303,6 @@ class OrgProvider extends ChangeNotifier{
   getOrgFullLoadList(int id) async {
     isLoading = true;
     notifyListeners();
-    //String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getFullLoad/ForOrganisation?organizationId=26";
     String myUrl = ApiConstant.BASE_URL+"getFullLoad/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
@@ -363,7 +355,6 @@ class OrgProvider extends ChangeNotifier{
   getOrgPoolPurchaseList(int id) async {
     isLoading = true;
     notifyListeners();
-   // String myUrl = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/getBulkBuySell/ForOrganisation?organizationId=26";
     String myUrl = ApiConstant.BASE_URL + "getBulkBuySell/ForOrganisation?organizationId=${id}";
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
@@ -458,7 +449,7 @@ class OrgProvider extends ChangeNotifier{
   deleteBuySell(OrgBuySellModel truckLoad) async {
     String myUrl = ApiConstant.POST_BUY_SELL + '?id=${truckLoad.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     orgBuySellList.remove(truckLoad);
     notifyListeners();
   }
@@ -466,7 +457,7 @@ class OrgProvider extends ChangeNotifier{
  deletePoolPurchase(OrgPoolPurchaseModel obj) async {
     String myUrl = ApiConstant.BULK_DATA + '?id=${obj.id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    json.decode(req.body);
     orgPoolPurchaseList.remove(obj);
     notifyListeners();
   }

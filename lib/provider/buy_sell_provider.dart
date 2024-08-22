@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +8,6 @@ import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
-import 'package:tkd_app/util/date_converter.dart';
 
 class BuySellProvider extends ChangeNotifier {
   List<TruckLoad> buyVehicleList = [];
@@ -147,7 +145,7 @@ class BuySellProvider extends ChangeNotifier {
     if (createResponse.statusCode == 200) {
       var jsonData = jsonDecode(createResponse.body);
       CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if(commonResponse.isSuccess == true){
+      if (commonResponse.isSuccess == true) {
         var jsonData = jsonDecode(createResponse.body);
         if (type == 'Buy Vehicle') {
           TruckLoad dataObj = TruckLoad.fromJson(jsonData);
@@ -156,12 +154,13 @@ class BuySellProvider extends ChangeNotifier {
           TruckLoad dataObj = TruckLoad.fromJson(jsonData);
           sellVehicleList.add(dataObj);
         }
-      }
-      else{
+      } else {
         showSimpleNotification(
-            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
-            background: Colors.orange
-        );
+            Text(
+              commonResponse.message.toString(),
+              style: TextStyle(color: Colors.white),
+            ),
+            background: Colors.orange);
       }
       notifyListeners();
       return commonResponse.isSuccess;
@@ -184,15 +183,14 @@ class BuySellProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-
-    //return createResponse;
   }
 
   final dashBoardProvider = locator<DashboardProvider>();
+
   deleteBuySell(int id, int index, bool isBuy) async {
     String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
     var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
+    debugPrint(req.statusCode.toString());
     if (isBuy) {
       buyVehicleList.removeAt(index);
     } else {
