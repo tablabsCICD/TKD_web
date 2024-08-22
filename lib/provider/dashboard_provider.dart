@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -11,7 +9,6 @@ import 'package:tkd_app/model/auth_api.dart';
 import 'package:tkd_app/model/comman_response.dart';
 import 'package:tkd_app/model/group_added_member.dart';
 import 'package:tkd_app/model/group_list_model.dart';
-import 'package:tkd_app/model/request/genral_post.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:http/http.dart' as http;
@@ -56,9 +53,7 @@ class DashboardProvider extends ChangeNotifier {
     }
     isLoading = true;
     if (fromCity == "From" && toCity == "To") {
-      // bool  bool fla = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false; = false,pla = false,flr = false,plr = false,gp=false,buy_sell=false,jobs=false;
       if (!fla && !pla && !flr & !plr & !gp & !buy_sell & !jobs) {
-        //  url = ApiConstant.ALL_CARD +'?page=${currentPage}&size=10';//&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.content!.first.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
         url = ApiConstant.ALL_CARD(user.id,
             currentPage); //&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.content!.first.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
       } else {
@@ -100,6 +95,7 @@ class DashboardProvider extends ChangeNotifier {
     isLoading = false;
     if (req.statusCode == 200) {
       response = json.decode(req.body);
+      print(response);
       var type = TruckLoadType.fromJson(response);
 
       totalPages = type.totalPages;
@@ -110,11 +106,9 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   reSendPost(BuildContext context, TruckLoad postBidData) async {
-    //  ApiResponse apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}");
     var apiResponse = await http.post(Uri.parse(ApiConstant.BASE_URL +
         "repost?id=${postBidData.id!}&interchange=${false}"));
     if (apiResponse.statusCode == 200) {
-      // Navigator.pop(context,1);
       var jsonData = jsonDecode(apiResponse.body);
       CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
       if (commonResponse.isSuccess == true) {
@@ -159,7 +153,6 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   interChnageSendPost(BuildContext context, TruckLoad postBidData) async {
-    // var apiResponse=await ApiHelper().ApiPostData(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}");
     var apiResponse = await http.post(Uri.parse(ApiConstant.BASE_URL +
         "repost?id=${postBidData.id!}&interchange=${true}"));
     if (apiResponse.statusCode == 200) {
@@ -210,73 +203,6 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /*getFullLoadTruckList(String fromCity,String toCity,{int currentPage = 0}) async {
-    isLoading = true;
-    notifyListeners();
-    if(currentPage == 0){
-      isFirstLoading = true;
-      truckLoadTypeList.clear();
-    }
-    User user = await authProvider.getLoginData();
-    String myUrl = '';
-   // String myUrl = AppConstants.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp';
-    //String myUrl = AppConstants.FULL_LOAD_ALL_CARD_NEW +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}';
-
-
-    if(fromCity=="All" && toCity=="All"){
-      if(!flr & !fla & !plr & !pla & !gp & !buy_sell & !jobs){
-       // myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?loggedUserId=${user.id}&page=${currentPage}&size=20';
-      }else{
-        if(flr){
-          myUrl = ApiConstant.FULL_LOAD_REQUIRED(user.id,currentPage);
-        }else if(fla){
-          myUrl = ApiConstant.FULL_LOAD_AVILABLE(user.id,currentPage);
-        }else if(plr){
-          myUrl = ApiConstant.PART_LOAD_REQUIRED(user.id,currentPage);
-        }else if(pla){
-          myUrl = ApiConstant.PART_LOAD_AVILABLE(user.id,currentPage);
-        }else if(jobs){
-          myUrl = ApiConstant.JOBS_HOMEPAGE(user.id,currentPage);
-        }else if(buy_sell) {
-          myUrl = ApiConstant.BUYSELL_HOMEPAGE(user.id,currentPage);
-        }else{
-          myUrl = ApiConstant.General_POST_HOMEPAGE(user.id,currentPage);
-        }
-        }
-   }else{
-
-    */ /*  if(fromCity != "All" && toCity!="All"){
-        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else if(fromCity != "All" && toCity=="All"){
-        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else{
-        myUrl = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }
-*/ /*
-      if(fromCity != "All" && toCity!="All"){
-        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else if(fromCity != "All" && toCity=="All"){
-        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }else{
-        myUrl = ApiConstant.HOMEPAGE_FILTER +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&destination=$toCity&loggedUserId=${user.id}&generalPost=$gp&postJob=$jobs&buySell=$buy_sell';
-      }
-      //   url = ApiConstant.FULL_LOAD_ALL_CARD +'?page=${currentPage}&size=10&fullLoadAvailable=${fla}&fullLoadRequired=${flr}&partLoadAvailable=${pla}&partLoadRequired=${plr}&source=$fromCity&destination=$toCity';
-    }
-
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isFirstLoading= false;
-    isLoading = false;
-    if(req.statusCode == 200) {
-      response = json.decode(req.body);
-      var type = TruckLoadType.fromJson(response);
-      totalPages = type.totalPages;
-      truckLoadTypeList.addAll(type.content);
-      notifyListeners();
-    }
-  }*/
-
   List<GroupContent> groupListByUserId = [];
   List<String> groupListName = [];
   List<String> listOptionShow = ["All User", "Group", "Verified user"];
@@ -293,7 +219,6 @@ class DashboardProvider extends ChangeNotifier {
   getGroupMember(int groupId) async {
     listAddedMember.clear();
     isLoading = true;
-    //showLoader(context);
     ApiHelper apiHelper = ApiHelper();
     var response = await apiHelper.ApiGetData(
         ApiConstant.GROUP_MEMBER_LIST + groupId!.toString());
@@ -301,21 +226,17 @@ class DashboardProvider extends ChangeNotifier {
 
     listAddedMember.addAll(groupListModel.content!);
     isLoading = false;
-    //showLoader(context);
     notifyListeners();
   }
 
   getAllGroup(int? userId, context) async {
     print('the id is +${ApiConstant.USER_OBJECT.id}');
     isLoading = true;
-    //showLoader(context);
     ApiHelper apiHelper = ApiHelper();
     var response = await apiHelper.ApiGetData(
         ApiConstant.GROUP_BY_USER + userId!.toString() + "?page=0&size=1000");
-    // listGroup.addAll(groupListModel.content!);
     if (response.status == 200) {
       GroupListModel groupListModel = GroupListModel.fromJson(response);
-
       groupListByUserId.clear();
       groupListName.clear();
       groupListByUserId
@@ -325,7 +246,6 @@ class DashboardProvider extends ChangeNotifier {
       });
     }
     isLoading = false;
-    //showLoader(context);
     notifyListeners();
   }
 
@@ -344,9 +264,7 @@ class DashboardProvider extends ChangeNotifier {
         ItemBottomSheet itemBottomSheet = ItemBottomSheet();
         int a = await itemBottomSheet.showIteamHieght(
             context, groupListName, "Select Group");
-
         selecteGroup(a);
-
         selectedGroup = listOptionShow[index];
         notifyListeners();
         return;
@@ -532,8 +450,10 @@ class DashboardProvider extends ChangeNotifier {
               style: TextStyle(color: Colors.white),
             ),
             background: Colors.black);
+        await getFullLoadTruckList('From',"To");
         Navigator.of(context).pop();
-      } else {
+        Navigator.of(context).pop();
+          } else {
         showSimpleNotification(
             Text(
               commonResponse.message.toString(),

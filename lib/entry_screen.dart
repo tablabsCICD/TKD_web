@@ -65,7 +65,8 @@ class EntryState extends State<EntryScreen> {
           initUniLinks();
         }
       }else {
-        loginOrHome();
+       // loginOrHome();
+        initUniLinks();
       }
     });
   }
@@ -153,18 +154,18 @@ class EntryState extends State<EntryScreen> {
 
   SharedPostModel? truckLoad;
   loginOrDetails(String postId) async {
-    visitingFlag = (await authProvider.getVisitingFlag())!;
+   /* visitingFlag = (await authProvider.getVisitingFlag())!;
     if (visitingFlag == true) {
       int? empid = await authProvider.getEmpId();
       if (empid != null) {
         truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
-       // authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');
+       // authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');*/
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (builder) =>
                     SharedPostDetails(truckLoad!)));
-      }else{
+     /* }else{
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -177,11 +178,10 @@ class EntryState extends State<EntryScreen> {
           MaterialPageRoute(
               builder: (builder) =>
                   Login_Screen()));
-    }
+    }*/
   }
   @override
   Widget build(BuildContext context) {
-
     return Scaffold (
       backgroundColor: Colors.white,
     body: Center(
@@ -213,9 +213,9 @@ class EntryState extends State<EntryScreen> {
 
   Future<void> initUniLinks() async {
     // Platform messages may fail, so we use a try/catch PlatformException.
-    String postId='';
+    String postId='175509';
     try {
-      final initialLink = await getInitialLink();
+      final initialLink = "https://tkdost.com/tkd/?id=175509";//await getInitialLink();
       final initialUri = await getInitialUri();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.

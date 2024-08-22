@@ -115,7 +115,7 @@ class MyApp extends StatelessWidget {
             ),
 
           ),
-          home:HelpSupportScreen()
+          home:EntryScreen()
       // home: UpgradeAlert(
       //   upgrader: Upgrader(showIgnore: false,showLater: false),
       //     child: EntryScreen(),

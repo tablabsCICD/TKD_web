@@ -91,14 +91,14 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  image: DecorationImage(
+                 /* image: DecorationImage(
                     fit: BoxFit.fill,
                     image: NetworkImage('assets/images/truck.png'),
-                  ),
+                  ),*/
                 ),
               ),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 child: getCart(),
               ),
 

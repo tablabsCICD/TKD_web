@@ -341,7 +341,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                   CustomButton(
                       onTap: () async{
                         if (_formKey.currentState!.validate()) {
-                          var result = await model.savePost(context,
+                          bool result = await model.savePost(context,
                             mobile: authProvider.userDetailList[0].mobileNumber ,
                             destination: selectedToCity,
                             email: authProvider.userDetailList[0].emailId,
@@ -365,10 +365,8 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             vehicleSize: selectedVehicleSizeController.text,
                             selectedUserList: userIdList
                             //   userId: authProvider.userDetailList[0].id
-                          ).then((value) => {
-
-                          });
-                          if(result == true) {
+                          );
+                         /* if(result == true) {
 
                             showAnimatedDialog(
                                 context,
@@ -383,7 +381,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                                 ),
                                 dismissible: false,
                                 isFlip: false);
-
+                            Navigator.of(context).pop();
                           }else{
                             //Navigator.of(context).pop();
                             Navigator
@@ -391,7 +389,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                                 context, MaterialPageRoute(builder: (builder) => MenuPage(
                               userDetailList: authProvider.userDetailList,
                               selectedTab: "Package Change",)));
-                          }
+                          }*/
                         }},
                       buttonText: "Post Load")
                   ],
