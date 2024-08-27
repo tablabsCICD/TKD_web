@@ -1,36 +1,20 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:number_pagination/number_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
-import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/feedback_model.dart';
-import 'package:tkd_app/model/pool_purchase_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/more_provider.dart';
 import 'package:tkd_app/provider/pool_purchase_provider.dart';
-import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/pool_purchase/create_pool_purchase_post.dart';
-import 'package:tkd_app/view/screens/pool_purchase/multi_select_menu.dart';
-import 'package:tkd_app/view/screens/pool_purchase/pool_purchase_detail_screen.dart';
-import 'package:universal_html/html.dart' as html;
 
 class FeedbackScreen extends StatefulWidget {
   final moreProvider = locator<MoreProvider>();
@@ -277,13 +261,11 @@ class _FeedbackCardState extends State<FeedbackCard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: ColorResources.HOME_BG,
       body: Consumer<MoreProvider>(
         builder: (context, model, child) =>
             Container(
-              // padding: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(horizontal: 35):EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

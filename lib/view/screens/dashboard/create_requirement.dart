@@ -1,34 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
-import 'package:tkd_app/dialog/CustomStateListDialog.dart';
-import 'package:tkd_app/dialog/animated_custom_dialog.dart';
-import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
-import 'package:tkd_app/provider/buy_sell_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
-import 'package:tkd_app/provider/job_provider.dart';
-import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
-import 'package:tkd_app/view/base_widget/custom_dropdown_search_multi_selection.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
-import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/screens/dashboard/show_option_dropdown.dart';
-import 'package:tkd_app/view/screens/menu_page.dart';
-import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
-import 'package:tkd_app/widgets/bottomsheet.dart';
-import 'package:tkd_app/widgets/drop_down.dart';
 
 class CreateRequirement extends StatefulWidget {
 
@@ -338,10 +323,10 @@ class _CreateRequirementState extends State<CreateRequirement> {
                           ],
                         ),
                       ),
-                  CustomButton(
+                  model.isLoading?CircularProgressIndicator():CustomButton(
                       onTap: () async{
                         if (_formKey.currentState!.validate()) {
-                          bool result = await model.savePost(context,
+                          await model.savePost(context,
                             mobile: authProvider.userDetailList[0].mobileNumber ,
                             destination: selectedToCity,
                             email: authProvider.userDetailList[0].emailId,
@@ -366,30 +351,7 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             selectedUserList: userIdList
                             //   userId: authProvider.userDetailList[0].id
                           );
-                         /* if(result == true) {
 
-                            showAnimatedDialog(
-                                context,
-                                MyDialog(
-                                  icon: Icons.check,
-                                  title:
-                                  'New Post',
-                                  description:
-                                  'Your post submitted successfully',
-                                  isFailed: false,
-                                  isFromPost: true,
-                                ),
-                                dismissible: false,
-                                isFlip: false);
-                            Navigator.of(context).pop();
-                          }else{
-                            //Navigator.of(context).pop();
-                            Navigator
-                                .pushReplacement(
-                                context, MaterialPageRoute(builder: (builder) => MenuPage(
-                              userDetailList: authProvider.userDetailList,
-                              selectedTab: "Package Change",)));
-                          }*/
                         }},
                       buttonText: "Post Load")
                   ],

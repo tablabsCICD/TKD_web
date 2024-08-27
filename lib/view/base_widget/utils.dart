@@ -176,7 +176,7 @@ class Utils {
     } else {
       authProvider.userDetailList[0].transporterOrAgent == 3
           ? getAdminSupportDailog(context)
-          : await launch('$link');
+          : await launchUrl(Uri.parse(link.toString()));
     }
   }
 

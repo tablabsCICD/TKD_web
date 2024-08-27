@@ -17,24 +17,29 @@ import 'package:provider/provider.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/organization_model.dart';
+import 'package:tkd_app/model/shared_post_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/open_url.dart';
+import 'package:tkd_app/view/screens/bids/deeplinkscreen.dart';
 import 'package:tkd_app/view/screens/company/company_menu_page.dart';
+import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'login_screen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 
 
 class OTP_Screen extends StatefulWidget {
   String mobileNumber;
-  bool companyLogin;
+  String postId;
+  bool companyLogin,fromLink;
   final authProvider = locator<AuthProvider>();
 
-  OTP_Screen(this.mobileNumber,{ Key? key,required this.companyLogin}) : super(key: key) {
+  OTP_Screen(this.mobileNumber,{ Key? key,required this.companyLogin,required this.fromLink,this.postId="0"}) : super(key: key) {
     authProvider.startTimer();
   }
 
@@ -50,6 +55,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
   final orgProvider = locator<OrgProvider>();
   final authProvider = locator<AuthProvider>();
   String? _deviceId;
+  final dashboardProvider = locator<DashboardProvider>();
 
   Future<void> initPlatformState() async {
     String? deviceId;
@@ -395,6 +401,8 @@ class OTP_ScreenState extends State<OTP_Screen> {
       ),
     );
   }
+
+  SharedPostModel? truckLoad;
   getCard(AuthProvider model) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -596,7 +604,14 @@ class OTP_ScreenState extends State<OTP_Screen> {
                             print(model.userDetailList[0].userName);
                             print("OTP IS  :::::: "+model.userDetailList[0].otp.toString());
                             model.setUserName(model.userDetailList[0].userName!);
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: model.userDetailList,selectedTab: "Board",)));
+                            widget.fromLink==false?Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: model.userDetailList,selectedTab: "Board",))):{
+                              print("FromLink::::${widget.fromLink} && postId:::::${widget.postId}"),
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (builder) =>
+                                          DeepLink(id: widget.postId)))
+                            };
                           }else {
                            showSimpleNotification(
                                Text(result,style: TextStyle(color: Colors.white),),

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/group_list_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import '../screens/group/editGroupScreen.dart';
 
@@ -31,6 +33,26 @@ class AppBarCommon {
         ),
         onPressed: () {
           Navigator.pop(context);
+        },
+      ),
+    );
+  }
+  final authProvider = locator<AuthProvider>();
+  AppBar appBarWithoutBackButton() {
+    return AppBar(
+      title: Text(
+        title,
+        style: Style.appheading,
+      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios_new,
+          color: Colors.black,
+        ),
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: authProvider.userDetailList,selectedTab:"Board")));
         },
       ),
     );

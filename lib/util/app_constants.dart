@@ -93,8 +93,18 @@ class ApiConstant {
   static String GROUP_MEMBER_LIST=BASE_URL+'groupMembers/byGroupId/';
   static String GROUP_MEMBER_DELETE=BASE_URL+'groupMembers?id=';
   static User USER_OBJECT=User();
+ static String GET_BID_STATE(id, amount) =>
+     BASE_URL + "GetPositionByAmountAndPostId?postId=$id&amount=$amount";
+ static String PLACED_BID = BASE_URL + "biding";
+  static String MY_BIDS_PLACED(userName, page) =>
+     BASE_URL +
+         "GetPostsAndBidsForUserWithFilter?userName=$userName&privatePost=0&page=$page";
 
-  static String BUY_SELL_SINGLE_CARD = BASE_URL + "buySell/new/";
+ static String AVG_BID(bidId) => BASE_URL + "GetAvgOfBid?id=${bidId}";
+
+
+
+ static String BUY_SELL_SINGLE_CARD = BASE_URL + "buySell/new/";
 
 
   static String USER_FIND_BY_MOBILE=BASE_URL+"DeleteUser/getByMobileNumber?mobileNumber=";

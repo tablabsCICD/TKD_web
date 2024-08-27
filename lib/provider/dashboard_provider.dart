@@ -400,6 +400,8 @@ class DashboardProvider extends ChangeNotifier {
       String? typeOfPayment,
       int? userId,
       List<int>? selectedUserList}) async {
+    isLoading = true;
+    notifyListeners();
     String myUrl = selectedSampleData == "Show to All"
         ? ApiConstant.BASE_URL + "fullTruckLoad"
         : ApiConstant.POST_FULL_LOAD;
@@ -437,6 +439,7 @@ class DashboardProvider extends ChangeNotifier {
     print("request : ${data}");
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
+    isLoading=false;
     print("response : ${response.statusCode}" +
         " --- " +
         response.body.toString());
@@ -448,6 +451,7 @@ class DashboardProvider extends ChangeNotifier {
         TruckLoad dataObj = TruckLoad.fromJson(jsonData);
         print(dataObj);
         truckLoadTypeList.add(dataObj);
+        notifyListeners();
         showSimpleNotification(
             Text(
               "Post submitted successfully!",

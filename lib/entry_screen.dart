@@ -11,6 +11,7 @@ import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
+import 'package:tkd_app/view/screens/bids/deeplinkscreen.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -18,6 +19,7 @@ import 'package:uni_links/uni_links.dart';
 import 'locator.dart';
 import 'model/auth_api.dart';
 import 'model/organization_model.dart';
+import 'dart:html' as html;
 import 'network/api_call.dart';
 import 'view/screens/company/company_menu_page.dart';
 
@@ -43,17 +45,18 @@ class EntryState extends State<EntryScreen> {
     super.initState();
     // TODO: implement initState
 
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS){
-        if(isDebug==true){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kIsWeb) {
+        // Directly call the initUniLinks for web
+        initUniLinks();
+      } else if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
+        if (isDebug) {
           versionControllApi();
-        }else {
-          //loginOrHome();
+        } else {
           initUniLinks();
         }
-      }else {
-       // loginOrHome();
-        initUniLinks();
+      } else {
+        loginOrHome();
       }
     });
   }
@@ -117,29 +120,16 @@ class EntryState extends State<EntryScreen> {
     visitingFlag = (await authProvider.getVisitingFlag())!;
     if (visitingFlag == true) {
       int? empid = await authProvider.getEmpId();
+      print("EmpId:::"+empid.toString());
       if (empid != null) {
-        truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
-        authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) =>
-                    SharedPostDetails(truckLoad!)));
+        userDetailList = await authProvider.getUserDetails(empid);
+        ApiConstant.USER_OBJECT=authProvider.userDetailList[0];
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder)=>DeepLink(id:postId)));
       }else{
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) =>
-                    Login_Screen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder)=>Login_Screen(fromLink: true,postId:postId)));
       }
     }else {
-      truckLoad = await dashboardProvider.getRequirementDetails(int.parse(postId));
-      authProvider.getUserUsingUserName(truckLoad?.loggedUserName,'','','');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (builder) =>
-                  SharedPostDetails(truckLoad!)));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (builder)=>Login_Screen(fromLink: true,postId:postId)));
     }
   }
   @override
@@ -175,29 +165,49 @@ class EntryState extends State<EntryScreen> {
 
   Future<void> initUniLinks() async {
     String postId='0';
-    try {
-      final initialLink = await getInitialLink();//"https://tkdost.com/tkd/?id=175509";//await getInitialLink();
-      final initialUri = await getInitialUri();
-      debugPrint('LINK::::$initialLink');
-      debugPrint('$initialUri');
-      if(initialLink==null){
-        loginOrHome();
-      }else
-      {
-        debugPrint("App open using Shared link............");
-        var uri = Uri.parse(initialLink);
-        uri.queryParameters.forEach((k, v) {
-          print('key: $k - value: $v');
-          if(k=='id'){
-            postId = v;
-          }
-        });
-        await loginOrDetails(postId);
-      }
-    } on PlatformException {
 
+    if (kIsWeb) {
+      // Handle deep linking for web
+      final url = html.window.location.href;//"https://tkdost.com/tkd/?id=175509";
+      debugPrint('Current URL: $url');
+
+      Uri uri = Uri.parse(url);
+      if (uri.queryParameters.containsKey('id')) {
+        postId = uri.queryParameters['id']!;
+        debugPrint("Post ID from URL: $postId");
+
+        // Handle the deep link logic based on postId
+        await loginOrDetails(postId);
+      } else {
+        loginOrHome();
+      }
+    } else {
+      // Handle deep linking for mobile platforms
+      try {
+        final initialLink = await getInitialLink();//"https://tkdost.com/tkd/?id=175509";
+        final initialUri = await getInitialUri();
+        debugPrint('LINK::::$initialLink');
+        debugPrint('$initialUri');
+        if(initialLink == null){
+          loginOrHome();
+        }else
+        {
+          debugPrint("App open using Shared link............");
+          var uri = Uri.parse(initialLink);
+          uri.queryParameters.forEach((k, v) {
+            print('key: $k - value: $v');
+            if(k=='id'){
+              postId = v;
+            }
+          });
+          await loginOrDetails(postId);
+        }
+      } on PlatformException {
+
+      }
     }
   }
+
 }
 
 

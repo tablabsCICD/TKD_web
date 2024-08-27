@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../dialog/animated_custom_dialog.dart';
 import '../../../dialog/my_dialog.dart';
@@ -10,12 +9,10 @@ import '../../../locator.dart';
 import '../../../model/auth_api.dart';
 import '../../../network/api_call.dart';
 import '../../../provider/auth_provider.dart';
-import '../../../provider/dashboard_provider.dart';
 import '../../../util/app_constants.dart';
 import '../../../util/style.dart';
 import '../../base_widget/custom_button.dart';
 import '../../base_widget/custom_textfeild.dart';
-import 'package:http/http.dart' as http;
 
 class NewDiscussion extends StatefulWidget {
 
@@ -127,7 +124,7 @@ class _NewDiscussionState extends State<NewDiscussion> {
     final response = await http.post(uri,
         headers: {"Content-Type": "application/json"}, body: body);
     print("response : ${response.statusCode}" + " --- " + response.body.toString());
-    var jsonData = jsonDecode(response.body);
+    jsonDecode(response.body);
 
   }
 

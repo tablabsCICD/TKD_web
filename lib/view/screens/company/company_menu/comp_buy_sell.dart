@@ -1,9 +1,6 @@
 
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
@@ -23,11 +20,6 @@ import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/buy_sell/buy_sell_details_screen.dart';
-import 'package:tkd_app/view/screens/buy_sell/create_new_post.dart';
-import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
-
-import 'package:universal_html/html.dart' as html;
 
 class CompBuySell extends StatefulWidget {
   final buySellProvider = locator<OrgProvider>();
@@ -45,7 +37,6 @@ class CompBuySell extends StatefulWidget {
 class _CompBuySellState extends State<CompBuySell> {
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: ColorResources.HOME_BG,
         body: Container(

@@ -1,44 +1,20 @@
-import 'dart:convert';
-import 'dart:ui';
-import 'package:number_pagination/number_pagination.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/feet_model.dart';
-import 'package:tkd_app/multi_select.dart';
-import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
-import 'package:tkd_app/provider/bid_provider.dart';
-import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/fleet_provider.dart';
-import 'package:tkd_app/share_data.dart';
-import 'package:tkd_app/show_bid.dart';
-import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
-import 'package:tkd_app/view/base_widget/custom_textview.dart';
-import 'package:tkd_app/view/base_widget/getLoader.dart';
-import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
-import 'package:tkd_app/view/screens/dashboard/requirementDeatils.dart';
-import 'package:tkd_app/view/screens/fleet/create_fleet.dart';
-import 'package:tkd_app/view/screens/fleet/fleet_details.dart';
-import 'package:tkd_app/view/screens/menu_page.dart';
-import 'package:universal_html/html.dart' as html;
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:tkd_app/util/date_converter.dart';
-import 'package:tkd_app/util/star_display.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
-import 'package:tkd_app/view/screens/dashboard/allRequirement.dart';
+import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/custom_textview.dart';
+import 'package:tkd_app/view/base_widget/getLoader.dart';
+import 'package:tkd_app/view/localization/language_constrants.dart';
 
 class FleetScreen extends StatefulWidget {
   final fleetProvider = locator<FleetProvider>();
@@ -54,7 +30,6 @@ class FleetScreen extends StatefulWidget {
 class _FleetScreenState extends State<FleetScreen> {
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Container(
         color: ColorResources.HOME_BG,
@@ -90,29 +65,12 @@ class _FleetWebScreenState extends State<FleetWebScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Consumer<FleetProvider>(
       builder: (context, model, child) => Container(
         padding: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(horizontal: 35):EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            /*Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  width: screenSize.width / 6,
-                  child: CustomButton(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (builder) => CreateFleet()));
-                      },
-                      buttonText: getTranslated('new_fleets', context)!),
-                ),
-              ],
-            ),*/
+
             model.fleetList.isEmpty && model.isLoading == false
 
                 ? Expanded(

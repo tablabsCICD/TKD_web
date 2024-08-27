@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
-import 'package:tkd_app/dialog/animated_custom_dialog.dart';
-import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
-import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/edit_post_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
@@ -18,7 +13,6 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
-import 'package:tkd_app/view/base_widget/custom_dropdown_search_multi_selection.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
@@ -285,9 +279,8 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                         CustomButton(
                             onTap: () async {
                               if (_formKey.currentState!.validate()) {
-                                var result = await model.editPost(
+                                 await model.editPost(
                                     context, widget.postBidData.id
-                                    //   userId: authProvider.userDetailList[0].id
                                     );
                               }
                             },

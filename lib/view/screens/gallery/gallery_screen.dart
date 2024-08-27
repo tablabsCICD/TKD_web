@@ -1,31 +1,19 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:number_pagination/number_pagination.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/gallary_model.dart';
-import 'package:tkd_app/model/job_model.dart';
 import 'package:tkd_app/provider/gallery_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
-import 'package:http/http.dart' as http;
-import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/date_converter.dart';
-import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getImage.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/gallery/create_gallary_post.dart';
 import 'package:tkd_app/view/screens/gallery/view_image-dialog.dart';
 
 class GalleryScreen extends StatefulWidget {
@@ -86,29 +74,12 @@ class _GallaryCardState extends State<GallaryCard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Consumer<GalleryProvider>(
       builder: (context, model, child) => Container(
         margin: ResponsiveWidget.isDesktop(context)?EdgeInsets.symmetric(horizontal: 35,vertical: 10):EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            /*Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  width: screenSize.width / 6,
-                  child: CustomButton(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (builder) => CreateGalleryPost()));
-                      },
-                      buttonText: getTranslated('new_broadcast', context)),
-                ),
-              ],
-            ),*/
+
             model.imageList.isEmpty && model.isLoading == false
 
                 ? Expanded(

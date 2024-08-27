@@ -1,27 +1,19 @@
-import 'dart:convert';
-
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../model/discussion_model.dart';
 import '../../../network/api_call.dart';
-import '../../../provider/buy_sell_provider.dart';
 import '../../../util/ResponsiveWidget.dart';
 import '../../../util/app_constants.dart';
 import '../../../util/color-resource.dart';
-import '../../../util/date_converter.dart';
-import '../../../util/star_display.dart';
 import '../../../util/style.dart';
 import '../../base_widget/appbar.dart';
 import '../../base_widget/custom_textview.dart';
 import '../../base_widget/getImage.dart';
 import '../../base_widget/getLoader.dart';
 import '../../localization/language_constrants.dart';
-import '../buy_sell/buy_sell_details_screen.dart';
 import 'discussion_details.dart';
 import 'discussion_new.dart';
 
@@ -55,7 +47,6 @@ class _DiscussionDashboardState extends State<DiscussionDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: ColorResources.HOME_BG,
       appBar: AppBarCommon(context, title: "Discussions").appBarWithNewButton(() async {
@@ -216,7 +207,7 @@ class _DiscussionDashboardState extends State<DiscussionDashboard> {
                 ),
                 InkWell(
                   onTap: () {
-                    launch("tel:${discussionList[index].mobileNumber}");
+                    launchUrl(Uri.parse("tel:${discussionList[index].mobileNumber}"));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

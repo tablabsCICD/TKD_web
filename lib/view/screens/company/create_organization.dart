@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
@@ -27,8 +23,6 @@ import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
-import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
-import 'package:tkd_app/view/screens/my_routes/get_state_list.dart';
 
 class CreateOrganization extends StatefulWidget {
   @override
@@ -267,6 +261,7 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                                                   print("In pickfile response");
                                                   print(value);
                                                 });
+                                                print(doc);
                                               },
                                             ),
                                             CustomTextField(
@@ -547,6 +542,7 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                           print("In pickfile response");
                           print(value);
                         });
+                        print(doc);
                       },
                     ),
                     CustomTextField(

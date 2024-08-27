@@ -699,6 +699,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
             builder: (builder) => OTP_Screen(
                   widget.mobileNumber,
                   companyLogin: false,
+              fromLink: false,
                 )));
   }
 

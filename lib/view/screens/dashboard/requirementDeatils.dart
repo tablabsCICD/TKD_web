@@ -1,24 +1,18 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
-import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/open_whatsapp.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
-import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
-import 'package:tkd_app/util/date_converter.dart';
-import 'package:tkd_app/util/star_display.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
@@ -378,8 +372,8 @@ class _RequirementDetailsState extends State<RequirementDetails> {
                     SizedBox(width: 10,),
                     InkWell(
                       onTap: () {
-                        launch("tel:${ widget
-                            .truckLoad.mobileNumber}"
+                        launchUrl(Uri.parse("tel:${ widget
+                            .truckLoad.mobileNumber}")
 
                         );
                       },

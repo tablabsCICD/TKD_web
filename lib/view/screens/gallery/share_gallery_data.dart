@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:tkd_app/dialog/share_dialog_box.dart';
 import 'package:tkd_app/model/gallary_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -21,7 +17,7 @@ Future gallery_share_data(Gallery gallery, SocialMedia socialMedia) async {
   switch(socialMedia){
     case SocialMedia.facebook :
       if(await canLaunch('https://www.facebook.com/sharer.php?u=$urlShare&t=$text')){
-        await launch('https://www.facebook.com/sharer.php?u=$urlShare');
+        await launchUrl(Uri.parse('https://www.facebook.com/sharer.php?u=$urlShare'));
       }
       break;
     case SocialMedia.whatsapp :

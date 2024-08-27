@@ -1,22 +1,9 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/dialog/share_dialog_box.dart';
-import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/gallary_model.dart';
-import 'package:tkd_app/model/transport_serach_model.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:tkd_app/provider/route_provider.dart';
-import 'package:tkd_app/share_data.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
-import 'package:tkd_app/util/color-resource.dart';
-import 'package:tkd_app/util/style.dart';
-import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/screens/gallery/share_gallery_data.dart';
 
 //enum SocialMedia {whatsapp,facebook,email,twitter,linkedin,pintrest,google,evernote}
@@ -113,7 +100,7 @@ class _GalleryShareDialogBoxState extends State<GalleryShareDialogBox> {
                         iconName: "GooglePlus"
                     ),
                     buildSocialButton(
-                        icon: FontAwesomeIcons.facebookSquare,
+                        icon: FontAwesomeIcons.facebook,
                         color:Colors.blue,
                         onClicked: ()=>gallery_share_data(widget.galleryList,SocialMedia.facebook),
                         iconName : "Facebook"

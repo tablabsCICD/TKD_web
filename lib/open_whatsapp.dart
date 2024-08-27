@@ -7,6 +7,5 @@ Future openwhatsapp(BuildContext context,String number,String text,) async{
     phoneNumber: "+91 ${number}",
     text: text,
   );
-
-  await launch('$link');
+  await launchUrl(Uri.parse(link.toString()));
 }

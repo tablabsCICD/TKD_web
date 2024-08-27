@@ -55,9 +55,7 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
   List<int> selectedUserIdList = [];
 
   getAllGroup(int? userId,context)async{
-    ApiHelper apiHelper=ApiHelper();
-   // var response=await apiHelper.ApiGetData(ApiConstant.GROUP_BY_USER+userId!.toString());
-    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(ApiConstant.GROUP_BY_USER+userId!.toString()+"?page=0&size=1000");
+  ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(ApiConstant.GROUP_BY_USER+userId!.toString()+"?page=0&size=1000");
     if (apiResponse.statusCode == 200) {
       GroupListModel groupListModel=GroupListModel.fromJson(jsonDecode(apiResponse.response));
       groupList.clear();
