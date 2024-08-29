@@ -61,7 +61,12 @@ class _DeppLink extends State<DeepLink>{
 
         if(load.contactNumber==authProvider.userDetailList[0].mobileNumber){
           print('the response in navi');
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ReceivedBidsScreen()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (builder) =>
+                      MenuPage(userDetailList: authProvider.userDetailList,selectedTab:"Received Quotes")));
+        //  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ReceivedBidsScreen()));
         }else{
           print('the response in deep');
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>SharedPostDetails(load)));

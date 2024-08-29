@@ -83,7 +83,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    container = widget.selectedTab=="Board"?DashBoardScreen():SelectPlanScreen();
+    container = widget.selectedTab=="Board"?DashBoardScreen():widget.selectedTab=="Received Quotes"?ReceivedBidsScreen():SelectPlanScreen();
     routeProvider.addDataFromDummyListToRouteList();
     ApiConstant.languages
         .forEach((language) => _valueList.add(language.languageName!));
