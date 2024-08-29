@@ -347,6 +347,7 @@ class _ShowAllBids extends State<ShowAllBids>{
 
   void callApi()async {
     ApiResponse apiResponse =await ApiHelper().apiWithoutDecodeGet("${ApiConstant.BASE_URL}getPostAndBidWithId?postId=${widget.id}");
+    print('the data is ${apiResponse.response}');
     if(apiResponse.status==200){
       MyPostBids bidPlaced=MyPostBids.fromJson(apiResponse.response);
       postBidData=bidPlaced.content!;

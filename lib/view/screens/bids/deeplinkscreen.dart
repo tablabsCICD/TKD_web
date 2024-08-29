@@ -2,15 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/deep_link_load.dart';
-import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
-import 'package:tkd_app/view/screens/bids/my_bids_screen.dart';
-import 'package:tkd_app/view/screens/bids/place_bid_deeplink.dart';
+import 'package:tkd_app/view/screens/bids/received_bids.dart';
 import 'package:tkd_app/view/screens/bids/show_bidds.dart';
-import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/toast.dart';
@@ -62,9 +58,10 @@ class _DeppLink extends State<DeepLink>{
         print('the response ${response}');
         TruckDeep truckLoadType =TruckDeep.fromJson(response);
         TruckLoadDeepLink load=truckLoadType.content!.first;
+
         if(load.contactNumber==authProvider.userDetailList[0].mobileNumber){
           print('the response in navi');
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>MyBidsScreen()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ReceivedBidsScreen()));
         }else{
           print('the response in deep');
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>SharedPostDetails(load)));

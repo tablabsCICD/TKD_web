@@ -12,6 +12,7 @@ import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/view/screens/auth/login_screen.dart';
 import 'package:tkd_app/view/screens/bids/deeplinkscreen.dart';
+import 'package:tkd_app/view/screens/bids/show_bidds.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:url_launcher/url_launcher_string.dart';

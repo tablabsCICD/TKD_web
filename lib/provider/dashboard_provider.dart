@@ -461,6 +461,7 @@ class DashboardProvider extends ChangeNotifier {
         await getFullLoadTruckList('From', "To");
         Navigator.of(context).pop();
         Navigator.of(context).pop();
+        return true;
       } else {
         showSimpleNotification(
             Text(
