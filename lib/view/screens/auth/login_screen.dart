@@ -56,9 +56,14 @@ class _Login_ScreenState extends State<Login_Screen> {
 
   var _current = 0;
   List<ImageCarousel> carouselImages = [
-    ImageCarousel('assets/svg/intro_one.svg','assets/svg/intro_one.svg',"Grow your business","Hello! We are here to elevate your logistics experience. Let us be your logistics assistance and your business needs will be fulfilled seamlessly."),
-    ImageCarousel('assets/svg/intro_two.svg','assets/svg/intro_two.svg',"Grow your own business","Your needs are our skills. Let us combine the two and rise up together."),
-    ImageCarousel('assets/svg/intro_three.svg','assets/svg/intro_three.svg',"Grow your tkd business","With our wide network, we shall help you reach wider."),
+    ImageCarousel('assets/svg/intro_one.svg','assets/svg/intro_one.svg',"India's Transport Marketplace",
+        "Connect with verified shippers and carriers across India for reliable and efficient logistics."
+            +"\nFull Truck Load Shipping Across India"+
+            "\nDedicated Transport"),
+    ImageCarousel('assets/svg/intro_two.svg','assets/svg/intro_two.svg',
+        "Find Instant Truck Load Online",
+        "Find and secure available loads quickly, optimizing trips and reducing empty returns.\nMaximize Savings \nExpert Handling."),
+    ImageCarousel('assets/svg/intro_three.svg','assets/svg/intro_three.svg',"Find Load for you Trucks Online","Keep your trucks moving and profitable with real-time load availability tailored to your routes and preferences.\nFast and Reliable."),
   ];
 
   @override
@@ -489,7 +494,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                         width: MediaQuery.of(context).size.width,
                         child: index < 3?Stack(
                             children: [
-                              Align(
+                             /* Align(
                                 alignment: Alignment.center,
                                 child: Container(
                                     height: 500,
@@ -503,7 +508,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         width: 222,
                                       ),
                                     )),
-                              ),
+                              ),*/
                               Align(
                                 alignment: Alignment.center,
                                 child: Column(
@@ -512,7 +517,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   children: [
                                     SvgPicture.asset(
                                       carouselImages[index].image1,
-                                      height: 234,
+                                      height: 224,
                                       width: 120,
                                     ),
                                     Text(carouselImages[index].title,
