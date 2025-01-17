@@ -281,7 +281,7 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
 
   iteamBid(Bidings bidings, bool isLast, int index) {
     return Container(
-      width: 311,
+      width: 320,
       //  height: 69.h,
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -304,11 +304,10 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   BaseWidget().getImage(
                       bidings.profileImage != null ? bidings.profileImage! : "",
-                      height: 28, width: 28)
-                  ,
+                      height: 28,
+                      width: 28),
                   SizedBox(width: 10),
                   Expanded(
                     child: Container(
@@ -378,10 +377,25 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                                     fontFamily: AppConstant.FONTFAMILY,
                                     fontWeight: FontWeight.w600,
                                     height: 0,
-
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: bidings.bidings!.description==''?false:true,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 2, top: 8),
+                              child: Text(
+                                "Description : ${bidings.bidings!.description}",
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 12,
+                                  fontFamily: GoogleFonts.poppins().fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -397,7 +411,8 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
             width: 38,
             height: 38,
             decoration: ShapeDecoration(
-              color: Colors.white.withOpacity(0.07999999821186066),
+              color: const Color.fromARGB(255, 174, 174, 174)
+                  .withOpacity(0.07999999821186066),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100),
               ),
@@ -412,29 +427,30 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
                     // widget.provider.deleteBid(index, bidings);
                     Utils().callFunction(
                         context, "${bidings.bidings!.mobileNumber}");
-                  }
-                  , child: Container(
-                  width: 22,
-                  height: 22,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 22,
-                        height: 22,
-                        child: Stack(children: [
-                          SvgPicture.asset(
-                            Images.call_white, color: ThemeColor.theme_blue,
-                            height: 25,
-                            width: 25,)
-
-                        ]),
-                      ),
-                    ],
+                  },
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 22,
+                          height: 22,
+                          child: Stack(children: [
+                            SvgPicture.asset(
+                              Images.call_white,
+                              color: ThemeColor.theme_blue,
+                              height: 25,
+                              width: 25,
+                            )
+                          ]),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ],
             ),
@@ -443,6 +459,4 @@ class _WebScreenForBidState extends State<WebScreenForBid> {
       ),
     );
   }
-
-
 }

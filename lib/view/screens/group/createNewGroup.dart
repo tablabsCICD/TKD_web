@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/components/progress_bar/gf_progress_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
@@ -11,11 +10,8 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/screens/group/groupDeatilsScreen.dart';
-
 import '../../../locator.dart';
 import '../../../util/ResponsiveWidget.dart';
-import '../../base_widget/custom_textview.dart';
-import '../dashboard/requirementDeatils.dart';
 
 class CreateNewGroup extends StatefulWidget {
 
@@ -48,7 +44,6 @@ class CreateNewGroupState extends State<CreateNewGroup> {
     return Scaffold(
       backgroundColor: ThemeColor.baground,
       appBar: AppBarCommon(context, title: "Add Participants",appBarWord: "Next").appBarWithNewButton((){
-
         if(groupListProvider.selectedUsers.length==0){
           final snackBar = SnackBar(
             content: const Text('Please Select at least one member to create group'),
@@ -59,12 +54,8 @@ class CreateNewGroupState extends State<CreateNewGroup> {
             Navigator.pop(context,2);
           }else{
             Navigator.push(context, MaterialPageRoute(builder: (context) =>GroupDetailsScreen()));
-
           }
-
-
         }
-
       }),
       body: Consumer<GroupListProvider>( builder: (context, model, child) =>
         groupListProvider.isLoading==true?Center(child: CircularProgressIndicator(),):
@@ -87,12 +78,9 @@ class CreateNewGroupState extends State<CreateNewGroup> {
            listViewUser(),
          ],
        ),
-
       ),
      // backgroundColor: ColorResources.HOME_BG,
       bottomNavigationBar: nextButton(),
-
-
     );
   }
 
@@ -103,7 +91,6 @@ class CreateNewGroupState extends State<CreateNewGroup> {
           physics: ScrollPhysics(),
           staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
           shrinkWrap: true,
-
           crossAxisCount: ResponsiveWidget.isDesktop(context)
               ? 3
               : ResponsiveWidget.isMobile(context)
@@ -117,6 +104,8 @@ class CreateNewGroupState extends State<CreateNewGroup> {
           }),
     );
   }
+
+
   groupTile(int index) {
     String img = groupListProvider.filterByName[index].profilePicture!.replaceAll('"', '');
     String displayName=groupListProvider.filterByName[index].firstName!+" "+groupListProvider.filterByName[index].lastName!;
@@ -125,17 +114,12 @@ class CreateNewGroupState extends State<CreateNewGroup> {
       displayName=displayName+"...";
     }
     return Container(
-
       child: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: <Widget>[
-              /* groupListProvider.filterByName[index].profilePicture!.allMatches("null")==0 ? Image.network(groupListProvider.filterByName[index].profilePicture!,height: 64,width: 64,) : Icon(
-                  Icons.account_circle,
-                  size: 64.0,
-                ),*/
                 BaseWidget().getImageclip(img, height: 40 , width: 40 ),
                 Expanded(
                   child: Padding(
@@ -144,7 +128,6 @@ class CreateNewGroupState extends State<CreateNewGroup> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Row(
-
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
@@ -158,7 +141,6 @@ class CreateNewGroupState extends State<CreateNewGroup> {
                             widget.isFromEdit?callEditCheckBox(index):callCreateCheckBox(index),
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -248,18 +230,13 @@ class CreateNewGroupState extends State<CreateNewGroup> {
           horizantalControllet.animateTo(horizantalControllet.position.maxScrollExtent,
               duration:Duration(milliseconds: 400), curve: Curves.slowMiddle);
         }
-
-
-
       }),
     );
   }
+
   callCreateCheckBox(int index) {
     return Checkbox(value:  groupListProvider.filterByName[index].isSelected, onChanged: (value){
-
       groupListProvider.selectedUser(value, groupListProvider.filterByName[index]);
-
-      //horizantalControllet.jumpTo(horizantalControllet.position.maxScrollExtent+200);
       if(value==true){
         horizantalControllet.animateTo(horizantalControllet.position.maxScrollExtent+200,
             duration:Duration(milliseconds: 400), curve: Curves.fastOutSlowIn);
@@ -267,9 +244,6 @@ class CreateNewGroupState extends State<CreateNewGroup> {
         horizantalControllet.animateTo(horizantalControllet.position.maxScrollExtent,
             duration:Duration(milliseconds: 400), curve: Curves.slowMiddle);
       }
-
-
-
     });
   }
 }

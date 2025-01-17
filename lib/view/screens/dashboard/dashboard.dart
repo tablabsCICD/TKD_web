@@ -923,7 +923,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
         context: context,
         builder: (_) => new CupertinoAlertDialog(
               title: CustomText(
-                'Are you sure want to deleted your post?',
+                'Are you sure want to complete your post?',
                 style: Style.title,
               ),
               actions: <Widget>[
@@ -936,8 +936,8 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                               context,
                               MyDialog(
                                 icon: Icons.check,
-                                title: 'Post Delete',
-                                description: 'Your post deleted successfully',
+                                title: 'Post Completed',
+                                description: 'Your post completed successfully',
                                 isFailed: false,
                               ),
                               dismissible: false,

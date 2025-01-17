@@ -31,7 +31,7 @@ class EditPostLoadProvider extends ChangeNotifier {
   TextEditingController specialInstructionController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController emailIdController = TextEditingController();
-
+  TextEditingController expireDateController = TextEditingController();
   String selectedRequriment = "Select One";
   String selectedPostType = "Select One";
   String selectedCargo = "Select One";
@@ -184,6 +184,10 @@ class EditPostLoadProvider extends ChangeNotifier {
     return addedUserListIdInPost;
   }
 
+  setDate(String date) async {
+    expireDateController.text = date;
+    notifyListeners();
+  }
 
   getUserById(int userId) async {
     ApiHelper apiHelper = ApiHelper();
@@ -246,6 +250,7 @@ class EditPostLoadProvider extends ChangeNotifier {
     destinationCity = newTruckLoad.destination!;
     dnd = newTruckLoad.dnd == 0 ? false : true;
     hideMyID = newTruckLoad.privatePost == 0 ? false : true;
+    expireDateController.text = newTruckLoad.expireDate!;
     if(newTruckLoad.userList==null){
     }else{
       var userList = getUserListFromString(newTruckLoad.userList!);
@@ -281,6 +286,7 @@ class EditPostLoadProvider extends ChangeNotifier {
     postLoad.image = images;
     postLoad.listOfUserIds = addedMemberIdList;
     postLoad.id = id;
+    postLoad.expireDate = expireDateController.text;
     final response = await ApiHelper()
         .ApiPutDataMapRequest(ApiConstant.BASE_URL + "UpdatePost", postLoad.toJson());
     print('the request is ${json.encode(postLoad.toJson())}');

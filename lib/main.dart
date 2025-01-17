@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
     });
 
     return MaterialApp(
-        title: 'TKDost',
+        title: 'TKD Connect',
         debugShowCheckedModeBanner: false,
         locale: Provider.of<LocalizationProvider>(context).locale,
         localizationsDelegates: {

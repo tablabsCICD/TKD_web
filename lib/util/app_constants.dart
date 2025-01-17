@@ -5,7 +5,7 @@ import '../model/auth_api.dart';
 
 class ApiConstant {
 
-  static final String APP_VERSION="2.0.12";//42
+  static final String APP_VERSION="2.0.14";//43
  static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
   //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Test Url
   // static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
@@ -54,7 +54,7 @@ class ApiConstant {
   static String BID_TO_POST = BASE_URL + "biding";
   static String BID_FOR_USER = BASE_URL + "GetAllBidsForUser";
   static String POST_FIND_BY_ID = BASE_URL + "GetPostByIdAndType";
-  static String BID_OWN_POST = BASE_URL + "GetPostsAndBidsForUser";
+  static String BID_OWN_POST = BASE_URL + "GetPostsAndBidsForUserWithFilter";
   static String CONTACT_LIST_BASED_ON_ROUTE = BASE_URL + "getListOfUsersBasedOnSourceAndDesination";
   static String SEND_NOTIFICATION = BASE_URL + "sendNotifications";
   static String POST_TRANSCATION = BASE_URL + "transactions";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/dialog/CustomCityListDialog.dart';
 import 'package:tkd_app/locator.dart';
@@ -14,6 +15,7 @@ import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/screens/dashboard/show_option_dropdown.dart';
+import 'package:tkd_app/widgets/datepicker.dart';
 
 class CreateRequirement extends StatefulWidget {
 
@@ -42,6 +44,8 @@ class _CreateRequirementState extends State<CreateRequirement> {
   TextEditingController selectedVehicleSizeController = TextEditingController();
   TextEditingController loadWeightController = TextEditingController();
   TextEditingController instructionController = TextEditingController();
+  TextEditingController expireDateController = TextEditingController();
+
   DashboardProvider provider = locator<DashboardProvider>();
   bool identitySwitch = false;
   bool privateSwitch = false;
@@ -220,7 +224,24 @@ class _CreateRequirementState extends State<CreateRequirement> {
                       });
                     },
                   ),
-                 Container(
+                      // Expiry Date input with date picker
+                      CustomTextField(
+                        hintText: 'Post Expiry Date (YYYY-MM-DD)',
+                        controller: expireDateController,
+                        textInputType: TextInputType.text,
+                        isValidator: false,
+                        onTap: () async {
+                          String Date =
+                          await DateTimePickerDialog().pickDateDialog(
+                              context);
+                          setState(() {
+                            expireDateController.text = Date;
+                          });
+                        //  provider.setDate(Date);
+                        },
+                      ),
+
+                      Container(
                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                    height: 50,
@@ -348,8 +369,8 @@ class _CreateRequirementState extends State<CreateRequirement> {
                             typeOfCargo: selectedCargoType,
                             typeOfPayment: selectedTypeOfPayment,
                             vehicleSize: selectedVehicleSizeController.text,
-                            selectedUserList: userIdList
-                            //   userId: authProvider.userDetailList[0].id
+                            selectedUserList: userIdList,
+                            expireDate: expireDateController.text
                           );
 
                         }},

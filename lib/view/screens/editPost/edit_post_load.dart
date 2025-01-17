@@ -16,6 +16,7 @@ import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
+import 'package:tkd_app/widgets/datepicker.dart';
 
 class EditPostLoadScreen extends StatefulWidget {
   TruckLoad postBidData;
@@ -206,6 +207,20 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
                             });
                           },
                         ),
+                        // Expiry Date input with date picker
+                        CustomTextField(
+                          hintText: 'Post Expiry Date (YYYY-MM-DD)',
+                          controller: editProvider.expireDateController,
+                          textInputType: TextInputType.text,
+                          isValidator: false,
+                          onTap: () async {
+                            String Date =
+                            await DateTimePickerDialog().pickDateDialog(
+                                context);
+                            editProvider.setDate(Date);
+                          },
+                        ),
+
                         Container(
                           margin: EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),

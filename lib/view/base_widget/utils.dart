@@ -196,7 +196,7 @@ class Utils {
             child: Form(
               key: _formKey,
               child: Container(
-                height: 250,
+                height: 350,
                 width: 300,
                 child: Stack(
                   children: [
@@ -217,11 +217,12 @@ class Utils {
                             isDigits: true,
                             textInputType: TextInputType.number),
                         Visibility(
-                          visible: false,
+                          visible: true,
                           child: CustomTextField(
                               controller: descriptionController,
-                              hintText: "Comments/Descriptions",
-                              textInputType: TextInputType.number),
+                              hintText: "Quote Reason",
+                              isValidator: false,
+                              textInputType: TextInputType.text),
                         ),
                         CustomButton(
                             onTap: () {
@@ -230,7 +231,7 @@ class Utils {
                                     .generateBid(context,
                                         mobile: authProvider
                                             .userDetailList[0].mobileNumber,
-                                        description: "test",
+                                        description: descriptionController.text,
                                         idOfPost: load.id,
                                         email: authProvider
                                             .userDetailList[0].emailId,
@@ -301,6 +302,17 @@ class Utils {
           return;
       }
     }
+  }
+
+  bool isExpired(String expiryDateString) {
+    if(expiryDateString==''){
+      return false;
+    }else{
+      // Parse the string into a DateTime object
+      DateTime expiryDate = DateTime.parse(expiryDateString);
+
+      // Compare with the current date
+      return DateTime.now().isAfter(expiryDate);}
   }
 
   callRatingAndReview(context, TruckLoad load) {

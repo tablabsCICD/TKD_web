@@ -399,7 +399,7 @@ class DashboardProvider extends ChangeNotifier {
       String? vehicleSize,
       String? typeOfPayment,
       int? userId,
-      List<int>? selectedUserList}) async {
+      List<int>? selectedUserList,String? expireDate}) async {
     isLoading = true;
     notifyListeners();
     String myUrl = selectedSampleData == "Show to All"
@@ -432,7 +432,7 @@ class DashboardProvider extends ChangeNotifier {
       "typeOfCargo": typeOfCargo,
       "typeOfPayment": typeOfPayment,
       "vehicleSize": vehicleSize,
-      // "userId": userId
+      "expireDate": expireDate
     };
 
     var body = json.encode(data);

@@ -27,7 +27,7 @@ class BidProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     String myUrl = ApiConstant.BID_OWN_POST +
-        '?userName=${userName}&privatePost=${isPublic}';
+        '?userName=${userName}&privatePost=${isPublic}&page=0&size=100&fullLoadAvailable=true&fullLoadRequired=true&partLoadAvailable=true&partLoadRequired=true';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -119,7 +119,13 @@ class BidProvider extends ChangeNotifier {
     print("${response.statusCode}" + " --- " + response.body.toString());
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+      showSimpleNotification(
+          Text(
+            "Quote Submitted Successfully",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.green);
+   /*   CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
       if (commonResponse.isSuccess == true) {
       } else {
         showSimpleNotification(
@@ -135,8 +141,8 @@ class BidProvider extends ChangeNotifier {
                       userDetailList: authProvider.userDetailList,
                       selectedTab: "Package Change",
                     )));
-      }
-    } else if (response.statusCode == 401) {
+      }*/
+    } else if (response.statusCode == 401||response.statusCode == 400) {
       showSimpleNotification(
           Text(
             "Please update your package",

@@ -93,6 +93,8 @@ class TruckLoad {
     this.transporterOrAgent,
     this.userList,
     this.isverified,
+    this.expireDate,
+    this.isSharedInGroup,
     this.mobileOrLandline
 
   });
@@ -139,7 +141,10 @@ class TruckLoad {
   late final List<dynamic>? postImages;
   late final int? transporterOrAgent;
   late final String? userList;
+  late final String? expireDate;
+
   late final int? isverified;
+  late final bool? isSharedInGroup;
   late final String? mobileOrLandline;
 
 
@@ -190,7 +195,10 @@ class TruckLoad {
     postImages=json['images']??[];
     userList=json['userList']??'';
     isverified=json['isverified'];
+    expireDate=json['expireDate']??'';
+
     mobileOrLandline=json['mobileOrLandline']??'';
+    isSharedInGroup=json['isSharedInGroup']??false;
   }
 
   Map<String, dynamic> toJson() {
@@ -240,6 +248,8 @@ class TruckLoad {
     _data['userList'] = userList;
     _data['isverified'] = isverified;
     _data['mobileOrLandline'] = mobileOrLandline;
+    _data['expireDate'] = expireDate;
+    _data['isSharedInGroup'] = isSharedInGroup;
     return _data;
   }
 }

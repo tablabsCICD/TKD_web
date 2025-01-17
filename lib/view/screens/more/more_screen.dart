@@ -996,8 +996,8 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
                               context,
                               MyDialog(
                                 icon: Icons.check,
-                                title: 'Post Delete',
-                                description: 'Your post deleted successfully',
+                                title: 'Post Completed',
+                                description: 'Your post Completed successfully',
                                 isFailed: false,
                               ),
                               dismissible: false,

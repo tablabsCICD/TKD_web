@@ -25,7 +25,7 @@ import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'login_screen.dart';
 import 'otp_screen.dart';
-import 'package:csc_picker/csc_picker.dart';
+
 import 'dart:html' as html;
 
 class RegistrationScreen2 extends StatefulWidget {

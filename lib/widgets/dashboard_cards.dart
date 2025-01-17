@@ -12,6 +12,7 @@ import 'package:tkd_app/view/screens/editPost/edit_post_load.dart';
 import 'package:tkd_app/widgets/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import '../util/colors.dart';
 import 'base_widgets.dart';
 
 class DashbordCards {
@@ -90,133 +91,163 @@ class DashbordCards {
 
   cardLoadHome(int index, BuildContext context, TruckLoad load, int userId,
       DeletePostInf postDelete, DashboardProvider provider, bool isOwnPost) {
-    return Container(
-      width: 335,
-      padding: EdgeInsets.all(12),
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+    return Opacity(
+      opacity: Utils().isExpired(load.expireDate!) ? 0.5 : 1.0,
+      child: Container(
+        width: 335,
+        padding: EdgeInsets.all(12),
+        clipBehavior: Clip.antiAlias,
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x114A5568),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+              spreadRadius: 0,
+            )
+          ],
         ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x114A5568),
-            blurRadius: 8,
-            offset: Offset(0, 3),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              width: 120,
-              height: 18,
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: ShapeDecoration(
-                color: Color(0xFF2C8FEA),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-              ),
-              child: Center(
-                child: Text(
-                  Utils().mainTag(load.mainTag!),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w600,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Visibility(
+              visible:load.expireDate==''?false:true,
+              child: Container(
+                width: 120,
+                height: 20,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(2)
+                  ),
+                  border: Border.all(
+                    width: 0.5,
+                    color: ThemeColor.red,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: Center(
+                  child: Text("valid till: ${load.expireDate==''?"-":load.expireDate!}",
+                    style: TextStyle(
+                      color: ThemeColor.black,
+                      fontSize: 8,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: load.privatePost == 1 ? 10 : 5),
-          load.privatePost == 1
-              ? SizedBox.shrink()
-              : BaseWidget().profileWithUser(
-                  load.companyLogo!, load.nameOfPerson!, load.companyName!,
-                  verify: load.isverified!,
-                  transporterOrAgent: load.transporterOrAgent!),
-          BaseWidget().routes(load.source!, load.destination!),
-          SizedBox(
-            height: 12,
-          ),
-          imageLoad(load),
-          BaseWidget().heading(
-              load.topicName!, getDateObject(load.postingTime), load.content!),
-          load.userId == userId
-              ? BaseWidget().deleteButton((val) {
-                  if (val == 5) {
-                    postDelete.rePost(load, false);
-                  } else if (val == 6) {
-                    postDelete.rePost(load, true);
-                  } else if (val == 10) {
-                    postDelete.deleteOwnPost(load.id!, index);
-                  } else if (val == 7) {
-                    showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              elevation: 0.0,
-                              insetPadding: ResponsiveWidget.isMobile(context)
-                                  ? EdgeInsets.symmetric(
-                                      vertical: 50, horizontal: 10)
-                                  : ResponsiveWidget.isTablet(context)
-                                      ? EdgeInsets.symmetric(
-                                          vertical: 50, horizontal: 50)
-                                      : EdgeInsets.symmetric(
-                                          vertical: 50, horizontal: 50),
-                              backgroundColor: Colors.white,
-                              child: Container(
-                                width: ResponsiveWidget.isMobile(context)
-                                    ? MediaQuery.of(context).size.width - 50
-                                    : ResponsiveWidget.isDesktop(context)
-                                        ? 500
-                                        : 400,
-                                child: Stack(
-                                  children: [
-                                    EditPostLoadScreen(load),
-                                    Positioned(
-                                      top: 7,
-                                      right: 7,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.close,
-                                          size: 18,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    )
-                                  ],
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                width: 120,
+                height: 18,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: ShapeDecoration(
+                  color: Color(0xFF2C8FEA),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                ),
+                child: Center(
+                  child: Text(
+                    Utils().mainTag(load.mainTag!),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: load.privatePost == 1 ? 10 : 5),
+            load.privatePost == 1
+                ? SizedBox.shrink()
+                : BaseWidget().profileWithUser(
+                    load.companyLogo!, load.nameOfPerson!, load.companyName!,
+                    verify: load.isverified!,
+                    transporterOrAgent: load.transporterOrAgent!),
+            BaseWidget().routes(load.source!, load.destination!),
+            SizedBox(
+              height: 12,
+            ),
+            imageLoad(load),
+            BaseWidget().heading(
+                load.topicName!, getDateObject(load.postingTime), load.content!),
+            load.userId == userId
+                ? BaseWidget().deleteButton((val) {
+                    if (val == 5) {
+                      postDelete.rePost(load, false);
+                    } else if (val == 6) {
+                      postDelete.rePost(load, true);
+                    } else if (val == 10) {
+                      postDelete.deleteOwnPost(load.id!, index);
+                    } else if (val == 7) {
+                      showDialog(
+                          context: context,
+                          builder: (_) => Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
-                              ),
-                            ));
-                  } else {
+                                elevation: 0.0,
+                                insetPadding: ResponsiveWidget.isMobile(context)
+                                    ? EdgeInsets.symmetric(
+                                        vertical: 50, horizontal: 10)
+                                    : ResponsiveWidget.isTablet(context)
+                                        ? EdgeInsets.symmetric(
+                                            vertical: 50, horizontal: 50)
+                                        : EdgeInsets.symmetric(
+                                            vertical: 50, horizontal: 50),
+                                backgroundColor: Colors.white,
+                                child: Container(
+                                  width: ResponsiveWidget.isMobile(context)
+                                      ? MediaQuery.of(context).size.width - 50
+                                      : ResponsiveWidget.isDesktop(context)
+                                          ? 500
+                                          : 400,
+                                  child: Stack(
+                                    children: [
+                                      EditPostLoadScreen(load),
+                                      Positioned(
+                                        top: 7,
+                                        right: 7,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ));
+                    } else {
+                      if (load.dnd == 1) {
+                        ToastMessage.show(context, "This is DND Post");
+                      } else {
+                        Utils().openMenu(val, load, context);
+                      }
+                    }
+                  }, isOwnPost: isOwnPost)
+                : BaseWidget().bidButton((val) {
                     if (load.dnd == 1) {
                       ToastMessage.show(context, "This is DND Post");
                     } else {
                       Utils().openMenu(val, load, context);
                     }
-                  }
-                }, isOwnPost: isOwnPost)
-              : BaseWidget().bidButton((val) {
-                  if (load.dnd == 1) {
-                    ToastMessage.show(context, "This is DND Post");
-                  } else {
-                    Utils().openMenu(val, load, context);
-                  }
-                })
-        ],
+                  })
+          ],
+        ),
       ),
     );
   }

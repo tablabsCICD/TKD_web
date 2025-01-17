@@ -678,7 +678,7 @@ class BaseWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Delete",
+                    "Complete",
                     style: TextStyle(
                       color: ThemeColor.red,
                       fontSize: 12,
@@ -686,7 +686,7 @@ class BaseWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SvgPicture.asset(Images.delete)
+                  //SvgPicture.asset(Images.delete)
                 ],
               ),
             ),
@@ -732,7 +732,7 @@ class BaseWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Delete",
+                    "Complete",
                     style: TextStyle(
                       color: ThemeColor.red,
                       fontSize: 12,
@@ -740,7 +740,7 @@ class BaseWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SvgPicture.asset(Images.delete)
+                 // SvgPicture.asset(Images.delete)
                 ],
               ),
             ),
@@ -784,7 +784,7 @@ class BaseWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Delete",
+                      "Complete",
                       style: TextStyle(
                         color: ThemeColor.red,
                         fontSize: 12,
@@ -792,7 +792,7 @@ class BaseWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SvgPicture.asset(Images.delete)
+                   // SvgPicture.asset(Images.delete)
                   ],
                 ),
               ),
@@ -836,7 +836,7 @@ class BaseWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Delete",
+                      "Complete",
                       style: TextStyle(
                         color: ThemeColor.red,
                         fontSize: 12,
@@ -844,7 +844,7 @@ class BaseWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SvgPicture.asset(Images.delete)
+                   // SvgPicture.asset(Images.delete)
                   ],
                 ),
               ),
