@@ -78,6 +78,7 @@ dependencies:
   timeago:
   simple_circular_progress_bar:
   razorpay_web: any
+  fl_chart: ^0.70.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tkd_app/dialog/animated_custom_dialog.dart';
 import 'package:tkd_app/dialog/my_dialog.dart';
 import 'package:tkd_app/dialog/share_dialog_box.dart';
@@ -7,6 +8,7 @@ import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/bid_provider.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
@@ -16,7 +18,9 @@ import 'package:tkd_app/widgets/rating_dailog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
+import '../../util/colors.dart';
 import '../../util/images.dart';
+import 'app_constant.dart';
 
 class Utils {
   String getTranport(int val) {
@@ -58,6 +62,7 @@ class Utils {
   }
 
   final authProvider = locator<AuthProvider>();
+  final dashboardProvider = locator<DashboardProvider>();
 
   callFunction(BuildContext context, String mobile) async {
     if (authProvider.userDetailList[0].isPaid == 0) {
@@ -186,6 +191,27 @@ class Utils {
   TextEditingController bidAmtController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
+  labelText(String label) {
+    return SizedBox(
+      width: 332,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 12,
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   openMenu(int a, TruckLoad load, BuildContext context) async {
     if (a == 0) {
       showAnimatedDialog(
@@ -211,16 +237,18 @@ class Utils {
                         SizedBox(
                           height: 15,
                         ),
+                        labelText("Quote Amount"),
                         CustomTextField(
                             controller: bidAmtController,
                             hintText: "Enter Your quote Amount",
                             isDigits: true,
                             textInputType: TextInputType.number),
+                        labelText("Quote justification with cost(optional)"),
                         Visibility(
                           visible: true,
                           child: CustomTextField(
                               controller: descriptionController,
-                              hintText: "Quote Reason",
+                              hintText: "quote justification with cost(optional)",
                               isValidator: false,
                               textInputType: TextInputType.text),
                         ),
@@ -300,8 +328,47 @@ class Utils {
         case 4:
           Utils().callRatingAndReview(context, load);
           return;
+
+        case 11:
+         _showCompleteDialog(context, load.id!,);
+          return;
       }
     }
+  }
+
+  Future<void> _showCompleteDialog(BuildContext context,int id) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text("Complete Post",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue)),
+          content:  SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                CustomText("Do you want to complete this post.",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue),),
+
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child:  CustomText("Complete",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.red)),
+              onPressed: () {
+                dashboardProvider.completePost(id,context);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:  CustomText("No",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.green)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   bool isExpired(String expiryDateString) {
@@ -312,9 +379,9 @@ class Utils {
       DateTime expiryDate = DateTime.parse(expiryDateString);
 
       // Compare with the current date
-      return DateTime.now().isAfter(expiryDate);}
+      return DateTime.now().isAfter(expiryDate.add(const Duration(days: 1)));
+    }
   }
-
   callRatingAndReview(context, TruckLoad load) {
     showModalBottomSheet(
         isScrollControlled: true,

@@ -923,7 +923,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
         context: context,
         builder: (_) => new CupertinoAlertDialog(
               title: CustomText(
-                'Are you sure want to complete your post?',
+                'Are you sure want to delete your post?',
                 style: Style.title,
               ),
               actions: <Widget>[

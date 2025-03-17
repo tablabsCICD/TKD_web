@@ -642,11 +642,11 @@ class _MyRequirementCardState extends State<MyRequirementCard>
                   itemBuilder: (context, index) {
                     return InkWell(
                         onTap: () {
-                         /* Navigator.push(
+                          print("Card on tap call repeat post");
+                         Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (builder) => RequirementDetails(
-                                      widget.loadTypeList[index])));*/
+                                  builder: (builder) => RepeatDialogBox(model.myFullLoadTypeList[index])));
                         },
                         child: DashbordCards().cardLoadHome(
                             index,
@@ -939,7 +939,6 @@ class _MyGeneralPostCardState extends State<MyGeneralPostCard>
                 companyRating: "4.5",
                 dnd: 0,
                 isPaid: 0,
-                isverified: authProvider.userDetailList[0].isUserVerifiedByCompany,
                 isVerifiedByCompany: authProvider.userDetailList[0].isUserVerifiedByCompany.toString(),
                 likes: '',
                 makerName: '',

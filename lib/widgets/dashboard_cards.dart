@@ -12,7 +12,10 @@ import 'package:tkd_app/view/screens/editPost/edit_post_load.dart';
 import 'package:tkd_app/widgets/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import '../locator.dart';
 import '../util/colors.dart';
+import '../view/base_widget/app_constant.dart';
+import '../view/base_widget/custom_textview.dart';
 import 'base_widgets.dart';
 
 class DashbordCards {
@@ -80,7 +83,7 @@ class DashbordCards {
                   } else {
                     Utils().openMenu(val, load, context);
                   }
-                })
+                },load)
               : BaseWidget().bidButton((val) {
                   Utils().openMenu(val, load, context);
                 })
@@ -92,7 +95,7 @@ class DashbordCards {
   cardLoadHome(int index, BuildContext context, TruckLoad load, int userId,
       DeletePostInf postDelete, DashboardProvider provider, bool isOwnPost) {
     return Opacity(
-      opacity: Utils().isExpired(load.expireDate!) ? 0.5 : 1.0,
+      opacity: Utils().isExpired(load.expireDate!) || (load.isOpenForBid==0) ? 0.5 : 1.0,
       child: Container(
         width: 335,
         padding: EdgeInsets.all(12),
@@ -144,25 +147,42 @@ class DashbordCards {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: Container(
-                width: 120,
-                height: 18,
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: ShapeDecoration(
-                  color: Color(0xFF2C8FEA),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                ),
-                child: Center(
-                  child: Text(
-                    Utils().mainTag(load.mainTag!),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight: FontWeight.w600,
+              child: SizedBox(
+                height: 50,
+                width: 140,
+                child: Column(
+                  children: [
+                    Text(
+                      "TKD${load.id}",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontFamily: GoogleFonts.poppins().fontFamily,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
+                    Container(
+                      width: 120,
+                      height: 18,
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF2C8FEA),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          Utils().mainTag(load.mainTag!),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontFamily: GoogleFonts.poppins().fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -188,6 +208,8 @@ class DashbordCards {
                       postDelete.rePost(load, true);
                     } else if (val == 10) {
                       postDelete.deleteOwnPost(load.id!, index);
+                    } else if (val == 11) {
+                      _showCompleteDialog(context,load.id!);
                     } else if (val == 7) {
                       showDialog(
                           context: context,
@@ -238,7 +260,7 @@ class DashbordCards {
                         Utils().openMenu(val, load, context);
                       }
                     }
-                  }, isOwnPost: isOwnPost)
+                  },load,isOwnPost: isOwnPost)
                 : BaseWidget().bidButton((val) {
                     if (load.dnd == 1) {
                       ToastMessage.show(context, "This is DND Post");
@@ -249,6 +271,42 @@ class DashbordCards {
           ],
         ),
       ),
+    );
+  }
+
+  final dashboardProvider = locator<DashboardProvider>();
+  Future<void> _showCompleteDialog(BuildContext context,int id) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text("Complete Post",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue)),
+          content:  SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                CustomText("Do you want to complete this post.",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue),),
+
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child:  CustomText("Complete",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.red)),
+              onPressed: () {
+                dashboardProvider.completePost(id,context);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:  CustomText("No",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.green)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
     );
   }
 
@@ -357,25 +415,42 @@ class DashbordCards {
         children: [
           Align(
             alignment: Alignment.topRight,
-            child: Container(
-              width: 100,
-              height: 18,
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: ShapeDecoration(
-                color: Color(0xFF2C8FEA),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-              ),
-              child: Center(
-                child: Text(
-                  load.mainTag!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w600,
+            child: SizedBox(
+              height: 50,
+              width: 140,
+              child: Column(
+                children: [
+                  Text(
+                    "TKD${load.id}",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
+                  Container(
+                    width: 100,
+                    height: 18,
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF2C8FEA),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        load.mainTag!,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -394,7 +469,7 @@ class DashbordCards {
                   } else {
                     ToastMessage.show(context, "This is Private Post");
                   }
-                })
+                },load)
               : BaseWidget().bidButton((val) {
                   ToastMessage.show(context, "This is Private Post");
                 })

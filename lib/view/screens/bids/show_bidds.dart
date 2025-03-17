@@ -149,7 +149,7 @@ class _ShowAllBids extends State<ShowAllBids>{
               String description= "${postBidData.genericCardsDto!.mobileNumber.toString()}'Type : ${postBidData.genericCardsDto!.type}, \nSubject : ${postBidData.genericCardsDto!.content}, \nSource : ${postBidData.genericCardsDto!.source}, \nDestination : ${postBidData.genericCardsDto!.destination}, \nLink : https://api.tkdost.com/bids/?id=${postBidData.genericCardsDto!.id}'";
             //  await Utils().callShareFunction(description,postBidData,context);
             }
-          },true)
+          },true,postBidData)
 
 
         ],

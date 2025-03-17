@@ -39,6 +39,12 @@ const Received_Quotes = 'Received Quotes';
 const Logout = 'Logout';
 const Call = "Call";
 const Group = "Group";
+
+const FinanceEnquiry = "Finance Enquiry";
+const InsuranceEnquiry = "Insurance Enquiry";
+const TollCalculation = "Toll Calculation";
+const mParivahan = "mParivahan";
+
 const Privacy_Policy = "Privacy Policy";
 
 class DrawerMenu extends StatefulWidget {
@@ -140,7 +146,20 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   (selectedTab == Received_Quotes)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Group,
                 context, 'Group', (selectedTab == Group)),
+
+            getTile('assets/images/navigation_image/icn_bullet_01.png', FinanceEnquiry,
+                context, 'Finance Enquiry', (selectedTab == FinanceEnquiry)),
+
+            getTile('assets/images/navigation_image/icn_bullet_01.png', InsuranceEnquiry,
+                context, 'Insurance Enquiry', (selectedTab == InsuranceEnquiry)),
+
+            getTile('assets/images/navigation_image/icn_bullet_01.png', TollCalculation,
+                context, 'Toll Calculation', (selectedTab == TollCalculation)),
+
+            getTile('assets/images/navigation_image/icn_bullet_01.png', mParivahan,
+                context, 'mParivahan', (selectedTab == mParivahan)),
             getDivider(),
+
             getTile('assets/images/call.png', Call, context, 'Call To Support',
                 (selectedTab == Call)),
             getDivider(),

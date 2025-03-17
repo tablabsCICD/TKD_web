@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:ui';
 import 'dart:math';
 
@@ -39,6 +40,7 @@ import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
 import 'package:tkd_app/view/screens/discussion/discussion_dashboard.dart';
 import 'package:tkd_app/view/screens/feedback/feedback_screen.dart';
+import 'package:tkd_app/view/screens/financeAndInsurance.dart';
 import 'package:tkd_app/view/screens/fleet/create_fleet.dart';
 import 'package:tkd_app/view/screens/fleet/fleet_screen.dart';
 import 'package:tkd_app/view/screens/gallery/create_gallary_post.dart';
@@ -48,6 +50,7 @@ import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/job/job_screen.dart';
 import 'package:tkd_app/view/screens/more/create_general_post.dart';
 import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
+import '../../widgets/toast.dart';
 import 'auth/login_screen.dart';
 import 'package:tkd_app/view/screens/more/more_screen.dart';
 import 'package:tkd_app/view/screens/more/my_profile.dart';
@@ -60,6 +63,7 @@ import 'package:tkd_app/view/screens/transport/transport_search_screen.dart';
 
 import 'chats/IFramePage.dart';
 import 'discussion/discussion_new.dart';
+import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 
 class MenuPage extends StatefulWidget {
@@ -829,6 +833,27 @@ class _MenuPageState extends State<MenuPage> {
         html.window.open(url,"_blank"/*,"_self"*/);
 
         break;
+
+      case "Finance Enquiry":
+        container =FinanceAndInsurance("Finance enquiry",widget.userDetailList![0].id!);
+        //container = IFramePage(url: 'https://rcltechlab.000webhostapp.com/#/register',);
+        break;
+
+      case "Insurance Enquiry":
+        container = FinanceAndInsurance("Insurance enquiry",widget.userDetailList![0].id!);
+        //container = IFramePage(url: 'https://rcltechlab.000webhostapp.com/#/register',);
+        break;
+
+      case "Toll Calculation":
+        html.window.open("https://transportguru.in/","_blank"/*,"_self"*/);
+       // callTollCalculation();
+        break;
+
+      case "mParivahan":
+        html.window.open("https://parivahan.gov.in/parivahan//en/content/license-registration-details","_blank"/*,"_self"*/);
+    //  callMParivahan();
+        break;
+
       case "Chats":
         container = Consumer<AuthProvider>(
           builder: (context, model, child) =>Container(
@@ -851,6 +876,53 @@ class _MenuPageState extends State<MenuPage> {
     if (!ResponsiveWidget.isDesktop(context)) Navigator.pop(context);
     setState(() {});
   }
+
+
+  callMParivahan() async {
+    String url = ApiConstant.MPARIVAHAN;
+    print(url);
+    final response = await http.get(Uri.parse(url));
+
+    print('The response status is ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if(jsonResponse['message']=="success"){
+        debugPrint(jsonResponse['url']);
+        //  String url = "https://parivahan.gov.in/parivahan//en/content/license-registration-details";
+        html.window.open(jsonResponse['url'],"_blank"/*,"_self"*/);
+      }else{
+        ToastMessage.show(context, jsonResponse['message']+"Something went wrong!!");
+      }
+      Navigator.pop(context,1);
+    }else{
+      ToastMessage.show(context, "Please try again");
+    }
+  }
+
+  callTollCalculation() async {
+    String url = ApiConstant.TOLL_CALCULATION;
+    print(url);
+    final response = await http.get(Uri.parse(url));
+
+    print('The response status is ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if(jsonResponse['message']=="success"){
+        ToastMessage.show(context, jsonResponse['url']);
+        debugPrint(jsonResponse['url']);
+        //  String url = "https://transportguru.in/";
+        html.window.open(jsonResponse['url'],"_blank"/*,"_self"*/);
+      }else{
+        ToastMessage.show(context, jsonResponse['message']+"Something went wrong!!");
+      }
+      Navigator.pop(context,1);
+    }else{
+      ToastMessage.show(context, "Please try again");
+    }
+  }
+
 
   Future<void> logoutFunction(AuthProvider authProvider) async {
     await authProvider.setVisitingFlag(false);

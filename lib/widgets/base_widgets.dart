@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tkd_app/model/my_bids.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/images.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
+import 'package:tkd_app/widgets/toast.dart';
 import 'package:tkd_app/widgets/verified_tag.dart';
+
+import '../view/base_widget/custom_textview.dart';
 
 class BaseWidget {
   Widget profile(String profileLink, String name, String companyName,
@@ -648,7 +652,7 @@ class BaseWidget {
     );
   }
 
-  Widget deleteButton(Function(int) onMenuTap, {bool isOwnPost = false}) {
+  Widget deleteButton(Function(int) onMenuTap, TruckLoad load, {bool isOwnPost = false}) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(right: 8),
@@ -678,7 +682,7 @@ class BaseWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Complete",
+                    "Delete",
                     style: TextStyle(
                       color: ThemeColor.red,
                       fontSize: 12,
@@ -695,62 +699,14 @@ class BaseWidget {
           InkWell(
               onTap: () {},
               child: isOwnPost
-                  ? popUpmenuForMyPost(onMenuTap)
-                  : popUpmenuForOwnPost(onMenuTap))
+                  ? popUpmenuForMyPost(onMenuTap,load)
+                  : popUpmenuForOwnPost(onMenuTap,load))
         ],
       ),
     );
   }
 
-  Widget deleteMyPostButton(Function(int) onMenuTap) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(right: 8),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            onTap: () {
-              onMenuTap(10);
-            },
-            child: Container(
-              height: 38,
-              width: 253,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 0.50, color: Color(0x33001E49)),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Complete",
-                    style: TextStyle(
-                      color: ThemeColor.red,
-                      fontSize: 12,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                 // SvgPicture.asset(Images.delete)
-                ],
-              ),
-            ),
-          ),
-          SizedBox(width: 8),
-          InkWell(onTap: () {}, child: popUpmenuOwnPost(onMenuTap))
-        ],
-      ),
-    );
-  }
+
 
   Widget buyOnlyDeleteButton(Function(int) onMenuTap, bool isDeleteVisible) {
     return Container(
@@ -784,7 +740,7 @@ class BaseWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Complete",
+                      "Delete",
                       style: TextStyle(
                         color: ThemeColor.red,
                         fontSize: 12,
@@ -836,7 +792,7 @@ class BaseWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Complete",
+                      "Delete",
                       style: TextStyle(
                         color: ThemeColor.red,
                         fontSize: 12,
@@ -857,7 +813,7 @@ class BaseWidget {
     );
   }
 
-  Widget showBidButton(Function(int) onMenuTap, bool isBid) {
+  Widget showBidButton(Function(int) onMenuTap, bool isBid, PostBidData postBidData,) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(right: 8),
@@ -904,13 +860,13 @@ class BaseWidget {
               onTap: () {},
               child: isBid
                   ? popUpmenuOwnBid(onMenuTap)
-                  : popUpmenuOwnPost(onMenuTap))
+                  : popUpmenuOwnPost(onMenuTap,postBidData))
         ],
       ),
     );
   }
 
-  popUpmenuOwnPost(Function(int) onMenuTap) {
+  popUpmenuOwnPost(Function(int) onMenuTap,PostBidData postBidData) {
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
         side: BorderSide(width: 1, color: Color(0x332C363F)),
@@ -940,6 +896,38 @@ class BaseWidget {
                 "Delete",
                 style: TextStyle(
                   color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            postBidData.genericCardsDto!.isOpenForBid==1? onMenuTap(8):ToastMessage.show(context, "Your Post already Completed Successfully");;
+          },
+          child: Row(
+            children: [
+              /* SvgPicture.asset(
+                Images.delete,
+                color: Colors.black,
+                width: 20.w,
+                height: 20.h,
+              ),*/
+              Icon(Icons.done,color: postBidData.genericCardsDto!.isOpenForBid==1?Colors.black:Colors.green,),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                postBidData.genericCardsDto!.isOpenForBid==1?"Complete":"Completed",
+                style: TextStyle(
+                  color: postBidData.genericCardsDto!.isOpenForBid==1?Colors.black:Colors.green,
                   fontSize: 14,
                   fontFamily: GoogleFonts.poppins().fontFamily,
                   fontWeight: FontWeight.w400,
@@ -983,7 +971,7 @@ class BaseWidget {
     );
   }
 
-  Widget showBidRepostButton(Function(int) onMenuTap, bool isBid) {
+/*  Widget showBidRepostButton(Function(int) onMenuTap, bool isBid) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(right: 8),
@@ -1034,7 +1022,7 @@ class BaseWidget {
         ],
       ),
     );
-  }
+  }*/
 
   popUpmenuOwnRepostPost(Function(int) onMenuTap) {
     return PopupMenuButton(
@@ -1065,6 +1053,37 @@ class BaseWidget {
               ),
               Text(
                 getTranslated("delete", context)!,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            onMenuTap(11);
+          },
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                Images.delete,
+                color: Colors.black,
+                width: 20,
+                height: 20,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              CustomText(
+                "Complete",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1180,7 +1199,7 @@ class BaseWidget {
     );
   }
 
-  popUpmenuForMyPost(Function(int) onMenuTap) {
+  popUpmenuForMyPost(Function(int) onMenuTap, TruckLoad load) {
     return PopupMenuButton(
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -1192,6 +1211,38 @@ class BaseWidget {
         onMenuTap(val);
       },
       itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            load.isOpenForBid==1? onMenuTap(11):ToastMessage.show(context, "Your Post already Completed Successfully");;
+          },
+          child: Row(
+            children: [
+              /* SvgPicture.asset(
+                Images.delete,
+                color: Colors.black,
+                width: 20.w,
+                height: 20.h,
+              ),*/
+              Icon(Icons.done,color: load.isOpenForBid==1?Colors.black:Colors.green,),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                load.isOpenForBid==1?"Complete":"Completed",
+                style: TextStyle(
+                  color:load.isOpenForBid==1?Colors.black:Colors.green,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
         PopupMenuItem(
             onTap: () {
               onMenuTap(3);
@@ -1327,7 +1378,7 @@ class BaseWidget {
     );
   }
 
-  popUpmenuForOwnPost(Function(int) onMenuTap) {
+  popUpmenuForOwnPost(Function(int) onMenuTap,TruckLoad load) {
     return PopupMenuButton(
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -1339,6 +1390,38 @@ class BaseWidget {
         onMenuTap(val);
       },
       itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            load.isOpenForBid==1? onMenuTap(11):ToastMessage.show(context, "Your Post already Completed Successfully");;
+          },
+          child: Row(
+            children: [
+              /* SvgPicture.asset(
+                Images.delete,
+                color: Colors.black,
+                width: 20.w,
+                height: 20.h,
+              ),*/
+              Icon(Icons.done,color: load.isOpenForBid==1?Colors.black:Colors.green,),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                load.isOpenForBid==1?"Complete":"Completed",
+                style: TextStyle(
+                  color:load.isOpenForBid==1?Colors.black:Colors.green,
+                  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                ),
+              ),
+              SizedBox(
+                width: 13,
+              ),
+            ],
+          ),
+        ),
         PopupMenuItem(
             onTap: () {
               onMenuTap(3);

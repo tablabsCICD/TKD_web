@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/locator.dart';
@@ -18,6 +19,8 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/bottomsheet.dart';
+
+import '../widgets/toast.dart';
 
 class DashboardProvider extends ChangeNotifier {
   String? selectedSampleData = '';
@@ -369,10 +372,28 @@ class DashboardProvider extends ChangeNotifier {
     String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${id}';
     print(myUrl);
     var req = await http.delete(Uri.parse(myUrl));
+    if(req.statusCode==200){
     var deleteResponse = json.decode(req.body);
     print(deleteResponse);
     truckLoadTypeList.removeAt(index);
-    notifyListeners();
+    notifyListeners();}else{
+    }
+  }
+
+
+  completePost(int id,BuildContext context)async{
+    String myUrl = '${ApiConstant.COMPLETE_POST}$id';
+
+    var req = await http.put(Uri.parse(myUrl));
+    if(req.statusCode==200){
+      // truckLoadTypeList .removeAt(index);
+      ToastMessage.show(context, "Your Post Completed Successfully");
+      getFullLoadTruckList('All','All',currentPage: 0);
+
+      notifyListeners();
+    }else{
+      ToastMessage.show(context, "Please try again");
+    }
   }
 
   savePost(BuildContext context,
@@ -451,6 +472,9 @@ class DashboardProvider extends ChangeNotifier {
         TruckLoad dataObj = TruckLoad.fromJson(jsonData);
         print(dataObj);
         truckLoadTypeList.add(dataObj);
+        Future.microtask(() {
+          _showConfirmationDialog(context);
+        });
         notifyListeners();
         showSimpleNotification(
             Text(
@@ -530,4 +554,41 @@ class DashboardProvider extends ChangeNotifier {
     ApiHelper apiHelper = ApiHelper();
     apiHelper.ApiGetData(ApiConstant.BASE_URL + "getCount/${userId}");
   }
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Important Notice',
+            style: TextStyle(  fontSize: 16,
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontWeight: FontWeight.bold,),
+          ),
+          content: Text(
+            'Do not Pay any Advance before Loading of Truck and verifying RTO documents on mParivahan website.',
+            style: TextStyle(  fontSize: 12,
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontWeight: FontWeight.w600, color: Colors.red),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();// Close the dialog
+              },
+              child: Text(
+                'Ok',
+                style: TextStyle(  fontSize: 14,
+                  fontFamily: GoogleFonts.poppins().fontFamily,
+                  fontWeight: FontWeight.bold,),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+

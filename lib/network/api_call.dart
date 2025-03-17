@@ -16,6 +16,7 @@ class ApiHelper {
     }
   }
 
+
   ApiResponse returnNotDecodeResponse<T>(Response request) {
     if (request.statusCode == 200) {
       ApiResponse apiResponseHelper =
