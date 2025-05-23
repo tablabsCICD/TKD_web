@@ -7,7 +7,7 @@ class ApiConstant {
 
   static final String APP_VERSION="2.0.15";//44
  static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
-  //static String BASE_URL = "http://ec2-13-233-64-33.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Test Url
+ // static String BASE_URL = "http://ec2-13-232-71-100.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Test Url
   // static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
 //  static String BASE_URL = "http://ec2-35-154-166-48.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
   static String CHAT_USER_LIST_COMPANY(name) => BASE_URL + "companyRegistration/ByName8?firstName=$name";
