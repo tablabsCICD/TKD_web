@@ -23,6 +23,7 @@ import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/cutom_city_textfield.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
+import '../../base_widget/app_constant.dart';
 import 'login_screen.dart';
 import 'otp_screen.dart';
 
@@ -215,8 +216,8 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                   isValidator: false,
                 ),
                 CustomCityTextField(
-                  hintText: 'Select State',
-                  controller: selectedState!,
+                  label: 'Select State',
+                  value: selectedState!,
                   onTap: () {
                     showDialog(context: context,
                         builder: (BuildContext context){
@@ -242,8 +243,8 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                   },
                 ),
                 CustomCityTextField(
-                  hintText: 'Select City',
-                  controller: selectedCity!,
+                  label: 'Select City',
+                  value: selectedCity!,
                   onTap: () {
                     showDialog(context: context,
                         builder: (BuildContext context){
@@ -265,9 +266,8 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                   isValidator: false,
                 ),
                 CustomCityTextField(
-                  hintText: 'Select Language',
-                  controller: langController.text,
-                  textInputType: TextInputType.text,
+                  label: 'Select Language',
+                  value: langController.text,
                   onTap: () {
                     showDialog(
                         context: context,
@@ -436,7 +436,7 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
                       child: InkWell(
                         onTap: () {
                           html.window.open(
-                              'https://tkdtermsandconditions.s3.ap-south-1.amazonaws.com/termsconditions.html',
+                              AppConstant().TERMS_AND_CONDITION,
                               "_blank" /*,"_self"*/);
                         },
                         child: CustomText(
@@ -681,11 +681,11 @@ class _RegistrationScreen2State extends State<RegistrationScreen2> {
         preferredRouresEntered: 0,
         profilePicture: '',
         rating: 0,
-        transporterOrAgent: widget.selctedType == "Agent/Broker"
+        transporterOrAgent: widget.selctedType == AppConstant().BUSINESS_TYPE_AGENT
             ? 0
-            : widget.selctedType == "Transporter"
+            : widget.selctedType == AppConstant().BUSINESS_TYPE_TRANSPORTER
                 ? 1
-                : widget.selctedType == "Packers and Movers"
+                : widget.selctedType == AppConstant().BUSINESS_TYPE_MANUFACTURER
                     ? 2
                     : 3,
         verified: 0,

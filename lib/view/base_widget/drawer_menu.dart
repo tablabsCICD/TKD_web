@@ -15,11 +15,12 @@ import '../screens/transport/transport_search_screen.dart';
 
 typedef StringValue = Function(String);
 
-const Dashboard = 'Board';
+const Dashboard = 'Home';
 const Markets = 'Markets';
 const Transport = 'Transport Directory';
 const Discussions = 'Discussions';
 const Buy_Sell_Vehicles = 'Buy_Sell_Vehicles';
+const Bulk_Upload = "Bulk Upload";
 const Insurance_Finance = 'Insurance_Finance';
 const Announcement = 'Announcement';
 const Pool_Purchase = 'Pool_Purchase';
@@ -39,7 +40,8 @@ const Received_Quotes = 'Received Quotes';
 const Logout = 'Logout';
 const Call = "Call";
 const Group = "Group";
-
+const All_News = "All News";
+const Report_Incident = "Report Incident";
 const FinanceEnquiry = "Finance Enquiry";
 const InsuranceEnquiry = "Insurance Enquiry";
 const TollCalculation = "Toll Calculation";
@@ -60,7 +62,7 @@ class DrawerMenu extends StatefulWidget {
 
 class _DrawerMenuState extends State<DrawerMenu> {
   final authProvider = locator<AuthProvider>();
-  String selectedTab = "Board";
+  String selectedTab = "Home";
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
               height: 47,
             ),
             getTile('assets/images/navigation_image/icn_board_on.png',
-                Dashboard, context, 'Board', (selectedTab == Dashboard)),
+                Dashboard, context, 'Home', (selectedTab == Dashboard)),
             getDivider(),
             getTile(
                 'assets/images/navigation_image/icn_directory_off.png',
@@ -99,29 +101,32 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 'Transport Directory',
                 (selectedTab == Transport)),
             getDivider(),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3 ||
+          /*  if (authProvider.userDetailList[0].transporterOrAgent == 3 ||
                 authProvider.userDetailList[0].transporterOrAgent == 2)
               SizedBox.shrink()
-            else
+            else*/
               getTile(
                   'assets/images/navigation_image/icn_vehicles_off.png',
                   Buy_Sell_Vehicles,
                   context,
                   'Buy/Sell Vehicles',
-                  (selectedTab == Buy_Sell_Vehicles)),
-            authProvider.userDetailList[0].transporterOrAgent == 3 ||
+                 (selectedTab == Buy_Sell_Vehicles)),
+           /* authProvider.userDetailList[0].transporterOrAgent == 3 ||
                     authProvider.userDetailList[0].transporterOrAgent == 2
                 ? SizedBox.shrink()
-                : getDivider(),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3)
+                : */getDivider(),
+          /*  if (authProvider.userDetailList[0].transporterOrAgent == 3)
               SizedBox.shrink()
-            else
-              getTile('assets/images/navigation_image/jobs.png', Job_Page,
+            else*/
+              getTile('assets/images/navigation_image/job.png', Job_Page,
                   context, 'Jobs', (selectedTab == Job_Page)),
-            authProvider.userDetailList[0].transporterOrAgent == 3
+            /*authProvider.userDetailList[0].transporterOrAgent == 3
                 ? SizedBox.shrink()
-                : getDivider(),
-            getTile('assets/images/navigation_image/jobs.png', Package_Change,
+                :*/ getDivider(),
+            getTile('assets/images/navigation_image/news.png', All_News,
+                context, 'All News', (selectedTab == All_News)),
+            getDivider(),
+            getTile('assets/images/navigation_image/plan.png', Package_Change,
                 context, 'Package Change', (selectedTab == Package_Change)),
             getDivider(),
             getTile('assets/images/navigation_image/icn_account_off.png',
@@ -130,14 +135,14 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 context, 'My Post', (selectedTab == My_Post)),
             getTile('assets/images/navigation_image/icn_bullet_01.png',
                 My_Routes, context, 'My Route', (selectedTab == My_Routes)),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3)
+            /*if (authProvider.userDetailList[0].transporterOrAgent == 3)
               SizedBox.shrink()
-            else
+            else*/
               getTile('assets/images/navigation_image/icn_bullet_01.png',
                   My_Quotes, context, 'My Quotes', (selectedTab == My_Quotes)),
-            if (authProvider.userDetailList[0].transporterOrAgent == 3)
+            /*if (authProvider.userDetailList[0].transporterOrAgent == 3)
               SizedBox.shrink()
-            else
+            else*/
               getTile(
                   'assets/images/navigation_image/icn_bullet_01.png',
                   Received_Quotes,
@@ -146,7 +151,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   (selectedTab == Received_Quotes)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', Group,
                 context, 'Group', (selectedTab == Group)),
-
+            getTile('assets/images/navigation_image/icn_bullet_01.png', Bulk_Upload,
+                context, 'Bulk Upload', (selectedTab == Bulk_Upload)),
             getTile('assets/images/navigation_image/icn_bullet_01.png', FinanceEnquiry,
                 context, 'Finance Enquiry', (selectedTab == FinanceEnquiry)),
 
@@ -158,6 +164,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
             getTile('assets/images/navigation_image/icn_bullet_01.png', mParivahan,
                 context, 'mParivahan', (selectedTab == mParivahan)),
+            getTile('assets/images/navigation_image/icn_bullet_01.png', Report_Incident,
+                context, 'Report Incident', (selectedTab == Report_Incident)),
             getDivider(),
 
             getTile('assets/images/call.png', Call, context, 'Call To Support',
@@ -232,7 +240,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           if (value == Call) {
             calltoSupport(context);
           } else {
-            if (value == Discussion) {
+            /*if (value == Discussion) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DiscussionDashboard()),
@@ -245,16 +253,16 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 MaterialPageRoute(
                     builder: (context) => TransportSearchScreen()),
               );
-            } else if (value == Logout) {
+            } else*/ if (value == Logout) {
               getLogoutFunction();
-            } else if (value == Group) {
+            } else/* if (value == Group) {
               selectedTab = Dashboard;
               setState(() {});
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => GroupList()),
               );
-            } else {
+            } else*/ {
               widget.callBack(value);
             }
           }

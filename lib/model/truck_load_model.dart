@@ -90,12 +90,19 @@ class TruckLoad {
     this.comment,
     this.likes,
     this.postImages,
+    this.images,
     this.transporterOrAgent,
     this.userList,
     this.mobileOrLandline,
     this.expireDate,
+    this.repeatStartDate,
+    this.repeatEndDate,
     this.isSharedInGroup,
-    this.isOpenForBid
+    this.isOpenForBid,
+    this.isRepeat,
+    this.ispostOwnerVerifiedForTrack,this.isQuoteOwnerVerifiedForTrack,this.isCompleted,this.experience,this.department,
+    this.vehicleRegistrationNumber,
+    this.emailId
   });
   late final int? id;
   late final int? userId;
@@ -103,7 +110,7 @@ class TruckLoad {
   late final String? postingTime;
   late final String? companyName;
   late final String? nameOfPerson;
-  late final String? companyRating;
+  late final dynamic? companyRating;
   late final String? content;
   late final String? topicName;
   late final String? tableName;
@@ -135,21 +142,27 @@ class TruckLoad {
   late final String? loadWeight;
   late final String? typeOfCargo;
   late final String? otherDetails;
-  late final dynamic likes;
-  late final dynamic comment;
+  late final int? likes;
+  late final  List<dynamic>? comment;
   late final List<dynamic>?postImages;
+  late final List<dynamic>? images;
   late final int?transporterOrAgent;
   late final String? userList;
   late final String? mobileOrLandline;
   late final String? expireDate;
-
+  late final int? repeatEndDate;
+  late final int? repeatStartDate;
   late final int? isverified;
   late final bool? isSharedInGroup;
   late final int? isOpenForBid;
-
-
-
-
+  late final int? isRepeat;
+  int? ispostOwnerVerifiedForTrack;
+  int? isQuoteOwnerVerifiedForTrack;
+  int? isCompleted;
+  late final String? experience;
+  late final String? department;
+  late final String? vehicleRegistrationNumber;
+  late final String? emailId;
 
   TruckLoad.fromJson(Map<String, dynamic> json){
     id = json['id']?? 0;
@@ -158,7 +171,7 @@ class TruckLoad {
     postingTime = json['postingTime']?? '';
     companyName = json['companyName']?? '';
     nameOfPerson = json['nameOfPerson']?? '';
-    companyRating = json['companyRating']?? '';
+    companyRating = json['companyRating']?? 0.0;
     content = json['content']?? '';
     topicName = json['topicName']?? '';
     tableName = json['tableName']?? '';
@@ -195,16 +208,25 @@ class TruckLoad {
     loadWeight = json['vehicleWeight']?? '';
     typeOfCargo = json['cargoType']?? '';
     otherDetails = json['otherDetails']?? '';
-    likes=json['likes']??'';
-    comment=json['comment']??'';
-    postImages=json['images']??'';
+    likes=json['likes']??0;
+    comment=json['comment']??[];
+    postImages=json['postImages']??[];
+    images=json['images']??[];
     userList=json['userList']??'';
     expireDate=json['expireDate']??'';
-
+    repeatEndDate=json['repeatEndDate']??0;
+    repeatStartDate=json['repeatStartDate']??0;
     mobileOrLandline=json['mobileOrLandline']??'';
     isSharedInGroup=json['isSharedInGroup']??false;
     isOpenForBid=json['isOpenForBid']??1;
-
+    isRepeat = json['isRepeat']??0;
+    ispostOwnerVerifiedForTrack = json['ispostOwnerVerifiedForTrack'] ?? 0;
+    isQuoteOwnerVerifiedForTrack = json['isQuoteOwnerVerifiedForTrack'] ?? 0;
+    isCompleted = json['isCompleted']??0;
+    experience = json['experience']??'';
+    department = json['department']??'';
+    vehicleRegistrationNumber = json['vehicleRegistrationNumber']??"";
+    emailId = json["emailId"]??"";
   }
 
   Map<String, dynamic> toJson() {
@@ -249,16 +271,25 @@ class TruckLoad {
     data['otherDetails'] = otherDetails;
     data['likes'] = likes;
     data['comment'] = comment;
-    data['images'] = postImages;
+    data['postImages'] = postImages;
+    data['images'] = images;
     data['transporterOrAgent'] = transporterOrAgent;
     data['userList'] = userList;
     data['isverified'] = isverified;
     data['mobileOrLandline'] = mobileOrLandline;
     data['expireDate'] = expireDate;
+    data['repeatEndDate'] = repeatEndDate;
+    data['repeatStartDate'] = repeatStartDate;
     data['isSharedInGroup'] = isSharedInGroup;
     data['isOpenForBid'] = isOpenForBid;
-
-
+    data['isRepeat']=isRepeat;
+    data['ispostOwnerVerifiedForTrack'] = ispostOwnerVerifiedForTrack;
+    data['isQuoteOwnerVerifiedForTrack'] = isQuoteOwnerVerifiedForTrack;
+    data['isCompleted'] = isCompleted;
+    data['experience'] = experience;
+    data['department'] = department;
+    data['vehicleRegistrationNumber'] = vehicleRegistrationNumber;
+    data["emailId"]= emailId;
     return data;
   }
 }

@@ -7,12 +7,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/auth_api.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/model/deleteuser.dart';
 import 'package:tkd_app/model/validation_model.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/util/app_constants.dart';
+
+import '../util/validation.dart';
+import '../widgets/toast.dart';
 
 extension extString on String {
   bool get isValidEmail {
@@ -22,7 +26,7 @@ extension extString on String {
 
   bool get isValidName {
     final nameRegExp =
-        new RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$");
+        new RegExp(r"^\s*([A-Za-z]{1,}([\,] |[-']| ))+[A-Za-z]+\.?\s*$");
     return nameRegExp.hasMatch(this);
   }
 
@@ -619,7 +623,7 @@ class AuthProvider extends ChangeNotifier {
       userDetailList = list.content!;
       showSimpleNotification(
           Text(
-            "Post edited successfully!",
+            "profile edited successfully!",
             style: TextStyle(color: Colors.white),
           ),
           background: Colors.black);
@@ -792,11 +796,5 @@ class AuthProvider extends ChangeNotifier {
         _name.value != null;
   }
 
-  Future<DeleteUser> isUserDeleted(String mobileNumber) async {
-    ApiHelper apiHelper = ApiHelper();
-    response = await apiHelper.ApiGetData(
-        ApiConstant.USER_FIND_BY_MOBILE + mobileNumber);
-    DeleteUser deleteUser = DeleteUser.fromJson(response);
-    return deleteUser;
-  }
+
 }

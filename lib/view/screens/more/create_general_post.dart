@@ -35,6 +35,7 @@ import 'package:tkd_app/view/base_widget/getLoader.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/view/screens/my_routes/get_city_list.dart';
 
+import '../../../widgets/base_widgets.dart';
 import '../../base_widget/home_base_widgets.dart';
 
 class CreateGeneralPost extends StatefulWidget {
@@ -101,7 +102,7 @@ class _CreateGeneralPostState extends State<CreateGeneralPost> {
                       textInputType: TextInputType.text,
                       validatorMsg: 'Please enter some thing',
                   ),
-                  model.images.length>0? BaseWidget().carouseImage(model.images):SizedBox(),
+                  model.images.length>0? BaseWidget().carouseImage(context,model.images):SizedBox(),
                       InkWell(
                           onTap: () {
                             model.uploadImages(context);

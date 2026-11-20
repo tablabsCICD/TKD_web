@@ -117,8 +117,8 @@ class _CreatePoolPurchasePostState extends State<CreatePoolPurchasePost> {
                 readOnly: true,
               ),
               CustomCityTextField(
-                hintText: 'Select City',
-                controller: selectedCity,
+                label: 'Select City',
+                value: selectedCity,
                 onTap: (){
                   showDialog(context: context,
                       builder: (BuildContext context){

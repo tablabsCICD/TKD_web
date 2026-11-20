@@ -45,7 +45,7 @@ class _LoadingPageState extends State<LoadingPage> {
             context,
             MaterialPageRoute(
                 builder: (builder) =>
-                    MenuPage(userDetailList: userDetailList,selectedTab: "Board",)));
+                    MenuPage(userDetailList: userDetailList,selectedTab: "Home",)));
       }
     }  else {
     companyLoginOrHome();

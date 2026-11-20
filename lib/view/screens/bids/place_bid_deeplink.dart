@@ -12,6 +12,7 @@ import 'package:tkd_app/model/deep_link_load.dart';
 import 'package:tkd_app/model/post_upload.dart';
 import 'package:tkd_app/model/request/bid_place.dart';
 import 'package:tkd_app/model/shared_post_model.dart';
+import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
@@ -26,7 +27,7 @@ import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
 import 'package:tkd_app/widgets/toast.dart';
 
 class PlaceDeepBidScreen extends StatefulWidget{
-  final TruckLoadDeepLink truckLoad;
+  final TruckLoad truckLoad;
 
   const PlaceDeepBidScreen({required this.truckLoad});
   @override
@@ -61,7 +62,7 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
             children: [
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 36.h,
+                height: 36,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -69,7 +70,7 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
                       "Quote Now",
                       style:TextStyle(
                         color: Colors.black,
-                        fontSize: 20.sp,
+                        fontSize: 20,
                         fontFamily:AppConstant.FONTFAMILY,
                         fontWeight: FontWeight.w600,
                       ),
@@ -78,58 +79,58 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 50.h,),
+              SizedBox(height: 50,),
               Text(
                 "Vehicale Size ${widget.truckLoad.vehicleSize!} Cargo Type ${widget.truckLoad.typeOfCargo!}",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 18.sp,
+                  fontSize: 18,
                   fontFamily: AppConstant.FONTFAMILY,
                   fontWeight: FontWeight.w600,
                   height: 0,
                 ),
               ),
-              SizedBox(height: 8.h,),
-              BaseWidget().routes(widget.truckLoad.source!,widget.truckLoad.destination!),
-              SizedBox(height: 8.h,),
+              SizedBox(height: 8,),
+              HomeBaseWidget().routes(widget.truckLoad.source!,widget.truckLoad.destination!),
+              SizedBox(height: 8,),
               Text(
                 widget.truckLoad.otherDetails!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color(0x99001E49),
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontFamily: AppConstant.FONTFAMILY,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
               ),
-              SizedBox(height: 10.h,),
+              SizedBox(height: 10,),
               avgBid=="0"?const SizedBox.shrink():Text(
                 "Average Bid is $avgBid",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontFamily: AppConstant.FONTFAMILY,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
               ),
-              SizedBox(height: 36.h,),
+              SizedBox(height: 36,),
               Text(
                 "Enter Amount",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontFamily: AppConstant.FONTFAMILY,
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
 
               ),
-              SizedBox(height: 8.h,),
-              SizedBox(height:49.w,child: CustomTextField(
+              SizedBox(height: 8,),
+              SizedBox(height:49,child: CustomTextField(
                 hintText: "\u{20B9}", controller: controller,
                 textInputType: TextInputType.number,
                 onValueChange: (val){
@@ -149,7 +150,7 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
                 bidState,
                 style: TextStyle(
                   color: Colors.red,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontFamily: AppConstant.FONTFAMILY,
                   fontWeight: FontWeight.w400,
                   height: 0,
@@ -170,13 +171,13 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
             return AlertDialog(
               title: Text('Quote',style: TextStyle(
                 color: Colors.black,
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontFamily: GoogleFonts.poppins().fontFamily,
                 fontWeight: FontWeight.w600,
               ),),
               content: Text('Are you sure you want to quote this post?',style: TextStyle(
                 color: Colors.black,
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontFamily: GoogleFonts.poppins().fontFamily,
                 fontWeight: FontWeight.w400,
               ),),
@@ -185,7 +186,7 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
                   },
-                  child: Text('No',style: TextStyle(color: ThemeColor.theme_blue, fontSize: 12.sp,
+                  child: Text('No',style: TextStyle(color: ThemeColor.theme_blue, fontSize: 12,
                     fontFamily: GoogleFonts.poppins().fontFamily,
                     fontWeight: FontWeight.w600,),),
                 ),
@@ -195,7 +196,7 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
                   },
                   child: Text(
                     'Yes',
-                    style: TextStyle(color: Colors.green, fontSize: 12.sp,
+                    style: TextStyle(color: Colors.green, fontSize: 12,
                       fontFamily: GoogleFonts.poppins().fontFamily,
                       fontWeight: FontWeight.w600,),
                   ),
@@ -228,8 +229,10 @@ class _PlaceDeepBidScreen extends State<PlaceDeepBidScreen> {
     if(apiResponse.status==200){
         PostUpload postUpload=PostUpload.fromJson(apiResponse.response);
       if(postUpload.statusCode==401){
-        ToastMessage.show(context, "Please update your package");
-        Navigator.push(context, MaterialPageRoute(builder: (builder)=>SelectPlanScreen()));
+        ToastMessage.show(context, "Quote submitted successfully");
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>EntryScreen()));
+       /* ToastMessage.show(context, "Please update your package");
+        Navigator.push(context, MaterialPageRoute(builder: (builder)=>SelectPlanScreen()));*/
       }else{
         ToastMessage.show(context, "Quote submitted successfully");
        Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>EntryScreen()));

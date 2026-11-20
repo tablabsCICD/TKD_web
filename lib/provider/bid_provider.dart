@@ -16,7 +16,11 @@ import 'package:tkd_app/view/screens/menu_page.dart';
 import '../model/acceptBidResponse.dart';
 import '../model/api_response.dart';
 import '../model/bid_placed.dart';
+import '../model/deleteuser.dart';
+import '../model/quoteResponse.dart';
+import '../model/quote_response.dart';
 import '../network/api_call.dart';
+import '../util/validation.dart';
 import '../widgets/toast.dart';
 
 class BidProvider extends ChangeNotifier {
@@ -28,6 +32,10 @@ class BidProvider extends ChangeNotifier {
   bool isLoading = false;
   List<BidingUser> truckLoadTypeList = [];
   final authProvider = locator<AuthProvider>();
+  bool isPaginationLoading = false;
+  bool isLastPage = false;
+
+  int currentPage = 0;
 
   getAllBidingList(String userName, int isPublic) async {
     isLoading = true;
@@ -54,28 +62,61 @@ class BidProvider extends ChangeNotifier {
   List<TruckLoad> allPostList = [];
   List<TruckLoad> myOwnPostList = [];
 
-  getReceivedBidingList() async {
-    isLoading = true;
+  Future<List<Bidings>> getReceivedBidingList({int currentPage = 0}) async {
+    // Stop if last page already loaded
+    if (isLastPage) return receivedBidingList;
+
+    // Initial load vs pagination
+    if (currentPage == 0) {
+      isLoading = true;
+      ownBidPostList.clear();
+      receivedBidingList.clear();
+    } else {
+      isPaginationLoading = true;
+    }
+
     notifyListeners();
+
     String myUrl = ApiConstant.BASE_URL +
-        'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}';
+        'getOwnPostAndBid?userId=${authProvider.userDetailList[0].id}&page=$currentPage&size=10';
+
     print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
+
+    try {
+      var req = await http.get(Uri.parse(myUrl));
+      response = json.decode(req.body);
+      print(response);
+
+      var type = MyPostBids.fromJson(response);
+
+      /// 🔹 Check if API returned empty → last page
+      if (type.content == null || type.content!.isEmpty) {
+        isLastPage = true;
+      } else {
+        /// 🔹 Append instead of overwrite
+        ownBidPostList.addAll(type.content!);
+
+        /// 🔹 Collect all bidings
+        for (var post in type.content!) {
+          if (post.bidings != null && post.bidings!.isNotEmpty) {
+            receivedBidingList.addAll(post.bidings!);
+          }
+        }
+
+        /// 🔹 Sort by amount (Low → High)
+        receivedBidingList.sort((a, b) => int.parse(a.bidings!.amount!)
+            .compareTo(int.parse(b.bidings!.amount!)));
+
+        this.currentPage = currentPage;
+      }
+    } catch (e) {
+      debugPrint("Pagination error: $e");
+    }
+
     isLoading = false;
-    response = json.decode(req.body);
-    print(response);
-    var type = MyPostBids.fromJson(response);
-    ownBidPostList.clear();
-    ownBidPostList = type.content!;
-    receivedBidingList.clear();
-    receivedBidingList = type.content![0].bidings!;
-    receivedBidingList.sort((a, b) =>
-        int.parse(a.bidings!.amount!).compareTo(int.parse(b.bidings!.amount!)));
-    print('Low to hight in biding amount: $receivedBidingList');
-    receivedBidingList.forEach((element) {
-      print("amount : " + element.bidings!.amount.toString());
-    });
+    isPaginationLoading = false;
     notifyListeners();
+
     return receivedBidingList;
   }
 
@@ -91,19 +132,22 @@ class BidProvider extends ChangeNotifier {
     return truckLoadTypeList;
   }
 
-  generateBid(BuildContext context,
-      {int? mobile,
-      String? description,
-      int? id,
-      String? email,
-      String? amount,
-      int? idOfPost,
-      String? bidderUserName,
-      String? userName,
-      String? type,
-      String? loggedUserName}) async {
+  Future<bool> generateBid(
+    BuildContext context, {
+    int? mobile,
+    String? description,
+    int? id,
+    String? email,
+    String? amount,
+    int? idOfPost,
+    String? bidderUserName,
+    String? userName,
+    String? type,
+    String? loggedUserName,
+  }) async {
     String myUrl = ApiConstant.BID_TO_POST;
     Uri uri = Uri.parse(myUrl);
+
     Map<String, dynamic> data = {
       "amount": amount,
       "bidderUserName": bidderUserName,
@@ -117,60 +161,63 @@ class BidProvider extends ChangeNotifier {
       "type": type,
       "userName": userName
     };
-    var body = json.encode(data);
-    print(data);
 
-    final response = await http.post(uri,
-        headers: {"Content-Type": "application/json"}, body: body);
+    final response = await http.post(
+      uri,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
     print("${response.statusCode}" + " --- " + response.body.toString());
+
     if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      showSimpleNotification(
-          Text(
-            "Quote Submitted Successfully",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.green);
-   /*   CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if (commonResponse.isSuccess == true) {
+      QuoteRespose quoteResponse =
+          QuoteRespose.fromJson(jsonDecode(response.body));
+      if (quoteResponse.isSuccess == false) {
+        showSimpleNotification(
+          Text(quoteResponse.message.toString(),
+              style: TextStyle(color: Colors.white)),
+          background: Colors.orange,
+        );
+
+        return false;
       } else {
         showSimpleNotification(
-            Text(
-              commonResponse.message.toString(),
-              style: TextStyle(color: Colors.white),
-            ),
-            background: Colors.orange);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) => MenuPage(
-                      userDetailList: authProvider.userDetailList,
-                      selectedTab: "Package Change",
-                    )));
-      }*/
-    } else if (response.statusCode == 401||response.statusCode == 400) {
-      showSimpleNotification(
-          Text(
-            "Please update your package",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.orange);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (builder) => MenuPage(
-                    userDetailList: authProvider.userDetailList,
-                    selectedTab: "Package Change",
-                  )));
-    } else {
-      showSimpleNotification(
-          Text(
-            "Please Try Again!",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.red);
+          Text(quoteResponse.message.toString(),
+              style: TextStyle(color: Colors.white)),
+          background: Colors.green,
+        );
+
+        return true;
+      }
     }
-    notifyListeners();
+
+    if (response.statusCode == 400 || response.statusCode == 401) {
+      showSimpleNotification(
+        Text("Please update your package",
+            style: TextStyle(color: Colors.white)),
+        background: Colors.orange,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (builder) => MenuPage(
+            userDetailList: authProvider.userDetailList,
+            selectedTab: "Package Change",
+          ),
+        ),
+      );
+
+      return false;
+    }
+
+    showSimpleNotification(
+      Text("Please Try Again!", style: TextStyle(color: Colors.white)),
+      background: Colors.red,
+    );
+
+    return false;
   }
 
   deleteBid(Bids bid) async {
@@ -196,59 +243,69 @@ class BidProvider extends ChangeNotifier {
       "isUpdatedDriverDetails": 0,
       "loggedTime": "",
       "postId": data.genericCardsDto!.id,
-      "sourceLocation":data.genericCardsDto!.source ,
+      "sourceLocation": data.genericCardsDto!.source,
       "userId": authProvider.userDetailList[0].id,
       "vehicleNumber": vehicleNumber
     };
-    print(ApiConstant.ACCEPTBID);
-    var apiResponse = await ApiHelper().ApiAddPostDataMapRequest(ApiConstant.ACCEPTBID,mapData);
-    if (apiResponse.statusCode == 200) {
-      AcceptBidResponse acceptBidResponse = AcceptBidResponse.fromJson(apiResponse.body);
 
-      if(acceptBidResponse.success == true){
-        ToastMessage.show(context, acceptBidResponse.message.toString());
-      }else{
-        ToastMessage.show(context, acceptBidResponse.message.toString());
-      }
+    print(ApiConstant.ACCEPTBID);
+
+    var apiResponse = await ApiHelper().ApiAddPostDataMapRequest(
+      ApiConstant.ACCEPTBID,
+      mapData,
+    );
+
+    if (apiResponse.statusCode == 200) {
+      /// IMPORTANT FIX
+      final Map<String, dynamic> jsonMap = jsonDecode(apiResponse.body);
+      AcceptBidResponse acceptBidResponse = AcceptBidResponse.fromJson(jsonMap);
+
+      ToastMessage.show(context, acceptBidResponse.message ?? "Success");
+
       notifyListeners();
       getReceivedBidingList();
+
       Navigator.of(context).pop();
     } else {
       ToastMessage.show(context, "Please Try Again");
     }
   }
 
-  updateAcceptBid(BuildContext context, Bids data,
-      String driverNumber, String vehicleNumber) async {
+  updateAcceptBid(BuildContext context, Bids data, String driverNumber,
+      String vehicleNumber) async {
     Map<String, dynamic> mapData = {
       "driverContact": driverNumber,
       "id": data.acceptBidId,
-      "userId":authProvider.userDetailList[0].id,
+      "userId": authProvider.userDetailList[0].id,
       "vehicleNumber": vehicleNumber
     };
     print(ApiConstant.UPDATE_ACCEPTED_BID);
-    var response = await ApiHelper().ApiPutDataMapRequest(ApiConstant.UPDATE_ACCEPTED_BID,mapData);
+    var response = await ApiHelper()
+        .ApiPutDataMapRequest(ApiConstant.UPDATE_ACCEPTED_BID, mapData);
     print('the request is ${json.encode(mapData)}');
     print('the resopnse is ${response.statusCode}');
     if (response.statusCode == 200) {
       showSimpleNotification(
-          Text("driver number and vehicle number added Successfully",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
+          Text(
+            "driver number and vehicle number added Successfully",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.black);
       //nch  Navigator.pop(context);
       Navigator.pop(context, 1);
     } else {
       showSimpleNotification(
-          Text("Please try again",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
+          Text(
+            "Please try again",
+            style: TextStyle(color: Colors.white),
+          ),
+          background: Colors.black);
     }
   }
 
-
   late Map<String, dynamic> data = {};
 
-  getGraphDataForBids(BuildContext context, int postId,int index) async {
+  getGraphDataForBids(BuildContext context, int postId, int index) async {
     try {
       debugPrint('Fetching bid data from ${ApiConstant.GET_BID_TREND(postId)}');
       ApiResponse apiResponse = await ApiHelper()
@@ -256,9 +313,14 @@ class BidProvider extends ChangeNotifier {
 
       if (apiResponse.statusCode == 200) {
         debugPrint('${apiResponse.status}');
-        ownBidPostList[index].genericCardsDto!.graphList = {};
+        ownBidPostList[index].genericCardsDto!.graphList = [];
         data = jsonDecode(apiResponse.response) as Map<String, dynamic>;
-        ownBidPostList[index].genericCardsDto!.graphList = data;
+        QuoteResponse response = QuoteResponse.fromJson(data);
+        if (response.data != null) {
+          ownBidPostList[index].genericCardsDto!.graphList = response.data;
+        } else {
+          ToastMessage.show(context, response.message!);
+        }
         notifyListeners();
       } else {
         ToastMessage.show(context, "Please Try Again");
@@ -267,6 +329,99 @@ class BidProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error fetching bid data: $e");
       ToastMessage.show(context, "An error occurred. Please try again.");
+    }
+  }
+
+  Future<bool> callOtp(BuildContext context, String mobileNumber, int postId,
+      bool isPostOwner) async {
+    try {
+      var req = await ApiHelper()
+          .ApiPostData(ApiConstant.SEND_TRACKING_OTP(isPostOwner, postId));
+
+      // ✅ Prevent calling Toasts on disposed context
+      if (!context.mounted) return false;
+
+      if (req.statusCode == 200) {
+        ToastMessage.show(context, "OTP Sent Successfully");
+        return true;
+      } else {
+        ToastMessage.show(context, "Failed to send OTP");
+        return false;
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastMessage.show(context, "Error: $e");
+      }
+      return false;
+    }
+  }
+
+  Future<bool> callSwitch(DeleteUser user, BuildContext context,
+      String mobileNumber, int postId, bool isPostOwner) async {
+    try {
+      switch (user.errorCode) {
+        case '200':
+          return await callOtp(context, mobileNumber, postId, isPostOwner);
+
+        case '201':
+          if (context.mounted) {
+            ToastMessage.show(
+                context, "User is deleted, please register again");
+          }
+          return false;
+
+        case '500':
+          if (context.mounted) {
+            ToastMessage.show(
+                context, "Mobile number is not registered, please register");
+          }
+          return false;
+
+        default:
+          if (context.mounted) {
+            ToastMessage.show(context, "Unexpected response");
+          }
+          return false;
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastMessage.show(context, "Error: $e");
+      }
+      return false;
+    }
+  }
+
+  Future<bool> isUserDeleted(String mobileNumber, BuildContext context,
+      int postId, bool isPostOwner) async {
+    if (!Validation().isValidPhoneNumber(mobileNumber)) {
+      if (context.mounted) {
+        ToastMessage.show(context, "Enter valid mobile number");
+      }
+      return false;
+    }
+
+    try {
+    
+      var req = await http.get(Uri.parse( "${ApiConstant.USER_FIND_BY_MOBILE}$mobileNumber"));
+      // ✅ Check again after API call
+      if (!context.mounted) return false;
+
+      if (req.statusCode == 200) {
+        DeleteUser deleteUser = DeleteUser.fromJson(jsonDecode(req.body));
+        bool returnVal = await callSwitch(
+            deleteUser, context, mobileNumber, postId, isPostOwner);
+        return returnVal;
+      } else {
+        if (context.mounted) {
+          ToastMessage.show(context, "Please try again");
+        }
+        return false;
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastMessage.show(context, "Error: $e");
+      }
+      return false;
     }
   }
 }

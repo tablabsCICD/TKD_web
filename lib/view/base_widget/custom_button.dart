@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 
 class CustomButton extends StatelessWidget {
-  Function onTap;
+  final FutureOr<void> Function()? onTap;
   final String? buttonText;
 
   CustomButton({required this.onTap, required this.buttonText});
@@ -14,9 +16,18 @@ class CustomButton extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20,vertical: 15),
       height: 50,
+      alignment: Alignment.center,
       child: ElevatedButton(
         onPressed: (){
-          onTap();
+            if (onTap != null) {
+              final result = onTap!();   // works for sync + async
+              if (result is Future) {
+                result.catchError((e) {
+                  // optional error handling
+                });
+              }
+            }
+
         },
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white, backgroundColor: Color(0xFF001E49),

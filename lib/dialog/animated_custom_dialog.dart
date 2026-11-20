@@ -1,60 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 
-void showAnimatedDialog(BuildContext context, Widget dialog, {bool isFlip = false, bool dismissible = true}) {
-  isFlip = false;
+/// RESPONSIVE ANIMATED DIALOG
+showAnimatedDialog(
+    BuildContext context,
+    Widget dialog, {
+      bool isFlip = false,
+      bool dismissible = true,
+    }) {
   showGeneralDialog(
     context: context,
     barrierDismissible: dismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withOpacity(0.5),
-    pageBuilder: (context, animation1, animation2) => dialog,
-    transitionDuration: Duration(milliseconds: 500),
-    transitionBuilder: (context, a1, a2, widget) {
-      if(isFlip) {
-        return Rotation3DTransition(
+    barrierColor: Colors.black.withOpacity(0.45),
+    transitionDuration: const Duration(milliseconds: 450),
+
+    /// WRAP PAGEBUILDER FOR RESPONSIVE WIDTH
+    pageBuilder: (dialogContext, animation1, animation2) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: kIsWeb ? 450 : double.infinity,  // WEB = SMALL WIDTH
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: dialog,
+          ),
+        ),
+      );
+    },
+
+    /// ENTRY ANIMATION
+    transitionBuilder: (context, anim, _, child) {
+      if (isFlip) {
+        /// 3D Flip Animation
+        final double angle = (1 - anim.value) * math.pi;
+
+        return Transform(
           alignment: Alignment.center,
-          turns: Tween<double>(begin: math.pi, end: 2.0 * math.pi).animate(CurvedAnimation(parent: a1, curve: Interval(0.0, 1.0, curve: Curves.linear))),
-          child: FadeTransition(
-            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: a1, curve: Interval(0.5, 1.0, curve: Curves.elasticOut))),
-            child: widget,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(angle),
+          child: Opacity(
+            opacity: anim.value,
+            child: child,
           ),
         );
-      }else {
+      } else {
+        /// Scale + Fade Animation
         return Transform.scale(
-          scale: a1.value,
-          child: Opacity(
-            opacity: a1.value,
-            child: widget,
-          ),
+          scale: Curves.easeOutBack.transform(anim.value),
+          child: Opacity(opacity: anim.value, child: child),
         );
       }
     },
   );
-}
-
-class Rotation3DTransition extends AnimatedWidget {
-  const Rotation3DTransition({
-    Key? key,
-    required Animation<double> turns,
-    this.alignment = Alignment.center,
-    required this.child,
-  })  : assert(turns != null),
-        super(key: key, listenable: turns);
-
-  final Alignment alignment;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final double turnsValue = 45;
-    final Matrix4 transform = Matrix4.identity()
-      ..setEntry(3, 2, 0.0006)
-      ..rotateY(turnsValue);
-    return Transform(
-      transform: transform,
-      alignment: FractionalOffset(0.5, 0.5),
-      child: child,
-    );
-  }
 }

@@ -1,5 +1,5 @@
-import 'package:tkd_app/model/auth_api.dart';
 
+import 'package:tkd_app/model/userdata.dart';
 
 class RatingModel {
   String? message;
@@ -10,27 +10,27 @@ class RatingModel {
 
   RatingModel.fromJson(Map<String, dynamic> json) {
     message = json['message'];
-    data = json['data'] != null ? new RatingData.fromJson(json['data']) : null;
+    data = json['data'] != null ? RatingData.fromJson(json['data']) : null;
     success = json['success'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['success'] = this.success;
+    data['success'] = success;
     return data;
   }
 }
 
 class RatingData {
   int? id;
-  dynamic rating;
+  double? rating;
   String? review;
   CompanyId? companyId;
-  User? userId;
+  UserData? userId;
   int? date;
 
   RatingData(
@@ -46,25 +46,25 @@ class RatingData {
     rating = json['rating'];
     review = json['review'];
     companyId = json['companyId'] != null
-        ? new CompanyId.fromJson(json['companyId'])
+        ? CompanyId.fromJson(json['companyId'])
         : null;
     userId =
-    json['userId'] != null ? new User.fromJson(json['userId']) : null;
+    json['userId'] != null ? UserData.fromJson(json['userId']) : null;
     date = json['date'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['rating'] = this.rating;
-    data['review'] = this.review;
-    if (this.companyId != null) {
-      data['companyId'] = this.companyId!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['rating'] = rating;
+    data['review'] = review;
+    if (companyId != null) {
+      data['companyId'] = companyId!.toJson();
     }
-    if (this.userId != null) {
-      data['userId'] = this.userId!.toJson();
+    if (userId != null) {
+      data['userId'] = userId!.toJson();
     }
-    data['date'] = this.date;
+    data['date'] = date;
     return data;
   }
 }
@@ -89,7 +89,7 @@ class CompanyId {
   String? city;
   String? state;
   String? otp;
-  bool? active;
+  dynamic? active;
   String? logo;
 
   CompanyId(
@@ -135,33 +135,33 @@ class CompanyId {
     city = json['city'];
     state = json['state'];
     otp = json['otp'];
-    active = json['active']??true;
+    active = json['active']??'';
     logo = json['logo']??'';
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['companyName'] = this.companyName;
-    data['companyAddress'] = this.companyAddress;
-    data['isVerified'] = this.isVerified;
-    data['website'] = this.website;
-    data['landlineNumber'] = this.landlineNumber;
-    data['companyMobileNumber'] = this.companyMobileNumber;
-    data['pointOfContact'] = this.pointOfContact;
-    data['gstNumber'] = this.gstNumber;
-    data['gstNumber2'] = this.gstNumber2;
-    data['typeOfRegistration'] = this.typeOfRegistration;
-    data['panCardNumber'] = this.panCardNumber;
-    data['tanCardNumber'] = this.tanCardNumber;
-    data['officialEmailId'] = this.officialEmailId;
-    data['rating'] = this.rating;
-    data['numberOfRatings'] = this.numberOfRatings;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['otp'] = this.otp;
-    data['active'] = this.active;
-    data['logo'] = this.logo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['companyName'] = companyName;
+    data['companyAddress'] = companyAddress;
+    data['isVerified'] = isVerified;
+    data['website'] = website;
+    data['landlineNumber'] = landlineNumber;
+    data['companyMobileNumber'] = companyMobileNumber;
+    data['pointOfContact'] = pointOfContact;
+    data['gstNumber'] = gstNumber;
+    data['gstNumber2'] = gstNumber2;
+    data['typeOfRegistration'] = typeOfRegistration;
+    data['panCardNumber'] = panCardNumber;
+    data['tanCardNumber'] = tanCardNumber;
+    data['officialEmailId'] = officialEmailId;
+    data['rating'] = rating;
+    data['numberOfRatings'] = numberOfRatings;
+    data['city'] = city;
+    data['state'] = state;
+    data['otp'] = otp;
+    data['active'] = active;
+    data['logo'] = logo;
     return data;
   }
 }

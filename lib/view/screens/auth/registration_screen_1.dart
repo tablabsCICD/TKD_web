@@ -12,6 +12,7 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/util/ResponsiveWidget.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_dropdown_list.dart';
 import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
@@ -43,11 +44,11 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
   File? imagefile;
   Uint8List? imageBytes;
   String? fileName;
-  List<String> itemList = <String>[
-    'Agent/Broker',
-    'Transporter',
-    'Packers and Movers',
-    'Manufacturer/Distributor/Trade',
+  static final List<String> itemList = [
+    AppConstant().BUSINESS_TYPE_AGENT,
+    AppConstant().BUSINESS_TYPE_TRANSPORTER,
+    AppConstant().BUSINESS_TYPE_MANUFACTURER,
+    AppConstant().BUSINESS_TYPE_DRIVER,
   ];
 
   var _current = 0;
@@ -242,7 +243,7 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                   });
                 },
               ),
-              selectedPostType == 'Shipper/Manufacturer/Distributor'
+              selectedPostType == AppConstant().BUSINESS_TYPE_MANUFACTURER
                   ? CustomTextField(
                       hintText: 'Type Of Business',
                       controller: businessController,
@@ -256,8 +257,8 @@ class _RegistrationScreen1State extends State<RegistrationScreen1> {
                     onTap: () {
                       if (_formKey.currentState!.validate()) {
                      //   model.postProfilePicture('2880',imageFilePath: fileName,imageBytes:  imageBytes,objectFile: objFile);
-                        selectedPostType == 'Agent' ||
-                                selectedPostType == 'Transporter'
+                        selectedPostType == AppConstant().BUSINESS_TYPE_AGENT ||
+                                selectedPostType == AppConstant().BUSINESS_TYPE_TRANSPORTER
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(

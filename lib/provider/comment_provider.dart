@@ -24,10 +24,11 @@ class CommentProvider extends ChangeNotifier {
 
     print('the url $url');
 
-    var apiResponse = await http.get(Uri.parse(url));
-    if (apiResponse.statusCode == 200) {
+    final response = await http.get(Uri.parse(url));
+    print(response.body);
+    if (response.statusCode == 200) {
       CommentResponse commentResponse =
-          CommentResponse.fromJson(jsonDecode(apiResponse.body));
+          CommentResponse.fromJson(jsonDecode(response.body));
       countComment = commentResponse.data!.commentCount!;
       countLike = commentResponse.data!.generalPost!.likes!;
       commentList.clear();

@@ -14,7 +14,7 @@ import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/post_comment.dart';
 import 'package:tkd_app/widgets/verified_tag.dart';
 
-class BaseWidget {
+class HomeBaseWidget {
 
 
   Widget likeComment(TruckLoad truckLoad, BuildContext context,
@@ -153,8 +153,8 @@ class BaseWidget {
     );
   }
 
-  Widget profile(String profileLink, String name, String companyName,
-      {int verify = 0}) {
+  Widget profile(String profileLink, String name, String companyName,String email,double ratings,
+      {int verify = 0,isJob=0}) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -248,9 +248,23 @@ class BaseWidget {
                                             ),
                                           ),
                                         ),
-                                        RatingBar.builder(
+                                        isJob==0?SizedBox.shrink(): SizedBox(
+                                          width: double.infinity,
+                                          child: Text(
+                                            email??'-',
+                                            style: TextStyle(
+                                              color: Color(0xff000000),
+                                              fontSize: 10,
+                                              fontFamily: GoogleFonts
+                                                  .poppins()
+                                                  .fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                        isJob==1?SizedBox.shrink():RatingBar.builder(
                                           itemSize: 10,
-                                          initialRating: 4.5,
+                                          initialRating: ratings,
                                           ignoreGestures: true,
                                           minRating: 1,
                                           direction: Axis.horizontal,
@@ -478,26 +492,7 @@ class BaseWidget {
     );
   }
 
-  getImage(String src, {double? height, double? width}) {
-    return src == ""
-        ? Container(
-        width: height == null ? 35 : height,
-        height: width == null ? 35 : width,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey[100],
-            image: new DecorationImage(
-                fit: BoxFit.contain,
-                image: AssetImage('assets/images/my_profile.png'))))
-        : Container(
-        width: height == null ? 35 : height,
-        height: width == null ? 35 : width,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey[100],
-            image: new DecorationImage(
-                fit: BoxFit.contain, image: NetworkImage(src))));
-  }
+
 
   getImageclip(String src, {double? height, double? width}) {
     return src == ""
@@ -660,54 +655,10 @@ class BaseWidget {
     );
   }
 
-  Widget image({String image = ""}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.0),
-      child: CachedNetworkImage(
-        imageUrl: image,
-        placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
-        errorWidget: (context, url, error) =>
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
-                  fit: BoxFit.fill,
-                  width: 311,
-                  height: 200,
-                )),
-        fit: BoxFit.fill,
-        width: 311,
-        height: 200,
-      ),
-    );
-  }
 
-  Widget imageLink(String link) {
-    return image(image: link);
-  }
-
-  Widget carouseImage(List<String?> imgList) {
-    return Container(
-        child: CarouselSlider(
-          options: CarouselOptions(
-            padEnds: false,
-            pageSnapping: false,
-            enableInfiniteScroll: false,
-          ),
-          items: imgList
-              .map((item) =>
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(child: imageLink(item!)),
-                ),
-              ))
-              .toList(),
-        ));
-  }
 
   Widget headingWithDescription(String title, String date, String field1,
-      String field2, String field3, bool isJobPost) {
+      String field2, String field3, String field4, String field5,bool isJobPost) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -841,6 +792,58 @@ class BaseWidget {
                             ),
                           ],
                         ),
+                        isJobPost ? SizedBox.shrink() : field5=="Buy"?SizedBox.shrink(): Row(
+                          children: [
+                            Text(
+                              "Vehicle Number : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              field5,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Location : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              field4,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -854,7 +857,7 @@ class BaseWidget {
   }
 
   Widget jobHeadingWithDescription(String title, String date, String exp,
-      String role, String desc, bool isJobPost) {
+      String role, String desc, String location,bool isJobPost) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -951,6 +954,32 @@ class BaseWidget {
                             ),
                             Text(
                               role,
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "Location : ",
+                              style: TextStyle(
+                                color: Color(0x99001E49),
+                                fontSize: 12,
+                                fontFamily: GoogleFonts
+                                    .poppins()
+                                    .fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              location,
                               style: TextStyle(
                                 color: Color(0x99001E49),
                                 fontSize: 12,
@@ -1102,155 +1131,7 @@ class BaseWidget {
     );
   }
 
-  Widget profileWithUser(String profileLink, String name, String companyName,
-      {int verify = 0, int transporterOrAgent = 0}) {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                getImageclip(profileLink, height: 40, width: 40)
-              ],
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              name,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                                fontFamily:
-                                                GoogleFonts
-                                                    .poppins()
-                                                    .fontFamily,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Visibility(
-                                              visible:
-                                              verify != 0 ? true : false,
-                                              child: VerifiedTag()
-                                                  .onVeriedTag(),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: Text(
-                                            companyName,
-                                            style: TextStyle(
-                                              color: Color(0x99001E49),
-                                              fontSize: 10,
-                                              fontFamily: GoogleFonts
-                                                  .poppins()
-                                                  .fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: Text(
-                                            getTranport(
-                                                transporterOrAgent),
-                                            style: TextStyle(
-                                              color: Color(0x99001E49),
-                                              fontSize: 10,
-                                              fontFamily: GoogleFonts
-                                                  .poppins()
-                                                  .fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        RatingBar.builder(
-                                          itemSize: 10,
-                                          initialRating: 4.5,
-                                          ignoreGestures: true,
-                                          minRating: 1,
-                                          direction: Axis.horizontal,
-                                          allowHalfRating: true,
-                                          itemCount: 5,
-                                          itemPadding: EdgeInsets.symmetric(
-                                              horizontal: 1.0),
-                                          itemBuilder: (context, _) =>
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
-                                                size: 5,
-                                              ),
-                                          onRatingUpdate: (rating) {
-                                            print(rating);
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   popUpmenu(Function(int) onMenuTap) {
     return PopupMenuButton(
@@ -1370,7 +1251,7 @@ class BaseWidget {
                   width: 12,
                 ),
                 Text(
-                  getTranslated('share', context)!,
+                  getTranslated('rating', context)!,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,

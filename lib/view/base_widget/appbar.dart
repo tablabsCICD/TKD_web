@@ -7,8 +7,11 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/provider/group/groupChatProvider.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
+import '../../util/ResponsiveWidget.dart';
+import '../../widgets/button.dart';
 import '../screens/group/editGroupScreen.dart';
 
 class AppBarCommon {
@@ -46,61 +49,114 @@ class AppBarCommon {
       ),
       backgroundColor: Colors.white,
       elevation: 0,
+
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios_new,
           color: Colors.black,
         ),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: authProvider.userDetailList,selectedTab:"Board")));
+          Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: authProvider.userDetailList,selectedTab:"Home")));
         },
       ),
     );
   }
 
-  AppBar appBarWithTextField(TextEditingController _controller, String hintText,
-      Function onChangeVal(value), bool backShow) {
+
+  AppBar appBarWithTextField(
+      TextEditingController _controller,
+      String hintText,
+      ValueChanged<String> onChangeVal,
+      bool backShow, {
+        Widget? filterIcon,
+        List<String>? selectedFilterLabel,  // 🔵 NEW PARAM
+      }) {
     return AppBar(
       leadingWidth: 25,
       centerTitle: true,
       title: Container(
         alignment: Alignment.center,
         width: 500,
-        child: TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.black12,
-              contentPadding: EdgeInsets.all(1),
-              hintText: hintText,
-              prefixIcon: Icon(Icons.search),
-              //border: InputBorder.none,
-              border: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(
-                  const Radius.circular(15.0),
+        child: Row(
+          children: [
+            // 🔍 SEARCH FIELD
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.black12,
+                  contentPadding: EdgeInsets.all(1),
+                  hintText: hintText,
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    borderSide: BorderSide(width: 0, style: BorderStyle.none),
+                  ),
                 ),
-                borderSide: BorderSide(
-                  width: 0,
-                  style: BorderStyle.none,
-                ),
-              )),
-          style: Style.searchHint,
-          onChanged: (value) {
-            onChangeVal(value);
-          },
+                style: Style.searchHint,
+                onChanged: onChangeVal,
+              ),
+            ),
+
+            SizedBox(width: 10),
+
+            // 🔵 SHOW SELECTED FILTER LABEL
+            if (selectedFilterLabel != null && selectedFilterLabel!.isNotEmpty)
+              Wrap(
+                spacing: 6,
+                children: selectedFilterLabel!.map((label) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveWidget.isMobile(context) ? 8 : 12,
+                      vertical: ResponsiveWidget.isMobile(context) ? 3 : 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade400),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: ResponsiveWidget.isMobile(context) ? 11 : 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+
+                        // ❌ Small clear icon per chip
+                        GestureDetector(
+                          onTap: () {
+                            selectedFilterLabel!.remove(label);
+                            // You must call setState from parent screen
+                            (context as Element).markNeedsBuild();
+                          },
+                          child: Icon(Icons.close, size: 14, color: Colors.black54),
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+
+
+
+            // 🔵 FILTER BUTTON
+            if (filterIcon != null) filterIcon!,
+          ],
         ),
       ),
       backgroundColor: Colors.white,
       leading: Visibility(
         visible: backShow,
         child: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
     );
@@ -127,7 +183,7 @@ class AppBarCommon {
                 MaterialPageRoute(
                     builder: (context) => MenuPage(
                           userDetailList: userProvider.userDetailList,
-                          selectedTab: "Board",
+                          selectedTab: "Home",
                         )));
           } else {
             Navigator.pop(context);
@@ -135,7 +191,8 @@ class AppBarCommon {
         },
       ),
       actions: [
-        Center(
+        Button(onClick: (){ ontap();},  width: 100, height: 40, title: appBarWord, textStyle: TextStyle(color: Colors.white)),
+       /* Center(
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
             child: RichText(
@@ -148,7 +205,7 @@ class AppBarCommon {
                     }),
             ),
           ),
-        )
+        )*/
       ],
     );
   }

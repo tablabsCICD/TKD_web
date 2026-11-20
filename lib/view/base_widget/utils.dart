@@ -23,24 +23,18 @@ import '../../util/images.dart';
 import 'app_constant.dart';
 
 class Utils {
-  String getTranport(int val) {
+  String getTransport(int? val) {
     switch (val) {
       case 0:
-        return "Agents/Brokers";
-
+        return AppConstant().BUSINESS_TYPE_AGENT;
       case 1:
-        return "Transporters";
-
+        return AppConstant().BUSINESS_TYPE_TRANSPORTER;
       case 2:
-        return "PACKERS AND MOVERS";
-      case 3:
-        return "MANUFACTURERS";
-      case 4:
-        return "DISTRIBUTORS";
-      case 5:
-        return "CLEARING AND FORWARDING AGENTS";
+        return AppConstant().BUSINESS_TYPE_MANUFACTURER;
+      case 6:
+        return AppConstant().BUSINESS_TYPE_DRIVER;
       default:
-        return "";
+        return AppConstant().BUSINESS_TYPE_TRANSPORTER;;
     }
   }
 
@@ -65,7 +59,7 @@ class Utils {
   final dashboardProvider = locator<DashboardProvider>();
 
   callFunction(BuildContext context, String mobile) async {
-    if (authProvider.userDetailList[0].isPaid == 0) {
+   /* if (authProvider.userDetailList[0].isPaid == 0) {
       authProvider.userDetailList[0].transporterOrAgent == 3
           ? getAdminSupportDailog(context)
           : Navigator.pushReplacement(
@@ -75,7 +69,7 @@ class Utils {
                         userDetailList: authProvider.userDetailList,
                         selectedTab: "Package Change",
                       )));
-    } else {
+    } else {*/
       showDialog(
           context: context,
           builder: (_) => new CupertinoAlertDialog(
@@ -98,7 +92,7 @@ class Utils {
                   ),
                 ],
               ));
-    }
+    //}
   }
 
   callShareFunction(String des, TruckLoad load, context) {
@@ -168,7 +162,9 @@ class Utils {
       text: text,
     );
 
-    if (authProvider.userDetailList[0].isPaid == 0) {
+    await launchUrl(Uri.parse(link.toString()));
+
+  /*  if (authProvider.userDetailList[0].isPaid != 0) {
       authProvider.userDetailList[0].transporterOrAgent == 3
           ? getAdminSupportDailog(context)
           : Navigator.pushReplacement(
@@ -182,7 +178,7 @@ class Utils {
       authProvider.userDetailList[0].transporterOrAgent == 3
           ? getAdminSupportDailog(context)
           : await launchUrl(Uri.parse(link.toString()));
-    }
+    }*/
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -215,100 +211,120 @@ class Utils {
   openMenu(int a, TruckLoad load, BuildContext context) async {
     if (a == 0) {
       showAnimatedDialog(
-          context,
-          Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Form(
-              key: _formKey,
-              child: Container(
-                height: 350,
-                width: 300,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(children: [
-                        CustomText(
-                          'Place Your Quote',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        labelText("Quote Amount"),
-                        CustomTextField(
+        context,
+        StatefulBuilder(
+          builder: (context, setState) {
+            String? successMessage;
+            bool isSubmitting = false;
+
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: Form(
+                key: _formKey,
+                child: Container(
+                  height: 350,
+                  width: 300,
+                  padding: EdgeInsets.all(16),
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            'Place Your Quote',
+                            style:
+                            TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 20),
+
+                          /// QUOTE AMOUNT
+                          CustomTextField(
                             controller: bidAmtController,
-                            hintText: "Enter Your quote Amount",
+                            hintText: "Enter your quote amount",
                             isDigits: true,
-                            textInputType: TextInputType.number),
-                        labelText("Quote justification with cost(optional)"),
-                        Visibility(
-                          visible: true,
-                          child: CustomTextField(
-                              controller: descriptionController,
-                              hintText: "quote justification with cost(optional)",
-                              isValidator: false,
-                              textInputType: TextInputType.text),
-                        ),
-                        CustomButton(
-                            onTap: () {
+                            textInputType: TextInputType.number,
+                          ),
+
+                          SizedBox(height: 12),
+
+                          /// DESCRIPTION
+                          CustomTextField(
+                            controller: descriptionController,
+                            hintText: "Justification (optional)",
+                            textInputType: TextInputType.text,
+                            isValidator: false,
+                          ),
+
+                          SizedBox(height: 20),
+
+                          /// SUBMIT BUTTON
+                          CustomButton(
+                            buttonText:
+                            isSubmitting ? "Submitting..." : "Submit",
+                            onTap: isSubmitting ? null : () async {
                               if (_formKey.currentState!.validate()) {
-                                bidProvider
-                                    .generateBid(context,
-                                        mobile: authProvider
-                                            .userDetailList[0].mobileNumber,
-                                        description: descriptionController.text,
-                                        idOfPost: load.id,
-                                        email: authProvider
-                                            .userDetailList[0].emailId,
-                                        amount: bidAmtController.text,
-                                        id: 0,
-                                        bidderUserName: authProvider
-                                            .userDetailList[0].userName,
-                                        userName: authProvider
-                                            .userDetailList[0].userName,
-                                        type: load.mainTag,
-                                        loggedUserName:
-                                            '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
-                                    .then((value) => {
-                                          showAnimatedDialog(
-                                              context,
-                                              MyDialog(
-                                                icon: Icons.check,
-                                                title: 'Generate Quote',
-                                                description:
-                                                    'Your quote Created successfully',
-                                                isFailed: false,
-                                              ),
-                                              dismissible: false,
-                                              isFlip: false),
-                                        });
-                                Navigator.of(context).pop();
+                                setState(() => isSubmitting = true);
+
+                                final success = await bidProvider.generateBid(
+                                  context,
+                                  mobile: authProvider.userDetailList[0].mobileNumber,
+                                  description: descriptionController.text,
+                                  idOfPost: load.id,
+                                  email: authProvider.userDetailList[0].emailId,
+                                  amount: bidAmtController.text,
+                                  id: 0,
+                                  bidderUserName: authProvider.userDetailList[0].userName,
+                                  userName: authProvider.userDetailList[0].userName,
+                                  type: load.mainTag,
+                                  loggedUserName: authProvider.userDetailList[0].userName,
+                                );
+
+                                if (success) {
+                                  Navigator.of(context).pop(true);   // ✅ Correct context (fix)
+                                }
+
+                                setState(() => isSubmitting = false);
                               }
                             },
-                            buttonText: "Submit")
-                      ]),
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: 18,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+
+                          ),
+
+                          SizedBox(height: 15),
+
+                          /// INLINE SUCCESS / ERROR MESSAGE
+                          if (successMessage != null)
+                            Text(
+                              successMessage!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: successMessage!.contains("success")
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
                       ),
-                    )
-                  ],
+
+                      /// CLOSE BUTTON
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: IconButton(
+                          icon: Icon(Icons.close, size: 18),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ));
+            );
+          },
+        ),
+      );
+
+
     } else {
       String description =
           "${load.mobileNumber.toString()}'Type : ${load.type}, \nSubject : ${load.content}, \nSource : ${load.source}, \nDestination : ${load.destination}, \nLink : https://api.tkdost.com/bids/?id=${load.id}'";

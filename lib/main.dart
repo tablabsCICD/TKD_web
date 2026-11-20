@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:tkd_app/entry_screen.dart';
@@ -20,51 +21,57 @@ import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
 import 'package:tkd_app/provider/more_provider.dart';
+import 'package:tkd_app/provider/news_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/provider/plan/select_plan.dart';
 import 'package:tkd_app/provider/plan_provider.dart';
 import 'package:tkd_app/provider/pool_purchase_provider.dart';
 import 'package:tkd_app/provider/rating_provider.dart';
 import 'package:tkd_app/provider/repeatProvider.dart';
+import 'package:tkd_app/provider/report_incident_provider.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/localization/app_localization.dart';
 import 'locator.dart';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
+
   runApp(OverlaySupport.global(
       child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => locator<MenuProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<AuthProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<DashboardProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<TransportProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<JobProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<GalleryProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<BuySellProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<PoolPurchaseProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<MoreProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<RouteProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<BidProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<OrgProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<FleetProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<LocalizationProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<PlanProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<RepeatProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<GroupListProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<RatingProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<EditPostLoadProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<GeneralPostProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<SelectPlanProvider>()),
-          ChangeNotifierProvider(create: (_) => locator<HelpSupportProvider>()),
-        ],
-        child: MyApp(),
-      )));
+    providers: [
+      ChangeNotifierProvider(create: (_) => locator<MenuProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<AuthProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<DashboardProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<TransportProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<JobProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<GalleryProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<BuySellProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<PoolPurchaseProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<MoreProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<RouteProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<BidProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<OrgProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<FleetProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<LocalizationProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<PlanProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<RepeatProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<GroupListProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<GroupChatProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<CommentProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<RatingProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<EditPostLoadProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<GeneralPostProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<SelectPlanProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<HelpSupportProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<NewsProvider>()),
+      ChangeNotifierProvider(create: (_) => locator<ReportIncidentProvider>()),
+    ],
+    child: MyApp(),
+  )));
 }
 
 class MyApp extends StatelessWidget {
@@ -72,28 +79,44 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Locale> _locals = [];
     locator<RepeatProvider>().startTimer();
+
     ApiConstant.languages.forEach((language) {
       _locals.add(Locale(language.languageCode!, language.countryCode));
     });
 
-    return MaterialApp(
-        title: 'TKD Connect',
-        debugShowCheckedModeBanner: false,
-        locale: Provider.of<LocalizationProvider>(context).locale,
-        localizationsDelegates: {
-          AppLocalization.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        },
-        supportedLocales: _locals,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          cardColor: Colors.white,
-          popupMenuTheme: PopupMenuThemeData(
-            color: Colors.white, // Set the background color of the dialog box
+    return ScreenUtilInit(
+      designSize: MediaQuery.of(context).size.width > 600
+          ? Size(1466, 868) // desktop
+          : Size(390, 844), // mobile // Your base UI size
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return MaterialApp(
+          title: 'TKD Connect',
+          debugShowCheckedModeBanner: false,
+
+          locale: Provider.of<LocalizationProvider>(context).locale,
+          localizationsDelegates: {
+            AppLocalization.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          },
+          supportedLocales: _locals,
+
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            cardColor: Colors.white,
+            popupMenuTheme: PopupMenuThemeData(
+              color: Colors.white,
+            ),
           ),
-        ),
-        home: EntryScreen());
+
+          home: child, // ScreenUtil child
+        );
+      },
+
+      child: EntryScreen(),
+    );
   }
 }

@@ -72,7 +72,7 @@ class TransportSearchData {
   double? ratings;
   String? profilePicture;
   String? loggedUserName;
-  String? loggedTime;
+  int? loggedTime;
   int? transporterOrAgent;
   int? isPaid;
   String? paidStartDate;
@@ -211,7 +211,7 @@ class ListOfPreferredRoutes {
   String? routeSource;
   String? routeDestination;
   String? loggedUserName;
-  String? loggedTime;
+  dynamic? loggedTime;
 
   ListOfPreferredRoutes(
       {this.id,

@@ -23,7 +23,7 @@ class TransportProvider extends ChangeNotifier{
     if(currentPage == 0){
       transportSearchList.clear();
     }
-    String myUrl = ApiConstant.DIRECTORY +'?page=${currentPage}&size=30';
+    String myUrl = ApiConstant.BASE_URL +'directory/allDirectoryUserGeoFence?page=$currentPage&size=30&userId=';
     print(myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -57,7 +57,7 @@ class TransportProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     transportSearchList.clear();
-    String myUrl = ApiConstant.BASE_URL +'/directory?search=${name}&page=0&size=30';
+    String myUrl = ApiConstant.BASE_URL +'directory?search=${name}&page=0&size=100';
     print("Api Call"+myUrl);
     var req = await http.get(Uri.parse(myUrl));
     isLoading = false;
@@ -84,24 +84,7 @@ class TransportProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  getBySearchData(String name) async {
-    isLoading = true;
-    notifyListeners();
-    transportSearchList.clear();
-    String myUrl = ApiConstant.DIRECTORY +'?search=${name}';
-    print("Search Api Call"+myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isLoading = false;
-    response = json.decode(req.body);
-    var type = TransportSearchModel.fromJson(response);
-    transportSearchList = type.content!;
-    if(type.content!.length >0){
-      isExpand=false;
-    }else {
-      isExpand=true;
-    }
-    notifyListeners();
-  }
+
 
   getByRoutesData(String source,String destination) async {
     isLoading = true;

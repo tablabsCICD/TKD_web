@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tkd_connect/utils/colors.dart';
+import '../../../provider/report_incident_provider.dart';
+import '../../../util/colors.dart';
+import '../../../util/images.dart';
+import '../../../util/style.dart';
+import '../../../widgets/base_widgets.dart';
+import '../../../widgets/button.dart';
+import '../../../widgets/datepicker.dart';
+import 'package:flutter/foundation.dart';
 
-import '../../constant/images.dart';
-import '../../generated/l10n.dart';
-import '../../provider/incident/report_incident_provider.dart';
-import '../../widgets/button.dart';
-import '../../widgets/card/base_widgets.dart';
-import '../../widgets/datepicker.dart';
-import '../../widgets/editText.dart';
+class ReportIncidentFormScreen extends StatefulWidget {
+  @override
+  State<ReportIncidentFormScreen> createState() => _ReportIncidentFormScreenState();
+}
 
-class ReportIncidentFormScreen extends StatelessWidget {
+class _ReportIncidentFormScreenState extends State<ReportIncidentFormScreen> {
   final List<String> _incidentTypes = [
     "Theft",
     "Fake RTO Documents",
@@ -34,341 +37,361 @@ class ReportIncidentFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => ReportIncidentProvider(),
-      builder: (context, child) => _buildPage(context),
+    return Scaffold(
+      backgroundColor: ThemeColor.baground,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text('Report Incident', style: Style.appheading),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isWeb = constraints.maxWidth > 600;
+
+          return Center(
+            child: Container(
+              width: isWeb ? 600 : double.infinity,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  if (isWeb)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+
+                  Expanded(child: _buildForm(context)),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+
     );
   }
 
-  _buildPage(BuildContext context) {
+  String? mobileError;
 
+  String? dateError;
+
+  Widget _buildForm(BuildContext context) {
     final provider = Provider.of<ReportIncidentProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Report Incident",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        backgroundColor: Color(0xFFC3262C),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildMultiSelectChips("Incident Type", _incidentTypes,
-                  provider.incidentTypes, provider.toggleIncidentType),
-              SizedBox(height: 16),
-              _buildMultiSelectChips("Cheated By", _cheatedByOptions,
-                  provider.cheatedBy, provider.toggleCheatedBy),
-              SizedBox(height: 16),
-              _buildRadioButtons("Was FIR Launched?", ["Yes", "No"],
-                  provider.wasFirLaunched, provider.updateFirStatus),
-              SizedBox(height: 16),
-              labelText("Name"),
-              SizedBox(
-                height: 4.h,
-              ),
-              editViewError(
-                  "your name", provider.nameController, provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              labelText(S().companyName),
-              SizedBox(
-                height: 4.h,
-              ),
-              editViewError("Contact number", provider.phoneNumberController,
-                  provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              labelText("Vehicle Number"),
-              SizedBox(
-                height: 4.h,
-              ),
-              editViewError("vehicle number", provider.vehicleNumberController,
-                  provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              labelText("Date of Incident"),
-              SizedBox(
-                height: 4.h,
-              ),
-              _buildText(context, "yyyy-mm-dd",
-                  provider.dateOfIncidentController, provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              labelText("Short Incident Description"),
-              SizedBox(
-                height: 4.h,
-              ),
-              editViewError("description", provider.shortDescriptionController,
-                  provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              labelText("Amount Lost / Goods Cheated"),
-              SizedBox(
-                height: 4.h,
-              ),
-              editViewError("ex- 1000",
-                  provider.amountLostOrGoodsCheatedController, provider, true),
-              SizedBox(
-                height: 12.h,
-              ),
-              _buildProofUploader(provider, context),
-              SizedBox(height: 30),
-              _buildDeclarationAndSubmitButton(context, provider),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.h),
-                child: Button(
-                  width: MediaQuery.of(context).size.width,
-                  height: 49.h,
-                  title: S().submit,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12.sp,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  onClick: () {
-                    provider.checkValidation(context);
-                  },
-                  isEnbale: provider.enbleButton,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMultiSelectChips(String title, List<String> options,
-      List<String> selectedOptions, Function toggleOption) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 12.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Wrap(
-          spacing: 8,
-          children: options.map((option) {
-            final isSelected = selectedOptions.contains(option);
-            return ChoiceChip(
-              label: Text(
-                option,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
-                  // Change text color based on selection
-                  fontSize: 12.sp,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              selected: isSelected,
-              selectedColor: ThemeColor.theme_blue,
-              // Set the background color for selected chips
-              backgroundColor: Colors.grey[200],
-              // Background color for unselected chips
-              onSelected: (_) => toggleOption(option),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRadioButtons(String title, List<String> options,
-      bool? selectedOption, Function(bool?) onChanged) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.black, // Change text color based on selection
-            fontSize: 12.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Row(
-          children: options.map((option) {
-            return Expanded(
-              child: ListTile(
-                title: Text(
-                  option,
-                  style: TextStyle(
-                    color: Colors.black, // Change text color based on selection
-                    fontSize: 12.sp,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                leading: Radio<bool?>(
-                  value: option == "Yes",
-                  groupValue: selectedOption,
-                  onChanged: onChanged,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildText(context, String hint, TextEditingController controller,
-      ReportIncidentProvider provider, bool redOnly) {
-    return EditText(
-      readOnly: true,
-      width: 335.w,
-      height: 52.h,
-      hint: "dd/mm/yyyy",
-      controller: controller,
-      onTap: () async {
-        String Date = await DateTimePickerDialog().pickDateDialog(context);
-        provider.setDate(Date);
-      },
-    );
-  }
-
-  Widget _buildProofUploader(
-      ReportIncidentProvider provider, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "Upload Proof (documents, images, receipts)",
-          style: TextStyle(
-            color: Colors.black, // Change text color based on selection
-            fontSize: 12.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        provider.images.isNotEmpty
-            ? BaseWidget().carouseImageDelete(provider.images, (item) {
-                provider.images.remove(item);
-                provider.notifyListeners();
-              })
-            : const SizedBox(),
-        SizedBox(
-          height: 16.h,
-        ),
-        InkWell(
-            onTap: () {
-              provider.uploadImage(context);
-            },
-            child: SvgPicture.asset(Images.add_image)),
-        Text(
-          "Upload Images",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: const Color(0xFF001E49),
-            fontSize: 12.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        ...provider.uploadedProofs.map((proof) => ListTile(title: Text(proof))),
-      ],
-    );
-  }
-
-  Widget _buildDeclarationAndSubmitButton(
-      BuildContext context, ReportIncidentProvider provider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // First Declaration Checkbox
-        CheckboxListTile(
-          activeColor: Color(0xFFC3262C), // Customize checkbox color
-          title: Text(
-            "I hereby declare that the above information is true to the best of my knowledge. I understand that submitting false information may result in legal action. I agree that Tkd Connect is not responsible for the accuracy of this content and I take full responsibility for this submission.",
-            style: TextStyle(
-              color: provider.isAccepted == true ? Colors.green : Colors.black, // Change text color dynamically
-              fontSize: 12.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          value: provider.isAccepted ?? false,
-          onChanged: (value) {
-            provider.updateAcceptedTerm(value ?? false);
-          },
-        ),
-
-      ],
-    );
-  }
-
-
-  labelText(String label) {
-    return SizedBox(
-      width: 332.w,
+    return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w400,
+          _sectionTitle("Incident Details"),
+
+          _chipSection(
+            title: "Incident Type",
+            options: _incidentTypes,
+            selected: provider.incidentTypes,
+            onTap: provider.toggleIncidentType,
+          ),
+
+          _chipSection(
+            title: "Cheated By",
+            options: _cheatedByOptions,
+            selected: provider.cheatedByList,
+            onTap: provider.toggleCheatedBy,
+          ),
+
+          _radioSection(
+            title: "Was FIR Launched?",
+            groupValue: provider.isFirLaunched,
+            onChanged: provider.setFirStatus,
+          ),
+
+          _sectionTitle("Basic Information"),
+
+          _label("Contact Number", true),
+          TextField(
+            controller: provider.phoneController,
+            keyboardType: TextInputType.phone,
+            onChanged: (value) {
+              setState(() {
+                if (value.length != 10 || !RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                  mobileError = "Enter a valid 10-digit mobile number";
+                } else {
+                  mobileError = null;
+                }
+              });
+            },
+            decoration: InputDecoration(
+              hintText: "Enter contact number",
+              errorText: mobileError,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             ),
           ),
+
+
+          _label("Vehicle Number", true),
+          _input(provider.vehicleNo,
+              hint: "Enter vehicle number", type: TextInputType.text),
+
+          _label("Date of Incident", true),
+          TextField(
+            controller: provider.dateController,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: "dd/mm/yyyy",
+              errorText: dateError,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onTap: () async {
+              FocusScope.of(context).unfocus();
+
+              final today = DateTime.now();
+
+              DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: today,
+                firstDate: DateTime(1950),
+                lastDate: today, // ⬅ future disabled
+              );
+
+              if (picked != null) {
+                // Format for display (dd/MM/yyyy)
+                String dd = picked.day.toString().padLeft(2, '0');
+                String mm = picked.month.toString().padLeft(2, '0');
+                String yyyy = picked.year.toString();
+
+                // UI Format
+                provider.dateController.text = "$dd/$mm/$yyyy";
+
+                // API Format (save separately if needed)
+                provider.selectedApiDate = "$yyyy-$mm-$dd";
+
+                setState(() {
+                  dateError = null;
+                });
+              }
+            },
+          ),
+
+          _label("Incident Location"),
+          _input(provider.incidentLocation, hint: "Location"),
+
+          _label("Short Incident Description"),
+          _input(provider.description, hint: "Write details"),
+
+          _label("Amount Lost / Goods Cheated"),
+          _input(provider.amountLost,
+              hint: "Amount e.g. 1000", type: TextInputType.number),
+
+          _sectionTitle("Supporting Documents"),
+
+          _proofUploader(provider, context),
+
+          _sectionTitle("Declaration"),
+
+          CheckboxListTile(
+            activeColor: ThemeColor.theme_blue,
+            value: provider.isAccepted,
+            onChanged: (v) => provider.setAccepted(v ?? false),
+            title: Text(
+              "I confirm that the above information is true and I take full responsibility.",
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: provider.isAccepted ? Colors.green : Colors.black,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Button(
+            width: double.infinity,
+            height: 48,
+            title: "Submit",
+            isEnbale: true,
+            onClick: () {
+              setState(() {
+                // Mobile validation
+                if (provider.phoneController.text.length != 10) {
+                  mobileError = "Enter a valid 10-digit mobile number";
+                }
+
+                // Date validation
+                if (provider.dateController.text.isEmpty) {
+                  dateError = "Please select a date";
+                }
+              });
+
+              if (mobileError == null && dateError == null) {
+                provider.addIncident(context); // will navigate pop inside
+              }
+            },
+
+            textStyle: const TextStyle(color: Colors.white,fontSize: 16),
+          ),
+
+          const SizedBox(height: 30),
         ],
       ),
     );
   }
 
-  editView(String hint, TextEditingController controller,
-      ReportIncidentProvider provider, bool redOnly) {
-    return EditText(
-      readOnly: redOnly,
-      width: 335.w,
-      height: 52.h,
-      hint: hint,
-      controller: controller,
-      onChange: (val) {
-        provider.enble();
-      },
+  // --------------------- UI Helpers ------------------------
+  Widget _sectionTitle(String text) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Text(text,
+        style: GoogleFonts.poppins(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        )),
+  );
+
+  Widget _label(String text, [bool req = false]) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 6),
+      child: RichText(
+        text: TextSpan(
+          text: text,
+          style: GoogleFonts.poppins(
+              fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),
+          children: req
+              ? [
+            TextSpan(
+                text: " *",
+                style: TextStyle(color: ThemeColor.red))
+          ]
+              : [],
+        ),
+      ),
     );
   }
 
-  editViewError(String hint, TextEditingController controller,
-      ReportIncidentProvider provider, bool valid) {
-    return EditTextError(
-      validate: valid,
-      width: 335.w,
-      height: 52.h,
-      hint: hint,
+  Widget _input(
+      TextEditingController controller, {
+        String hint = "",
+        bool read = false,
+        TextInputType type = TextInputType.text,
+        Function()? onTap,
+      }) {
+    return TextField(
       controller: controller,
-      onChange: (val) {
-        provider.enble();
-      },
+      readOnly: read,
+      onTap: onTap,
+      keyboardType: type,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300)),
+      ),
+    );
+  }
+
+  Widget _chipSection({
+    required String title,
+    required List<String> options,
+    required List<String> selected,
+    required Function(String) onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(title, true),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((opt) {
+            final chosen = selected.contains(opt);
+            return ChoiceChip(
+              label: Text(opt,
+                  style: GoogleFonts.poppins(
+                      color: chosen ? Colors.white : Colors.black)),
+              selected: chosen,
+              selectedColor: ThemeColor.theme_blue,
+              backgroundColor: Colors.grey.shade200,
+              onSelected: (_) => onTap(opt),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _radioSection({
+    required String title,
+    required bool? groupValue,
+    required Function(bool?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(title),
+        Row(
+          children: [
+            _radioItem("Yes", true, groupValue, onChanged),
+            _radioItem("No", false, groupValue, onChanged),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _radioItem(
+      String text, bool value, bool? group, Function(bool?) onChanged) {
+    return Expanded(
+      child: Row(
+        children: [
+          Radio<bool?>(
+            value: value,
+            groupValue: group,
+            onChanged: onChanged,
+          ),
+          Text(text)
+        ],
+      ),
+    );
+  }
+
+  Widget _proofUploader(ReportIncidentProvider provider, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label("Upload Proof (documents, images)", provider.isFirLaunched == true),
+
+        if (provider.images.isNotEmpty)
+          Center(
+            child: BaseWidget().carouseImageDelete(context,provider.images, (img) {
+              provider.images.remove(img);
+              provider.notifyListeners();
+            }),
+          ),
+
+        const SizedBox(height: 12),
+
+        Center(
+          child: InkWell(
+            onTap: () => provider.uploadImage(context),
+            child: Column(
+              children: [
+                SvgPicture.asset(Images.add_image, width: 40),
+                const SizedBox(height: 6),
+                Text("Upload Images",
+                    style: GoogleFonts.poppins(
+                        fontSize: 12, fontWeight: FontWeight.w600))
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

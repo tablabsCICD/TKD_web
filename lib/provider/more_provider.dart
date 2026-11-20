@@ -1,9 +1,8 @@
+// more_provider.dart
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:http/http.dart' as http;
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/api_response.dart';
 import 'package:tkd_app/model/comman_response.dart';
@@ -12,7 +11,6 @@ import 'package:tkd_app/model/gallary_model.dart';
 import 'package:tkd_app/model/my_job_list.dart';
 import 'package:tkd_app/model/pool_purchase_model.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/buy_sell_provider.dart';
@@ -22,29 +20,34 @@ import 'package:tkd_app/util/app_constants.dart';
 import '../model/discussion_model.dart';
 
 class MoreProvider extends ChangeNotifier {
-  List<TruckLoad> allPostList = [];
-  List<TruckLoad> myFullLoadTypeList = [];
-  List<TruckLoad> myPartLoadTypeList = [];
-  List<MyJobData> myJobList = [];
-  List<TruckLoad> myOwnPostList = [];
-  List<TruckLoad> myBuyVehicleList = [];
-  List<PoolPurchase> myPoolPurchaseList = [];
-  List<Gallery> myGalleryList = [];
-  List<FeedBack> feedbackList = [];
-  List<FeedBack> fullLoadFeedbackList = [];
-  List<FeedBack> partLoadFeedbackList = [];
-  List<FeedBack> galleryFeedbackList = [];
-  List<FeedBack> BuySellFeedbackList = [];
-  List<DiscussionContent>discussionList=[];
-  var response,
-      fullLoadResponse,
-      partLoadResponse,
-      jobResponse,
-      candidateResponse,
-      buyResponse,
-      sellResponse,
-      poolPurchaseResponse,
-      galleryResponse;
+  // --- Dependencies ---
+  final DashboardProvider dashboardProvider = locator<DashboardProvider>();
+  final BuySellProvider buySellProvider = locator<BuySellProvider>();
+  final AuthProvider authProvider = locator<AuthProvider>();
+
+  // --- Lists ---
+  final List<TruckLoad> allPostList = [];
+  final List<TruckLoad> myFullLoadTypeList = [];
+  final List<TruckLoad> myPartLoadTypeList = [];
+  final List<MyJobData> myJobList = [];
+  final List<TruckLoad> myBuyVehicleList = [];
+  final List<PoolPurchase> myPoolPurchaseList = [];
+  final List<Gallery> myGalleryList = [];
+  final List<FeedBack> feedbackList = [];
+  final List<FeedBack> fullLoadFeedbackList = [];
+  final List<FeedBack> partLoadFeedbackList = [];
+  final List<FeedBack> galleryFeedbackList = [];
+  final List<FeedBack> buySellFeedbackList = [];
+  final List<DiscussionContent> discussionList = [];
+
+  // --- States & flags ---
+  bool isMoreLoading = false;
+  bool isMoreFirstLoading = false;
+  bool isFeedbackLoading = false;
+  bool isFirstFeedbackLoading = false;
+  bool isRepostLoading = false;
+
+  // Fine-grained flags (kept if other code uses them)
   bool jobFlag = false,
       fullLoadFlag = false,
       buySellFlag = false,
@@ -52,388 +55,508 @@ class MoreProvider extends ChangeNotifier {
       partLoadFlag = false,
       galleryFlag = false;
 
-  DashboardProvider dashboardProvider = locator<DashboardProvider>();
-  BuySellProvider buySellProvider = locator<BuySellProvider>();
-  AuthProvider authProvider = locator<AuthProvider>();
-
-  getOwnPostList(String userName,{int currentPage = 0}) async {
-    isMoreLoading = true;
-    notifyListeners();
-    if(currentPage == 0){
-      isMoreFirstLoading = true;
-      allPostList.clear();
-      myFullLoadTypeList.clear();
-      myPartLoadTypeList.clear();
-      myBuyVehicleList.clear();
-    }
-
-    String myUrl = ApiConstant.GET_OWNPOST + '?userId=${userName}&page=$currentPage&size=100';
-    print("OwnPost::"+myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isMoreFirstLoading= false;
-    isMoreLoading = false;
-    response = json.decode(req.body);
-    var type = TruckLoadType.fromJson(response);
-    allPostList = type.content;
-    for (int i = 0; i < allPostList.length; i++) {
-      if (allPostList[i].type == 'Full Load')
-        myFullLoadTypeList.add(allPostList[i]);
-      else if (allPostList[i].type == 'Part Load')
-        myPartLoadTypeList.add(allPostList[i]);
-      else if (allPostList[i].type == 'Jobs')
-        null;
-      else
-        myBuyVehicleList.add(allPostList[i]);
-    }
-    notifyListeners();
-  }
-
-  getOwnJobList(String userName,{int currentPage = 0}) async {
-    isMoreLoading = true;
-    notifyListeners();
-    if(currentPage == 0){
-      myJobList.clear();
-    }
-    print("the url is ${ApiConstant.BASE_URL}getPostJobsByUserId/${authProvider.userDetailList[0].id}");
-    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet("${ApiConstant.BASE_URL}getPostJobsByUserId/${authProvider.userDetailList[0].id}");
-    print('the status code is ${apiResponse.statusCode}');
-    isMoreLoading=false;
-    if(apiResponse.statusCode==200){
-      MyJobList jobList=MyJobList.fromJson(jsonDecode(apiResponse.response));
-      myJobList.addAll(jobList.data!);
-      print('the lenghth is ${myJobList.length}');
-    }else{
-    }
-    notifyListeners();
-  }
-
-  reSendPost(BuildContext context,TruckLoad postBidData)async {
-    String myUrl = ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${false}";
-    print(myUrl);
-    var apiResponse=await http.post(Uri.parse(myUrl));
-    if(apiResponse.statusCode==200){
-      var jsonData = jsonDecode(apiResponse.body);
-      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if(commonResponse.isSuccess == true){
-        await getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
-        showSimpleNotification(
-            Text("Re-post submitted successfully!",style: TextStyle(color: Colors.white),),
-            background: Colors.black
-        );}
-      else{
-        showSimpleNotification(
-            Text(commonResponse.message.toString(),style: TextStyle(color: Colors.white),),
-            background: Colors.orange
-        );
-      }
-      return commonResponse.isSuccess;
-    }else if(apiResponse.statusCode == 402){
-      showSimpleNotification(
-          Text("Please update your package",style: TextStyle(color: Colors.white),),
-          background: Colors.orange
-      );
-      return false;
-    }else{
-      showSimpleNotification(
-          Text("Please Try Again!",style: TextStyle(color: Colors.white),),
-          background: Colors.red
-      );
-      return false;
-    }
-  }
-
-  interChnageSendPost(BuildContext context,TruckLoad postBidData) async{
-    var apiResponse=await http.post(Uri.parse(ApiConstant.BASE_URL+"repost?id=${postBidData.id!}&interchange=${true}"));
-    if(apiResponse.statusCode==200){
-      getOwnPostList(authProvider.userDetailList[0].id.toString(),currentPage: 0);
-      showSimpleNotification(
-          Text("Intercity post submitted successfully!",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
-    }else{
-      showSimpleNotification(
-          Text("Please try again",style: TextStyle(color: Colors.white),),
-          background: Colors.black
-      );
-    }
-    notifyListeners();
-  }
-
-  getList(String userName) async {
-    allPostList.clear();
-    myOwnPostList.clear();
-    String myUrl = ApiConstant.GET_OWNPOST + '?userName=${userName}';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    response = json.decode(req.body);
-    var type = TruckLoadType.fromJson(response);
-    allPostList = type.content;
-    for (int i = 0; i < allPostList.length; i++) {
-      if (allPostList[i].tableName == 'FullTruckLoad')
-       {
-         myOwnPostList.add(allPostList[i]);
-       }
-    }
-    notifyListeners();
-  }
-
-  getDiscussionList(String userName)async{
-    discussionList.clear();
-    ApiHelper apiHelper=ApiHelper();
-    var result=await apiHelper.ApiGetData(ApiConstant.GET_DISCUSSION+'/getByUserName?userName=${userName}');
-    DiscussionData discussion = await DiscussionData.fromJson(result);
-    discussionList.addAll(discussion.content!);
-  }
-
-  deleteJob(MyJobData job) async {
-    String myUrl = ApiConstant.POST_JOB + '?id=${job.postJob!.id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    response = json.decode(req.body);
-    myJobList.remove(job);
-    notifyListeners();
-  }
-
-  deleteFullLoad(int id,int index) async {
-    TruckLoad truckLoad = await getRequirementDetails(id);
-    String myUrl = ApiConstant.BASE_URL + 'fullTruckLoad?id=${id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    var deleteResponse = json.decode(req.body);
-    truckLoad.type == 'Full Load'
-        ? myFullLoadTypeList.removeAt(index)
-        : myPartLoadTypeList.removeAt(index);
-   await getOwnPostList(authProvider.userDetailList[0].id.toString());
-    print("delete response: "+deleteResponse);
-    notifyListeners();
-  }
-
+  // cached requirement detail
   TruckLoad? truckLoad;
-  getRequirementDetails(int id) async {
-    String myUrl = ApiConstant.BASE_URL +'fullTruckLoad/${id}';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    response = await json.decode(req.body);
-    var list = TruckLoadType.fromJson(response);
-    truckLoad = list.content[0];
-    notifyListeners();
-    return truckLoad;
+
+  // Helper - show overlay notification
+  void _notify(String text, {Color background = Colors.black}) {
+    showSimpleNotification(Text(text, style: TextStyle(color: Colors.white)), background: background);
   }
 
-  deleteBuySell(int id,int index) async {
-    String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    json.decode(req.body);
-    notifyListeners();
-    myBuyVehicleList.removeAt(index);
-    buySellProvider.notifyListeners();
+  // -----------------------
+  // HTTP helpers
+  // -----------------------
+  Future<http.Response> _get(String url) async {
+    final uri = Uri.parse(url);
+    return await http.get(uri);
   }
 
-  deleteMultipleBuySell() async {
-    String myUrl = ApiConstant.POST_BUY_SELL + '/deleteMultiple';
-    var req = await http.delete(Uri.parse(myUrl));
-    json.decode(req.body);
-    notifyListeners();
+  Future<http.Response> _post(String url, {Object? body}) async {
+    final uri = Uri.parse(url);
+    if (body == null) return await http.post(uri);
+    return await http.post(uri, headers: {"Content-Type": "application/json"}, body: jsonEncode(body));
   }
 
-  deleteGallery(Gallery gallery) async {
-    String myUrl = ApiConstant.GALLERY + '?id=${gallery.id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    json.decode(req.body);
-    myGalleryList.remove(gallery);
-    notifyListeners();
+  Future<http.Response> _delete(String url) async {
+    final uri = Uri.parse(url);
+    return await http.delete(uri);
   }
 
-  deletePoolPurchase(PoolPurchase obj) async {
-    String myUrl = ApiConstant.BULK_DATA + '?id=${obj.id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    json.decode(req.body);
-    myPoolPurchaseList.remove(obj);
-    notifyListeners();
-  }
-
-  deleteFeedback(FeedBack obj) async {
-    String myUrl = ApiConstant.BASE_URL + 'Feedback?id=${obj.id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    json.decode(req.body);
-    feedbackList.remove(obj);
-    notifyListeners();
-  }
-
-  getPoolPurchaseList(String userName) async {
-    myPoolPurchaseList.clear();
-    String myUrl = ApiConstant.BULK_DATA + '/byUserName?userName=${userName}';
-    var req = await http.get(Uri.parse(myUrl));
-    poolPurchaseResponse = json.decode(req.body);
-    var type = PoolPurchaseModel.fromJson(poolPurchaseResponse);
-    myPoolPurchaseList = type.content;
-    notifyListeners();
-  }
-
-  getGalleryList(String id) async {
-    myGalleryList.clear();
-    String myUrl = ApiConstant.GALLERY + '/byUserId?userId=${id}';
-    var req = await http.get(Uri.parse(myUrl));
-    galleryResponse = json.decode(req.body);
-    var type = GalleryModel.fromJson(galleryResponse);
-    myGalleryList = type.content;
-    notifyListeners();
-  }
-
-  Future setFullLoadFlag(bool value) async {
-    this.fullLoadFlag = value;
-    this.notifyListeners();
-  }
-
-  Future setPartLoadFlag(bool value) async {
-    this.partLoadFlag = value;
-    this.notifyListeners();
-  }
-
-  Future setjobFlag(bool value) async {
-    this.jobFlag = value;
-    this.notifyListeners();
-  }
-
-  Future setBuySellFlag(bool value) async {
-    this.buySellFlag = value;
-    this.notifyListeners();
-  }
-
-  Future setGalleryFlag(bool value) async {
-    this.galleryFlag = value;
-    this.notifyListeners();
-  }
-
-  Future setPoolPurchaseFlag(bool value) async {
-    this.poolPurchaseFlag = value;
-    this.notifyListeners();
-  }
-
-  final now = new DateTime.now();
-
-  saveFeedback({int? id,String? feedbackDetails,int? postId,int? userId,String? type,int? rating}) async {
-    String myUrl = ApiConstant.BASE_URL + 'Feedback';
-    Uri uri = Uri.parse(myUrl);
-    Map<String, dynamic> data = {
-      "date": "2022-06-29T09:35:24.342Z",
-      "feedbackDetails": feedbackDetails,
-      "id": id,
-      "postId": postId,
-      "ratings": rating,
-      "type": type,
-      "userId": userId
-    };
-    var body = json.encode(data);
-    print("request : ${data}");
-    final response = await http.post(uri,
-        headers: {"Content-Type": "application/json"}, body: body);
-    print("response : ${response.statusCode}" + " --- " + response.body.toString());
-    var jsonData = jsonDecode(response.body);
-    FeedBack dataObj = FeedBack.fromJson(jsonData);
-    print(dataObj);
-    feedbackList.add(dataObj);
-    notifyListeners();
-  }
-  bool isFeedbackLoading = false, isFirstFeedbackLoading=false;
-  bool isMoreLoading = false, isMoreFirstLoading=false;
-
-  getAllFeedBackList({int currentPage = 0,int? userId}) async {
-    isFeedbackLoading = true;
-    notifyListeners();
-    if(currentPage == 0){
-      isFirstFeedbackLoading = true;
-      feedbackList.clear();
-      fullLoadFeedbackList.clear();
-      partLoadFeedbackList.clear();
-      galleryFeedbackList.clear();
-      BuySellFeedbackList.clear();
-    }
-    String myUrl = ApiConstant.BASE_URL +'Feedback?page=${currentPage}&size=10';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isFirstFeedbackLoading= false;
-    isFeedbackLoading = false;
-    if(req.statusCode == 200) {
-      response = json.decode(req.body);
-      var type = FeedbackModel.fromJson(response);
-      feedbackList.addAll(type.content);
-      for (int i = 0; i < feedbackList.length; i++) {
-        if (feedbackList[i].type == 'Full Load')
-          fullLoadFeedbackList.add(feedbackList[i]);
-        else if (feedbackList[i].type == 'Part Load')
-          partLoadFeedbackList.add(feedbackList[i]);
-        else if (feedbackList[i].type == 'Gallery')
-          galleryFeedbackList.add(feedbackList[i]);
-        else
-          BuySellFeedbackList.add(feedbackList[i]);
+  // -----------------------
+  // Get own posts (paged)
+  // -----------------------
+  Future<void> getOwnPostList(String userId, {int currentPage = 0, int size = 100}) async {
+    try {
+      if (currentPage == 0) {
+        isMoreFirstLoading = true;
+        allPostList.clear();
+        myFullLoadTypeList.clear();
+        myPartLoadTypeList.clear();
+        myBuyVehicleList.clear();
+        notifyListeners();
+      } else {
+        isMoreLoading = true;
+        notifyListeners();
       }
+
+      final String url = '${ApiConstant.GET_OWNPOST}?userId=${userId}&page=$currentPage&size=$size';
+      print(url);
+      final res = await _get(url);
+
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final type = TruckLoadType.fromJson(decoded);
+
+        // append or set
+        if (currentPage == 0) allPostList.clear();
+        allPostList.addAll(type.content ?? []);
+
+        // split lists
+        myFullLoadTypeList.clear();
+        myPartLoadTypeList.clear();
+        myBuyVehicleList.clear();
+
+        for (final p in allPostList) {
+          if (p.type == 'Full Load')
+            myFullLoadTypeList.add(p);
+          else if (p.type == 'Part Load')
+            myPartLoadTypeList.add(p);
+          else if (p.type == 'Jobs')
+            continue; // jobs handled separately
+          else
+            myBuyVehicleList.add(p);
+        }
+      } else {
+        _notify('Failed to fetch posts', background: Colors.red);
+      }
+    } catch (e) {
+      _notify('Something went wrong while fetching posts', background: Colors.red);
+    } finally {
+      isMoreLoading = false;
+      isMoreFirstLoading = false;
       notifyListeners();
     }
   }
 
+  // -----------------------
+  // Get own job list
+  // -----------------------
+  Future<void> getOwnJobList(String userId, {int currentPage = 0}) async {
+    try {
+      if (currentPage == 0) myJobList.clear();
+      notifyListeners();
 
+      final url = '${ApiConstant.BASE_URL}getPostJobsByUserId/${authProvider.userDetailList[0].id}';
+      final res = await _get(url);
 
-  String resFromDateCnt = "ReservationFrom";
-  String TimeCnt = "Time";
-  String resToDateCnt = "ReservationTo";
-  String? _hour, _minute, _time;
-  String? dateTime;
-  TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
-  DateTime _date = DateTime.now();
-
-  selectTime(BuildContext context, String timeString) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-    );
-    if (picked != null) selectedTime = picked;
-    _hour = selectedTime.hour.toString();
-    _minute = selectedTime.minute.toString();
-
-    _hour = _hour!.length == 1 ? "0$_hour" : _hour;
-    _minute = _minute!.length == 1 ? "0$_minute" : _minute;
-    _time = _hour! + ' : ' + _minute!;
-
-    if (picked?.periodOffset.toString() == '0') {
-      TimeCnt = (_time).toString();
-    } else if (picked?.periodOffset.toString() == '12') {
-      TimeCnt = (_time).toString();
+      if (res.statusCode == 200) {
+        final decoded = jsonDecode(res.body);
+        final jobList = MyJobList.fromJson(decoded);
+        myJobList.addAll(jobList.data ?? []);
+      } else {
+        _notify('Failed to fetch jobs', background: Colors.red);
+      }
+    } catch (e) {
+      _notify('Error fetching jobs', background: Colors.red);
+    } finally {
+      notifyListeners();
     }
+  }
+
+  // -----------------------
+  // Repost (normal)
+  // adds loader, refresh list on success
+  // -----------------------
+  Future<bool> reSendPost(BuildContext context, TruckLoad postBidData) async {
+    isRepostLoading = true;
+    notifyListeners();
+    try {
+      final url = '${ApiConstant.BASE_URL}repost?id=${postBidData.id}&interchange=false';
+      final res = await _post(url);
+
+      if (res.statusCode == 200) {
+        final jsonData = jsonDecode(res.body);
+        final CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
+
+        if (commonResponse.success == true) {
+          // refresh lists
+          await getOwnPostList(authProvider.userDetailList[0].id.toString(), currentPage: 0);
+          _notify("Re-post submitted successfully!", background: Colors.black);
+          return true;
+        } else {
+          _notify(commonResponse.message ?? 'Failed', background: Colors.orange);
+          return false;
+        }
+      } else if (res.statusCode == 402) {
+        _notify("Please update your package", background: Colors.orange);
+        return false;
+      } else {
+        _notify("Please try again", background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify("Error while reposting", background: Colors.red);
+      return false;
+    } finally {
+      isRepostLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Repost with interchange (city interchange)
+  // -----------------------
+  Future<bool> interChnageSendPost(BuildContext context, TruckLoad postBidData) async {
+    isRepostLoading = true;
+    notifyListeners();
+    try {
+      final url = '${ApiConstant.BASE_URL}repost?id=${postBidData.id}&interchange=true';
+      final res = await _post(url);
+
+      if (res.statusCode == 200) {
+        await getOwnPostList(authProvider.userDetailList[0].id.toString(), currentPage: 0);
+        _notify("Intercity post submitted successfully!", background: Colors.black);
+        return true;
+      } else {
+        _notify("Please try again", background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify("Error while reposting (interchange)", background: Colors.red);
+      return false;
+    } finally {
+      isRepostLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Get requirement details (single)
+  // -----------------------
+  Future<TruckLoad?> getRequirementDetails(int id) async {
+    try {
+      final url = '${ApiConstant.BASE_URL}fullTruckLoad/$id';
+      final res = await _get(url);
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final list = TruckLoadType.fromJson(decoded);
+        truckLoad = list.content.first;
+        notifyListeners();
+        return truckLoad;
+      } else {
+        _notify('Failed to fetch requirement details', background: Colors.red);
+        return null;
+      }
+    } catch (e) {
+      _notify('Error fetching requirement details', background: Colors.red);
+      return null;
+    }
+  }
+
+  // -----------------------
+  // Delete full load (and refresh)
+  // -----------------------
+  Future<bool> deleteFullLoad(int id, int index) async {
+    try {
+      final url = '${ApiConstant.BASE_URL}fullTruckLoad?id=$id';
+      final res = await _delete(url);
+
+      if (res.statusCode == 200) {
+        myFullLoadTypeList.removeWhere((e) => e.id == id);
+        myPartLoadTypeList.removeWhere((e) => e.id == id);
+        allPostList.removeWhere((e) => e.id == id);
+
+        // refresh
+        await getOwnPostList(authProvider.userDetailList[0].id.toString(), currentPage: 0);
+        _notify('Post deleted', background: Colors.black);
+        return true;
+      } else {
+        _notify('Failed to delete post', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify('Error deleting post', background: Colors.red);
+      return false;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Delete job
+  // -----------------------
+  Future<bool> deleteJob(MyJobData job) async {
+    try {
+      if (job.postJob == null || job.postJob!.id == null) {
+        _notify('Invalid job id', background: Colors.red);
+        return false;
+      }
+
+      final url = '${ApiConstant.POST_JOB}?id=${job.postJob!.id}';
+      final res = await _delete(url);
+
+      if (res.statusCode == 200) {
+        myJobList.removeWhere((j) => j.postJob?.id == job.postJob?.id);
+        _notify('Job deleted', background: Colors.black);
+        notifyListeners();
+        return true;
+      } else {
+        _notify('Failed to delete job', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify('Error deleting job', background: Colors.red);
+      return false;
+    }
+  }
+
+  // -----------------------
+  // Delete buy/sell
+  // -----------------------
+  Future<bool> deleteBuySell(int id, int index) async {
+    try {
+      final url = '${ApiConstant.POST_BUY_SELL}?id=$id';
+      final res = await _delete(url);
+
+      if (res.statusCode == 200) {
+        myBuyVehicleList.removeWhere((e) => e.id == id);
+        buySellProvider.notifyListeners();
+        _notify('Post deleted', background: Colors.black);
+        notifyListeners();
+        return true;
+      } else {
+        _notify('Failed to delete buy/sell post', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify('Error deleting buy/sell post', background: Colors.red);
+      return false;
+    }
+  }
+
+  // -----------------------
+  // Delete gallery
+  // -----------------------
+  Future<bool> deleteGallery(Gallery gallery) async {
+    try {
+      final url = '${ApiConstant.GALLERY}?id=${gallery.id}';
+      final res = await _delete(url);
+      if (res.statusCode == 200) {
+        myGalleryList.removeWhere((g) => g.id == gallery.id);
+        _notify('Gallery item deleted', background: Colors.black);
+        notifyListeners();
+        return true;
+      } else {
+        _notify('Failed to delete gallery item', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify('Error deleting gallery', background: Colors.red);
+      return false;
+    }
+  }
+
+  // -----------------------
+  // Delete pool purchase
+  // -----------------------
+  Future<bool> deletePoolPurchase(PoolPurchase obj) async {
+    try {
+      final url = '${ApiConstant.BULK_DATA}?id=${obj.id}';
+      final res = await _delete(url);
+      if (res.statusCode == 200) {
+        myPoolPurchaseList.removeWhere((p) => p.id == obj.id);
+        _notify('Pool purchase deleted', background: Colors.black);
+        notifyListeners();
+        return true;
+      } else {
+        _notify('Failed to delete pool purchase', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+      _notify('Error deleting pool purchase', background: Colors.red);
+      return false;
+    }
+  }
+
+  // -----------------------
+  // Get pool purchase list
+  // -----------------------
+  Future<void> getPoolPurchaseList(String userName, {int page = 0, int size = 50}) async {
+    try {
+      final url = '${ApiConstant.BULK_DATA}/byUserName?userName=$userName&page=$page&size=$size';
+      final res = await _get(url);
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final type = PoolPurchaseModel.fromJson(decoded);
+        myPoolPurchaseList.clear();
+        myPoolPurchaseList.addAll(type.content ?? []);
+      } else {
+      //  _notify('Failed to fetch pool purchases', background: Colors.red);
+      }
+    } catch (e) {
+    //  _notify('Error fetching pool purchases', background: Colors.red);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Get gallery list
+  // -----------------------
+  Future<void> getGalleryList(String userId, {int page = 0, int size = 50}) async {
+    try {
+      final url = '${ApiConstant.GALLERY}/byUserId?userId=$userId&page=$page&size=$size';
+      final res = await _get(url);
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final type = GalleryModel.fromJson(decoded);
+        myGalleryList.clear();
+        myGalleryList.addAll(type.content ?? []);
+      } else {
+    //    _notify('Failed to fetch gallery', background: Colors.red);
+      }
+    } catch (e) {
+      //_notify('Error fetching gallery', background: Colors.red);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Save feedback
+  // -----------------------
+  Future<bool> saveFeedback({int? id, String? feedbackDetails, int? postId, int? userId, String? type, int? rating}) async {
+    try {
+      final url = '${ApiConstant.BASE_URL}Feedback';
+      final body = <String, dynamic>{
+        if (id != null) "id": id,
+        "feedbackDetails": feedbackDetails,
+        "postId": postId,
+        "ratings": rating,
+        "type": type,
+        "userId": userId,
+        "date": DateTime.now().toIso8601String(),
+      };
+
+      final res = await _post(url, body: body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final decoded = json.decode(res.body);
+        final dataObj = FeedBack.fromJson(decoded);
+        feedbackList.add(dataObj);
+        notifyListeners();
+        _notify('Feedback saved', background: Colors.black);
+        return true;
+      } else {
+       // _notify('Failed to save feedback', background: Colors.red);
+        return false;
+      }
+    } catch (e) {
+   //   _notify('Error saving feedback', background: Colors.red);
+      return false;
+    }
+  }
+
+  // -----------------------
+  // Get all feedback (paged)
+  // -----------------------
+  Future<void> getAllFeedBackList({int currentPage = 0, int size = 10, int? userId}) async {
+    try {
+      if (currentPage == 0) {
+        isFirstFeedbackLoading = true;
+        feedbackList.clear();
+        fullLoadFeedbackList.clear();
+        partLoadFeedbackList.clear();
+        galleryFeedbackList.clear();
+        buySellFeedbackList.clear();
+        notifyListeners();
+      } else {
+        isFeedbackLoading = true;
+        notifyListeners();
+      }
+
+      final url = '${ApiConstant.BASE_URL}Feedback?page=$currentPage&size=$size';
+      final res = await _get(url);
+
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        final type = FeedbackModel.fromJson(decoded);
+        feedbackList.addAll(type.content ?? []);
+
+        // categorize
+        fullLoadFeedbackList.clear();
+        partLoadFeedbackList.clear();
+        galleryFeedbackList.clear();
+        buySellFeedbackList.clear();
+
+        for (final f in feedbackList) {
+          if (f.type == 'Full Load')
+            fullLoadFeedbackList.add(f);
+          else if (f.type == 'Part Load')
+            partLoadFeedbackList.add(f);
+          else if (f.type == 'Gallery')
+            galleryFeedbackList.add(f);
+          else
+            buySellFeedbackList.add(f);
+        }
+      } else {
+      //  _notify('Failed to fetch feedback', background: Colors.red);
+      }
+    } catch (e) {
+    //  _notify('Error fetching feedback', background: Colors.red);
+    } finally {
+      isFeedbackLoading = false;
+      isFirstFeedbackLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Get discussion list
+  // -----------------------
+  Future<void> getDiscussionList(String userName, {int page = 0, int size = 50}) async {
+    try {
+      discussionList.clear();
+      ApiHelper apiHelper = ApiHelper();
+      var result = await apiHelper.ApiGetData('${ApiConstant.GET_DISCUSSION}/getByUserName?userName=$userName&page=$page&size=$size');
+      DiscussionData discussion = DiscussionData.fromJson(result);
+      discussionList.addAll(discussion.content ?? []);
+    } catch (e) {
+     // _notify('Error fetching discussions', background: Colors.red);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // -----------------------
+  // Flags setters
+  // -----------------------
+  Future<void> setFullLoadFlag(bool value) async {
+    fullLoadFlag = value;
     notifyListeners();
   }
 
-  selectDate(BuildContext context, String controllerString) async {
-    DateTime? _datePicker = await showDatePicker(
-      initialDatePickerMode: DatePickerMode.day,
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(1947),
-      lastDate: DateTime(2030),
-    );
+  Future<void> setPartLoadFlag(bool value) async {
+    partLoadFlag = value;
+    notifyListeners();
+  }
 
-    if (_datePicker != null && _datePicker != _date) {
-      DateTime? date;
+  Future<void> setJobFlag(bool value) async {
+    jobFlag = value;
+    notifyListeners();
+  }
 
-      if (controllerString == 'From Date') {
-        if (_datePicker.isBefore(DateTime.now())) {
-          date = _datePicker;
-          resFromDateCnt = DateFormat('dd/MM/yyyy').format(DateTime.now());
-          resToDateCnt = DateFormat('dd/MM/yyyy')
-              .format(DateTime.now().add(Duration(days: 1)));
-        } else {
-          date = _datePicker;
-          resFromDateCnt = DateFormat('dd/MM/yyyy').format(_datePicker);
-          resToDateCnt = DateFormat('dd/MM/yyyy')
-              .format(_datePicker.add(Duration(days: 1))); //resFromDateCnt;
-        }
-      } else if (controllerString == 'To Date') {
-        if (_datePicker.isBefore(date!)) {
-          resToDateCnt = DateFormat('dd/MM/yyyy').format(_datePicker);
-        } else {
-          resToDateCnt = DateFormat('dd/MM/yyyy').format(_datePicker);
-        }
-      }
-      notifyListeners();
-    }
-    return _datePicker;
+  Future<void> setBuySellFlag(bool value) async {
+    buySellFlag = value;
+    notifyListeners();
+  }
+
+  Future<void> setGalleryFlag(bool value) async {
+    galleryFlag = value;
+    notifyListeners();
+  }
+
+  Future<void> setPoolPurchaseFlag(bool value) async {
+    poolPurchaseFlag = value;
+    notifyListeners();
   }
 }

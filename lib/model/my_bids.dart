@@ -1,4 +1,4 @@
-
+import 'package:tkd_app/model/quoteResponse.dart';
 
 class MyPostBids {
   List<PostBidData>? content;
@@ -133,7 +133,10 @@ class GenericCardsDto {
   String? expireDate;
   bool showCharts = false;
   int? isOpenForBid;
-  Map<String,dynamic>? graphList={};
+  List<MonthData>? graphList=[];
+  int? ispostOwnerVerifiedForTrack;
+  int? isQuoteOwnerVerifiedForTrack;
+  int? isCompleted;
 
   GenericCardsDto(
       {this.id,
@@ -177,7 +180,8 @@ class GenericCardsDto {
         this.likes,
         this.cargoType,
         this.userList,
-        this.comment,this.expireDate,this.showCharts = false,this.isOpenForBid,this.graphList});
+        this.comment,this.expireDate,this.showCharts = false,this.isOpenForBid,this.graphList,
+        this.ispostOwnerVerifiedForTrack,this.isQuoteOwnerVerifiedForTrack,this.isCompleted});
 
   GenericCardsDto.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -225,7 +229,15 @@ class GenericCardsDto {
     expireDate = json['expireDate']??'';
     showCharts = json['showCharts'] ?? false;
     isOpenForBid = json['isOpenForBid'] ?? 1;
-    graphList = json['graphList'];
+    if (json['graphList'] != null) {
+      graphList = <MonthData>[];
+      json['graphList'].forEach((v) {
+        graphList!.add(MonthData.fromJson(v));
+      });
+    }
+    ispostOwnerVerifiedForTrack = json['ispostOwnerVerifiedForTrack'] ?? 0;
+    isQuoteOwnerVerifiedForTrack = json['isQuoteOwnerVerifiedForTrack'] ?? 0;
+    isCompleted = json['isCompleted']??0;
   }
 
   Map<String, dynamic> toJson() {
@@ -276,7 +288,12 @@ class GenericCardsDto {
     data['expireDate'] = expireDate;
     data['showCharts'] = showCharts;
     data['isOpenForBid'] = isOpenForBid;
-    data['graphList'] = graphList;
+    if (graphList != null) {
+      data['graphList'] = graphList!.map((v) => v.toJson()).toList();
+    }
+    data['ispostOwnerVerifiedForTrack'] = ispostOwnerVerifiedForTrack;
+    data['isQuoteOwnerVerifiedForTrack'] = isQuoteOwnerVerifiedForTrack;
+    data['isCompleted'] = isCompleted;
     return data;
   }
 }
@@ -290,6 +307,8 @@ class Bidings {
   int?    isVerified;
   int?    isPaid;
   int?    isAccepted;
+  String? vehicleNumber;
+  String? driverContact;
 
 
   Bidings(
@@ -297,7 +316,7 @@ class Bidings {
         this.firstName,
         this.lastName,
         this.profileImage,
-        this.companyName,this.isVerified,this.isPaid,this.isAccepted});
+        this.companyName,this.isVerified,this.isPaid,this.isAccepted,this.vehicleNumber,this.driverContact});
 
   Bidings.fromJson(Map<String, dynamic> json) {
     bidings =
@@ -309,6 +328,8 @@ class Bidings {
     isVerified=json['isVerified'];
     isPaid=json['isPaid'];
     isAccepted=json['isAccepted'];
+    vehicleNumber=json['vehicleNumber'];
+    driverContact = json['driverContact'];
   }
 
   Map<String, dynamic> toJson() {
@@ -323,6 +344,8 @@ class Bidings {
     data['isVerified'] = isVerified;
     data['isPaid'] = isPaid;
     data['isAccepted'] = isAccepted;
+    data['vehicleNumber'] = vehicleNumber;
+    data['driverContact'] = driverContact;
     return data;
   }
 }

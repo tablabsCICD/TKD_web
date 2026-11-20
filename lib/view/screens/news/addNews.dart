@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tkd_connect/provider/news/news_provider.dart';
-import 'package:tkd_connect/utils/colors.dart';
+import 'package:tkd_app/util/color-resource.dart';
+import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
 
-import '../../constant/images.dart';
-import '../../generated/l10n.dart';
-import '../../provider/incident/report_incident_provider.dart';
-import '../../widgets/button.dart';
-import '../../widgets/card/base_widgets.dart';
-import '../../widgets/datepicker.dart';
-import '../../widgets/editText.dart';
+import '../../../provider/news_provider.dart';
+import '../../../util/images.dart';
+import '../../../util/style.dart';
+import '../../../widgets/base_widgets.dart';
+import '../../../widgets/button.dart';
 
 class AddNewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => NewsProvider(),
-      builder: (context, child) => _buildPage(context),
-    );
-  }
 
-  _buildPage(BuildContext context) {
     final provider = Provider.of<NewsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Add News",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-            fontWeight: FontWeight.w400,
-          ),
+        backgroundColor: Colors.white,
+        title: Text('Add News', style: Style.appheading),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xFFC3262C),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -47,49 +36,49 @@ class AddNewsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              labelText("News Title"),
+              labelText("News Title",isMandatory: true),
               SizedBox(
-                height: 4.h,
+                height: 4,
               ),
               editViewError(
                   "enter title", provider.topicController, provider, true),
               SizedBox(
-                height: 12.h,
+                height: 12,
               ),
               labelText("Description"),
               SizedBox(
-                height: 4.h,
+                height: 4,
               ),
               editViewError("short description", provider.descriptionController,
                   provider, true),
               SizedBox(
-                height: 12.h,
+                height: 12,
               ),
               labelText("News Link"),
               SizedBox(
-                height: 4.h,
+                height: 4,
               ),
               editViewError(
                   "youtube link/google link", provider.linkController, provider, true),
               SizedBox(
-                height: 12.h,
+                height: 12,
               ),
               _buildProofUploader(provider, context),
               SizedBox(height: 10),
               Padding(
-                padding: EdgeInsets.only(bottom: 20.h),
+                padding: EdgeInsets.only(bottom: 20),
                 child: Button(
                   width: MediaQuery.of(context).size.width,
-                  height: 49.h,
-                  title: S().addNews,
+                  height: 49,
+                  title: "Add News",
                   textStyle: TextStyle(
                     color: Colors.white,
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontFamily: GoogleFonts.poppins().fontFamily,
                     fontWeight: FontWeight.w600,
                   ),
                   onClick: () {
-                     provider.checkValidation(context);
+                     provider.createPost(context);
                   },
                   isEnbale: true,
                 ),
@@ -110,23 +99,15 @@ class AddNewsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "Upload Photo",
-            style: TextStyle(
-              color: Colors.black, // Change text color based on selection
-              fontSize: 12.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          labelText("Upload Photo",isMandatory: true),
           provider.images.isNotEmpty
-              ? BaseWidget().carouseImageDelete(provider.images, (item) {
+              ? BaseWidget().carouseImageDelete(context,provider.images, (item) {
             provider.images.remove(item);
             provider.notifyListeners();
           })
               : const SizedBox(),
           SizedBox(
-            height: 16.h,
+            height: 16,
           ),
           InkWell(
               onTap: () {
@@ -138,7 +119,7 @@ class AddNewsScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: const Color(0xFF001E49),
-              fontSize: 12.sp,
+              fontSize: 12,
               fontFamily: GoogleFonts.poppins().fontFamily,
               fontWeight: FontWeight.w600,
             ),
@@ -149,50 +130,46 @@ class AddNewsScreen extends StatelessWidget {
   }
 
 
-  labelText(String label) {
+  labelText(String label, {bool isMandatory = false}) {
     return SizedBox(
-      width: 332.w,
+      width: 332,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w400,
+          RichText(
+            text: TextSpan(
+              text: label,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                fontWeight: FontWeight.w400,
+              ),
+              children: isMandatory
+                  ? [
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: ColorResources.PRIMARY_COLOR,
+                    fontSize: 12,
+                  ),
+                ),
+              ]
+                  : [],
             ),
           ),
         ],
       ),
     );
   }
-
-  editView(String hint, TextEditingController controller,
-      NewsProvider provider, bool redOnly) {
-    return EditText(
-      readOnly: redOnly,
-      width: 335.w,
-      height: 52.h,
-      hint: hint,
-      controller: controller,
-      onChange: (val) {
-        provider.enble();
-      },
-    );
-  }
-
   editViewError(String hint, TextEditingController controller,
       NewsProvider provider, bool valid) {
-    return EditTextError(
-      validate: valid,
-      width: 335.w,
-      height: 52.h,
-      hint: hint,
+    return CustomTextField(
+     textInputType: TextInputType.text,
+      hintText: hint,
       controller: controller,
-      onChange: (val) {
+      onTap: () {
         provider.enble();
       },
     );

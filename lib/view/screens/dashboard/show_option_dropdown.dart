@@ -21,6 +21,8 @@ import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 
+import '../editPost/edit_post_load.dart';
+
 class ShowOptionDropDown extends StatefulWidget {
   String? sourceCity;
 
@@ -70,7 +72,9 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
 
   getListOfVefiyUser(String sourceCity) async {
     verifiedUserList.clear();
+    verifiedUserNameList.clear();
     String myUrl = ApiConstant.GET_USER_SOURCE_LIST(sourceCity);
+    print(myUrl);
     ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(myUrl);
     if(apiResponse.statusCode==200){
       VerifiedUser verifiedUser =VerifiedUser.fromJson(jsonDecode(apiResponse.response));
@@ -100,12 +104,11 @@ class _ShowOptionDropDownState extends State<ShowOptionDropDown> {
       builder: (context, model, child) => AlertDialog(
         title: Center(child: Text('Select Option')),
         content: Container(
-          width: 400,
+          width: 450,
           height: 500,
           child: Column(
             children: [
               Container(
-                height: 170,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: sampleData.length,

@@ -280,7 +280,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                                             email: authProvider.userDetailList[0].emailId,
                                             amount: bidAmtController.text,
                                             idOfPost: widget.job.userId,
-                                            bidderUserName: widget.job.nameOfPerson,
+                                            bidderUserName: authProvider.userDetailList[0].userName,
                                             userName: authProvider.userDetailList[0].userName,
                                             type: 'Bid',
                                             loggedUserName: authProvider.userDetailList[0].userName);

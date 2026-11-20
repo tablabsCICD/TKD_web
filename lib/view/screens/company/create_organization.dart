@@ -197,8 +197,8 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                                                 child: CustomText('Create New Organization',
                                                     style: Style.heading)),
                                             CustomCityTextField(
-                                              hintText: 'Select City',
-                                              controller: selectedCity!,
+                                              label: 'Select City',
+                                              value: selectedCity!,
                                               onTap: () {
                                                 showDialog(context: context,
                                                     builder: (BuildContext context){
@@ -275,8 +275,8 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                                               textInputType: TextInputType.text,
                                             ),
                                             CustomCityTextField(
-                                              hintText: 'Select State',
-                                              controller: selectedState!,
+                                              label: 'Select State',
+                                              value: selectedState!,
                                               onTap: () {
                                                 showDialog(context: context,
                                                     builder: (BuildContext context){
@@ -476,8 +476,8 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                         child: CustomText('Create New Organization',
                             style: Style.heading)),
                     CustomCityTextField(
-                      hintText: 'Select City',
-                      controller: selectedCity!,
+                      label: 'Select City',
+                      value: selectedCity!,
                       onTap: () {
                         showDialog(context: context,
                             builder: (BuildContext context){
@@ -557,8 +557,8 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                       isValidator: false,
                     ),
                     CustomCityTextField(
-                      hintText: 'Select State',
-                      controller: selectedState!,
+                      label: 'Select State',
+                      value: selectedState!,
                       onTap: () {
                         showDialog(context: context,
                             builder: (BuildContext context){

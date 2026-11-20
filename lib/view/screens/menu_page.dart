@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tkd_app/constant.dart';
 import 'package:tkd_app/locator.dart';
@@ -23,6 +24,7 @@ import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/custom_text_style.dart';
 import 'package:tkd_app/util/style.dart';
+import 'package:tkd_app/view/base_widget/app_constant.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/dashboard_header.dart';
 import 'package:tkd_app/view/base_widget/drawer_menu.dart';
@@ -33,8 +35,9 @@ import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/payment/razor_pay.dart';
 import 'package:tkd_app/view/screens/bids/my_bids_screen.dart';
 import 'package:tkd_app/view/screens/bids/received_bids.dart';
+import 'package:tkd_app/view/screens/bulk_upload/bulk_upload_screen.dart';
 import 'package:tkd_app/view/screens/buy_sell/buy_sell_vehicles.dart';
-import 'package:tkd_app/view/screens/buy_sell/create_new_post.dart';
+import 'package:tkd_app/view/screens/buy_sell/create_buysell_post.dart';
 import 'package:tkd_app/view/screens/company/create_organization.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 import 'package:tkd_app/view/screens/dashboard/dashboard.dart';
@@ -45,18 +48,26 @@ import 'package:tkd_app/view/screens/fleet/create_fleet.dart';
 import 'package:tkd_app/view/screens/fleet/fleet_screen.dart';
 import 'package:tkd_app/view/screens/gallery/create_gallary_post.dart';
 import 'package:tkd_app/view/screens/gallery/gallery_screen.dart';
+import 'package:tkd_app/view/screens/group/groupListScreen.dart';
 import 'package:tkd_app/view/screens/insuranceAndFinance.dart';
 import 'package:tkd_app/view/screens/job/create_job.dart';
 import 'package:tkd_app/view/screens/job/job_screen.dart';
 import 'package:tkd_app/view/screens/more/create_general_post.dart';
+import 'package:tkd_app/view/screens/news/addNews.dart';
+import 'package:tkd_app/view/screens/news/allNews.dart';
 import 'package:tkd_app/view/screens/plan/select_plan_screen.dart';
+import 'package:tkd_app/view/screens/report_incident/report_incident_form.dart';
+import 'package:tkd_app/view/screens/report_incident/report_incident_list.dart';
+import '../../model/api_response.dart';
+import '../../network/api_call.dart';
+import '../../util/colors.dart';
+import '../../widgets/button.dart';
 import '../../widgets/toast.dart';
 import 'auth/login_screen.dart';
 import 'package:tkd_app/view/screens/more/more_screen.dart';
 import 'package:tkd_app/view/screens/more/my_profile.dart';
 import 'package:tkd_app/view/screens/my_routes/my_routes.dart';
 import 'auth/otp_screen.dart';
-import 'package:tkd_app/view/screens/plan/plan_screen.dart';
 import 'package:tkd_app/view/screens/pool_purchase/create_pool_purchase_post.dart';
 import 'package:tkd_app/view/screens/pool_purchase/pool_purches_screen.dart';
 import 'package:tkd_app/view/screens/transport/transport_search_screen.dart';
@@ -87,7 +98,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    container = widget.selectedTab=="Board"?DashBoardScreen():widget.selectedTab=="Received Quotes"?ReceivedBidsScreen():SelectPlanScreen();
+    container = widget.selectedTab=="Home"?DashBoardScreen():widget.selectedTab=="Received Quotes"?ReceivedBidsScreen():DashBoardScreen();
     routeProvider.addDataFromDummyListToRouteList();
     ApiConstant.languages
         .forEach((language) => _valueList.add(language.languageName!));
@@ -110,7 +121,7 @@ class _MenuPageState extends State<MenuPage> {
                       height: 500,
                       width: 500,
                     )*/
-              Visibility(visible:false,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,))
+              Visibility(visible:true,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,))
                   : IconButton(
                       icon: Icon(
                         Icons.menu,
@@ -129,16 +140,10 @@ class _MenuPageState extends State<MenuPage> {
                   ? Padding(
                     padding: const EdgeInsets.only(left: 12.0),
                     child: Container(
-                height: 60,
-                width: 70,
-               /* decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                      image: AssetImage('assets/images/tkd.png',)
-                    )
-                ),*/
+                height: 100,
+                width: 120,
 
-                      child: Visibility(visible:false,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,)),
+                      child: Visibility(visible:true,child: SvgPicture.asset('assets/svg/logo.svg',height: 250,width: 500,)),
                     ),
                   )
                   : IconButton(
@@ -307,14 +312,14 @@ class _MenuPageState extends State<MenuPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SizedBox(width: 20,),
-          Container(
+          ResponsiveWidget.isMobile(context)?SizedBox.shrink():Container(
               height: 40,
               color: Colors.black12,
               child: Text("Note : As we offer annual packages, \n we don't offer refunds.")),
 
           Spacer(),
 
-          FloatingActionButton.extended(
+          ResponsiveWidget.isMobile(context)?SizedBox.shrink():FloatingActionButton.extended(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10)
           ),
@@ -355,364 +360,17 @@ class _MenuPageState extends State<MenuPage> {
           SizedBox(width: 16,),
           FloatingActionButton.extended(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)
+              borderRadius: BorderRadius.circular(10),
             ),
             backgroundColor: ColorResources.THEME_COLOR,
             foregroundColor: Colors.white,
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                      content: Container(
-
-                        height: ResponsiveWidget.isDesktop(context)
-                            ?220
-                            :220,
-                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?100:100,
-                        // alignment: Alignment.center,
-                        child: Column(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              child: CustomText('Full Load'),
-                              onTap: () {
-                                /*Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (builder) =>
-                                            CreateRequirement('Full Load')));*/
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                      ),
-                                      elevation: 0.0,
-                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                      backgroundColor: Colors.white,
-                                      child: Container(
-                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                        child: Stack(
-                                          children: [
-                                            CreateRequirement("Full Load"),
-                                            Positioned(
-                                              top: 7,
-                                              right: 7,
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,size: 18,),
-                                                onPressed: (){
-                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                );
-                              },
-                            ),
-                            Divider(),
-                            InkWell(
-                              child: CustomText('Part Load'),
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                      ),
-                                      elevation: 0.0,
-                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                      backgroundColor: Colors.white,
-                                      child: Container(
-                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                        child: Stack(
-                                          children: [
-                                            CreateRequirement("Part Load"),
-                                            Positioned(
-                                              top: 7,
-                                              right: 7,
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,size: 18,),
-                                                onPressed: (){
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                );
-                              },
-                            ),
-                            Divider(),
-                            InkWell(
-                              child: Text("General Post"),
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                      ),
-                                      elevation: 0.0,
-                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                      backgroundColor: Colors.white,
-                                      child: Container(
-                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                        child: Stack(
-                                          children: [
-                                            CreateGeneralPost(),
-                                            Positioned(
-                                              top: 7,
-                                              right: 7,
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,size: 18,),
-                                                onPressed: (){
-                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                );
-                              },
-                            ),
-
-                            Divider(),
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else
-                              InkWell(
-                                child: CustomText('Buy/Sell Vehicle'),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0),
-                                        ),
-                                        elevation: 0.0,
-                                        insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                        backgroundColor: Colors.white,
-                                        child: Container(
-                                          width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                          child: Stack(
-                                            children: [
-                                              CreateNewBuySellPost(),
-                                              Positioned(
-                                                top: 7,
-                                                right: 7,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close,size: 18,),
-                                                  onPressed: (){
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  );
-                                },
-                              ),
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3 || authProvider.userDetailList[0].isPaid != 30)
-                              SizedBox.shrink()
-                            else
-                            Divider(),
-
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3 || authProvider.userDetailList[0].isPaid != 30)
-                              SizedBox.shrink()
-                            else
-                              InkWell(
-                                child: Text(getTranslated('jobs', context)!),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0),
-                                        ),
-                                        elevation: 0.0,
-                                        insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                        backgroundColor: Colors.white,
-                                        child: Container(
-                                          height: 500,
-                                          width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                          child: Stack(
-                                            children: [
-                                              CreateJob(),
-                                              Positioned(
-                                                top: 7,
-                                                right: 7,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close,size: 18,),
-                                                  onPressed: (){
-                                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>MenuPage(userDetailList: widget.userDetailList,selectedTab: "Board",)));
-                                                  },
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  );
-                                },
-                              ),
-                            Divider(),/*
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else*/
-                           /* InkWell(
-                              child: CustomText('BroadCast'),
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                      ),
-                                      elevation: 0.0,
-                                      insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                      backgroundColor: Colors.white,
-                                      child: Container(
-                                        width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                        child: Stack(
-                                          children: [
-                                            CreateGalleryPost(),
-                                            Positioned(
-                                              top: 7,
-                                              right: 7,
-                                              child: IconButton(
-                                                icon: Icon(Icons.close,size: 18,),
-                                                onPressed: (){
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                );
-                              },
-                            ),*/
-                         //   Divider(),
-
-                            /*if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else
-                              InkWell(
-                                child:
-                                CustomText('Pool Purchase'),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0),
-                                        ),
-                                        elevation: 0.0,
-                                        insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                        backgroundColor: Colors.white,
-                                        child: Container(
-                                          width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                          child: Stack(
-                                            children: [
-                                              CreatePoolPurchasePost(),
-                                              Positioned(
-                                                top: 7,
-                                                right: 7,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close,size: 18,),
-                                                  onPressed: (){
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  );
-                                },
-                              ),*/
-
-                          /*  if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else
-                              Divider(),
-                            if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else
-                              InkWell(
-                                child: CustomText('Fleet'),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0),
-                                        ),
-                                        elevation: 0.0,
-                                        insetPadding: ResponsiveWidget.isMobile(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 10):ResponsiveWidget.isTablet(context)?EdgeInsets.symmetric(vertical: 50,horizontal: 50):EdgeInsets.symmetric(vertical: 50,horizontal: 50),
-                                        backgroundColor: Colors.white,
-                                        child: Container(
-                                          width: ResponsiveWidget.isMobile(context)?MediaQuery.of(context).size.width-50:ResponsiveWidget.isDesktop(context)?500:400,
-                                          child: Stack(
-                                            children: [
-                                              CreateFleet(),
-                                              Positioned(
-                                                top: 7,
-                                                right: 7,
-                                                child: IconButton(
-                                                  icon: Icon(Icons.close,size: 18,),
-                                                  onPressed: (){
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              )
-                                             ],
-                                          ),
-                                        ),
-                                      )
-                                  );
-                                },
-                              ),*/
-                          /*  if (widget.userDetailList![0].transporterOrAgent == 2 ||
-                                widget.userDetailList![0].transporterOrAgent == 3)
-                              SizedBox.shrink()
-                            else
-                              Divider(),*/
-                            InkWell(
-                              child: CustomText(
-                                "Cancel",
-                                style:
-                                TextStyle(color: ColorResources.PRIMARY_COLOR),
-                              ),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      )));
+              _showMainMenuDialog(context);
             },
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             label: Text("New Post", style: Style.button),
           ),
+
         ],
       ),
       body: SafeArea(
@@ -733,17 +391,169 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  void _showMainMenuDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final size = MediaQuery.of(context).size;
+        final bool isMobile = size.width < 600;
+
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 20 : size.width * 0.35,
+            vertical: isMobile ? 40 : 120,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _menuItem(context, "Full Load", () {
+                  _openResponsiveFormDialog(context, CreateRequirement("Full Load"));
+                }),
+
+                _divider(),
+
+                _menuItem(context, "Part Load", () {
+                  _openResponsiveFormDialog(context, CreateRequirement("Part Load"));
+                }),
+
+                _divider(),
+
+                _menuItem(context, "General Post", () {
+                  _openResponsiveFormDialog(context, CreateGeneralPost());
+                }),
+
+                _divider(),
+
+                _menuItem(context, "Buy/Sell Vehicle", () {
+                  _openResponsiveFormDialog(context, CreateNewBuySellPost());
+                }),
+
+                _divider(),
+
+                _menuItem(context, "Jobs", () {
+                  _openResponsiveFormDialog(context, CreateJob());
+                }),
+
+                _divider(),
+
+                _menuItem(context, "News", () {
+                  _openResponsiveFormDialog(context, AddNewsScreen());
+                }),
+
+                _divider(),
+
+                _menuItem(context, "Report Incident", () {
+                  _openResponsiveFormDialog(context, ReportIncidentFormScreen());
+                }),
+                _divider(),
+                const SizedBox(height: 20),
+
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: ColorResources.PRIMARY_COLOR,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _divider() => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Divider(thickness: 1),
+  );
+
+
+  Widget _menuItem(BuildContext context, String title, Function onTap) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+
+  void _openResponsiveFormDialog(BuildContext context, Widget child) {
+    final size = MediaQuery.of(context).size;
+    final bool isMobile = size.width < 600;
+    final double dialogWidth = isMobile ? size.width - 50 : 500;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 10 : 80,
+          vertical: 50,
+        ),
+        child: Container(
+          width: dialogWidth,
+          child: Stack(
+            children: [
+              child,
+
+              // CLOSE BUTTON FIXED
+              Positioned(
+                top: 7,
+                right: 7,
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () => Navigator.pop(dialogContext),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   menuCallBack(String value) {
     print(value);
     switch (value) {
-      case "Board":
+      case "Home":
         container = DashBoardScreen();
         break;
-      case "Markets":
-        container = TransportSearchScreen();
+      case "Group":
+        container = GroupList();
         break;
-      case "Transport":
-        widget.userDetailList![0].isPaid == 0
+      case "Transport Directory":
+      /*  widget.userDetailList![0].isPaid == 0
             ? showDialog(
                 context: context,
                 builder: (_) => new CupertinoAlertDialog(
@@ -779,11 +589,11 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                       ],
                     ))
-            : SizedBox.shrink();
+            : SizedBox.shrink();*/
         container = TransportSearchScreen();
         break;
       case "Discussions":
-        container = TransportSearchScreen();
+        container = AllNewsScreen();
         break;
       case "Buy_Sell_Vehicles":
         container = BuySellVehicles(); //BuySellVehicles();
@@ -793,6 +603,7 @@ class _MenuPageState extends State<MenuPage> {
         break;
       case "Package Change":
         container = SelectPlanScreen();
+     // container = DashBoardScreen();
         break;
       case "Jobs":
         container = JobScreen();
@@ -802,6 +613,9 @@ class _MenuPageState extends State<MenuPage> {
         break;
       case "My_Account":
         container = MyProfile();
+        break;
+      case "Bulk Upload":
+        container = BulkUploadLoad();
         break;
       case "My_Post":
         container = MoreScreen();
@@ -815,6 +629,12 @@ class _MenuPageState extends State<MenuPage> {
       case "Received Quotes":
         container = ReceivedBidsScreen();
         break;
+      case "Report Incident":
+        container = ReportIncidentList();
+        break;
+      case "All News":
+        container = AllNewsScreen();
+        break;
       case "Company":
         container = CreateOrganization();
         break;
@@ -825,11 +645,11 @@ class _MenuPageState extends State<MenuPage> {
         container = FeedbackScreen();
         break;
       case "Plans":
-        container = PlanScreen();
+      //  container = PlanScreen();
         //container = IFramePage(url: 'https://rcltechlab.000webhostapp.com/#/register',);
         break;
       case "Privacy Policy":
-        String url = "https://s3.ap-south-1.amazonaws.com//tkd-images/profileImages//1711368127989-privacyPolicy.pdf";
+        String url = AppConstant().PRIVACY_POLICY;
         html.window.open(url,"_blank"/*,"_self"*/);
 
         break;
@@ -845,13 +665,13 @@ class _MenuPageState extends State<MenuPage> {
         break;
 
       case "Toll Calculation":
-        html.window.open("https://transportguru.in/","_blank"/*,"_self"*/);
-       // callTollCalculation();
+       // html.window.open("https://transportguru.in/","_blank"/*,"_self"*/);
+        callTollCalculation();
         break;
 
       case "mParivahan":
-        html.window.open("https://parivahan.gov.in/parivahan//en/content/license-registration-details","_blank"/*,"_self"*/);
-    //  callMParivahan();
+        //html.window.open("https://parivahan.gov.in/parivahan//en/content/license-registration-details","_blank"/*,"_self"*/);
+      callMParivahan();
         break;
 
       case "Chats":
@@ -871,57 +691,77 @@ class _MenuPageState extends State<MenuPage> {
         print('logout');
         break;
       default:
-        container = TransportSearchScreen();
+        container = DashBoardScreen();
     }
     if (!ResponsiveWidget.isDesktop(context)) Navigator.pop(context);
     setState(() {});
   }
 
 
+
+
   callMParivahan() async {
-    String url = ApiConstant.MPARIVAHAN;
-    print(url);
-    final response = await http.get(Uri.parse(url));
+    try {
+      String url = ApiConstant.MPARIVAHAN;
+      print(url);
 
-    print('The response status is ${response.statusCode}');
+      final response = await http.get(Uri.parse(url));
+      print('The response status is ${response.statusCode}');
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonResponse = json.decode(response.body);
-      if(jsonResponse['message']=="success"){
-        debugPrint(jsonResponse['url']);
-        //  String url = "https://parivahan.gov.in/parivahan//en/content/license-registration-details";
-        html.window.open(jsonResponse['url'],"_blank"/*,"_self"*/);
-      }else{
-        ToastMessage.show(context, jsonResponse['message']+"Something went wrong!!");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+        if (jsonResponse['message'] == "success") {
+          final mParivahanURL = jsonResponse['url'];
+
+          debugPrint(mParivahanURL);
+
+          // 👉 Open in NEW TAB safely (no blank page issue)
+          html.window.open(mParivahanURL, "_blank");
+
+          // ❌ DO NOT CLOSE CURRENT SCREEN IMMEDIATELY
+          // Navigator.pop(context);  <-- remove completely
+
+        } else {
+          ToastMessage.show(context, "${jsonResponse['message']} Something went wrong!!");
+        }
+      } else {
+        ToastMessage.show(context, "Please try again");
       }
-      Navigator.pop(context,1);
-    }else{
-      ToastMessage.show(context, "Please try again");
+    } catch (e) {
+      print("ERROR (MParivahan): $e");
+      ToastMessage.show(context, "Something went wrong!");
     }
   }
+
 
   callTollCalculation() async {
     String url = ApiConstant.TOLL_CALCULATION;
     print(url);
-    final response = await http.get(Uri.parse(url));
 
+    final response = await http.get(Uri.parse(url));
     print('The response status is ${response.statusCode}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
-      if(jsonResponse['message']=="success"){
-        ToastMessage.show(context, jsonResponse['url']);
-        debugPrint(jsonResponse['url']);
-        //  String url = "https://transportguru.in/";
-        html.window.open(jsonResponse['url'],"_blank"/*,"_self"*/);
-      }else{
-        ToastMessage.show(context, jsonResponse['message']+"Something went wrong!!");
+
+      if (jsonResponse['message'] == "success") {
+        final tollUrl = jsonResponse['url'];
+
+        ToastMessage.show(context, "Opening toll calculator...");
+
+        // Open external page safely
+        html.window.open(tollUrl, "_blank");
+
+        // ❌ DO NOT POP — this causes blank page issue
+      } else {
+        ToastMessage.show(context, jsonResponse['message'] + " Something went wrong!!");
       }
-      Navigator.pop(context,1);
-    }else{
+    } else {
       ToastMessage.show(context, "Please try again");
     }
   }
+
 
 
   Future<void> logoutFunction(AuthProvider authProvider) async {
@@ -997,4 +837,6 @@ class _MenuPageState extends State<MenuPage> {
               ],
             ));
   }
+
+
 }

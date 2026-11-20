@@ -183,7 +183,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                     child: ClipRRect(
                         borderRadius: BorderRadius.all(
                             Radius.circular(Constants.avatarRadius)),
-                        child: BaseWidget().getImageclip(
+                        child: HomeBaseWidget().getImageclip(
                             widget.transportList.profilePicture.toString(),
                             height: 90,
                             width:
@@ -347,7 +347,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
             child: ClipRRect(
                 borderRadius:
                     BorderRadius.all(Radius.circular(Constants.avatarRadius)),
-                child: BaseWidget().getImageclip(
+                child: HomeBaseWidget().getImageclip(
                     widget.transportList.profilePicture.toString(),
                     height: 90,
                     width:

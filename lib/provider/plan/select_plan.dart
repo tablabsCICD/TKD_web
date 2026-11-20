@@ -158,7 +158,7 @@ class SelectPlanProvider extends ChangeNotifier {
           MaterialPageRoute(
               builder: (builder) => MenuPage(
                     userDetailList: [user!],
-                    selectedTab: "Board",
+                    selectedTab: "Home",
                   )),
           (route) => false);
     } else {

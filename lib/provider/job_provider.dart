@@ -129,24 +129,54 @@ int jobPages = 0;
   int selectedPage=0;
   ScrollController scrollController=ScrollController();
 
-  getAllJobs({int currentPage = 0})async{
+  getAllJobs({
+    int currentPage = 0,
+    String? search,
+    String? role,
+    String? experience,
+    String? salary,
+    String? date, String? department,
+  }) async {
+
     isLoadingCandidate = true;
     notifyListeners();
-    if(currentPage==0){
+
+    if (currentPage == 0) {
       listJobs.clear();
     }
 
-    String myUrl = ApiConstant.BASE_URL+'postJob/getAllJobsWithSearch?page=$currentPage';
-    print(myUrl);
-    ApiResponse apiResponse=await ApiHelper().apiWithoutDecodeGet(myUrl);
-    print("Response:::"+apiResponse.response);
+    // Base URL
+    String baseUrl = ApiConstant.BASE_URL + 'postJob/getAllJobsWithSearch';
+
+    // BUILD QUERY MAP
+    Map<String, dynamic> query = {
+      "page": currentPage.toString(),
+      "size": "20",
+    };
+
+    // ONLY ADD NON-NULL AND NON-EMPTY FIELDS
+    if (search != null && search.trim().isNotEmpty) query["search"] = search;
+    if (role != null && role.trim().isNotEmpty) query["role"] = role;
+    if (experience != null && experience.trim().isNotEmpty) query["experience"] = experience;
+    if (salary != null && salary.trim().isNotEmpty) query["salary"] = salary;
+    if (date != null && date.trim().isNotEmpty) query["date"] = date;
+    if (department != null && department.trim().isNotEmpty) query["department"] = department;
+
+    // BUILD FINAL URL
+    final uri = Uri.parse(baseUrl).replace(queryParameters: query);
+    print("FINAL URL => $uri");
+
+    // CALL API
+    ApiResponse apiResponse = await ApiHelper().apiWithoutDecodeGet(uri.toString());
+    print("Response ::: ${apiResponse.response}");
+
     isLoadingCandidate = false;
-    if(apiResponse.statusCode==200){
-      JobList jobList=JobList.fromJson(jsonDecode(apiResponse.response));
+
+    if (apiResponse.statusCode == 200) {
+      JobList jobList = JobList.fromJson(jsonDecode(apiResponse.response));
       listJobs.addAll(jobList.content!);
       currentPage++;
       notifyListeners();
-    }else{
     }
   }
 
@@ -154,7 +184,7 @@ int jobPages = 0;
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        getAllJobs();
+        getAllJobs(currentPage: 0, search: '');
       }
     });
   }

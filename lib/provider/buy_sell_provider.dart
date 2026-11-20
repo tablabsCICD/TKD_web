@@ -1,203 +1,577 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:overlay_support/overlay_support.dart';
-import 'package:tkd_app/locator.dart';
-import 'package:tkd_app/model/comman_response.dart';
-import 'package:tkd_app/model/truck_load_model.dart';
-import 'package:tkd_app/provider/dashboard_provider.dart';
-import 'package:tkd_app/util/app_constants.dart';
 
+import '../locator.dart';
+import '../model/comman_response.dart';
+import '../model/truck_load_model.dart';
+import '../network/api_call.dart';
+import '../util/app_constants.dart';
+import '../view/screens/gallery/image_picker_helper.dart';
+import '../widgets/toast.dart';
+import 'dashboard_provider.dart';
+// adjust if path differs
+import 'package:overlay_support/overlay_support.dart';
+
+/// BuySellProvider
+/// - Option B: uses ImagePickerHelper().pickAndUploadImage(context) which returns final URL.
+/// - Manages buy & sell lists, pagination, image uploads, retries, create post.
+/// - Pagination pages start at 0.
 class BuySellProvider extends ChangeNotifier {
-  List<TruckLoad> buyVehicleList = [];
-  var response;
-  List<TruckLoad> sellVehicleList = [];
-  var response1;
-  int sellTotalPages = 0;
-  int totalPages = 0;
+  BuySellProvider() {
+    // initialize first pages
+    _buyPage = 0;
+    _sellPage = 0;
+  }
+
+  // -------------------------
+  // Public state
+  // -------------------------
+  final List<TruckLoad> buyVehicleList = [];
+  final List<TruckLoad> sellVehicleList = [];
+
+  /// List of image URLs (final URLs). We keep ordering consistent.
+  final List<String> buySellImages = [];
+
+  /// Upload state per index while uploading (true = uploading, false = uploaded/idle)
+  final Map<int, bool> _uploading = {};
+
+  /// Upload error flag per index (true => last upload failed)
+  final Map<int, String?> _uploadError = {};
+
+  // getters for uploading / error
+  bool isUploadingAt(int index) => _uploading[index] == true;
+  String? uploadErrorAt(int index) => _uploadError[index];
+
+  // -------------------------
+  // Pagination state
+  // -------------------------
+  int _buyPage = 0;
+  int _sellPage = 0;
+  int buyTotalPages = 999999; // if server gives total pages, set it
+  int sellTotalPages = 999999;
   bool isLoadingForBuyVehicles = false;
   bool isLoadingForSellVehicles = false;
-  bool isLoding = true;
-  late TruckLoad truckLoadNotification;
 
-  Future<TruckLoadType> getBuyVehicles({int currentPage = 0}) async {
-    isLoadingForBuyVehicles = true;
-    notifyListeners();
-    if (currentPage == 0) {
-      buyVehicleList.clear();
+  bool get hasMoreBuy => _buyPage < buyTotalPages - 1;
+  bool get hasMoreSell => _sellPage < sellTotalPages - 1;
+
+  // -------------------------
+  // Helper providers
+  // -------------------------
+  final DashboardProvider _dashboardProvider = locator<DashboardProvider>();
+
+  // -------------------------
+  // Image upload methods (Option B)
+  // -------------------------
+
+  /// Adds a placeholder and starts upload using ImagePickerHelper.
+  /// Since helper returns final URL only, we show a simple uploading flag.
+  Future<void> uploadBuySellImage(BuildContext context) async {
+    try {
+      // Prevent adding more than 4 images
+      if (buySellImages.length >= 4) {
+        showSimpleNotification(
+          const Text("Maximum 4 images allowed"),
+          background: Colors.orange,
+        );
+        return;
+      }
+
+      // mark a new index as uploading and show placeholder (empty string)
+      final int newIndex = buySellImages.length;
+      buySellImages.add(''); // placeholder
+      _uploading[newIndex] = true;
+      _uploadError[newIndex] = null;
+      notifyListeners();
+
+      // call helper which picks file and uploads, returning final URL (Option B)
+      String? uploadedUrl = await ImagePickerHelper().pickAndUploadImage(context);
+
+      if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
+        buySellImages[newIndex] = uploadedUrl;
+        _uploading[newIndex] = false;
+        _uploadError[newIndex] = null;
+        notifyListeners();
+      } else {
+        // upload failed or cancelled
+        buySellImages.removeAt(newIndex);
+        _uploading.remove(newIndex);
+        _uploadError.remove(newIndex);
+        notifyListeners();
+
+        showSimpleNotification(
+          const Text("Image upload cancelled or failed"),
+          background: Colors.red,
+        );
+      }
+    } catch (e) {
+      // find last placeholder index (if any)
+      final int idx = buySellImages.indexOf('');
+      if (idx >= 0) {
+        _uploading[idx] = false;
+        _uploadError[idx] = e.toString();
+      }
+      notifyListeners();
+      showSimpleNotification(
+        Text("Upload error: $e"),
+        background: Colors.red,
+      );
     }
-    String myUrl =
-        ApiConstant.BUY_SELL_ALL_CARD + '?type=Buy&&page=${currentPage}';
-    var req = await http.get(Uri.parse(myUrl));
-    isLoadingForBuyVehicles = false;
-    response = json.decode(req.body);
-    var type = TruckLoadType.fromJson(response);
-    buyVehicleList.addAll(type.content);
-    notifyListeners();
-    return type;
   }
 
-  Future<TruckLoadType> getSellVehicles({int currentPage = 0}) async {
-    isLoadingForSellVehicles = true;
+  /// Retry upload for a given index (re-uploads and replaces URL).
+  Future<void> retryUploadImage(BuildContext context, int index) async {
+    if (index < 0 || index >= buySellImages.length) return;
+
+    // replace current value with placeholder and set uploading
+    buySellImages[index] = '';
+    _uploading[index] = true;
+    _uploadError[index] = null;
     notifyListeners();
-    if (currentPage == 0) {
-      sellVehicleList.clear();
+
+    try {
+      final String? uploadedUrl = await ImagePickerHelper().pickAndUploadImage(context);
+      if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
+        buySellImages[index] = uploadedUrl;
+        _uploading[index] = false;
+        _uploadError[index] = null;
+        notifyListeners();
+      } else {
+        _uploading[index] = false;
+        _uploadError[index] = "Upload cancelled";
+        // keep placeholder removed
+        buySellImages.removeAt(index);
+        _uploading.remove(index);
+        notifyListeners();
+
+        showSimpleNotification(
+          const Text("Upload cancelled"),
+          background: Colors.orange,
+        );
+      }
+    } catch (e) {
+      _uploading[index] = false;
+      _uploadError[index] = e.toString();
+      notifyListeners();
+
+      showSimpleNotification(
+        Text("Retry upload failed: $e"),
+        background: Colors.red,
+      );
     }
-    String myUrl =
-        ApiConstant.BUY_SELL_ALL_CARD + '?type=Sell&page=${currentPage}';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isLoadingForSellVehicles = false;
-    response1 = json.decode(req.body);
-    var type1 = TruckLoadType.fromJson(response1);
-    sellVehicleList.addAll(type1.content);
-    print('the id is ${truckLoadNotification.id}');
-    notifyListeners();
-    return type1;
   }
 
-  Future<TruckLoadType> getSellVehiclesNotification(int id) async {
-    isLoadingForSellVehicles = true;
+  /// Remove image at index
+  void removeImage(int index) {
+    if (index < 0 || index >= buySellImages.length) return;
+    buySellImages.removeAt(index);
+
+    // shift _uploading and _uploadError maps down one index for keys greater than index
+    final Map<int, bool> newUploading = {};
+    final Map<int, String?> newErrors = {};
+    int pos = 0;
+    for (int i = 0; i <= buySellImages.length; i++) {
+      if (_uploading.containsKey(i) && i != index) {
+        newUploading[pos] = _uploading[i] ?? false;
+        newErrors[pos] = _uploadError[i];
+        pos++;
+      }
+    }
+    _uploading
+      ..clear()
+      ..addAll(newUploading);
+    _uploadError
+      ..clear()
+      ..addAll(newErrors);
+
     notifyListeners();
-    sellVehicleList.clear();
-    String myUrl = ApiConstant.BUY_SELL_SINGLE_CARD + '${id}';
-    var req = await http.get(Uri.parse(myUrl));
-    print('req $myUrl');
-    isLoadingForSellVehicles = false;
-    response1 = json.decode(req.body);
-    print('${response1}');
-    var type1 = TruckLoadType.fromJson(response1);
-    sellVehicleList.addAll(type1.content);
-    notifyListeners();
-    return type1;
   }
 
-  createBuySell(
-      {int? userId,
-      String? description,
-      String? agentName,
-      String? bodyType,
-      String? buySellType,
-      String? city,
-      String? conditionOfTyre,
-      String? ConOfVehicle,
-      int? mobile,
-      String? date,
-      String? price,
-      int? id,
-      String? image,
-      String? insurancePaidDate,
-      String? mainTag,
-      String? maker,
-      String? mfgYear,
-      String? model,
-      String? lUserName,
-      String? owner,
-      String? postingTime,
-      String? type,
-      String? registrationNumber,
-      String? yearOfBuying}) async {
-    String myUrl = ApiConstant.POST_BUY_SELL;
-    Uri uri = Uri.parse(myUrl);
-    Map<String, dynamic> data = {
-      "additionalInformation": description,
-      "agentName": agentName,
-      "bodyType": bodyType,
-      "buySelltype": buySellType,
-      "city": city,
-      "conditionOfTyres": conditionOfTyre,
-      "conditionOfVehicle": ConOfVehicle,
-      "contactNumber": mobile,
-      "date": "2022-01-22T11:29:53.473Z",
-      "estimatedPrice": price,
-      "id": 0,
-      "image1": image,
-      "image2": "",
-      "image3": "",
-      "image4": "",
-      "insaurancePaidUpto": insurancePaidDate,
-      "loggedTime": "",
-      "loggedUserName": lUserName,
-      "mainTag": mainTag,
-      "maker": maker,
-      "mfgYear": yearOfBuying,
-      "model": model,
-      "negotiable": 0,
-      "os": "",
-      "ownerName": owner,
-      "postingTime": "",
-      "privatePost": 0,
-      "tableName": "string",
-      "topicName": "string",
-      "type": type,
-      "userId": userId,
-      "vehicleRegistrationNumber": registrationNumber,
-      "yearOfBuying": yearOfBuying
-    };
-    var body = json.encode(data);
-    print(data);
-    var createResponse = await http.post(uri,
-        headers: {"Content-Type": "application/json"}, body: body);
-    print("${createResponse.statusCode}" +
-        " --- " +
-        createResponse.body.toString());
-    if (createResponse.statusCode == 200) {
-      var jsonData = jsonDecode(createResponse.body);
-      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if (commonResponse.isSuccess == true) {
-        var jsonData = jsonDecode(createResponse.body);
-        if (type == 'Buy Vehicle') {
-          TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-          buyVehicleList.add(dataObj);
-        } else {
-          TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-          sellVehicleList.add(dataObj);
+  // -------------------------
+  // GET LISTS (pagination)
+  // -------------------------
+
+  /// Get Buy vehicles (page starts at 0).
+  /// If page == 0, it will clear existing list and reload.
+  Future<void> getBuyVehicles({
+    int currentPage = 0,
+    String? companyName,
+    String? nameOfPerson,
+    String? location,
+    String? model,
+    String? mfgYear,
+    String? vehicleSize,
+    int? minPrice,
+    int? maxPrice,
+    String? searchText,
+  }) async {
+    try {
+      if (isLoadingForBuyVehicles) return;
+
+      isLoadingForBuyVehicles = true;
+      notifyListeners();
+
+      if (currentPage == 0) {
+        buyVehicleList.clear();
+        _buyPage = 0;
+      }
+
+      // -------------------------------
+      // 🔥 BUILD PARAMETERS DYNAMICALLY
+      // -------------------------------
+      Map<String, String> params = {
+        "type": "Buy",
+        "page": currentPage.toString(),
+        "size": "20",
+      };
+
+      if (searchText != null && searchText.trim().isNotEmpty)
+        params["search"] = searchText;
+
+      if (companyName != null && companyName.trim().isNotEmpty)
+        params["companyName"] = companyName;
+
+      if (nameOfPerson != null && nameOfPerson.trim().isNotEmpty)
+        params["nameOfPerson"] = nameOfPerson;
+
+      if (location != null && location.trim().isNotEmpty)
+        params["location"] = location;
+
+      if (model != null && model.trim().isNotEmpty)
+        params["model"] = model;
+
+      if (mfgYear != null && mfgYear.trim().isNotEmpty)
+        params["mfgYear"] = mfgYear;
+
+      if (vehicleSize != null && vehicleSize.trim().isNotEmpty)
+        params["vehicleSize"] = vehicleSize;
+
+      if (minPrice != null)
+        params["minPrice"] = minPrice.toString();
+
+      if (maxPrice != null)
+        params["maxPrice"] = maxPrice.toString();
+
+      // -------------------------------
+      // 🔥 BUILD FINAL URL
+      // -------------------------------
+      final uri = Uri.parse(ApiConstant.BUY_SELL_ALL_CARD)
+          .replace(queryParameters: params);
+
+      print("BUY VEHICLES URL: $uri");
+
+      // -------------------------------
+      // 🔥 CALL API
+      // -------------------------------
+      final res = await http.get(uri);
+
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> js = jsonDecode(res.body);
+
+        final TruckLoadType type = TruckLoadType.fromJson(js);
+
+        if (currentPage == 0) buyVehicleList.clear();
+        buyVehicleList.addAll(type.content);
+
+        // Only increment page if more data comes
+        if (type.content.isNotEmpty) {
+          _buyPage = currentPage + 1;
         }
       } else {
         showSimpleNotification(
-            Text(
-              commonResponse.message.toString(),
-              style: TextStyle(color: Colors.white),
-            ),
-            background: Colors.orange);
+          const Text("Failed to fetch buy vehicles"),
+          background: Colors.red,
+        );
       }
+    } catch (e) {
+      debugPrint("getBuyVehicles error: $e");
+    } finally {
+      isLoadingForBuyVehicles = false;
       notifyListeners();
-      return commonResponse.isSuccess;
-    } else if (createResponse.statusCode == 402) {
-      showSimpleNotification(
-          Text(
-            "Please update your package",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.orange);
+    }
+  }
+
+  /// Get Sell vehicles (page starts at 0).
+  Future<void> getSellVehicles({
+    int currentPage = 0,
+    String? companyName,
+    String? nameOfPerson,
+    String? location,
+    String? model,
+    String? mfgYear,
+    String? vehicleSize,
+    int? minPrice,
+    int? maxPrice,
+    String? searchText,
+  }) async {
+    try {
+      if (isLoadingForSellVehicles) return;
+
+      isLoadingForSellVehicles = true;
       notifyListeners();
-      return false;
-    } else {
-      showSimpleNotification(
-          Text(
-            "Please Try Again!",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.red);
+
+      if (currentPage == 0) {
+        sellVehicleList.clear();
+        _sellPage = 0;
+      }
+
+      // -------------------------------
+      // 🔥 BUILD PARAMETERS DYNAMICALLY
+      // -------------------------------
+      Map<String, String> params = {
+        "type": "Sell",
+        "page": currentPage.toString(),
+        "size": "20",
+      };
+
+      if (searchText != null && searchText.trim().isNotEmpty)
+        params["searchText"] = searchText;
+
+      if (companyName != null && companyName.trim().isNotEmpty)
+        params["companyName"] = companyName;
+
+      if (nameOfPerson != null && nameOfPerson.trim().isNotEmpty)
+        params["nameOfPerson"] = nameOfPerson;
+
+      if (location != null && location.trim().isNotEmpty)
+        params["location"] = location;
+
+      if (model != null && model.trim().isNotEmpty)
+        params["model"] = model;
+
+      if (mfgYear != null && mfgYear.trim().isNotEmpty)
+        params["mfgYear"] = mfgYear;
+
+      if (vehicleSize != null && vehicleSize.trim().isNotEmpty)
+        params["vehicleSize"] = vehicleSize;
+
+      if (minPrice != null)
+        params["minPrice"] = minPrice.toString();
+
+      if (maxPrice != null)
+        params["maxPrice"] = maxPrice.toString();
+
+      // -------------------------------
+      // 🔥 BUILD FINAL URL
+      // -------------------------------
+      final uri = Uri.parse(ApiConstant.BUY_SELL_ALL_CARD)
+          .replace(queryParameters: params);
+
+      print("SELL VEHICLES URL => $uri");
+
+      final res = await http.get(uri);
+
+      // -------------------------------
+      // 🔥 HANDLE RESPONSE
+      // -------------------------------
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> js = jsonDecode(res.body);
+
+        final TruckLoadType type = TruckLoadType.fromJson(js);
+
+        if (currentPage == 0) sellVehicleList.clear();
+
+        sellVehicleList.addAll(type.content);
+
+        // increment page only if content exists
+        if (type.content.isNotEmpty) {
+          _sellPage = currentPage + 1;
+        }
+      } else {
+        showSimpleNotification(
+          const Text("Failed to fetch sell vehicles"),
+          background: Colors.red,
+        );
+      }
+    } catch (e) {
+      debugPrint("getSellVehicles error: $e");
+    } finally {
+      isLoadingForSellVehicles = false;
       notifyListeners();
+    }
+  }
+
+
+  /// convenience: load next page if available
+  Future<void> loadMoreBuy() async {
+    if (!hasMoreBuy) return;
+    await getBuyVehicles(currentPage: _buyPage + 1);
+  }
+
+  Future<void> loadMoreSell() async {
+    if (!hasMoreSell) return;
+    await getSellVehicles(currentPage: _sellPage + 1);
+  }
+
+  // -------------------------
+  // CREATE BUY/SELL
+  // -------------------------
+  /// Mirrors the mobile `createBuySell()` behavior (uses same body keys).
+  /// Returns true on success and false on failure.
+  Future<bool> createBuySell({
+    required BuildContext context,
+    required int userId,
+    required String description,
+    required String agentName,
+    required String bodyType,
+    required String buySellType,
+    required String city,
+    required String conditionOfTyre,
+    required String conditionOfVehicle,
+    required String mobile,
+    required String price,
+    required String mainTag,
+    required String maker,
+    required String mfgYear,
+    required String model,
+    required String loggedUserName,
+    required String owner,
+    required String registrationNumber,
+    required String yearOfBuying,
+      required List<String> images,
+  }) async {
+    try {
+      final String url = ApiConstant.POST_BUY_SELL;
+
+      // prepare payload like mobile code
+      Map<String, dynamic> data = {
+        "additionalInformation": description,
+        "agentName": agentName,
+        "bodyType": bodyType,
+        "buySelltype": buySellType,
+        "city": city,
+        "conditionOfTyres": conditionOfTyre,
+        "conditionOfVehicle": conditionOfVehicle,
+        "contactNumber": mobile,
+        "date": "2022-01-22T11:29:53.473Z",
+        "estimatedPrice": price,
+        "id": 0,
+        "image1": images.isNotEmpty ? images[0] : "",
+        "image2": images.length > 1 ? images[1] : "",
+        "image3": images.length > 2 ? images[2] : "",
+        "image4": images.length > 3 ? images[3] : "",
+        "insaurancePaidUpto": mfgYear,
+        "loggedTime": "2022-01-22T11:29:53.473Z",
+        "loggedUserName": loggedUserName,
+        "mainTag": buySellType,
+        "maker": maker,
+        "mfgYear": mfgYear,
+        "model": model,
+        "negotiable": 0,
+        "os": "",
+        "ownerName": owner,
+        "postingTime": "2022-01-22T11:29:53.473Z",
+        "privatePost": 0,
+        "tableName": "Buy/Sell",
+        "topicName": "",
+        "type": buySellType,
+        "userId": userId,
+        "vehicleRegistrationNumber": registrationNumber,
+        "yearOfBuying": yearOfBuying,
+      };
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(data),
+      );
+
+      debugPrint("CreateBuySell response: ${response.statusCode} -> ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonRes = jsonDecode(response.body);
+
+        // If API returns 401 statusCode in body (mobile already handles this case)
+        if (jsonRes is Map && jsonRes['statusCode'] == 401) {
+          ToastMessage.show(context, "Please update your package");
+          // optionally navigate to package page here
+          return false;
+        }
+
+        // Parse TruckLoad / PostUpload object (mobile used PostUpload)
+        try {
+          // Some endpoints return object representing created post; try both
+          // 1) Try parsing TruckLoad directly
+          final TruckLoad created = TruckLoad.fromJson(jsonRes);
+          // Add created to respective list
+          if (buySellType == 'Buy Vehicle') {
+            buyVehicleList.insert(0, created);
+          } else {
+            sellVehicleList.insert(0, created);
+          }
+
+          // Clear local images after successful submit
+          buySellImages.clear();
+          _uploading.clear();
+          _uploadError.clear();
+
+          notifyListeners();
+          return true;
+        } catch (e) {
+          // If parsing fails, fallback to success message check
+          // If jsonRes contains message/success flag, consider success
+          if ((jsonRes is Map && (jsonRes['message'] != null || jsonRes['success'] == true))) {
+            // Refresh lists
+            await refreshLists();
+            buySellImages.clear();
+            _uploading.clear();
+            _uploadError.clear();
+            notifyListeners();
+            return true;
+          }
+
+          // final fallback: treat as failure
+          ToastMessage.show(context, "Post created but response couldn't be parsed");
+          return false;
+        }
+      } else {
+        ToastMessage.show(context, "Please try again");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("createBuySell error: $e");
+      ToastMessage.show(context, "Something went wrong");
       return false;
     }
   }
 
-  final dashBoardProvider = locator<DashboardProvider>();
-
-  deleteBuySell(int id, int index, bool isBuy) async {
-    String myUrl = ApiConstant.POST_BUY_SELL + '?id=${id}';
-    var req = await http.delete(Uri.parse(myUrl));
-    debugPrint(req.statusCode.toString());
-    if (isBuy) {
-      buyVehicleList.removeAt(index);
-    } else {
-      sellVehicleList.removeAt(index);
+  // -------------------------
+  // DELETE
+  // -------------------------
+  Future<void> deleteBuySell(int id, int index, bool isBuy) async {
+    final String url = "${ApiConstant.POST_BUY_SELL}?id=$id";
+    try {
+      final res = await http.delete(Uri.parse(url));
+      debugPrint("deleteBuySell status: ${res.statusCode}");
+      if (res.statusCode == 200) {
+        if (isBuy) {
+          if (index >= 0 && index < buyVehicleList.length) buyVehicleList.removeAt(index);
+        } else {
+          if (index >= 0 && index < sellVehicleList.length) sellVehicleList.removeAt(index);
+        }
+        notifyListeners();
+        // refresh dashboard counts if needed
+        _dashboardProvider.getFullLoadTruckList("From", "To");
+      } else {
+        showSimpleNotification(
+          const Text("Failed to delete post"),
+          background: Colors.red,
+        );
+      }
+    } catch (e) {
+      debugPrint("deleteBuySell error: $e");
     }
-    dashBoardProvider.notifyListeners();
-    dashBoardProvider.getFullLoadTruckList("From", "To");
-    notifyListeners();
+  }
+
+  // -------------------------
+  // Refresh helper
+  // -------------------------
+  Future<void> refreshLists() async {
+    await Future.wait([
+      getBuyVehicles(currentPage: 0),
+      getSellVehicles(currentPage: 0),
+    ]);
   }
 }

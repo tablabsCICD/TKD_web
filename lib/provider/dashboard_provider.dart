@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tkd_app/locator.dart';
@@ -20,6 +21,8 @@ import 'package:tkd_app/util/app_constants.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/bottomsheet.dart';
 
+import '../model/postLoad.dart';
+import '../model/post_upload.dart';
 import '../widgets/toast.dart';
 
 class DashboardProvider extends ChangeNotifier {
@@ -108,13 +111,17 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  falseAllFilter(){
+    fla = false;pla = false;flr = false;plr = false;gp=false;jobs=false;buy_sell=false;
+  }
+
   reSendPost(BuildContext context, TruckLoad postBidData) async {
     var apiResponse = await http.post(Uri.parse(ApiConstant.BASE_URL +
         "repost?id=${postBidData.id!}&interchange=${false}"));
     if (apiResponse.statusCode == 200) {
       var jsonData = jsonDecode(apiResponse.body);
       CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if (commonResponse.isSuccess == true) {
+      if (commonResponse.success == true) {
         await getFullLoadTruckList("From", "To", currentPage: 0);
         showSimpleNotification(
             Text(
@@ -137,7 +144,7 @@ class DashboardProvider extends ChangeNotifier {
                       selectedTab: "Package Change",
                     )));
       }
-      return commonResponse.isSuccess;
+      return commonResponse.success;
     } else if (apiResponse.statusCode == 401) {
       showSimpleNotification(
           Text(
@@ -163,7 +170,7 @@ class DashboardProvider extends ChangeNotifier {
     if (apiResponse.statusCode == 200) {
       var jsonData = jsonDecode(apiResponse.body);
       CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if (commonResponse.isSuccess == true) {
+      if (commonResponse.success == true) {
         await getFullLoadTruckList("From", "To", currentPage: 0);
         showSimpleNotification(
             Text(
@@ -388,7 +395,7 @@ class DashboardProvider extends ChangeNotifier {
     if(req.statusCode==200){
       // truckLoadTypeList .removeAt(index);
       ToastMessage.show(context, "Your Post Completed Successfully");
-      getFullLoadTruckList('All','All',currentPage: 0);
+      getFullLoadTruckList('From','To',currentPage: 0);
 
       notifyListeners();
     }else{
@@ -396,132 +403,84 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  savePost(BuildContext context,
-      {int? mobile,
-      String? destination,
-      int? dnd,
-      String? email,
-      String? fullLoadChoice,
-      int? id,
-      String? instruction,
-      User? userList,
-      String? loadWeight,
-      String? name,
-      String? mainTag,
-      String? os,
-      String? otherDetails,
-      String? source,
-      int? partLoad,
-      int? privatePost,
-      double? rating,
-      String? customerName,
-      String? type,
-      String? typeOfCargo,
-      String? vehicleSize,
-      String? typeOfPayment,
-      int? userId,
-      List<int>? selectedUserList,String? expireDate}) async {
-    isLoading = true;
-    notifyListeners();
-    String myUrl = selectedSampleData == "Show to All"
-        ? ApiConstant.BASE_URL + "fullTruckLoad"
-        : ApiConstant.POST_FULL_LOAD;
-    print(myUrl);
-    Uri uri = Uri.parse(myUrl);
+  Future<bool> savePost(BuildContext context, PostLoad postLoad) async {
+    try {
+      isLoading = true;
+      notifyListeners();
 
-    Map<String, dynamic> data = {
-      "contactNumber": mobile ?? 0,
-      "destination": destination,
-      "dnd": dnd,
-      "emailId": email,
-      "fullLoadChoice": fullLoadChoice,
-      "instructions": instruction,
-      "listOfUserIds": selectedUserList,
-      "loadWeight": loadWeight,
-      "loggedUserName": name,
-      "mainTag": mainTag,
-      "os": "Web",
-      "otherDetails": otherDetails,
-      "partLoad": partLoad ?? 0,
-      "privatePost": selectedSampleData == "Show to All" ? 0 : privatePost,
-      "rating": rating ?? 5,
-      "source": source,
-      "tableName": "Full Load",
-      "topicName": "Full Load Truck",
-      "transporterOrCustomerName": customerName,
-      "type": type,
-      "typeOfCargo": typeOfCargo,
-      "typeOfPayment": typeOfPayment,
-      "vehicleSize": vehicleSize,
-      "expireDate": expireDate
-    };
+      print("REQUEST JSON: ${postLoad.toJson()}");
 
-    var body = json.encode(data);
-    print("request : ${data}");
-    final response = await http.post(uri,
-        headers: {"Content-Type": "application/json"}, body: body);
-    isLoading=false;
-    print("response : ${response.statusCode}" +
-        " --- " +
-        response.body.toString());
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      CommonResponse commonResponse = CommonResponse.fromJson(jsonData);
-      if (commonResponse.isSuccess == true) {
-        var jsonData = jsonDecode(response.body);
-        TruckLoad dataObj = TruckLoad.fromJson(jsonData);
-        print(dataObj);
-        truckLoadTypeList.add(dataObj);
-        Future.microtask(() {
-          _showConfirmationDialog(context);
-        });
-        notifyListeners();
-        showSimpleNotification(
-            Text(
-              "Post submitted successfully!",
-              style: TextStyle(color: Colors.white),
-            ),
-            background: Colors.black);
-        await getFullLoadTruckList('From', "To");
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
-        return true;
-      } else {
-        showSimpleNotification(
-            Text(
-              commonResponse.message.toString(),
-              style: TextStyle(color: Colors.white),
-            ),
-            background: Colors.orange);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (builder) => MenuPage(
-                      userDetailList: authProvider.userDetailList,
-                      selectedTab: "Package Change",
-                    )));
+      String myUrl = ApiConstant.BASE_URL + "fullTruckLoad2";
+      Uri uri = Uri.parse(myUrl);
+
+      final response = await http.post(
+        uri,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(postLoad.toJson()),
+      );
+
+      print("response : ${response.statusCode} --- ${response.body}");
+
+      isLoading = false;
+      notifyListeners();
+
+      // SUCCESS
+      if (response.statusCode == 200) {
+        PostUpload postUpload = PostUpload.fromJson(jsonDecode(response.body));
+        _showConfirmationDialog(context);
+        // 🔒 Optional check if backend sends statusCode
+        /*
+      if (postUpload.statusCode == 401) {
+        ToastMessage.show(context, "Please update your package");
+        callSubDailog(context, postLoad);
+        return false;
       }
-      return commonResponse.isSuccess;
-    } else if (response.statusCode == 401) {
-      showSimpleNotification(
-          Text(
-            "Please update your package",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.orange);
-      Navigator.of(context).pop();
+      */
+
+        ToastMessage.show(context, "Post submitted successfully!");
+        return true;  // UI will handle popup + list refresh
+      }
+
+      // FAILURE
+      ToastMessage.show(context, "Please try again later.");
       return false;
-    } else {
-      showSimpleNotification(
-          Text(
-            "Please Try Again!",
-            style: TextStyle(color: Colors.white),
-          ),
-          background: Colors.red);
-      Navigator.of(context).pop();
+
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      print("SAVE POST ERROR: $e");
+      ToastMessage.show(context, "Something went wrong.");
       return false;
     }
   }
+
+  void callSubDailog(BuildContext context, PostLoad postLoad) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Package Required", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text(
+            "Your current package does not support posting this requirement.\nPlease upgrade to continue."),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: const Text("Upgrade"),
+            onPressed: () {
+              Navigator.pop(context);
+              // Navigate to subscription page
+              Navigator.pushNamed(context, "/subscription", arguments: postLoad);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   SharedPostModel? truckLoad;
 
@@ -535,19 +494,69 @@ class DashboardProvider extends ChangeNotifier {
     return truckLoad;
   }
 
-  getSearchByNameList(String name, String source, String dest) async {
+  bool isDigitsButNotMobile(String? input) {
+    if (input == null) return false;
+
+    final value = input.trim();
+    return RegExp(r'^\d+$').hasMatch(value) && value.length != 10;
+  }
+
+  getSearchByNameList(int currentPage,String search) async {
     isLoading = true;
     notifyListeners();
     truckLoadTypeList.clear();
-    String myUrl = ApiConstant.FULL_LOAD_ALL_CARD +
-        '?nameOfPerson=${name}&source=${source}&destination=${dest}';
-    print(myUrl);
-    var req = await http.get(Uri.parse(myUrl));
-    isLoading == false;
-    response = json.decode(req.body);
-    var type = TruckLoadType.fromJson(response);
-    truckLoadTypeList = type.content;
-    notifyListeners();
+    User user = await authProvider.getLoginData();
+    final trimmed = search.trim();
+    final lower = trimmed.toLowerCase();
+
+    final bool startsWithTKD = lower.startsWith('tkd');
+    final bool digitsNotMobile = isDigitsButNotMobile(trimmed);
+
+    String url;
+
+    // 🔥 USE ID SEARCH
+    if (startsWithTKD || digitsNotMobile) {
+      final uniqueId = trimmed;
+
+      print("🔍 Searching by ID: $uniqueId");
+
+      url =
+      '${ApiConstant.HOMEPAGE_FILTER}'
+          '?page=$currentPage'
+          '&size=3'
+          '&loggedUserId=${user.id}'
+          '&id=$uniqueId';
+    }
+    // 🔍 NORMAL SEARCH
+    else {
+      url =
+      '${ApiConstant.HOMEPAGE_FILTER}'
+          '?page=$currentPage'
+          '&size=50'
+          '&search=$trimmed'
+          '&loggedUserId=${user.id}';
+    }
+
+    print("API URL 👉 $url");
+
+    final req = await http.get(Uri.parse(url));
+
+    isFirstLoading = false;
+
+    if (req.statusCode == 200) {
+      response = json.decode(req.body);
+
+      final type = TruckLoadType.fromJson(response);
+      totalPages = type.totalPages;
+      truckLoadTypeList.addAll(type.content);
+
+      isLoading = false;
+      notifyListeners();
+    } else {
+      isLoading = false;
+      notifyListeners();
+
+    }
   }
 
   getCountUnreadNotification(int userId) {
@@ -576,7 +585,6 @@ class DashboardProvider extends ChangeNotifier {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();// Close the dialog
               },
               child: Text(
                 'Ok',

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tkd_connect/constant/app_constant.dart';
 import 'package:geocoding/geocoding.dart';
+
+import '../view/base_widget/app_constant.dart';
 
 class GeoHelper {
   static const String _apiKey = AppConstant.GOOGLE_KEY;
@@ -31,6 +32,9 @@ class GeoHelper {
   // simple in-memory cache for offline reuse
   static final Map<String, Map<String, double>> _cityCache = {
     "pune": {"lat": 18.5204, "lng": 73.8567},
+    "beed": {"lat": 18.9891, "lng": 75.7601},
+    "ahmednagar": {"lat": 19.0948, "lng": 74.7480},
+    "ahmadnagar": {"lat": 19.0948, "lng": 74.7480},
     "mumbai": {"lat": 19.0760, "lng": 72.8777},
     "delhi": {"lat": 28.6139, "lng": 77.2090},
     "bangalore": {"lat": 12.9716, "lng": 77.5946},

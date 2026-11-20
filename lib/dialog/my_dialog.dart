@@ -75,7 +75,7 @@ class MyDialog extends StatelessWidget {
                                           builder: (c) => MenuPage(
                                                 userDetailList:
                                                     authProvider.userDetailList,
-                                                selectedTab: "Board",
+                                                selectedTab: "Home",
                                               )),
                                       (route) => false)
                                 }

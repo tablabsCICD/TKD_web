@@ -37,7 +37,8 @@ class ImageCarousel{
 class Login_Screen extends StatefulWidget {
   bool fromLink=false;
   String postId;
-  Login_Screen({Key? key,this.fromLink=false,this.postId="0"}) : super(key: key) {
+  String linkType;
+  Login_Screen({Key? key,this.fromLink=false,this.postId="0",this.linkType="post"}) : super(key: key) {
   }
   @override
   _Login_ScreenState createState() => _Login_ScreenState();
@@ -404,7 +405,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       print(result);
                       if(result["responseCode"]=='3001'){
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: false,fromLink:widget.fromLink,postId: widget.postId,)));
+                            MaterialPageRoute(builder: (builder) => OTP_Screen(mobileController.text,companyLogin: false,fromLink:widget.fromLink,postId: widget.postId,linkType: widget.linkType,)));
                       }
                       else{
                         print(result['response']);

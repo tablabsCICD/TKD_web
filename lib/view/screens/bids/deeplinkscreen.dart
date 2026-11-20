@@ -10,6 +10,7 @@ import 'package:tkd_app/view/screens/bids/show_bidds.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/toast.dart';
+import 'package:tkd_app/model/truck_load_model.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -57,9 +58,9 @@ class _DeppLink extends State<DeepLink>{
       if(req.statusCode==200){
         print('the response ${response}');
         TruckDeep truckLoadType =TruckDeep.fromJson(response);
-        TruckLoadDeepLink load=truckLoadType.content!.first;
+        TruckLoad load=truckLoadType.content!.first;
 
-        if(load.contactNumber==authProvider.userDetailList[0].mobileNumber){
+        if(load.mobileNumber==authProvider.userDetailList[0].mobileNumber){
           print('the response in navi');
           Navigator.pushReplacement(
               context,

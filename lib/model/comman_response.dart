@@ -1,23 +1,25 @@
+import 'package:tkd_app/model/truck_load_model.dart';
+
 class CommonResponse {
-  int? statusCode;
   String? message;
-  bool? isSuccess;
+  TruckLoad? data;
+  bool? success;
 
-  CommonResponse({this.statusCode, this.message, this.isSuccess});
+  CommonResponse({
+    this.message,
+    this.data,
+    this.success,
+  });
 
-  CommonResponse.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
-    message = json['message'];
-    isSuccess = json['isSuccess'];
-  }
+  factory CommonResponse.fromJson(Map<String, dynamic> json) => CommonResponse(
+    message: json["message"],
+    data: json["data"] == null ? null : TruckLoad.fromJson(json["data"]),
+    success: json["success"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['statusCode'] = this.statusCode;
-
-    data['message'] = this.message;
-    data['isSuccess'] = this.isSuccess;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "message": message,
+    "data": data?.toJson(),
+    "success": success,
+  };
 }
-

@@ -1,85 +1,85 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 
-
 class CustomCityTextField extends StatelessWidget {
-  final String controller;
-  final String hintText;
-  final TextInputType? textInputType;
-  final int maxLine;
-  final bool isPhoneNumber;
-  final bool isValidator;
-  final TextCapitalization capitalization;
-  final IconData? iconData;
-  final bool? obsecure;
-  final bool? readOnly;
-  final String? validatorMsg;
-  Function? onTap;
+  final String value;               // city text (string)
+  final String label;               // floating label
   final bool isFromProfile;
+  final VoidCallback? onTap;
 
-  CustomCityTextField({
-    required this.controller,
-    required this.hintText,
-    this.textInputType,
-    this.maxLine = 1,
-    this.validatorMsg,
-    this.isPhoneNumber = false,
-    this.isValidator = false,
-    this.capitalization = TextCapitalization.none,
-    this.iconData,
-    this.obsecure,
-    this.readOnly,
+  const CustomCityTextField({
+    Key? key,
+    required this.value,
+    required this.label,
     this.onTap,
-    this.isFromProfile=false
-  });
+    this.isFromProfile = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        onTap!();
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        padding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
-        alignment: Alignment.center,
-        child: TextFormField(
-          controller: TextEditingController(text: controller),
-          enabled: false,
-          readOnly: true,
-          style: Style.dropdownValue,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "This field is required";
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            suffixIcon: Icon(Icons.arrow_drop_down_outlined,size: 26,color: Colors.black54,),
-            hintText: hintText,
-            filled: true,
-            errorStyle: TextStyle(color: Colors.red),
-            labelStyle: TextStyle(color: Colors.black),
-            fillColor: isFromProfile==false?ColorResources.WHITE:ColorResources.WHITE,
-            hintStyle: Style.searchHint,
-            border:isFromProfile==false?OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black54)) :OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(strokeAlign: BorderSide.strokeAlignInside,style: BorderStyle.solid,color: Colors.grey)),
+    final controller = TextEditingController(text: value);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+
+      child: InkWell(
+        onTap: onTap,
+
+        child: IgnorePointer( // prevents keyboard but allows tap
+          child: TextFormField(
+            controller: controller,
+            readOnly: true,
+            style: Style.dropdownValue,
+
+            validator: (v) {
+              if (v == null || v.isEmpty) return "This field is required";
+              return null;
+            },
+
+            decoration: InputDecoration(
+              labelText: label,                          // ⭐ FLOATING LABEL
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              filled: true,
+              fillColor: ColorResources.WHITE,
+
+              suffixIcon: const Icon(
+                Icons.arrow_drop_down_outlined,
+                size: 26,
+                color: Colors.black54,
+              ),
+
+              labelStyle: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 14,
+              ),
+
+              // Borders
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black54),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black54),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide:
+                BorderSide(color: Theme.of(context).primaryColor, width: 1.4),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+            ),
           ),
-          keyboardType: TextInputType.text,
         ),
       ),
     );
   }
 }
-
-
-
-
-
-

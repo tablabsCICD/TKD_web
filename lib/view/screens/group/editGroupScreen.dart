@@ -40,9 +40,16 @@ class EditGroupState extends State<EditGroupScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // 🔥 Reset provider selection before loading a new edit screen
+    groupListProvider.resetSelection();
+
+    // Load group image
     groupListProvider.changeImage(widget.groupContent.imageUrl!);
+
+    // Load members FIRST
     groupListProvider.getGroupMember(widget.groupContent.id!);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +203,7 @@ class EditGroupState extends State<EditGroupScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: <Widget>[
-                BaseWidget().getImageclip('', height: 40 , width: 40 ),
+                HomeBaseWidget().getImageclip('', height: 40 , width: 40 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -215,6 +222,7 @@ class EditGroupState extends State<EditGroupScreen> {
                               softWrap: true,
                               maxLines: 2,
                             ),
+
                             Visibility(
                               visible: widget.groupContent.createByUserId ==
                                       userProvider.userDetailList[0].id
@@ -296,12 +304,25 @@ class EditGroupState extends State<EditGroupScreen> {
     );
   }
 
-  void callAddedMember()async {
-    var result= await Navigator.push(
+  void callAddedMember() async {
+    // 🔥 FIRST LOAD MEMBER LIST
+    await groupListProvider.getGroupMember(widget.groupContent.id!);
+
+    // Then open the CreateNewGroup screen
+    var result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CreateNewGroup(isFromEdit: true,)));
-    if(result == 2){
-      groupListProvider.callGroupMember(widget.groupContent.id!, userProvider.userDetailList[0].id, context, true);
+        MaterialPageRoute(
+            builder: (_) => CreateNewGroup(isFromEdit: true)));
+
+    // After returning from selection
+    if (result == 2) {
+      groupListProvider.callGroupMember(
+          widget.groupContent.id!,
+          userProvider.userDetailList[0].id,
+          context,
+          true
+      );
     }
   }
+
 }

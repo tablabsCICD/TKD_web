@@ -17,6 +17,8 @@ import 'package:tkd_app/model/userdata.dart';
 import 'package:tkd_app/model/verified_user.dart';
 import 'package:tkd_app/network/api_call.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
+import 'package:tkd_app/provider/dashboard_provider.dart';
+import 'package:tkd_app/provider/more_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:tkd_app/widgets/bottomsheet.dart';
@@ -28,13 +30,13 @@ class EditPostLoadProvider extends ChangeNotifier {
 
   TextEditingController loadWeightController = TextEditingController();
   TextEditingController vehicleSizeController = TextEditingController();
-  TextEditingController specialInstructionController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController emailIdController = TextEditingController();
   TextEditingController expireDateController = TextEditingController();
   String selectedRequriment = "Select One";
   String selectedPostType = "Select One";
   String selectedCargo = "Select One";
+  String selectedSI = "Double Delivery";
   String selectedPayment = "Select One";
   String selectedGroup = "Select Group";
   String sourceCity = "Select One";
@@ -56,6 +58,16 @@ class EditPostLoadProvider extends ChangeNotifier {
   List<String> paymentList = <String>['Immediate','Fortnight','Weekly','Others'];
   List<String> reqirement = ["Full Load", "Part Load"];
   List<String> reqirementVehicale = ["Full Load Vehicle", "Part Load Vehicle"];
+  List<String> specialInstructionList = [
+    'Double Delivery',
+    'Express Delivery',
+    'Loading From Multiple Places',
+    'Unloading At Multiple Place ',
+    "Give Rate Inclusive Of Loading Hamali",
+    'Give Rate Inclusive Of Unloading Hamali',
+    'Others',
+    'None'
+  ];
   List<String> images = [];
   List<String> searchingList = [];
 
@@ -66,6 +78,8 @@ class EditPostLoadProvider extends ChangeNotifier {
   ];
 
  final authProvider = locator<AuthProvider>();
+  final moreProvider = locator<MoreProvider>();
+  final dashProvider = locator<DashboardProvider>();
 
 
 
@@ -74,8 +88,11 @@ class EditPostLoadProvider extends ChangeNotifier {
     User user = authProvider.userDetailList[0];
     emailIdController.text = user.emailId!;
     mobileNumberController.text = user.mobileNumber!.toString();
-    selectedCargo = postBidData.typeOfCargo!;
+    selectedCargo = postBidData.typeOfCargo??"";
+    setSafeSelectedSI(postBidData.content);
+
     loadWeightController.text = postBidData.loadWeight!;
+    selectedPostType=postBidData.type??'';
     await getTruckLoadById(postBidData.id!);
     notifyListeners();
   }
@@ -102,6 +119,16 @@ class EditPostLoadProvider extends ChangeNotifier {
       }
     }
 
+  }
+
+  void setSafeSelectedSI(String? value) {
+    if (value != null &&
+        value.isNotEmpty &&
+        specialInstructionList.contains(value)) {
+      selectedSI = value;
+    } else {
+      selectedSI = 'None'; // or null-safe default
+    }
   }
 
 
@@ -241,11 +268,12 @@ class EditPostLoadProvider extends ChangeNotifier {
     NewTruckLoad newTruckLoad = result.content![0];
     vehicleSizeController.text = newTruckLoad.vehicleSize!;
     loadWeightController.text = newTruckLoad.loadWeight!;
-    specialInstructionController.text = newTruckLoad.otherDetails!;
+    setSafeSelectedSI(newTruckLoad.otherDetails);
+
     selectedCargo = newTruckLoad.typeOfCargo!;
     selectedPayment = newTruckLoad.typeOfPayment!;
     selectedRequriment = newTruckLoad.fullLoadChoice!;
-    selectedPostType = newTruckLoad.type!;
+    selectedPostType = newTruckLoad.type??"";
     sourceCity = newTruckLoad.source!;
     destinationCity = newTruckLoad.destination!;
     dnd = newTruckLoad.dnd == 0 ? false : true;
@@ -267,17 +295,17 @@ class EditPostLoadProvider extends ChangeNotifier {
     postLoad.dnd = dnd ? 1 : 0;
     postLoad.emailId = user.emailId!;
     postLoad.fullLoadChoice = "I Have Vehicle";
-    postLoad.instructions = specialInstructionController.text;
+    postLoad.instructions = selectedSI;
     postLoad.loadWeight = loadWeightController.text;
     postLoad.loggedUserName = user.userName;
     postLoad.mainTag = selectedRequriment;
     postLoad.os = 'App';
-    postLoad.otherDetails = specialInstructionController.text;
+    postLoad.otherDetails = selectedSI;
     postLoad.source = sourceCity;
-    postLoad.partLoad = selectedRequriment == 'Part Load' ? 1 : 0;
+    postLoad.partLoad = selectedPostType == 'Part Load' ? 1 : 0;
     postLoad.privatePost = hideMyID ? 1 : 0;
     postLoad.rating = 5;
-    postLoad.type = selectedRequriment;
+    postLoad.type = selectedPostType;
     postLoad.typeOfCargo = selectedCargo;
     postLoad.typeOfPayment = selectedPayment;
     postLoad.vehicleSize = vehicleSizeController.text;
@@ -296,6 +324,8 @@ class EditPostLoadProvider extends ChangeNotifier {
           Text("Post Edited Successfully",style: TextStyle(color: Colors.white),),
           background: Colors.black
       );
+      moreProvider.getOwnPostList(user.id.toString());
+      dashProvider.getFullLoadTruckList("From", "To");
      //nch  Navigator.pop(context);
       Navigator.pop(context, 1);
     } else {
@@ -315,12 +345,12 @@ class EditPostLoadProvider extends ChangeNotifier {
     postLoad.emailId = user.emailId!;
     postLoad.fullLoadChoice = "I Want Vehicle";
     postLoad.id = id;
-    postLoad.instructions = specialInstructionController.text;
+    postLoad.instructions = selectedSI;
     postLoad.loadWeight = loadWeightController.text;
     postLoad.loggedUserName = user.userName;
     postLoad.mainTag = selectedRequriment;
     postLoad.os = 'App';
-    postLoad.otherDetails = specialInstructionController.text;
+    postLoad.otherDetails = selectedSI;
     postLoad.source = sourceCity;
     postLoad.partLoad = selectedRequriment == 'Part Load Vehicle' ? 1 : 0;
     postLoad.privatePost = hideMyID ? 1 : 0;
@@ -357,7 +387,7 @@ class EditPostLoadProvider extends ChangeNotifier {
         loadWeightController.text.isNotEmpty &&
         emailIdController.text.isNotEmpty &&
         mobileNumberController.text.isNotEmpty &&
-        specialInstructionController.text.isNotEmpty &&
+        selectedSI.isNotEmpty &&
         checkdropDown(selectedCargo) &&
         checkdropDown(selectedRequriment) &&
         checkdropDown(selectedPayment) &&

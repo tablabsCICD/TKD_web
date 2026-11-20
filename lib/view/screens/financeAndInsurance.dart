@@ -1,18 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tkd_app/view/base_widget/custom_button.dart';
-import 'package:tkd_app/view/base_widget/custom_textfeild.dart';
-import 'package:http/http.dart' as http;
-import 'package:tkd_app/view/base_widget/custom_textview.dart';
-
-import '../../model/api_response.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../network/api_call.dart';
 import '../../util/app_constants.dart';
+import '../../util/colors.dart';
+import '../../widgets/button.dart';
 import '../../widgets/toast.dart';
 
 class FinanceAndInsurance extends StatefulWidget {
-  String enquiry;
-  int id;
+  final String enquiry;
+  final int id;
+
   FinanceAndInsurance(this.enquiry, this.id);
 
   @override
@@ -20,81 +17,123 @@ class FinanceAndInsurance extends StatefulWidget {
 }
 
 class _FinanceAndInsuranceState extends State<FinanceAndInsurance> {
-  final TextEditingController _reasonController = TextEditingController();
-  bool enable = false;
+  bool loading = false;
 
-  callInsuranceApi(String enquiry) async {
+  // ------------------- API CALLS ---------------------
+  Future<void> callInsuranceApi() async {
+    setState(() => loading = true);
     String url = ApiConstant.INSURANCE_API;
-    Map<String,dynamic> data = {
+
+    Map<String, dynamic> data = {
       "date": "",
       "id": 0,
-      "requirement": enquiry,
+      "requirement":
+      "I AM INTERESTED IN GETTING A GOOD DEAL FOR Insurance Inquiry.",
       "userId": widget.id
     };
-    var response=await ApiHelper().ApiAddPostDataMapRequest(url, data);
-    print('the resopnse is ${response.statusCode}');
-    if(response.statusCode==200){
+
+    var response = await ApiHelper().ApiAddPostDataMapRequest(url, data);
+    setState(() => loading = false);
+
+    if (response.statusCode == 200) {
       ToastMessage.show(context, "Insurance Enquiry submitted successfully!");
-    }else{
+    } else {
       ToastMessage.show(context, "Please try again");
     }
   }
 
-
-  callFinanceApi(String enquiry) async {
+  Future<void> callFinanceApi() async {
+    setState(() => loading = true);
     String url = ApiConstant.FINANCE_API;
 
-    Map<String,dynamic> data = {
+    Map<String, dynamic> data = {
       "date": "",
       "id": 0,
-      "requirement": enquiry,
+      "requirement":
+      "I AM INTERESTED IN GETTING A GOOD DEAL FOR Finance Inquiry.",
       "userId": widget.id
     };
-    var response=await ApiHelper().ApiAddPostDataMapRequest(url, data);
-    print('the resopnse is ${response.statusCode}');
-    if(response.statusCode==200){
+
+    var response = await ApiHelper().ApiAddPostDataMapRequest(url, data);
+    setState(() => loading = false);
+
+    if (response.statusCode == 200) {
       ToastMessage.show(context, "Finance Enquiry submitted successfully!");
-    }else{
+    } else {
       ToastMessage.show(context, "Please try again");
     }
   }
 
-  final _formKey = GlobalKey<FormState>();
-
+  // ------------------- UI ------------------------
   @override
   Widget build(BuildContext context) {
+    String titleText =
+        "I AM INTERESTED IN GETTING A GOOD DEAL FOR ${widget.enquiry.toUpperCase()}";
+
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomText(widget.enquiry),
-            SizedBox(height: 10,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal:200),
-              child: CustomTextField(
-                controller: _reasonController,
-                hintText: widget.enquiry,
-                textInputType: TextInputType.text,
-                validatorMsg: "Please Enter enquiry details",
+      backgroundColor: ThemeColor.baground,
+
+
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(   // ensures perfect center even on small screens
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.enquiry,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      height: 1.4,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  /// Main Title — CENTERED PERFECTLY
+                  Text(
+                    titleText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      height: 1.4,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                    ),
+                  ),
+
+                  const SizedBox(height: 55),
+
+                  /// Submit Button
+                  Button(
+                    width: MediaQuery.of(context).size.width * 0.60,
+                    height: 48,
+                    title: loading ? "Please wait..." : "Submit",
+                    isEnbale: !loading,
+                    onClick: () {
+                      if (widget.enquiry.toLowerCase() == "insurance enquiry") {
+                        callInsuranceApi();
+                      } else {
+                        callFinanceApi();
+                      }
+                    },
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
+                    ),
+                  ),
+                ],
               ),
             ),
-            CustomButton(onTap: (){
-              if (_formKey.currentState!.validate()) {
-                if ("Insurance enquiry" == widget.enquiry) {
-                  callInsuranceApi(_reasonController.text);
-                } else {
-                  callFinanceApi(_reasonController.text);
-                }
-                _reasonController.clear();
-                setState(() {
-
-                });
-              }
-            }, buttonText: "Submit")
-          ],
+          ),
         ),
       ),
     );

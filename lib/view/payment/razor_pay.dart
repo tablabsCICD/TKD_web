@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:js' as js; // Import dart:js for web integration
+import 'dart:js' as js;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,19 +19,123 @@ class RazorPayClass {
   static String orderID = "id";
   static int planId = 0;
 
+  final AuthProvider authProvider = locator<AuthProvider>();
+
   RazorPayClass(this.context);
 
+  // ------------------------
+  // SHOW LOADER
+  // ------------------------
+  void showLoader([String message = "Processing Payment..."]) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black54,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: Colors.white),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void hideLoader() {
+    Navigator.pop(context, null);
+  }
+
+  // ------------------------
+  // ERROR BANNER
+  // ------------------------
+  void showErrorBanner(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  // ------------------------
+  // RETRY ALERT
+  // ------------------------
+  void showRetryDialog(String title, String message, VoidCallback retryCallback) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            child: Text("Retry"),
+            onPressed: () {
+              Navigator.pop(ctx);
+              retryCallback();
+            },
+          ),
+          TextButton(
+            child: Text("Cancel"),
+            onPressed: () => Navigator.pop(ctx),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------
+  // CREATE ORDER ID
+  // ------------------------
   Future<void> createOrderId(int amount) async {
-    ApiResponse apiResponse =
-    await ApiHelper().ApiPostData(ApiConstant.CREATE_ORDER_ID(amount));
-    if (apiResponse.statusCode == 200) {
-      var responseJson = json.decode(apiResponse.response);
-      orderID = responseJson['data'];
-    } else {
-      ToastMessage.show(context, "Failed to create order ID");
+    try {
+      showLoader("Creating order...");
+
+      User user = await authProvider.getLoginData();
+
+      String url = ApiConstant.CREATE_ORDER_ID(amount);
+      print(url);
+
+      var apiResponse = await ApiHelper().ApiAddPostDataMapRequest(url, {
+        "userId": user.id,
+      });
+
+      print(apiResponse.body);
+
+      if (apiResponse.statusCode == 200) {
+        // DECODE JSON FIRST
+        final Map<String, dynamic> jsonData = jsonDecode(apiResponse.body);
+
+        // NOW YOU CAN ACCESS "data"
+        orderID = jsonData["data"];  // order_RhVzdg6dDW9HWw
+
+        print("ORDER ID → $orderID");
+      } else {
+        showErrorBanner("Failed to create order ID");
+      }
+    } catch (e) {
+      showErrorBanner("Order creation failed!");
+      print(e);
+    } finally {
+      hideLoader();
     }
   }
 
+
+  // ------------------------
+  // INITIAL PAY (WEB)
+  // ------------------------
   Future<void> initalPay(
       int amount,
       int contact,
@@ -40,65 +144,84 @@ class RazorPayClass {
       int plan,
       ) async {
     planId = plan;
+
     await createOrderId(amount);
 
     if (orderID == "id") {
-      ToastMessage.show(context, "Please try again");
+      showRetryDialog(
+        "Order Failed",
+        "Unable to create order. Retry?",
+            () => initalPay(amount, contact, email, packageName, plan),
+      );
       return;
     }
 
-    // Use JS interop for web platform
-    if (kIsWeb) {
-      final options = {
-        'key': 'rzp_live_LraIKZvldr9N1J', // Replace with your Razorpay key
-        'amount': 99, // Amount in paise
-        'currency': 'INR',
-        'name': 'TKD Connect',
-        'description': 'Test Payment',
-        'prefill': {
-          'contact': '9999999999',
-          'email': 'example@test.com',
-        },
-      };
-
-      js.context.callMethod('Razorpay', [options]);
-      js.context['handlePaymentSuccess'] = (response) {
-        handlePaymentSuccessResponse(response['razorpay_signature'], response['razorpay_order_id'], response['razorpay_payment_id']);
-      };
-      js.context['handlePaymentError'] = (response) {
-        handlePaymentErrorResponse(response['error']['description']);
-      };
-    } else {
-      ToastMessage.show(context, "Razorpay is only supported on the web");
+    if (!kIsWeb) {
+      showErrorBanner("Web Razorpay works only on browser!");
+      return;
     }
+
+    final options = {
+      "key": "rzp_live_LraIKZvldr9N1J",
+      "name": "TKD Connect",
+      "description": packageName,
+      "order_id": orderID,
+      "amount": amount * 100,
+      "currency": "INR",
+      "prefill": {
+        "contact": contact.toString(),
+        "email": email,
+      },
+      "theme": {"color": "#FF0000"},
+    };
+
+    showLoader("Opening Razorpay...");
+
+    js.context["handleWebPaymentSuccess"] = (resp) {
+      hideLoader();
+      handlePaymentSuccessResponse(
+        resp["razorpay_signature"],
+        resp["razorpay_order_id"],
+        resp["razorpay_payment_id"],
+      );
+    };
+
+    js.context["handleWebPaymentError"] = (resp) {
+      hideLoader();
+      showRetryDialog(
+        "Payment Failed",
+        resp["error"]["description"] ?? "Something went wrong",
+            () => initalPay(amount, contact, email, packageName, plan),
+      );
+    };
+
+    hideLoader(); // Close loader before opening Razorpay
+
+    js.context.callMethod("openRazorpayCheckout", [js.JsObject.jsify(options)]);
   }
 
-  void handlePaymentErrorResponse(String errorMessage) {
-    showAlertDialog(context, "Payment Failed", errorMessage);
+  // ------------------------
+  // PAYMENT ERROR
+  // ------------------------
+  void handlePaymentErrorResponse(String message) {
+    showErrorBanner(message);
   }
 
-  void handlePaymentSuccessResponse(String signature, String orderId, String paymentId) {
+  // ------------------------
+  // PAYMENT SUCCESS
+  // ------------------------
+  void handlePaymentSuccessResponse(
+      String signature,
+      String orderId,
+      String paymentId,
+      ) {
+    showLoader("Verifying payment...");
     callSignature(signature, orderId, paymentId, planId);
   }
 
-  void showAlertDialog(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  final AuthProvider authProvider = locator<AuthProvider>();
-
+  // ------------------------
+  // VERIFY SIGNATURE
+  // ------------------------
   Future<void> callSignature(
       String razorpaySignature,
       String razorpayOrderId,
@@ -118,23 +241,35 @@ class RazorPayClass {
     ApiResponse response = await ApiHelper()
         .ApiAddPostDataMapRequest(ApiConstant.PAYMENT_SIGNATURE, parameter);
 
+    hideLoader();
+
     if (response.statusCode == 200) {
-      showAlertDialog(context, "Payment Successful", "Redirecting to Home...");
+      showErrorBanner("Payment Successful!");
+
+      // ------------------------
+      // AUTO REFRESH USER PLAN
+      // ------------------------
+      await authProvider.getUserDetails(authProvider.userDetailList[0].id!);
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString(AppConstant.LOGIN_KEY, jsonEncode(response.response));
-      Navigator.pop(context);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (builder) => MenuPage(
+          builder: (_) => MenuPage(
             userDetailList: [user],
-            selectedTab: "Board",
+            selectedTab: "Home",
           ),
         ),
-            (route) => false,
+            (_) => false,
       );
     } else {
-      showAlertDialog(context, "Payment Failed", "Transaction ID: $paymentId");
+      showRetryDialog(
+        "Verification Failed",
+        "Unable to verify payment. Retry?",
+            () => callSignature(razorpaySignature, razorpayOrderId, paymentId, plan),
+      );
     }
   }
 }

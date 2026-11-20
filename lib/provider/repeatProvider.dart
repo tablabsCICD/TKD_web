@@ -14,6 +14,8 @@ import 'package:tkd_app/provider/auth_provider.dart';
 import 'package:tkd_app/provider/dashboard_provider.dart';
 import 'package:tkd_app/util/app_constants.dart';
 
+import '../model/postLoad.dart';
+
 class RepeatProvider extends ChangeNotifier {
   List<RepeatModel> repeatPostList = [];
   var response;
@@ -67,29 +69,63 @@ class RepeatProvider extends ChangeNotifier {
       if(startDate.isBefore(now)==true && endDate.isAfter(now)==true){
         if(currentTime == element.time.toString()){
           print('id'+element.postId.toString());
-          Load load = await getFullLoadTruckById(element.postId!);
-          print('object'+ load.transporterOrCustomerName.toString());
-          dashboardProvider.savePost(context,
-            mobile: authProvider.userDetailList[0].mobileNumber ,
-            destination: load.destination,
-            dnd: 0,
-            email: authProvider.userDetailList[0].emailId,
-            fullLoadChoice: load.fullLoadChoice,
-            instruction: load.otherDetails,
-            loadWeight: load.loadWeight,
-            name: authProvider.userDetailList[0].userName,
-            mainTag: load.mainTag,
-            os: 'Web',
-            otherDetails: load.otherDetails,
-            source: load.source,
-            partLoad: load.partLoad,
-            privatePost: load.privatePost,
-            rating: 5,
-            customerName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}',
-            type: load.type,
-            typeOfCargo: load.typeOfCargo,
-            typeOfPayment: load.typeOfPayment,
-            vehicleSize: load.vehicleSize,
+          TruckLoad load = await getFullLoadTruckById(element.postId!);
+          print('object'+ load.nameOfPerson.toString());
+          PostLoad postLoad = PostLoad();
+
+// Basic info
+          postLoad.contactNumber = authProvider.userDetailList[0].mobileNumber ?? 0;
+          postLoad.destination = load.destination ?? "";
+          postLoad.dnd = 0;
+          postLoad.emailId = authProvider.userDetailList[0].emailId ?? "";
+          postLoad.fullLoadChoice = load.fullLoadChoice ?? "";
+
+// Instructions & details
+          postLoad.instructions = load.otherDetails ?? "";
+          postLoad.otherDetails = load.otherDetails ?? "";
+          postLoad.loadWeight = load.loadWeight ?? "";
+          postLoad.loggedUserName = authProvider.userDetailList[0].userName ?? "";
+          postLoad.mainTag = load.mainTag ?? "";
+          postLoad.os = "Web";
+
+// Cities
+          postLoad.source = load.source ?? "";
+
+// Load type & privacy
+          postLoad.partLoad = load.partLoadOrNot ?? 0;
+          postLoad.privatePost = load.privatePost ?? 0;
+
+// Rating & customer info
+          postLoad.rating = 5.0;
+          postLoad.transporterOrCustomerName =
+          '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}';
+
+// Load types
+          postLoad.type = load.type ?? "";
+          postLoad.typeOfCargo = load.typeOfCargo ?? "";
+          postLoad.typeOfPayment = load.typeOfPayment ?? "";
+          postLoad.vehicleSize = load.vehicleSize ?? "";
+
+// Optional values
+          postLoad.expireDate = load.expireDate ?? "";
+          postLoad.image = "";
+          postLoad.tableName = "Full Load";
+          postLoad.topicName = "Full Load Truck";
+
+// Repeat settings
+          postLoad.isRepeat = 0;
+          postLoad.repeatStartDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+          postLoad.repeatEndDate = "";
+
+// Selected user list (group selection)
+          postLoad.listOfUserIds = [];
+
+// ID
+          postLoad.id = 0;
+
+          dashboardProvider.savePost(context,postLoad
+
+
           );
         }
       }
@@ -110,7 +146,7 @@ class RepeatProvider extends ChangeNotifier {
     timer!.cancel();
   }
 
-  Load? truckLoadObj;
+  TruckLoad? truckLoadObj;
   getFullLoadTruckById(int id) async {
     String myUrl = ApiConstant.BASE_URL +'fullTruckLoad/${id}';
     print(myUrl);

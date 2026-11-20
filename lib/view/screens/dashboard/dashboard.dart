@@ -23,6 +23,7 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/colors.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/all_cards.dart';
+import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/custom_search_city_feild.dart';
 import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/base_widget/getLoader.dart';
@@ -30,6 +31,10 @@ import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/menu_page.dart';
 import 'package:tkd_app/widgets/dashboard_cards.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../widgets/base_widgets.dart';
+import '../../../widgets/button.dart';
+import 'debouncer.dart';
 
 class DashBoardScreen extends StatefulWidget {
   final dashboardProvider = locator<DashboardProvider>();
@@ -72,11 +77,15 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
   TextEditingController sourceController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
   TextEditingController filterController = TextEditingController();
+  TextEditingController _controller = TextEditingController();
+  final Debouncer _debouncer = Debouncer();
   int counter = 0;
   var selectedPageNumber = 1;
   final dashboardProvider = locator<DashboardProvider>();
   ScrollController _scrollController = ScrollController();
-  String? selectedFromCity = "From", selectedToCity = "To";
+  TextEditingController selectedFromCity = TextEditingController();
+  TextEditingController selectedToCity = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   final langProvider = locator<LocalizationProvider>();
   String? langCode;
@@ -85,20 +94,31 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
   void initState() {
     super.initState();
     langCode = langProvider.selectedlangCode;
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         dashboardProvider.getFullLoadTruckList(
-            selectedFromCity!, selectedToCity!,
-            currentPage: selectedPageNumber);
+          selectedFromCity.text,
+          selectedToCity.text,
+          currentPage: selectedPageNumber,
+        );
         selectedPageNumber++;
       }
     });
   }
 
   @override
+  void dispose() {
+    _debouncer.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: ThemeColor.baground,
       body: Consumer<DashboardProvider>(
@@ -115,89 +135,204 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 40,
-                        margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(0, 0),
-                              blurRadius: 5,
-                              spreadRadius: 0,
+                      SizedBox(
+                        height: 45,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: 40,
+                              margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    offset: Offset(0, 0),
+                                    blurRadius: 5,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                              ),
+                              width: 500,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    /// FROM CITY
+                                    CustomSearchCityTextField(
+                                      hintText: 'From',
+                                      controller: selectedFromCity.text,
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomCityListDialog(
+                                              onTap: (String value) {
+                                                setState(() {
+                                                  selectedFromCity.text = value;
+                                                });
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+
+                                    Container(
+                                      height: 40,
+                                      width: 0.2,
+                                      color: Colors.grey[200],
+                                    ),
+
+                                    /// TO CITY
+                                    CustomSearchCityTextField(
+                                      hintText: 'To',
+                                      controller: selectedToCity.text,
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomCityListDialog(
+                                              onTap: (String value) {
+                                                setState(() {
+                                                  selectedToCity.text = value;
+                                                });
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+
+                                    /// SEARCH BUTTON
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        model.getFullLoadTruckList(
+                                          selectedFromCity.text,
+                                          selectedToCity.text,
+                                          currentPage: 0,
+                                        );
+                                        selectedPageNumber = 1;
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor:
+                                            ColorResources.THEME_COLOR,
+                                        elevation: 3,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                        ),
+                                      ),
+                                      child: Container(
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 0, horizontal: 0),
+                                        child: CustomText("Search",
+                                            style: Style.boardButton),
+                                      ),
+                                    ),
+
+                                    /// CLEAR FILTER (corrected condition)
+                                    if ((selectedFromCity.text.isNotEmpty &&
+                                            selectedFromCity.text != "From") ||
+                                        (selectedToCity.text.isNotEmpty &&
+                                            selectedToCity.text != "To"))
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedFromCity.text = "From";
+                                            selectedToCity.text = "To";
+                                            selectedPageNumber = 1;
+                                          });
+
+                                          model.getFullLoadTruckList(
+                                            "From",
+                                            "To",
+                                            currentPage: 0,
+                                          );
+                                        },
+                                        child: Text(
+                                          "Clear",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
                             ),
+                            Container(
+                                height: 40,
+                                margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      offset: Offset(0, 0),
+                                      blurRadius: 5,
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                width: 400,
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.all(8),
+                                    hintText: "Search here",
+                                    prefixIcon: const Icon(Icons.search),
+                                    suffixIcon: _controller.text.isNotEmpty
+                                        ? IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                              _controller.clear();
+                                              model.getFullLoadTruckList(
+                                                  "From", "To");
+                                            },
+                                          )
+                                        : null,
+                                    border: const OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  style: Style.searchHint,
+                                  onChanged: (value) {
+                                    final search = value.trim();
+
+                                    _debouncer.run(() {
+                                      if (!mounted) return;
+                                      // Clear search → load default list
+                                      if (search.isEmpty) {
+                                        model.getFullLoadTruckList(
+                                            "From", "To");
+                                        return;
+                                      }
+
+                                      // Avoid unnecessary calls
+                                      if (search.length < 3) return;
+
+                                      model.getSearchByNameList(0, search);
+                                    });
+                                  },
+                                ))
                           ],
                         ),
-                        width: 400,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomSearchCityTextField(
-                                hintText: 'From',
-                                controller: selectedFromCity!,
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomCityListDialog(
-                                            onTap: (String value) {
-                                          setState(() {
-                                            selectedFromCity = value;
-                                          });
-                                        });
-                                      });
-                                },
-                              ),
-                              Container(
-                                height: 40,
-                                width: 0.2,
-                                color: Colors.grey[200],
-                              ),
-                              CustomSearchCityTextField(
-                                hintText: 'To',
-                                controller: selectedToCity!,
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomCityListDialog(
-                                            onTap: (String value) {
-                                          setState(() {
-                                            selectedToCity = value;
-                                          });
-                                        });
-                                      });
-                                },
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  model.getFullLoadTruckList(
-                                      selectedFromCity!, selectedToCity!);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: ColorResources.THEME_COLOR,
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 0),
-                                  child:
-                                      CustomText("Search", style: Style.button),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
+
+                      // ---- TABS BELOW ----
                       Container(
                         height: 62,
                         padding:
@@ -206,8 +341,8 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
                           children: [
-                            getCircularContainer("All Requirement",
-                                (selectedTab == "All Requirement"), 0),
+                            getCircularContainer("All Loads",
+                                (selectedTab == "All Loads"), 0),
                             getCircularContainer("Full Load Required",
                                 (selectedTab == "Full Load Required"), 1),
                             getCircularContainer("Full Vehicle Required",
@@ -229,7 +364,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                   ),
                 )
               : Container(
-                  height: 105,
+                  height: 180,
                   width: MediaQuery.of(context).size.width,
                   color: ThemeColor.baground,
                   child: Padding(
@@ -239,9 +374,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                       children: [
                         Container(
                           height: 40,
-                          width: ResponsiveWidget.isMobile(context)
-                              ? screenSize.width
-                              : screenSize.width - 200,
+                          width: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(5),
@@ -255,72 +388,168 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                             ],
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                CustomSearchCityTextField(
-                                  hintText: 'From',
-                                  controller: selectedFromCity!,
-                                  onTap: () {
-                                    showDialog(
+                                Expanded(
+                                  child: CustomSearchCityTextField(
+                                    hintText: 'From',
+                                    controller: selectedFromCity.text,
+                                    onTap: () {
+                                      showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CustomCityListDialog(
-                                              onTap: (String value) {
-                                            setState(() {
-                                              selectedFromCity = value;
-                                            });
-                                          });
-                                        });
-                                  },
+                                            onTap: (String value) {
+                                              setState(() {
+                                                selectedFromCity.text = value;
+                                              });
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
-                                Container(
-                                  height: 40,
-                                  width: 0.2,
-                                  color: Colors.grey[200],
-                                ),
-                                CustomSearchCityTextField(
-                                  hintText: 'To',
-                                  controller: selectedToCity!,
-                                  onTap: () {
-                                    showDialog(
+                                SizedBox(width: 6),
+                                Expanded(
+                                  child: CustomSearchCityTextField(
+                                    hintText: 'To',
+                                    controller: selectedToCity.text,
+                                    onTap: () {
+                                      showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CustomCityListDialog(
-                                              onTap: (String value) {
-                                            setState(() {
-                                              selectedToCity = value;
-                                            });
-                                          });
-                                        });
-                                  },
+                                            onTap: (String value) {
+                                              setState(() {
+                                                selectedToCity.text = value;
+                                              });
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
+                                SizedBox(width: 6),
                                 ElevatedButton(
                                   onPressed: () {
                                     model.getFullLoadTruckList(
-                                        selectedFromCity!, selectedToCity!);
+                                      selectedFromCity.text,
+                                      selectedToCity.text,
+                                      currentPage: 0,
+                                    );
+                                    selectedPageNumber = 1;
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     backgroundColor: ColorResources.THEME_COLOR,
                                     elevation: 3,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5))),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    ),
                                   ),
                                   child: Container(
-                                    height: 40,
+                                    height: 28,
+                                    alignment: Alignment.center,
                                     padding: EdgeInsets.symmetric(
                                         vertical: 0, horizontal: 0),
-                                    child: CustomText("SEARCH",
+                                    child: CustomText("Search",
                                         style: Style.boardButton),
                                   ),
                                 ),
+                                if ((selectedFromCity.text.isNotEmpty &&
+                                        selectedFromCity.text != "From") ||
+                                    (selectedToCity.text.isNotEmpty &&
+                                        selectedToCity.text != "To"))
+                                  SizedBox(width: 2),
+                                if ((selectedFromCity.text.isNotEmpty &&
+                                        selectedFromCity.text != "From") ||
+                                    (selectedToCity.text.isNotEmpty &&
+                                        selectedToCity.text != "To"))
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedFromCity.text = "From";
+                                        selectedToCity.text = "To";
+                                        selectedPageNumber = 1;
+                                      });
+
+                                      model.getFullLoadTruckList(
+                                        "From",
+                                        "To",
+                                        currentPage: 0,
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: ThemeColor.red,
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
                         ),
+                        Container(
+                            height: 40,
+                            margin: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  offset: Offset(0, 0),
+                                  blurRadius: 5,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            width: double.infinity,
+                            child: TextField(
+                              controller: _controller,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(8),
+                                hintText: "Search here",
+                                prefixIcon: const Icon(Icons.search),
+                                suffixIcon: _controller.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: () {
+                                          _controller.clear();
+                                          model.getFullLoadTruckList(
+                                              "From", "To");
+                                        },
+                                      )
+                                    : null,
+                                border: const OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              style: Style.searchHint,
+                              onChanged: (value) {
+                                final search = value.trim();
+
+                                _debouncer.run(() {
+                                  if (!mounted) return;
+                                  // Clear search → load default list
+                                  if (search.isEmpty) {
+                                    model.getFullLoadTruckList("From", "To");
+                                    return;
+                                  }
+
+                                  // Avoid unnecessary calls
+                                  if (search.length < 3) return;
+
+                                  model.getSearchByNameList(0, search);
+                                });
+                              },
+                            )),
                         Container(
                           height: 40,
                           color: ColorResources.HOME_BG,
@@ -340,9 +569,11 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                               getCircularContainer("Part Vehicle Required",
                                   (selectedTab == "Part Vehicle Required"), 4),
                               getCircularContainer("Sell Buy Post",
-                                  (selectedTab == "Sell Buy Post"), 5),
+                                  (selectedTab == "Sell Buy Post"), 6),
+                              getCircularContainer("General Post",
+                                  (selectedTab == "General Post"), 5),
                               getCircularContainer(
-                                  "Jobs", (selectedTab == "Jobs"), 6),
+                                  "Jobs", (selectedTab == "Jobs"), 7),
                             ],
                           ),
                         ),
@@ -388,42 +619,44 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
                               print("Index: ${index}");
                               print(
                                   "Date: ${model.truckLoadTypeList[index].postingTime.toString()}");
+                              TruckLoad load = model.truckLoadTypeList[index];
+                              List<String> stringList = (load.images ?? [])
+                                  .map((e) => e?.toString() ?? "")
+                                  .toList();
+
                               return model.truckLoadTypeList[index].type ==
                                       "Advertisement"
-                                  ? getAdvCard(
-                                      context, model.truckLoadTypeList[index])
+                                  ? DashbordCards().getAdvCard(
+                                      context,
+                                      load.companyName ?? "",
+                                      load.mobileNumber.toString(),
+                                      load.website ?? "",
+                                      stringList,
+                                      load.type ?? "")
                                   : model.truckLoadTypeList[index].type ==
                                           "Buy/Sell"
-                                      ? AllCards().cardSellBuyPost(index, context,
-                                          model.truckLoadTypeList[index], this,
-                                          userId: 0, isDashBoard: true)
+                                      ? AllCards().cardSellBuyPost(
+                                          index, context, model.truckLoadTypeList[index], this,
+                                          userId: authProvider
+                                              .userDetailList[0].id!,
+                                          isDashBoard: true)
                                       : model.truckLoadTypeList[index].type ==
                                               "Jobs"
                                           ? AllCards().cardJobPost(
                                               index,
                                               context,
                                               model.truckLoadTypeList[index],
-                                              this)
+                                              this,
+                                              userId: authProvider
+                                                  .userDetailList[0].id!)
                                           : model.truckLoadTypeList[index].type ==
                                                   "General Post"
                                               ? DashbordCards().generalPost(
-                                                  model.truckLoadTypeList[index],
-                                                  context)
-                                              : DashbordCards().cardLoadHome(
-                                                  index,
-                                                  context,
-                                                  model.truckLoadTypeList[index],
-                                                  authProvider
-                                                      .userDetailList[0].id!,
-                                                  this,
-                                                  model,
-                                                  false);
+                                                  model.truckLoadTypeList[index], context)
+                                              : DashbordCards().cardLoadHome(index, context, model.truckLoadTypeList[index], authProvider.userDetailList[0].id!, this, model, model.truckLoadTypeList[index].userId == authProvider.userDetailList[0].id! ? true : false);
                             }),
                       ),
                     ),
-          model.truckLoadTypeList.isEmpty
-              ? SizedBox.shrink()
-              : getLoader(model.isLoading)
         ])),
       ),
     );
@@ -440,7 +673,7 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
       return '${count} ' + getTranslated('requirements_selected', context)!;
   }
 
-  var selectedTab = 'All Requirement';
+  var selectedTab = 'All Loads';
   late List<int> selectedValuesList = <int>[];
 
   getCircularContainer(String title, bool isSelected, int i) {
@@ -449,71 +682,30 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
         onTap: () {
           setState(() {
             selectedTab = title;
-            model.fla = false;
-            model.flr = false;
-            model.pla = false;
-            model.plr = false;
-            model.gp = false;
-            model.buy_sell = false;
-            model.jobs = false;
-            if (selectedTab == 'Full Load Required') {
-              model.flr = true;
-            }
-            if (selectedTab == 'Part Load Required') {
-              model.plr = true;
-            }
-            if (selectedTab == 'Full Vehicle Required') {
-              model.fla = true;
-            }
-            if (selectedTab == 'Part Vehicle Required') {
-              model.pla = true;
-            }
-            if (selectedTab == 'General Post') {
-              model.gp = true;
-            }
-            if (selectedTab == 'Sell Buy Post') {
-              model.buy_sell = true;
-            }
-            if (selectedTab == 'Jobs') {
-              model.jobs = true;
-            }
-            if (selectedTab == 'All Requirement') {
-              model.pla = false;
-              model.plr = false;
-              model.fla = false;
-              model.flr = false;
-              model.gp = false;
-              model.buy_sell = false;
-              model.jobs = false;
-            }
           });
-          model.getFullLoadTruckList(selectedFromCity!, selectedToCity!);
-          /* selectedValuesList.add(i);
-          setState(() {
-            isSelected = !isSelected;
-            selectedTab = title;
-            selectedValuesList.forEach((element) {
-              if (element == 1) {
-                model.flr = true;
-              }
-              if (element == 2) {
-                model.plr = true;
-              }
-              if (element == 3) {
-                model.fla = true;
-              }
-              if (element == 4) {
-                model.pla = true;
-              }
-            });
-            if (selectedTab == 'All Loads') {
-              model.flr = true;
-              model.fla = true;
-              model.plr = true;
-              model.pla = true;
-            }
-          });
-          model.getFullLoadTruckList();*/
+
+          model.falseAllFilter(); // reset all to false
+
+          if (title == 'Full Load Required')
+            model.flr = true;
+          else if (title == 'Part Load Required')
+            model.plr = true;
+          else if (title == 'Full Vehicle Required')
+            model.fla = true;
+          else if (title == 'Part Vehicle Required')
+            model.pla = true;
+          else if (title == 'General Post')
+            model.gp = true;
+          else if (title == 'Sell Buy Post')
+            model.buy_sell = true;
+          else if (title == 'Jobs') model.jobs = true;
+          // All Requirement → keep all false
+
+          model.notifyListeners();
+          if (selectedFromCity.text.isEmpty) selectedFromCity.text = "From";
+          if (selectedToCity.text.isEmpty) selectedToCity.text = "To";
+          model.getFullLoadTruckList(
+              selectedFromCity.text, selectedToCity.text);
         },
         child: Card(
           margin: EdgeInsets.symmetric(horizontal: 2.7),
@@ -558,173 +750,6 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
     return type;
   }
 
-  Column imageLoad(TruckLoad load) {
-    if (load.postImages!.length == 0) {
-      return const Column(
-        children: [
-          SizedBox(
-            height: 0,
-          ),
-        ],
-      );
-    } else if (load.postImages!.length == 1) {
-      return Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: CachedNetworkImage(
-              imageUrl: load.postImages!.first,
-              placeholder: (context, url) =>
-                  SvgPicture.asset("assets/svg/logo.svg"),
-              errorWidget: (context, url, error) => ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
-                    fit: BoxFit.fill,
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                  )),
-              fit: BoxFit.fill,
-              width: MediaQuery.of(context).size.width,
-              height: 200,
-            ),
-          ),
-          SizedBox(
-            height: 9,
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-          Container(
-              transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: Container(
-                  child: CarouselSlider(
-                options: CarouselOptions(
-                  padEnds: false,
-                  pageSnapping: false,
-                  enableInfiniteScroll: false,
-                ),
-                items: load.postImages!
-                    .map((item) => Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(child: imageLink(item!)),
-                          ),
-                        ))
-                    .toList(),
-              ))),
-          SizedBox(
-            height: 9,
-          ),
-        ],
-      );
-    }
-  }
-
-  Widget imageLink(String link) {
-    // return Container(
-    //   width: 311,
-    //   height: 200,
-    //   decoration: ShapeDecoration(
-    //     image: DecorationImage(
-    //       image: NetworkImage(
-    //           link),
-    //       fit: BoxFit.fill,
-    //     ),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12),
-    //     ),
-    //   ),
-    // );
-
-    return CachedNetworkImage(
-      imageUrl: link,
-      placeholder: (context, url) => SvgPicture.asset("assets/svg/logo.svg"),
-      errorWidget: (context, url, error) => ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.network(
-            "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
-            fit: BoxFit.fill,
-            width: 311,
-            height: 200,
-          )),
-      fit: BoxFit.fill,
-      width: 311,
-      height: 200,
-    );
-  }
-
-  /*cardSellBuyPost(int index, BuildContext context, TruckLoad load,DeletePostInf postDelete,{int userId=0}) {
-    return Container(
-      width: 335,
-      // height: 255.h,
-      padding: EdgeInsets.all(12),
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x114A5568),
-            blurRadius: 8,
-            offset: Offset(0, 3),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              width: 100,
-              height: 18,
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: ShapeDecoration(
-                color: Color(0xffd0a232),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-              ),
-              child: Center(
-                child: Text(
-                  load.mainTag!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontFamily: GoogleFonts.poppins().fontFamily,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 8),
-          BaseWidget().profile(
-              load.companyLogo!, load.nameOfPerson!, load.companyName!,
-              verify: load.isPaid!),
-          BaseWidget().headingWithDescription(load.topicName!, getDateObject(load.postingTime), load.mfgYear!,load.modelName!,load.estPrice!,false),
-          SizedBox(height: 8),
-          imageLoad(load),
-          load.userId==userId ?BaseWidget().deleteButton((val) {
-            if(val==10){
-
-            }else{
-              Utils().openMenu(val, load, context);
-            }
-          },false) :BaseWidget().getInTouchButton((val) {
-            Utils().openMenu(val, load, context);
-          })
-        ],
-      ),
-    );
-  }*/
-
   getDateObject(String? dateTime) {
     try {
       DateTime formatedDate = DateTime.parse(dateTime!);
@@ -739,175 +764,6 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
       return dateTime;
     }
   }
-
-  getAdvCard(BuildContext context, TruckLoad load) {
-    return GestureDetector(
-      onTap: () {
-        // print('the deds');
-        showDialog(
-          context: context,
-          builder: (_) => imageDialog(
-              load.companyName, load.postImages!.first, context, load),
-        );
-      },
-      child: Container(
-        width: 335,
-        // height: 255,
-        padding: EdgeInsets.all(12),
-        clipBehavior: Clip.antiAlias,
-        decoration: ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          shadows: [
-            BoxShadow(
-              color: Color(0x114A5568),
-              blurRadius: 8,
-              offset: Offset(0, 3),
-              spreadRadius: 0,
-            )
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                width: 100,
-                height: 18,
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: ShapeDecoration(
-                  color: Color(0xFFD9462A),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                ),
-                child: Center(
-                  child: Text(
-                    load.type!,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontFamily: GoogleFonts.poppins().fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            //   SizedBox(height: 8),
-            Text(
-              load.companyName!,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontFamily: GoogleFonts.poppins().fontFamily,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            imageLoad(load),
-            InkWell(
-              onTap: () async {
-                final url = Uri.parse(
-                  'http://${load.website}',
-                );
-                //   final Uri url = Uri.parse('https://flutter.dev');
-                if (!await launchUrl(url)) {
-                  throw Exception('Could not launch $url');
-                }
-
-                //  await  launchUrl(url);
-              },
-              child: Container(
-                padding: EdgeInsets.all(4),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          load.companyName ?? '',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          load.mobileOrLandline.toString() ?? '',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontFamily: GoogleFonts.poppins().fontFamily,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        load.website ?? '',
-                        style: TextStyle(
-                          color: Color(0x99001E49),
-                          fontSize: 12,
-                          fontFamily: GoogleFonts.poppins().fontFamily,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  /*Future<void> _showMyDialog(int index,int id,DashboardProvider myPostProvider) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title:  Text("Delete",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue)),
-          content:  SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text("DeleteMsg",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.theme_blue),),
-
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child:  Text("Delete",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.red)),
-              onPressed: () {
-                myPostProvider.deletePost(index,id,context);
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child:  Text("No",style: TextStyle(fontFamily: AppConstant.FONTFAMILY,color: ThemeColor.green)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      },
-    );
-  }*/
 
   @override
   void deleteOwnPost(
@@ -990,68 +846,32 @@ class _WebScreenDashBoardState extends State<WebScreenDashBoard>
   }
 
   imageLoadAdd(TruckLoad load, BuildContext context) {
-    if (load.postImages!.length == 0) {
-      return Column(
-        children: [
-          SizedBox(
-            height: 0,
+    Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: CachedNetworkImage(
+            imageUrl: load.images!.first,
+            placeholder: (context, url) =>
+                SvgPicture.asset("assets/svg/logo.svg"),
+            errorWidget: (context, url, error) => ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
+                  fit: BoxFit.fill,
+                  width: MediaQuery.of(context).size.width - 100,
+                  height: MediaQuery.of(context).size.height - 100,
+                )),
+            fit: BoxFit.fill,
+            width: 500,
+            height: 500,
           ),
-        ],
-      );
-    } else if (load.postImages!.length == 1) {
-      return Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: CachedNetworkImage(
-              imageUrl: load.postImages!.first,
-              placeholder: (context, url) =>
-                  SvgPicture.asset("assets/svg/logo.svg"),
-              errorWidget: (context, url, error) => ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    "https://igps.net/wp-content/uploads/2018/08/shutterstock_711168088.jpg",
-                    fit: BoxFit.fill,
-                    width: MediaQuery.of(context).size.width - 100,
-                    height: MediaQuery.of(context).size.height - 100,
-                  )),
-              fit: BoxFit.fill,
-              width: 500,
-              height: 500,
-            ),
-          ),
-          SizedBox(
-            height: 9,
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-          Container(
-              transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: Container(
-                  child: CarouselSlider(
-                options: CarouselOptions(
-                  padEnds: false,
-                  pageSnapping: false,
-                  enableInfiniteScroll: false,
-                ),
-                items: load.postImages!
-                    .map((item) => Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(child: imageLink(item!)),
-                          ),
-                        ))
-                    .toList(),
-              ))),
-          SizedBox(
-            height: 9,
-          ),
-        ],
-      );
-    }
+        ),
+        SizedBox(
+          height: 9,
+        ),
+      ],
+    );
   }
 
   @override

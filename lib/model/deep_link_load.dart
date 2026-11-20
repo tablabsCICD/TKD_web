@@ -1,5 +1,7 @@
+import 'package:tkd_app/model/truck_load_model.dart';
+
 class TruckDeep {
-  List<TruckLoadDeepLink>? content;
+  List<TruckLoad>? content;
   bool? last;
   int? totalElements;
   int? totalPages;
@@ -22,9 +24,9 @@ class TruckDeep {
 
   TruckDeep.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {
-      content = <TruckLoadDeepLink>[];
+      content = <TruckLoad>[];
       json['content'].forEach((v) {
-        content!.add(new TruckLoadDeepLink.fromJson(v));
+        content!.add(new TruckLoad.fromJson(v));
       });
     }
     last = json['last'];
@@ -54,7 +56,7 @@ class TruckDeep {
   }
 }
 
-class TruckLoadDeepLink {
+/*class TruckLoadDeepLink {
   int? id;
   String? fullLoadChoice;
   String? transporterOrCustomerName;
@@ -193,4 +195,4 @@ class TruckLoadDeepLink {
 
     return data;
   }
-}
+}*/

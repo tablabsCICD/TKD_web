@@ -33,13 +33,17 @@ class GroupListProvider extends ChangeNotifier {
   String changeImageUrl = '';
   final authProvider = locator<AuthProvider>();
 
-  getAllUserList(bool isFromEdit) async {
-    selectedUsers = [];
+  getAllUserList(bool isFromEdit,String char) async {
+    filterByName.clear();
+    allUserList.clear();
+    if (!isFromEdit && (char == null || char.trim().isEmpty)) {
+      selectedUsers.clear();
+    }
     isLoading = true;
     notifyListeners();
     if (allUserList.length == 0) {
       //String myUrl = ApiConstant.BASE_URL +'companyRegistration?page=${0}&size=6000';
-      String myUrl = ApiConstant.CHAT_USER_LIST_COMPANY(' ');
+      String myUrl = ApiConstant.CHAT_USER_LIST_COMPANY(char);
       print(myUrl);
       var responseBody = await ApiHelper().ApiGetData(myUrl);
       isFirstLoading = false;
@@ -54,6 +58,12 @@ class GroupListProvider extends ChangeNotifier {
         for (int j = 0; j < listAddedMember.length; j++) {
           if (allUserList[i].id == listAddedMember[j].userId) {
             allUserList[i].addedIngroup = true;
+            allUserList[i].isSelected = true;
+
+            // avoid duplicate add
+            if (!selectedUsers.any((u) => u.id == allUserList[i].id)) {
+              selectedUsers.add(allUserList[i]);
+            }
           }
         }
 
@@ -100,6 +110,20 @@ class GroupListProvider extends ChangeNotifier {
     } else {
       filterByName.addAll(allUserList);
     }
+    notifyListeners();
+  }
+
+  void resetSelection() {
+    selectedUsers.clear();
+    filterByName.clear();
+    allUserList.clear();
+
+    // Also reset addedIngroup flags if needed
+    for (var user in allUserList) {
+      user.addedIngroup = false;
+      user.isSelected = false;
+    }
+
     notifyListeners();
   }
 
@@ -262,10 +286,10 @@ class GroupListProvider extends ChangeNotifier {
 
   removeMemberFromGroup(int memberId, int index) async {
     ApiHelper apiHelper = ApiHelper();
-    int statusCode = await apiHelper.ApiDeleteData(
+    var response = await apiHelper.ApiDeleteData(
         ApiConstant.GROUP_MEMBER_DELETE + memberId.toString());
     ;
-    if (statusCode == 200) {
+    if (response.statusCode == 200) {
       listAddedMember.removeAt(index);
       notifyListeners();
     }

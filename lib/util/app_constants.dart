@@ -6,11 +6,10 @@ import '../model/auth_api.dart';
 class ApiConstant {
 
   static final String APP_VERSION="2.0.15";//44
- static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
- // static String BASE_URL = "http://ec2-13-232-71-100.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Test Url
-  // static String BASE_URL = "http://ec2-13-201-5-172.ap-south-1.compute.amazonaws.com:8080/tkd3/api/";//Test Url
-//  static String BASE_URL = "http://ec2-35-154-166-48.ap-south-1.compute.amazonaws.com:8080/tkd2/api/";//Test Url
-  static String CHAT_USER_LIST_COMPANY(name) => BASE_URL + "companyRegistration/ByName8?firstName=$name";
+  static String BASE_URL = "https://api.tkdost.com/tkd2/api/"; //Production Url
+// static String BASE_URL = "http://ec2-13-200-229-164.ap-south-1.compute.amazonaws.com:8080/tkd2/api/"; //Test Url
+
+  static String CHAT_USER_LIST_COMPANY(name) => BASE_URL + "companyRegistration/ByName8?firstName=$name&page=0&size=1000";
   static String LOGIN = BASE_URL + "authLogin/emailId";
   static String REGISTRATION = BASE_URL + "companyRegistration";
   static String GENERIC_DATA = BASE_URL + "/get/allCards";
@@ -49,7 +48,7 @@ class ApiConstant {
   static String VERIFY_OTP_ON_MAIL = BASE_URL + "verifyOTPEmail";
   static String SEND_OTP = BASE_URL + "sendOtp";
   static String ADD_CITY = BASE_URL + "/set/cities/db";
-  static String DIRECTORY = BASE_URL + "directory/allDirectoryUser2";
+  static String DIRECTORY = BASE_URL + "directory";
   static String SHARE_POST_BASE_URL = "http://www.tkdost.com/tkd/";
   static String BID_TO_POST = BASE_URL + "biding";
   static String BID_FOR_USER = BASE_URL + "GetAllBidsForUser";
@@ -67,10 +66,10 @@ class ApiConstant {
   static String GET_USER_SOURCE_LIST(cityName) =>
       BASE_URL + "UserBySource?source=$cityName";
   static String JOBS_ALL_CARD = BASE_URL + "allCards/Jobs";
-  static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell";
+  static String BUY_SELL_ALL_CARD = BASE_URL + "allCards/buySell2";
   static String LIKE_DISLIKE = BASE_URL + "discussionLikes";
 
-  static String FULL_LOAD_ALL_CARD_NEW=BASE_URL + "dashboard/homepage/posts";
+  static String FULL_LOAD_ALL_CARD_NEW=BASE_URL + "dashboard/homepage/Search";
 
   static String GETCOMMENTS(id) => BASE_URL + "/getGerenalPostComments?generalPostId=$id";
   static String GIVE_RATING_REVIEWS = BASE_URL + "/ratings-reviews/save";
@@ -132,6 +131,28 @@ class ApiConstant {
  static String UPDATE_ACCEPTED_BID="${BASE_URL}acceptedBid/%7Bid%7D";
  static String GET_BID_TREND(id) =>
      "${BASE_URL}trend/$id";
+
+
+ static String GET_NEWS_LIST(page)=> "${BASE_URL}Gallery?page=$page&size=1000";
+ static String MY_NEWS(id, page) => "${BASE_URL}Gallery/byUserId?userId=$id&page=$page&size=1000";
+ static String ADD_NEWS= "${BASE_URL}Gallery";
+ static String DELETE_NEWS(id) => "${BASE_URL}Gallery?id=$id";
+ static String SEARCH_NEWS(char) => "${BASE_URL}Gallery/searchByAnyKey?key=$char&page=0&size=100";
+
+
+ static String GET_REPORT_LIST(page)=> "${BASE_URL}ReportIncients?page=$page&size=1000";
+ static String MY_INCIDENT(id) => "${BASE_URL}user/$id";
+ static String ADD_REPORT = "${BASE_URL}ReportIncients";
+ static String DELETE_INCIDENT(id) => "${BASE_URL}ReportIncients?id=$id";
+ static String SEARCH_REPORT(char,id) => "${BASE_URL}getTicketsByUserIdAndSearch?userId=$id&keyword=$char";
+  static String GET_GROUP_LIST(userId) => "${BASE_URL}groups/byUser/$userId";
+
+  static String BULK_UPLOAD= "${BASE_URL}uploadFullTruckLoad";
+  static String GET_LATLNG(postId) => "${BASE_URL}vehicleTracking/getVehicleTrackingByPostId/newJson/$postId";
+  static String SEND_TRACKING_OTP(isPostOwner,postId) => "${BASE_URL}vehicleTracking/sendOtp?postId=$postId&isPostOwner=$isPostOwner";
+  static String OTP_TRACKING_VERIFICATION(isPostOwner, otp, postId) =>
+      "${BASE_URL}vehicleTracking/verifyOtp?postId=$postId&otp=$otp&isPostOwner=$isPostOwner";
+
 
   static List<LanguageModel> languages = [
     LanguageModel(imageUrl: '', languageName: 'English', countryCode: 'US', languageCode: 'en',isSelected: true),

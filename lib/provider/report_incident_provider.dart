@@ -1,403 +1,336 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:tkd_connect/model/request/reportIncidentRequest.dart';
-import '../../constant/api_constant.dart';
-import '../../model/api_response.dart';
-import '../../model/response/allNewsResponse.dart';
-import '../../model/response/getAllReportIncidentResponse.dart';
-import '../../model/response/userdata.dart';
-import '../../network/api_helper.dart';
-import '../../utils/colors.dart';
-import '../../utils/sharepreferences.dart';
-import '../../utils/toast.dart';
-import '../base_provider.dart';
+import 'package:http/http.dart' as http;
 
-class ReportIncidentProvider extends BaseProvider {
-  ReportIncidentProvider() : super('Ideal') {
-  //  pagenationHorizantal();
-   // pagenationVerical();
-    getAllData();
+import '../locator.dart';
+import '../model/api_response.dart';
+import '../model/auth_api.dart';
+import '../model/getAllReportIncidentResponse.dart';
+import '../model/request/reportIncidentRequest.dart';
+import '../network/api_call.dart';
+import '../util/app_constants.dart';
+import '../view/screens/gallery/image_picker_helper.dart';
+import '../widgets/toast.dart';
+import 'auth_provider.dart';
+
+class ReportIncidentProvider extends ChangeNotifier {
+  ReportIncidentProvider() {
+    loadAllIncidents();
   }
 
-  int selectedPage = 0;
+  // =========================================================================
+  // STATE VARIABLES
+  // =========================================================================
 
-  List<IncidentObject> allReportTemp = [];
-  List<IncidentObject> allReport = [];
+  bool isLoading = false;
+  bool isSearching = false;
+  bool isMyIncident = false;
 
-  bool isLoadDone = false;
-  bool _myIncident = false;
-  bool get myIncident => _myIncident;
+  int page = 0;                // Future pagination support
+  bool hasMore = true;         // Tracks if more data exists
 
-  void toggleMyNews(bool value) {
-    _myIncident = value;
-    if(_myIncident==true){
-      getMyIncidentData();
-    }else{
-      getAllData();
-    }
+  List<IncidentObject> allIncidents = [];
+  List<IncidentObject> backupIncidents = [];
+
+  // Form Fields
+  TextEditingController vehicleNo = TextEditingController();
+  TextEditingController incidentLocation = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController amountLost = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+
+  TextEditingController searchController = TextEditingController();
+
+  List<String> incidentTypes = [];
+  List<String> cheatedByList = [];
+  bool? isFirLaunched;
+  bool isAccepted = false;
+
+  List<String> images = [];
+
+  final authProvider = locator<AuthProvider>();
+
+  // =========================================================================
+  // LOADING HELPERS
+  // =========================================================================
+
+  void setLoading(bool value) {
+    isLoading = value;
     notifyListeners();
   }
 
+  void setSearching(bool value) {
+    isSearching = value;
+    notifyListeners();
+  }
 
-  ScrollController scrollControllerVertical = ScrollController();
-  ScrollController scrollControllerHorizantal = ScrollController();
-  TextEditingController searchController = TextEditingController();
-  List<String> _incidentTypes = [];
-  List<String> _cheatedBy = [];
-  bool? _wasFirLaunched;
-  bool _isAccepted = false;
+  // =========================================================================
+  // TOGGLE ALL / MY INCIDENTS
+  // =========================================================================
 
-  // TextEditingControllers
-  TextEditingController nameController = TextEditingController();
-  TextEditingController companyNameController = TextEditingController();
-  TextEditingController vehicleNumberController = TextEditingController();
-  TextEditingController incidentLocationController = TextEditingController();
-  TextEditingController shortDescriptionController = TextEditingController();
-  TextEditingController amountLostOrGoodsCheatedController =
-      TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController dateOfIncidentController = TextEditingController();
-  List<String> _uploadedProofs = [];
-  List<String> images = [];
+  void toggleMyIncidents(bool value, BuildContext context) {
+    isMyIncident = value;
 
-  // Getters
-  List<String> get incidentTypes => _incidentTypes;
-
-  List<String> get cheatedBy => _cheatedBy;
-
-  bool? get wasFirLaunched => _wasFirLaunched;
-
-  bool? get isAccepted => _isAccepted;
-
-  List<String> get uploadedProofs => _uploadedProofs;
-
-  // Methods
-  void toggleIncidentType(String type) {
-    if (_incidentTypes.contains(type)) {
-      _incidentTypes.remove(type);
+    if (value) {
+      loadMyIncidents(context);
     } else {
-      _incidentTypes.add(type);
+      loadAllIncidents(reset: true);
     }
+  }
+
+  // =========================================================================
+  // LOAD ALL INCIDENTS
+  // =========================================================================
+
+  Future<void> loadAllIncidents({bool reset = false}) async {
+    if (reset) {
+      page = 0;
+      allIncidents.clear();
+      backupIncidents.clear();
+      hasMore = true;
+    }
+
+    if (!hasMore) return;
+
+    setLoading(true);
+    final url = ApiConstant.GET_REPORT_LIST(page);
+    print("Fetching all incidents → $url");
+
+    try {
+      final res = await http.get(Uri.parse(url));
+
+      if (res.statusCode == 200) {
+        final jsonMap = jsonDecode(res.body);
+
+        if (jsonMap is Map && jsonMap.containsKey("content")) {
+          List<dynamic> list = jsonMap["content"];
+
+          if (list.isNotEmpty) {
+            final incidents =
+            list.map((e) => IncidentObject.fromJson(e)).toList();
+
+            allIncidents.addAll(incidents);
+            backupIncidents.addAll(incidents);
+            page++;
+          } else {
+            hasMore = false;
+          }
+        }
+      }
+    } catch (e) {
+      print("ERROR LOADING ALL INCIDENTS → $e");
+    }
+
+    setLoading(false);
+  }
+
+  // =========================================================================
+  // LOAD MY INCIDENTS
+  // =========================================================================
+
+  Future<void> loadMyIncidents(BuildContext context) async {
+    setLoading(true);
+
+    try {
+      final user = await authProvider.getLoginData();
+      final url = ApiConstant.MY_INCIDENT(user.id);
+
+      print("Fetching my incidents → $url");
+
+      final res = await http.get(Uri.parse(url));
+
+      if (res.statusCode == 200) {
+        final jsonMap = jsonDecode(res.body);
+
+        if (jsonMap is Map && jsonMap.containsKey("content")) {
+          List<dynamic> list = jsonMap["content"];
+
+          allIncidents.clear();
+
+          if (list.isNotEmpty) {
+            final myIncList =
+            list.map((e) => IncidentObject.fromJson(e)).toList();
+            allIncidents.addAll(myIncList);
+          }
+        }
+      } else {
+        ToastMessage.show(context, "Failed to fetch your incidents");
+      }
+    } catch (e) {
+      print("ERROR LOADING MY INCIDENTS → $e");
+    }
+
+    setLoading(false);
+  }
+
+  // =========================================================================
+  // SEARCH INCIDENTS
+  // =========================================================================
+
+  Future<void> searchIncidents() async {
+    final query = searchController.text.trim();
+
+    if (query.length < 3) {
+      allIncidents = List.from(backupIncidents);
+      notifyListeners();
+      return;
+    }
+
+    setSearching(true);
+
+    try {
+      final user = await authProvider.getLoginData();
+      final url = ApiConstant.SEARCH_REPORT(query, user.id);
+
+      print("SEARCH URL → $url");
+
+      final res = await http.get(Uri.parse(url));
+
+      if (res.statusCode == 200) {
+        final jsonResponse = jsonDecode(res.body);
+
+        if (jsonResponse is Map && jsonResponse["content"] is List) {
+          allIncidents = (jsonResponse["content"] as List)
+              .map((e) => IncidentObject.fromJson(e))
+              .toList();
+        } else {
+          print("Unexpected search response structure");
+          allIncidents = [];
+        }
+      }
+    } catch (e) {
+      print("SEARCH ERROR → $e");
+    }
+
+    setSearching(false);
+  }
+
+
+  // =========================================================================
+  // ADD INCIDENT
+  // =========================================================================
+  String? selectedApiDate;
+
+  Future<void> addIncident(BuildContext context) async {
+    final user = await authProvider.getLoginData();
+
+    String cheatedByStr = cheatedByList.join(", ");
+    String incidentTypeStr = incidentTypes.join(", ");
+
+    final req = ReportIncidentRequest(
+      userId: user.id,
+      topic: incidentTypes.isNotEmpty ? incidentTypes.first : "",
+      image: (isFirLaunched == true && images.isNotEmpty) ? images.first : null,
+      date: selectedApiDate,
+      description: description.text,
+      isResolved: false,
+      amountLost: amountLost.text,
+      vehicleNumber: vehicleNo.text,
+      cheatedBy: cheatedByStr,
+      incidentType: incidentTypeStr,
+      isFirLounched: isFirLaunched,
+      resolutionDetails: "",
+    );
+    var body = json.encode(req);
+    print(ApiConstant.ADD_REPORT);
+    print("Request::::"+body.toString());
+    final response = await http.post(Uri.parse(ApiConstant.ADD_REPORT),
+        headers: {"Content-Type": "application/json"}, body: body);
+    print("Response::::"+response.body);
+    print("Response::::"+response.statusCode.toString());
+    if (response.statusCode == 200) {
+      ToastMessage.show(context, "Incident reported successfully!");
+      toggleMyIncidents(true, context);
+      Navigator.pop(context);
+    } else {
+      ToastMessage.show(context, "Something went wrong");
+    }
+  }
+
+  // =========================================================================
+  // DELETE INCIDENT
+  // =========================================================================
+
+  Future<void> deleteIncident(
+      IncidentObject incident, BuildContext context) async {
+    final url = ApiConstant.DELETE_INCIDENT(incident.id);
+
+    final res = await ApiHelper().ApiDeleteData(url);
+
+    if (res.statusCode == 200) {
+      ToastMessage.show(context, "Incident deleted");
+      toggleMyIncidents(true, context);
+    } else {
+      ToastMessage.show(context, "Delete failed");
+    }
+  }
+
+  // =========================================================================
+  // FORM HELPERS
+  // =========================================================================
+
+  void toggleIncidentType(String type) {
+    incidentTypes.contains(type)
+        ? incidentTypes.remove(type)
+        : incidentTypes.add(type);
     notifyListeners();
   }
 
   void toggleCheatedBy(String value) {
-    if (_cheatedBy.contains(value)) {
-      _cheatedBy.remove(value);
-    } else {
-      _cheatedBy.add(value);
-    }
+    cheatedByList.contains(value)
+        ? cheatedByList.remove(value)
+        : cheatedByList.add(value);
     notifyListeners();
   }
 
-  void updateFirStatus(bool? status) {
-    _wasFirLaunched = status;
+  void setFirStatus(bool? value) {
+    isFirLaunched = value;
     notifyListeners();
   }
 
-  void updateAcceptedTerm(bool status) {
-    _isAccepted = status;
+  void setAccepted(bool value) {
+    isAccepted = value;
     notifyListeners();
   }
 
-  void addUploadedProof(String proof) {
-    _uploadedProofs.add(proof);
+  void addImage(String url) {
+    images.add(url);
     notifyListeners();
   }
 
-  uploadImage(BuildContext context) async {
-    String? image = await pickAndUploadImage(context);
-    if (image != null) {
-      images.add(image);
-      print("Image uploaded successfully: $image");
-    } else {
-      print("Image upload failed or was cancelled.");
-    }
-    notifyListeners();
-  }
+  // Use your existing ImagePickerHelper upload
+  Future<void> uploadImage(BuildContext context) async {
+    try {
+      String? image = await ImagePickerHelper().pickAndUploadImage(context);
 
-  setDate(String date) async {
-    dateOfIncidentController.text = date;
-    notifyListeners();
-  }
-
-  void clear() {
-    _incidentTypes.clear();
-    _cheatedBy.clear();
-    _wasFirLaunched = null;
-
-    // Clear TextEditingControllers
-    nameController.clear();
-    companyNameController.clear();
-    vehicleNumberController.clear();
-    incidentLocationController.clear();
-    shortDescriptionController.clear();
-    amountLostOrGoodsCheatedController.clear();
-
-    phoneNumberController.clear();
-    dateOfIncidentController.clear();
-    _uploadedProofs.clear();
-    notifyListeners();
-  }
-
-  bool enbleButton = false;
-
-  enble() {
-    if (_isAccepted==true &&
-        vehicleNumberController.text.isNotEmpty &&
-        incidentLocationController.text.isNotEmpty &&
-        amountLostOrGoodsCheatedController.text.isNotEmpty &&
-        dateOfIncidentController.text.isNotEmpty &&
-        incidentTypes.isNotEmpty &&
-        cheatedBy.isNotEmpty) {
-      enbleButton = true;
-    } else {
-      enbleButton = false;
-    }
-    notifyListeners();
-  }
-
-  void checkValidation(BuildContext context) {
-    // Consolidate error messages
-    String? errorMessage;
-
-    if (incidentTypes.isEmpty) {
-      errorMessage = "Please select at least one incident";
-    } else if (cheatedBy.isEmpty) {
-      errorMessage = "Please select at least one cheater";
-    } else if (vehicleNumberController.text.isEmpty) {
-      errorMessage = "Please enter vehicle number";
-    } else if (images.isEmpty) {
-      errorMessage = "Please upload an image";
-    } else if (dateOfIncidentController.text.isEmpty) {
-      errorMessage = "Please select a date";
-    } else if (!isAccepted!) {
-      errorMessage = "Please accept the agreement";
-    }
-
-    // Show error message if validation fails
-    if (errorMessage != null) {
-      ToastMessage.show(context, errorMessage);
-      return;
-    }
-
-    // Validation passed, show confirmation dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Post Load',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to post this requirement?',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 12.sp,
-              fontFamily: GoogleFonts.poppins().fontFamily,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                'No',
-                style: TextStyle(
-                  color: ThemeColor.theme_blue,
-                  fontSize: 12.sp,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                addReport(context);
-              },
-              child: Text(
-                'Yes',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 12.sp,
-                  fontFamily: GoogleFonts.poppins().fontFamily,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
-  addReport(BuildContext context) async {
-    // Convert list to comma-separated string
-    String cheatedByList = cheatedBy.join(", ");
-    // Convert list to comma-separated string
-    String incidentTypeList = incidentTypes.join(", ");
-    User user =
-        await LocalSharePreferences.localSharePreferences.getLoginData();
-    ReportIncidentRequest reportIncidentRequest = ReportIncidentRequest();
-    reportIncidentRequest.cheatedBy = cheatedByList;
-    reportIncidentRequest.userId = user.content!.first.id!;
-    reportIncidentRequest.topic = incidentTypes[0];
-    reportIncidentRequest.image = images[0];
-    reportIncidentRequest.date = dateOfIncidentController.text;
-    reportIncidentRequest.description = shortDescriptionController.text;
-    reportIncidentRequest.isResolved = false;
-    reportIncidentRequest.amountLost = amountLostOrGoodsCheatedController.text;
-    reportIncidentRequest.vehicleNumber = vehicleNumberController.text;
-    reportIncidentRequest.incidentType = incidentTypeList;
-    reportIncidentRequest.isFirLounched = wasFirLaunched;
-    reportIncidentRequest.resolutionDetails = '';
-
-
-    ApiResponse response = await ApiHelper()
-        .postParameter("${ApiConstant.ADD_REPORT}", reportIncidentRequest.toJson());
-    print('The response status code: ${response.status}');
-
-    if (response.status == 200) {
-      ToastMessage.show(context, "Your Report is submitted successfully!");
-      toggleMyNews(true);
-      // First dialog logic
-      Navigator.pop(context); // Close the first dialog
-      Navigator.pop(context);
-    } else {
-      ToastMessage.show(context, "Please try again");
-    }
-  }
-
-  getAllData() async {
-    String myUrl = ApiConstant.GET_REPORT_LIST(selectedPage);
-
-    print("Url $myUrl");
-    ApiResponse apiResponse = await ApiHelper().apiWithoutDecodeGet(myUrl);
-
-    if (apiResponse.status == 200) {
-      GetAllReportIncidentResponse newsResponse =
-      GetAllReportIncidentResponse.fromJson(apiResponse.response);
-
-      if (selectedPage == 0) {
-        allReport.clear();
-        allReportTemp.clear();
+      if (image != null && image.isNotEmpty) {
+        images.add(image);
+        print("Image uploaded successfully: $image");
+        notifyListeners();
+      } else {
+        print("Image upload failed or cancelled.");
       }
-      allReport.addAll(newsResponse.content!);
-      allReportTemp.addAll(newsResponse.content!);
-     // selectedPage++;
+    } catch (e) {
+      print("Upload error: $e");
     }
-    isLoadDone = true;
+  }
+
+
+  void clearForm() {
+    incidentTypes.clear();
+    cheatedByList.clear();
+    isFirLaunched = null;
+    isAccepted = false;
+
+    vehicleNo.clear();
+    incidentLocation.clear();
+    description.clear();
+    amountLost.clear();
+    dateController.clear();
+    phoneController.clear();
+    images.clear();
+
     notifyListeners();
-  }
-
-  pagenationVerical() {
-    scrollControllerVertical.addListener(() {
-      if (scrollControllerVertical.position.pixels ==
-          scrollControllerVertical.position.maxScrollExtent) {
-        getAllData();
-      }
-    });
-  }
-
-  pagenationHorizantal() {
-    scrollControllerHorizantal.addListener(() {
-      if (scrollControllerHorizantal.position.pixels ==
-          scrollControllerHorizantal.position.maxScrollExtent) {
-        getAllData();
-      }
-    });
-  }
-
-  getBySearchData() async {
-    User user = await LocalSharePreferences.localSharePreferences.getLoginData();
-    if (searchController.text.length > 2) {
-      String myUrl =
-      ApiConstant.SEARCH_REPORT(searchController.text, user.content!.first.id);
-      ApiResponse apiResponse = await ApiHelper().apiWithoutDecodeGet(myUrl);
-
-      if (apiResponse.status == 200) {
-        try {
-          // Decode the JSON response
-          final List<dynamic> responseList = jsonDecode(apiResponse.response);
-          if (responseList.isNotEmpty) {
-            // Map each JSON object to an IncidentObject
-            List<IncidentObject> newsResponse = responseList
-                .map((item) =>
-                IncidentObject.fromJson(item as Map<String, dynamic>))
-                .toList();
-            allReport.clear();
-            allReport.addAll(newsResponse);
-          } else {
-            allReport.clear();
-          }
-        } catch (e) {
-          print('Error decoding response: $e');
-          allReport.clear(); // Clear the list if decoding fails
-        }
-      }
-    } else {
-      // Restore the original list if search text is less than 3 characters
-      allReport.clear();
-      allReport.addAll(allReportTemp);
-    }
-    notifyListeners();
-  }
-
-  getMyIncidentData() async {
-    User user = await LocalSharePreferences.localSharePreferences.getLoginData();
-    String myUrl = ApiConstant.MY_INCIDENT(user.content!.first.id);
-    print(myUrl);
-    ApiResponse apiResponse = await ApiHelper().apiWithoutDecodeGet(myUrl);
-
-    if (apiResponse.status == 200) {
-      try {
-        // Decode the JSON response
-        final List<dynamic> responseList = jsonDecode(apiResponse.response);
-        if (responseList.isNotEmpty) {
-          // Map each JSON object to an IncidentObject
-          List<IncidentObject> newsResponse = responseList
-              .map((item) => IncidentObject.fromJson(item as Map<String, dynamic>))
-              .toList();
-          allReport.clear();
-          allReport.addAll(newsResponse);
-        } else {
-          allReport.clear();
-        }
-      } catch (e) {
-        print('Error decoding response: $e');
-        allReport.clear(); // Clear the list if decoding fails
-      }
-    }
-    notifyListeners();
-  }
-
-
-
-  deletePost(IncidentObject incidentObj,BuildContext context)async{
-    String myUrl = '${ApiConstant.DELETE_INCIDENT(incidentObj.id)}';
-    print(myUrl);
-    ApiResponse apiResponse= await ApiHelper().ApiDeleteData(myUrl);
-    print(apiResponse.response);
-    if(apiResponse.status==200){
-      ToastMessage.show(context, "Post deleted successfully");
-      toggleMyNews(true);
-      notifyListeners();
-    }else{
-      ToastMessage.show(context, "Please try again");
-    }
   }
 }

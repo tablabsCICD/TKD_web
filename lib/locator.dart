@@ -18,12 +18,14 @@ import 'package:tkd_app/provider/job_provider.dart';
 import 'package:tkd_app/provider/localization_provider.dart';
 import 'package:tkd_app/provider/menu_provider.dart';
 import 'package:tkd_app/provider/more_provider.dart';
+import 'package:tkd_app/provider/news_provider.dart';
 import 'package:tkd_app/provider/org_provider.dart';
 import 'package:tkd_app/provider/plan/select_plan.dart';
 import 'package:tkd_app/provider/plan_provider.dart';
 import 'package:tkd_app/provider/pool_purchase_provider.dart';
 import 'package:tkd_app/provider/rating_provider.dart';
 import 'package:tkd_app/provider/repeatProvider.dart';
+import 'package:tkd_app/provider/report_incident_provider.dart';
 import 'package:tkd_app/provider/route_provider.dart';
 import 'package:tkd_app/provider/transport_provider.dart';
 
@@ -53,6 +55,8 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => GeneralPostProvider());
   locator.registerLazySingleton(() => SelectPlanProvider());
   locator.registerLazySingleton(() => HelpSupportProvider());
+  locator.registerLazySingleton(() => NewsProvider());
+  locator.registerLazySingleton(() => ReportIncidentProvider());
   locator.registerLazySingleton(() => LocalizationProvider(sharedPreferences: locator()));
 
   final sharedPreferences = await SharedPreferences.getInstance();

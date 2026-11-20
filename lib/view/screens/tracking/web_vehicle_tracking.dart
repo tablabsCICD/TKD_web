@@ -1,28 +1,26 @@
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:tkd_connect/constant/app_constant.dart';
+import 'package:tkd_app/view/screens/tracking/vehicle_tracking.dart';
+
+import '../../../util/colors.dart';
 
 class WebVehicleTracking extends StatelessWidget {
   final LatLng startLocation;
   final LatLng endLocation;
+  final int postId;
+
 
   const WebVehicleTracking({
     super.key,
     required this.startLocation,
     required this.endLocation,
+    required this.postId,
+
   });
 
   @override
   Widget build(BuildContext context) {
-    final mapUrl =
-        "https://www.google.com/maps/embed/v1/directions"
-        "?key=${AppConstant.GOOGLE_KEY}"
-        "&origin=${startLocation.latitude},${startLocation.longitude}"
-        "&destination=${endLocation.latitude},${endLocation.longitude}"
-        "&mode=driving";
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -33,10 +31,15 @@ class WebVehicleTracking extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.red,
+        backgroundColor: ThemeColor.red,
       ),
-      body: HtmlElementView(
-        viewType: 'google-map',
+
+      /// 🔥 SAME TRACKING WIDGET AS ANDROID
+      body: VehicleTrackingWithTwoPolylines(
+        startLocation: startLocation,
+        endLocation: endLocation,
+
+        postId: postId,
       ),
     );
   }

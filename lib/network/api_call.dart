@@ -73,7 +73,7 @@ class ApiHelper {
 
   ApiDeleteData(String URL) async {
     var req = await http.delete(Uri.parse(URL));
-    return req.statusCode;
+    return req;
   }
 
   Future<dynamic> ApiAddPostDataMapRequest(

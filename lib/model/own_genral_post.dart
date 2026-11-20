@@ -30,7 +30,7 @@ class OwnGenralPostList {
 class GernralPostOwnData {
   int? id;
   String? typeName;
- // List<Null>? images;
+  List<String>? images;
   String? description;
   String? title;
   int? likes;
@@ -41,7 +41,7 @@ class GernralPostOwnData {
   GernralPostOwnData(
       {this.id,
         this.typeName,
-        //this.images,
+        this.images,
         this.description,
         this.title,
         this.likes,
@@ -53,12 +53,12 @@ class GernralPostOwnData {
   GernralPostOwnData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     typeName = json['typeName'];
-    // if (json['images'] != null) {
-    //   images = <Null>[];
-    //   json['images'].forEach((v) {
-    //     images!.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['images'] != null) {
+       images = <String>[];
+       json['images'].forEach((v) {
+         images!.add((v));
+       });
+     }
     description = json['description'];
     title = json['title'];
     likes = json['likes'];
@@ -71,9 +71,9 @@ class GernralPostOwnData {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['typeName'] = this.typeName;
-    // if (this.images != null) {
-    //   data['images'] = this.images!.map((v) => v.toJson()).toList();
-    // }
+     if (this.images != null) {
+       data['images'] = this.images!.map((v) => v).toList();
+     }
     data['description'] = this.description;
     data['title'] = this.title;
     data['likes'] = this.likes;

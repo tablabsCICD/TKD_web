@@ -19,6 +19,8 @@ import 'package:tkd_app/view/base_widget/custom_textview.dart';
 import 'package:tkd_app/view/localization/language_constrants.dart';
 import 'package:tkd_app/view/screens/dashboard/create_requirement.dart';
 
+import '../editPost/edit_post_load.dart';
+
 class RepeatDialogBox extends StatefulWidget {
   TruckLoad? obj;
 

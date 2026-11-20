@@ -58,8 +58,8 @@ class _MyRoutesState extends State<MyRoutes> {
                 ),
                 SizedBox(height: ResponsiveWidget.isDesktop(context)?50:30,),
                 CustomCityTextField(
-                  hintText: 'Select City',
-                  controller: selectedFromCity!,
+                  label: 'Select City',
+                  value: selectedFromCity!,
                   onTap: (){
                     showDialog(context: context,
                         builder: (BuildContext context){
@@ -75,8 +75,8 @@ class _MyRoutesState extends State<MyRoutes> {
                   },
                 ),
                 CustomCityTextField(
-                  hintText: 'Select City',
-                  controller: selectedToCity!,
+                  label: 'Select City',
+                  value: selectedToCity!,
                   onTap: (){
                     showDialog(context: context,
                         builder: (BuildContext context){

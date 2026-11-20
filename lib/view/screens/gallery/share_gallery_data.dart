@@ -60,6 +60,9 @@ Future gallery_share_data(Gallery gallery, SocialMedia socialMedia) async {
         await launch('https://bufferapp.com/add?text=$text&url=$urlShare');
       }
       break;
+    case SocialMedia.buffer:
+      // TODO: Handle this case.
+      throw UnimplementedError();
   }
 
 

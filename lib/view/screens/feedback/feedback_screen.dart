@@ -121,7 +121,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           ? Expanded(
                         child: Container(
                           color: ColorResources.HOME_BG,
-                          child: model.BuySellFeedbackList.isEmpty
+                          child: model.buySellFeedbackList.isEmpty
                               ? Container(
                               alignment: Alignment.center,
                               height: screenSize.height,
@@ -132,11 +132,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   style: Style.heading))
                               : ResponsiveWidget(
                             desktop: FeedbackCard(
-                                model.BuySellFeedbackList),
+                                model.buySellFeedbackList),
                             mobile: FeedbackCard(
-                                model.BuySellFeedbackList),
+                                model.buySellFeedbackList),
                             tablet: FeedbackCard(
-                                model.BuySellFeedbackList),
+                                model.buySellFeedbackList),
                           ),
                         ),
                       )
@@ -369,7 +369,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
                                               height: 30,
                                               color: Colors.grey,
                                             ),*/
-                                            InkWell(
+                                           /* InkWell(
                                               onTap: () {
                                                 showDialog(
                                                     context: context,
@@ -386,7 +386,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
                                                               style: Style.okButton),
                                                           onPressed: () {
                                                             model
-                                                                .deleteFeedback(widget.feedbackList
+                                                                .de(widget.feedbackList
                                                                 [index])
                                                                 .then((value) => {
                                                               showAnimatedDialog(
@@ -435,7 +435,7 @@ class _FeedbackCardState extends State<FeedbackCard> {
                                                       style: Style.bottomHeading)
                                                 ],
                                               ),
-                                            )
+                                            )*/
 
                                           ],
                                         ),

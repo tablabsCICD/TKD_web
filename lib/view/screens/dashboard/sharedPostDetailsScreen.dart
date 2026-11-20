@@ -73,7 +73,7 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
             MaterialPageRoute(
                 builder: (builder) => MenuPage(
                       userDetailList: userDetailList,
-                      selectedTab: "Board",
+                      selectedTab: "Home",
                     )));
         return false;
       },
@@ -615,7 +615,7 @@ import '../../base_widget/getImage.dart';
 import '../menu_page.dart';
 
 class SharedPostDetails extends StatefulWidget {
-  TruckLoadDeepLink truckLoad;
+  TruckLoad truckLoad;
 
   // RequirementDetails(this.truckLoad);
 
@@ -659,7 +659,7 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
             MaterialPageRoute(
                 builder: (builder) => MenuPage(
                   userDetailList: userDetailList,
-                  selectedTab: "Board",
+                  selectedTab: "Home",
                 )));
         return false;
       },
@@ -753,9 +753,9 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
               widget.truckLoad.privatePost == 1
                   ? SizedBox.shrink()
                   : BaseWidget().profileWithUser(
-                  '' ,widget.truckLoad.transporterOrCustomerName!, widget.truckLoad.typeOfCargo!,
+                  '' ,widget.truckLoad.nameOfPerson!, widget.truckLoad.typeOfCargo!,
                   verify: 0,
-                  transporterOrAgent: 0),
+                  transporterOrAgent: 0, ratings: widget.truckLoad.ratings??4.5,isJob: false,email: ''),
               BaseWidget().routes(widget.truckLoad.source!, widget.truckLoad.destination!),
               SizedBox(
                 height: 12,
@@ -798,38 +798,38 @@ class _SharedPostDetailsState extends State<SharedPostDetails> {
               SizedBox(
                 height: 20,
               ),
-              BaseWidget().bidButton((val) {
-                if (widget.truckLoad.dnd == 1) {
-                  ToastMessage.show(context, "This is DND Post");
-                } else {
-                  TruckLoad truckLoad = new TruckLoad(
-                      id: widget.truckLoad.id,
-                      userId: 0,
-                      type: widget.truckLoad.type,
-                      postingTime: widget.truckLoad.postingTime,
-                      companyName: '',
-                      nameOfPerson:widget.truckLoad.transporterOrCustomerName,
-                      content: widget.truckLoad.otherDetails,
-                      topicName: widget.truckLoad.topicName,
-                      tableName: widget.truckLoad.tableName,
-                      partLoadOrNot: widget.truckLoad.partLoad,
-                      sharableLink: '',
-                      deviceId: '',
-                      ratings: 5.0,
-                      mobileNumber: widget.truckLoad.contactNumber,
-                      source: widget.truckLoad.source,
-                      destination: widget.truckLoad.destination,
-                      mainTag: widget.truckLoad.mainTag,
-                      privatePost: widget.truckLoad.privatePost,
-                      dnd: widget.truckLoad.dnd,
-                      vehicleSize: widget.truckLoad.vehicleSize,
-                      association: '',
-                      isPaid: widget.truckLoad.dnd,
-                      website: '',
-                      companyDetailsName: '');
-                  Utils().openMenu(val, truckLoad, context);
-                }
-              })
+            BaseWidget().bidButton(widget.truckLoad, (val) {
+              if (widget.truckLoad.dnd == 1) {
+                ToastMessage.show(context, "This is DND Post");
+              } else {
+                TruckLoad truckLoad = new TruckLoad(
+                    id: widget.truckLoad.id,
+                    userId: 0,
+                    type: widget.truckLoad.type,
+                    postingTime: widget.truckLoad.postingTime,
+                    companyName: '',
+                    nameOfPerson:widget.truckLoad.nameOfPerson,
+                    content: widget.truckLoad.otherDetails,
+                    topicName: widget.truckLoad.topicName,
+                    tableName: widget.truckLoad.tableName,
+                    partLoadOrNot: widget.truckLoad.partLoadOrNot,
+                    sharableLink: '',
+                    deviceId: '',
+                    ratings: 5.0,
+                    mobileNumber: widget.truckLoad.mobileNumber,
+                    source: widget.truckLoad.source,
+                    destination: widget.truckLoad.destination,
+                    mainTag: widget.truckLoad.mainTag,
+                    privatePost: widget.truckLoad.privatePost,
+                    dnd: widget.truckLoad.dnd,
+                    vehicleSize: widget.truckLoad.vehicleSize,
+                    association: '',
+                    isPaid: widget.truckLoad.dnd,
+                    website: '',
+                    companyDetailsName: '');
+                Utils().openMenu(val, truckLoad, context);
+              }
+            })
             ],
           ),
         )

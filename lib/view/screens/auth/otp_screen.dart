@@ -26,7 +26,7 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/util/style.dart';
 import 'package:tkd_app/view/base_widget/custom_button.dart';
 import 'package:tkd_app/view/base_widget/open_url.dart';
-import 'package:tkd_app/view/screens/bids/deeplinkscreen.dart';
+import 'package:tkd_app/view/screens/deeplink/deeplinkscreen.dart';
 import 'package:tkd_app/view/screens/company/company_menu_page.dart';
 import 'package:tkd_app/view/screens/dashboard/sharedPostDetailsScreen.dart';
 import 'login_screen.dart';
@@ -36,10 +36,11 @@ import 'package:tkd_app/view/screens/menu_page.dart';
 class OTP_Screen extends StatefulWidget {
   String mobileNumber;
   String postId;
+  String linkType;
   bool companyLogin,fromLink;
   final authProvider = locator<AuthProvider>();
 
-  OTP_Screen(this.mobileNumber,{ Key? key,required this.companyLogin,required this.fromLink,this.postId="0"}) : super(key: key) {
+  OTP_Screen(this.mobileNumber,{ Key? key,required this.companyLogin,required this.fromLink,this.postId="0",this.linkType="post"}) : super(key: key) {
     authProvider.startTimer();
   }
 
@@ -615,7 +616,7 @@ class OTP_ScreenState extends State<OTP_Screen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (builder) =>
-                                          DeepLink(id: widget.postId)))
+                                          DeepLink(id: widget.postId,type: widget.linkType)))
                             };
                           }else {
                            showSimpleNotification(

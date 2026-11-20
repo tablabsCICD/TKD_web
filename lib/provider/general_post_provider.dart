@@ -83,7 +83,6 @@ class GeneralPostProvider extends ChangeNotifier {
       callGeneralPostApi();
       Navigator.pop(context);
       Navigator.pop(context);
-      Navigator.pop(context);
     } else {
       showSimpleNotification(
           Text(

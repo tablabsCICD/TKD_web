@@ -53,6 +53,11 @@ class _JobScreenState extends State<JobScreen> {
   final jobProvider = locator<JobProvider>();
   int selectedPageNumber = 1;
   ScrollController _scrollController = ScrollController();
+  TextEditingController _searchController = TextEditingController();
+  String? selectedRole;
+  String? selectedExperience;
+  String? selectedSalary;
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -66,6 +71,11 @@ class _JobScreenState extends State<JobScreen> {
     });
   }
 
+  List<String> expList = ["Fresher","6 Month","1 Year","1.5 Year","2 Year","2.5 Year","3 Year","3.5 Year","4 Year","4.5  Year","5 Year","5.5 Year","6 Year"];
+  List<String> salaryList = ['1LPA','1PLA to 2LPA','2PLA to 3LPA','4PLA to 5LPA','6PLA to 7LPA','8PLA to 9LPA','10PLA to Above',];
+
+
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -78,6 +88,57 @@ class _JobScreenState extends State<JobScreen> {
             padding: EdgeInsets.all(10),
             child: Column(
               children: [
+                // --------------------------- FILTER BAR --------------------------
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      // SEARCH BUTTON
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: "Search job title, role...",
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: (v) {
+                            if (v.isNotEmpty && v.length > 2) {
+                              _callSearch();
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10),
+
+                      // FILTER BUTTON
+                      InkWell(
+                        onTap: () => _openFilters(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: ColorResources.THEME_COLOR,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.filter_alt_rounded, color: Colors.white),
+                              SizedBox(width: 5),
+                              Text("Filter",
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 model.listJobs.isEmpty
 
                     ? Expanded(
@@ -124,7 +185,7 @@ class _JobScreenState extends State<JobScreen> {
   jobCard(JobData jobData) {
     return Container(
       width: 335,
-      // height: 417.h,
+      // height: 417,
       padding: EdgeInsets.all(12),
       clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
@@ -157,7 +218,7 @@ class _JobScreenState extends State<JobScreen> {
               child: Center(
                 child: Text(
                   jobData.postJob!.experience != null
-                      ? "Exp: "+jobData.postJob!.experience! + " Year"
+                      ? "Exp: "+jobData.postJob!.experience! + ""
                       : "No Info",
                   style: TextStyle(
                     color: Colors.white,
@@ -169,14 +230,14 @@ class _JobScreenState extends State<JobScreen> {
               ),
             ),
           ),
-          BaseWidget().profile(
+          HomeBaseWidget().profile(
               "",
               jobData.name != null ? jobData.name! : "No Info",
               jobData.postJob!.companyName != null
                   ? jobData.postJob!.companyName!
-                  : "No Info"),
+                  : "No Info",jobData.postJob!.emailId??'-',0.0,isJob: 1),
           SizedBox(width: 8),
-          BaseWidget().jobHeading(jobData.postJob!.salary==null?"":jobData.postJob!.salary!),
+          HomeBaseWidget().jobHeading(jobData.postJob!.salary==null?"":jobData.postJob!.salary!),
           /*BaseWidget().headingWithDescription(
               jobData.postJob!.jobDepartment!,
               jobData.postingDate != null ? jobData.postingDate!.split(" ").first : "",
@@ -185,7 +246,7 @@ class _JobScreenState extends State<JobScreen> {
             '',
             true
           ),*/
-          BaseWidget().jobHeadingWithDescription("Job Title", jobData.postingDate != null ? jobData.postingDate!.split(" ").first : "", jobData.postJob!.jobDepartment!,jobData.postJob!.jobType!,jobData.postJob!.jobDescription!,true),
+          HomeBaseWidget().jobHeadingWithDescription("Job Title", jobData.postingDate != null ? jobData.postingDate!.split(" ").first : "", jobData.postJob!.jobDepartment!,jobData.postJob!.jobType!,jobData.postJob!.jobDescription!,jobData.postJob!.jobLocation??"",true),
           SizedBox(width: 8),
           jobApply(jobData),
         ],
@@ -208,7 +269,7 @@ class _JobScreenState extends State<JobScreen> {
             },
             child: Container(
               height: 38,
-              //width: 203.w,//for save job
+              //width: 203,//for save job
               width: 240,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: ShapeDecoration(
@@ -236,7 +297,7 @@ class _JobScreenState extends State<JobScreen> {
               ),
             ),
           ),
-          //  SizedBox(width: 12.w),
+          //  SizedBox(width: 12),
           // SvgPicture.asset(Images.savejob),
           SizedBox(width: 12),
           InkWell(
@@ -249,558 +310,200 @@ class _JobScreenState extends State<JobScreen> {
       ),
     );
   }
+  final TextEditingController roleController = TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
 
-}
+  String? selectedDepartment;
 
-class CandidateCard extends StatefulWidget {
-  @override
-  _CandidateCardState createState() => _CandidateCardState();
-}
 
-class _CandidateCardState extends State<CandidateCard> {
-  final jobProvider = locator<JobProvider>();
-  int selectedPageNumber = 1;
-  ScrollController _scrollController = ScrollController();
+  void _openFilters(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) {
+        return StatefulBuilder(builder: (context, setStateSB) {
+          return Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // HEADER
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Filter Jobs",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Divider(),
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        jobProvider.getCandidates(currentPage: selectedPageNumber);
-        selectedPageNumber++;
-      }
-    });
-  }
+                  // ROLE
+                  Text("Role", style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: roleController,
+                    decoration: _inputStyle().copyWith(
+                      hintText: "Enter role (e.g. Driver, Manager...)",
+                    ),
+                    onChanged: (v) => setStateSB(() => selectedRole = v),
+                  ),
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<JobProvider>(
-      builder: (context, model, child) => Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            model.candidateList.isEmpty && model.isLoadingCandidate == false
+                  SizedBox(height: 18),
 
-                ? Expanded(
-                child: Container(
-                    height: MediaQuery.of(context).size.height - 200,
-                    child: Center(child: Text(getTranslated('no_post', context)!,style: Style.heading,))))
-                : Expanded(
-                    child: StaggeredGridView.countBuilder(
-                      controller: _scrollController,
-                      physics: ScrollPhysics(),
-                      crossAxisCount: ResponsiveWidget.isDesktop(context)
-                          ? 3
-                          : ResponsiveWidget.isMobile(context)
-                              ? 1
-                              : 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 12,
-                      itemCount: model.candidateList.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (builder) => JobDetailsScreen(
-                                        model.candidateList[index])));
-                          },
-                          child: Card(
-                            elevation: 5,
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 5),
-                                    horizontalTitleGap: 5,
-                                    minVerticalPadding: 0,
-                                    leading: getImage(model
-                                        .candidateList[index].companyLogo
-                                        .toString()),
-                                    title: Text(
-                                        model.candidateList[index].nameOfPerson
-                                            .toString(),
-                                        style: Style.title),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            model.candidateList[index]
-                                                .companyName
-                                                .toString(),
-                                            style: Style.subtitle),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: StarDisplay(
-                                              value:double.parse( model
-                                                  .candidateList[index].ratings!
-                                                  .toString())),
-                                        ),
-                                      ],
-                                    ),
-                                    trailing: Text(
-                                        model.candidateList[index].postingTime
-                                            .toString(),
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 12)),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 9),
-                                    child: Text(
-                                        model.candidateList[index].topicName
-                                            .toString(),
-                                        style: Style.contentHeading),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, bottom: 10, right: 10),
-                                    child: Text(
-                                      model.candidateList[index].content
-                                          .toString(),
-                                      style: Style.content,
-                                    ),
-                                  ),
-                                  Divider(
-                                    height: 1.5,
-                                    thickness: 1.5,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        InkWell(
-                                          onTap: () async {
-                                            var shareData = {
-                                              "title": model
-                                                  .candidateList[index]
-                                                  .nameOfPerson,
-                                              "text": model.candidateList[index]
-                                                  .mobileNumber,
-                                              "url": model.candidateList[index]
-                                                  .sharableLink,
-                                            };
-                                            try {
-                                              await html.window.navigator
-                                                  .share(shareData);
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.share,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'share', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 1.5,
-                                          height: 30,
-                                          color: Colors.grey,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            openwhatsapp(
-                                                context,
-                                                model.candidateList[index]
-                                                    .mobileNumber
-                                                    .toString(),
-                                                'please contact for more details');
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.chat,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'chat', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 1.5,
-                                          height: 30,
-                                          color: Colors.grey,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (_) =>
-                                                    new CupertinoAlertDialog(
-                                                      title: Text(
-                                                          'Contact Number : ${model.candidateList[index].mobileNumber}',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  ColorResources
-                                                                      .THEME_COLOR,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10.0),
-                                                            child: Text(
-                                                                getTranslated(
-                                                                    'yes',
-                                                                    context)!,
-                                                                style: TextStyle(
-                                                                    color: ColorResources
-                                                                        .GREEN,
-                                                                    fontSize:
-                                                                        18)),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ));
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.call,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'call', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+// DEPARTMENT
+                  Text("Department", style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: departmentController,
+                    decoration: _inputStyle().copyWith(
+                      hintText: "Enter department (e.g. Logistics, HR...)",
+                    ),
+                    onChanged: (v) => setStateSB(() => selectedDepartment = v),
+                  ),
+
+
+                  SizedBox(height: 18),
+
+                  // EXPERIENCE
+                  Text("Experience",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: selectedExperience,
+                    decoration: _inputStyle(),
+                    items: expList.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                    onChanged: (v) => setStateSB(() => selectedExperience = v),
+                  ),
+
+                  SizedBox(height: 18),
+
+                  // SALARY
+                  Text("Salary",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: selectedSalary,
+                    decoration: _inputStyle(),
+                    items: salaryList.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                    onChanged: (v) => setStateSB(() => selectedSalary = v),
+                  ),
+
+                  SizedBox(height: 18),
+
+                  // DATE
+                  Text("Posting Date",
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                        initialDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setStateSB(() => selectedDate = picked);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_month, color: Colors.black54),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              selectedDate == null
+                                  ? "Select Date"
+                                  : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                              style: TextStyle(fontSize: 14),
                             ),
                           ),
-                        );
-                      },
-                      //physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                        ],
+                      ),
                     ),
                   ),
-            getLoader(model.isLoadingCandidate)
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class JobCard extends StatefulWidget {
-  @override
-  _JobCardState createState() => _JobCardState();
-}
+                  SizedBox(height: 20),
 
-class _JobCardState extends State<JobCard> {
-  final jobProvider = locator<JobProvider>();
-  int selectedPageNumber = 1;
-  ScrollController _scrollController = ScrollController();
+                  // BUTTONS
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        child: Text("Clear All",
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
+                        onPressed: () {
+                          setStateSB(() {
+                            selectedRole = null;
+                            selectedExperience = null;
+                            selectedSalary = null;
+                            selectedDate = null;
+                            roleController.clear();
+                            departmentController.clear();
+                          });
+                        },
+                      ),
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        jobProvider.getCard(currentPage: selectedPageNumber);
-        selectedPageNumber++;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<JobProvider>(
-      builder: (context, model, child) => Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: 35,
-        ),
-        child: Column(
-          children: [
-            model.jobList.isEmpty && model.isLoadingJob == false
-
-                ? Expanded(
-                child: Container(
-                    height: MediaQuery.of(context).size.height - 200,
-                    child: Center(child: Text(getTranslated('no_post', context)!,style: Style.heading,))))
-                : Expanded(
-                    child: StaggeredGridView.countBuilder(
-                      controller: _scrollController,
-                      crossAxisCount: ResponsiveWidget.isDesktop(context)
-                          ? 3
-                          : ResponsiveWidget.isMobile(context)
-                              ? 1
-                              : 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 12,
-                      itemCount: model.jobList.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (builder) => JobDetailsScreen(
-                                        model.jobList[index])));
-                          },
-                          child: Card(
-                            elevation: 5,
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 5),
-                                    horizontalTitleGap: 5,
-                                    minVerticalPadding: 0,
-                                    leading: getImage(model
-                                        .jobList[index].companyLogo
-                                        .toString()),
-                                    title: Text(
-                                        model.jobList[index].nameOfPerson
-                                            .toString(),
-                                        style: Style.title),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            model.jobList[index].companyName
-                                                .toString(),
-                                            style: Style.subtitle),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: StarDisplay(
-                                              value: double.parse(model
-                                                  .jobList[index].ratings!
-                                                  .toString())),
-                                        ),
-                                      ],
-                                    ),
-                                    trailing: ConvertStringToDate(model
-                                        .jobList[index].postingTime
-                                        .toString()),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 9),
-                                    child: Text(
-                                        model.jobList[index].topicName
-                                            .toString(),
-                                        style: Style.contentHeading),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, bottom: 10, right: 10),
-                                    child: Text(
-                                      model.jobList[index].content.toString(),
-                                      style: Style.content,
-                                    ),
-                                  ),
-                                  Divider(
-                                    height: 1.5,
-                                    thickness: 1.5,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        InkWell(
-                                          onTap: () async {
-                                            var shareData = {
-                                              "title": model
-                                                  .jobList[index].nameOfPerson,
-                                              "text": model
-                                                  .jobList[index].mobileNumber,
-                                              "url": model
-                                                  .jobList[index].sharableLink,
-                                            };
-                                            try {
-                                              await html.window.navigator
-                                                  .share(shareData);
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.share,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'share', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 1.5,
-                                          height: 30,
-                                          color: Colors.grey,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            openwhatsapp(
-                                                context,
-                                                model
-                                                    .jobList[index].mobileNumber
-                                                    .toString(),
-                                                'please contact for more details');
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.chat,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'chat', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 1.5,
-                                          height: 30,
-                                          color: Colors.grey,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (_) =>
-                                                    new CupertinoAlertDialog(
-                                                      title: Text(
-                                                          'Contact Number : ${model.jobList[index].mobileNumber}',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  ColorResources
-                                                                      .THEME_COLOR,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10.0),
-                                                            child: Text(
-                                                                getTranslated(
-                                                                    'ok',
-                                                                    context)!,
-                                                                style: TextStyle(
-                                                                    color: ColorResources
-                                                                        .GREEN,
-                                                                    fontSize:
-                                                                        18)),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ));
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.call,
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                  getTranslated(
-                                                      'call', context)!,
-                                                  style: Style.bottomHeading)
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                    ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorResources.THEME_COLOR,
+                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("Apply", style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _callSearch();
+                        },
+                      ),
+                    ],
                   ),
-            getLoader(model.isLoadingJob)
-          ],
-        ),
-      ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
     );
   }
+
+  InputDecoration _inputStyle() {
+    return InputDecoration(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    );
+  }
+
+  void _callSearch() {
+    widget.jobProvider.getAllJobs(
+      currentPage: 0,
+      search: _searchController.text.trim(),
+      role: selectedRole,
+      department:selectedDepartment,
+      experience: selectedExperience,
+      salary: selectedSalary,
+      date: selectedDate != null
+          ? "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}"
+          : null,
+    );
+  }
+
 }
 

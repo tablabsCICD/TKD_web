@@ -149,8 +149,8 @@ class _RegistrationScreen3State extends State<RegistrationScreen3> {
                 height: 20,
               ),
               CustomCityTextField(
-                hintText: 'Select City',
-                controller: selectedFromCity!,
+                label: 'Select City',
+                value: selectedFromCity!,
                 onTap: () {
                   showDialog(
                       context: context,
@@ -164,8 +164,8 @@ class _RegistrationScreen3State extends State<RegistrationScreen3> {
                 },
               ),
               CustomCityTextField(
-                hintText: 'Select City',
-                controller: selectedToCity!,
+                label: 'Select City',
+                value: selectedToCity!,
                 onTap: () {
                   showDialog(
                       context: context,

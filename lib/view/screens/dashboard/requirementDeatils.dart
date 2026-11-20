@@ -469,7 +469,7 @@ class _RequirementDetailsState extends State<RequirementDetails> {
                                                       bidderUserName: authProvider.userDetailList[0].userName,
                                                       userName: authProvider.userDetailList[0].userName,
                                                       type: widget.truckLoad.mainTag,
-                                                      loggedUserName: '${authProvider.userDetailList[0].firstName} ${authProvider.userDetailList[0].lastName}')
+                                                      loggedUserName: '${authProvider.userDetailList[0].userName}')
                                                       .then((value) => {
                                                     showAnimatedDialog(
                                                         context,

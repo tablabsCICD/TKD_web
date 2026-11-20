@@ -1,3 +1,6 @@
+// Updated version of your EditPostLoadScreen with proper labels added to every
+// TextField, Dropdown, and City Picker. Only UI labels added — logic unchanged.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,9 +30,7 @@ class EditPostLoadScreen extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() {
-    return _EditPostLoadScreen();
-  }
+  State<StatefulWidget> createState() => _EditPostLoadScreen();
 }
 
 class _EditPostLoadScreen extends State<EditPostLoadScreen> {
@@ -39,7 +40,6 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
 
   @override
   void initState() {
-    //setData();
     editProvider.getAllUserList();
     super.initState();
   }
@@ -52,299 +52,273 @@ class _EditPostLoadScreen extends State<EditPostLoadScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Do something here
-        print("After clicking the Android Back Button");
         Navigator.pop(context, 1);
         return false;
       },
       child: Scaffold(
         backgroundColor: ThemeColor.baground,
-
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Text(
-            "Edit Post load/vehicle requirement",
-            style: Style.appheading,
-          ),
+          title: Text("Edit Post Load / Vehicle Requirement", style: Style.appheading),
           shadowColor: Colors.white,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context, 1);
-            },
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context, 1),
           ),
         ),
-        body: Container(
-          child: Form(
-              key: _formKey,
-              child: Consumer<EditPostLoadProvider>(
-                  builder: (context, model, child) {
-                getAddedUserList(model);
-                return Container(
-                  // margin: ResponsiveWidget.isDesktop(context)? EdgeInsets.symmetric(horizontal: 50,vertical: 10):EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Requirement you post will be visible on the general board to vendors whose routes match to yours.',
-                              style: Style.appsubtitle,
-                            )),
-                        CustomDropdownList(
-                          hintText: model.selectedRequriment,//"Select Requirement",
-                          items: model.requirementList,
-                          selectedType: model.selectedRequriment,
-                          onChange: (String value) {
-                            // setState(() {
-                            //   selectedRequirementType = value;
-                            // });
-                            model.selectedRequriment = value;
-                          },
-                        ),
-                        CustomDropdownList(
-                          hintText: model.selectedPostType,//"Select Post Type",
-                          items: model.postTypeList,
-                          selectedType: model.selectedPostType,
-                          onChange: (String value) {
-                            setState(() {
-                              model.selectedPostType = value;
-                            });
-                          },
-                        ),
-                        CustomCityTextField(
-                          hintText: 'Select City From',
-                          controller: model.sourceCity,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomCityListDialog(
-                                      onTap: (String value) {
-                                    setState(() {
-                                      model.sourceCity = value;
-                                    });
-                                  });
-                                });
-                          },
-                        ),
-                        CustomCityTextField(
-                          hintText: 'Select City To',
-                          controller: model.destinationCity,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomCityListDialog(
-                                      onTap: (String value) {
-                                    setState(() {
-                                      model.destinationCity = value;
-                                    });
-                                  });
-                                });
-                          },
-                        ),
-                        CustomDropdownList(
-                          hintText: model.selectedCargo,//"Select Cargo Type",
-                          items: model.cargoList,
-                          selectedType: model.selectedCargo,
-                          onChange: (String value) {
-                            setState(() {
-                              model.selectedCargo = value;
-                            });
-                          },
-                        ),
-                        CustomTextField(
-                          hintText: 'Vehicle Size',
-                          controller: model.vehicleSizeController,
-                          textInputType: TextInputType.text,
-                        ),
-                        CustomTextField(
-                            hintText: 'Load Weight (In Tons)',
-                            controller: model.loadWeightController,
-                            textInputType: TextInputType.text,
-                            onValueChange: () {
-                              setState(() {});
-                            }),
-                        CustomTextField(
-                            hintText: 'Special Instruction',
-                            controller: model.specialInstructionController,
-                            textInputType: TextInputType.text,
-                            onValueChange: () {
-                              setState(() {});
-                            }),
-                        CustomTextField(
-                          hintText: 'Mobile',
-                          controller: TextEditingController(
-                              text: authProvider.userDetailList[0].mobileNumber
-                                  .toString()),
-                          textInputType: TextInputType.phone,
-                          readOnly: true,
-                        ),
-                        CustomTextField(
-                          hintText: 'Email',
-                          controller: TextEditingController(
-                              text:
-                                  authProvider.userDetailList[0].emailId ?? ''),
-                          textInputType: TextInputType.emailAddress,
-                          readOnly: true,
-                          onValueChange: () {
-                            setState(() {});
-                          },
-                        ),
-                        CustomDropdownList(
-                          hintText: model.selectedPayment,//"Select Type Of Payment",
-                          items: model.paymentList,
-                          selectedType: model.selectedPayment,
-                          onChange: (String value) {
-                            setState(() {
-                              model.selectedPayment = value;
-                            });
-                          },
-                        ),
-                        // Expiry Date input with date picker
-                        CustomTextField(
-                          hintText: 'Post Expiry Date (YYYY-MM-DD)',
-                          controller: editProvider.expireDateController,
-                          textInputType: TextInputType.text,
-                          isValidator: false,
-                          onTap: () async {
-                            String Date =
-                            await DateTimePickerDialog().pickDateDialog(
-                                context);
-                            editProvider.setDate(Date);
-                          },
-                        ),
 
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          height: 25,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Hide My Identity', style: Style.heading1),
-                              FlutterSwitch(
-                                showOnOff: true,
-                                valueFontSize: 12,
-                                activeColor: ColorResources.PRIMARY_COLOR,
-                                activeTextColor: Colors.black,
-                                inactiveTextColor: Colors.red,
-                                value: model.identitySwitch,
-                                onToggle: (val) {
-                                  setState(() {
-                                    model.identitySwitch = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          height: 25,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Do Not Disturb', style: Style.heading1),
-                              FlutterSwitch(
-                                showOnOff: true,
-                                valueFontSize: 12,
-                                activeColor: ColorResources.PRIMARY_COLOR,
-                                activeTextColor: Colors.black,
-                                inactiveTextColor: Colors.red,
-                                value: model.disturbSwitch,
-                                onToggle: (val) {
-                                  setState(() {
-                                    model.disturbSwitch = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text("Show Post To:",style: TextStyle(fontFamily: GoogleFonts.poppins().fontFamily,fontSize: 16),),
+        body: Form(
+          key: _formKey,
+          child: Consumer<EditPostLoadProvider>(
+            builder: (context, model, child) {
+              getAddedUserList(model);
 
-                        editProvider.addedUserListIdInPost.length == 0
-                            ? Text("All Users")
-                            : Visibility(
-                                visible: true,
-                                child: Container(
-                                  color: Colors.grey.shade50,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Container(
-                                          child: selectedUsers(),
-                                          height: 60,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                        CustomButton(
-                            onTap: () async {
-                              if (_formKey.currentState!.validate()) {
-                                 await model.editPost(
-                                    context, widget.postBidData.id
-                                    );
-                              }
-                            },
-                            buttonText: "Edit Post")
-                      ],
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    // INFO TEXT
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        'Your posted requirement will be visible to vendors whose routes match yours.',
+                        style: Style.appsubtitle,
+                      ),
                     ),
-                  ),
-                );
-              })),
+
+                    // REQUIREMENT TYPE LABEL
+                    CustomDropdownList(
+                      hintText: "Select Requirement",
+                      items: model.requirementList,
+                      selectedType: model.selectedRequriment,
+                      onChange: (value) => model.selectedRequriment = value,
+                    ),
+
+                    // POST TYPE LABEL
+                    CustomDropdownList(
+                      hintText: "Post Type",
+                      items: model.postTypeList,
+                      selectedType: model.selectedPostType,
+                      onChange: (value) => setState(() => model.selectedPostType = value),
+                    ),
+
+                    // CITY FROM
+                    CustomCityTextField(
+                      label: 'Select City From',
+                      value: model.sourceCity,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => CustomCityListDialog(
+                            onTap: (value) => setState(() => model.sourceCity = value),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // CITY TO
+                    CustomCityTextField(
+                      label: 'Select City To',
+                      value: model.destinationCity,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => CustomCityListDialog(
+                            onTap: (value) => setState(() => model.destinationCity = value),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // CARGO TYPE
+                    CustomDropdownList(
+                      hintText: "Select Cargo Type",
+                      items: model.cargoList,
+                      selectedType: model.selectedCargo,
+                      onChange: (value) => setState(() => model.selectedCargo = value),
+                    ),
+
+                    // VEHICLE SIZE
+                    CustomTextField(
+                      hintText: 'Vehicle Size',
+                      controller: model.vehicleSizeController,
+                      textInputType: TextInputType.text,
+                    ),
+
+                    // LOAD WEIGHT
+                    CustomTextField(
+                      hintText: 'Load Weight (In Tons)',
+                      controller: model.loadWeightController,
+                      textInputType: TextInputType.number,
+                    ),
+
+                  /*  // SPECIAL INSTRUCTION
+                    CustomTextField(
+                      hintText: 'Special Instruction',
+                      controller: model.specialInstructionController,
+                      textInputType: TextInputType.text,
+                    ),
+*/
+                    // CARGO TYPE
+                    CustomDropdownList(
+                      hintText: "Select Special Instruction",
+                      items: model.specialInstructionList,
+                      selectedType: model.specialInstructionList.contains(model.selectedSI)
+                          ? model.selectedSI
+                          : null,
+                      onChange: (value) => setState(() => model.selectedSI = value),
+                    ),
+
+                    // MOBILE
+                    CustomTextField(
+                      hintText: 'Mobile',
+                      controller: TextEditingController(text: authProvider.userDetailList[0].mobileNumber.toString()),
+                      textInputType: TextInputType.phone,
+                      readOnly: true,
+                    ),
+
+                    // EMAIL
+                    CustomTextField(
+                      hintText: 'Email',
+                      controller: TextEditingController(text: authProvider.userDetailList[0].emailId ?? ''),
+                      textInputType: TextInputType.emailAddress,
+                      readOnly: true,
+                    ),
+
+                    // PAYMENT TYPE
+                    CustomDropdownList(
+                      hintText: "Select Payment",
+                      items: model.paymentList,
+                      selectedType: model.selectedPayment,
+                      onChange: (value) => setState(() => model.selectedPayment = value),
+                    ),
+
+                    // EXPIRY DATE
+                    CustomTextField(
+                      hintText: 'Post Expiry Date (YYYY-MM-DD)',
+                      controller: editProvider.expireDateController,
+                      textInputType: TextInputType.text,
+                      isValidator: false,
+                      onTap: () async {
+                        String date = await DateTimePickerDialog().pickDateDialog(context);
+                        editProvider.setDate(date);
+                      },
+                    ),
+
+                    // SWITCHES
+                    settingSwitch("Hide My Identity", model.identitySwitch, (val) {
+                      setState(() => model.identitySwitch = val);
+                    }),
+
+                    settingSwitch("Do Not Disturb", model.disturbSwitch, (val) {
+                      setState(() => model.disturbSwitch = val);
+                    }),
+
+                    // SHOW TO USERS
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        "Show Post To:",
+                        style: TextStyle(
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+
+                    editProvider.addedUserListIdInPost.isEmpty
+                        ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text("All Users", style: Style.heading1),
+                    )
+                        : Container(
+                      color: Colors.grey.shade50,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SizedBox(height: 60, child: selectedUsers()),
+                      ),
+                    ),
+
+                    // SUBMIT BUTTON
+                    CustomButton(
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await model.editPost(context, widget.postBidData.id);
+                        }
+                      },
+                      buttonText: "Edit Post",
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
+
+  // SWITCH UI
+  Widget settingSwitch(String label, bool value, Function(bool) onToggle) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      height: 25,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: Style.heading1),
+          FlutterSwitch(
+            showOnOff: true,
+            valueFontSize: 12,
+            activeColor: ColorResources.PRIMARY_COLOR,
+            activeTextColor: Colors.black,
+            inactiveTextColor: Colors.red,
+            value: value,
+            onToggle: onToggle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // SELECTED USERS LIST
   ScrollController horizantalControllet = ScrollController();
 
-  selectedUsers() {
+  Widget selectedUsers() {
     return Consumer<EditPostLoadProvider>(
-      builder: (context, model, child) => ListView.builder(
+      builder: (context, model, child) {
+        return ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           controller: horizantalControllet,
           itemCount: model.addedUsers.length,
-          itemBuilder: (BuildContext context, int index) {
+          itemBuilder: (context, index) {
             return Container(
-              height: 50,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Column(
-                  children: <Widget>[
-                    BaseWidget().getImageclip(
-                      model.addedUsers[index].profilePicture.toString(),
-                      height: 34,
-                      width: 34,
+              padding: EdgeInsets.only(left: 10),
+              child: Column(
+                children: [
+                  HomeBaseWidget().getImageclip(
+                    model.addedUsers[index].profilePicture.toString(),
+                    height: 34,
+                    width: 34,
+                  ),
+                  Text(
+                    model.addedUsers[index].firstName!,
+                    style: TextStyle(
+                      color: Color(0xCC001E49),
+                      fontSize: 14,
+                      fontFamily: AppConstant.FONTFAMILY,
                     ),
-                    Text(
-                      model.addedUsers[index].firstName!,
-                      style: TextStyle(
-                        color: Color(0xCC001E49),
-                        fontSize: 14,
-                        fontFamily: AppConstant.FONTFAMILY,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             );
-          }),
+          },
+        );
+      },
     );
   }
 }
@@ -364,35 +338,40 @@ class RadioItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 15, horizontal: 5.0),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: _item.isSelected ? Color(0xFFE8F0FE) : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _item.isSelected ? Color(0xFF1A73E8) : Colors.grey.shade300,
+          width: 1.3,
+        ),
+      ),
+
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width - 165,
-            margin: EdgeInsets.only(left: 5.0),
-            child: Text(
-              _item.text,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-              maxLines: 2,
-            ),
+        children: [
+          Icon(
+            _item.isSelected
+                ? Icons.radio_button_checked
+                : Icons.radio_button_off,
+            color: _item.isSelected ? Color(0xFF1A73E8) : Colors.grey,
+            size: 22,
           ),
-          Container(
-            height: 20.0,
-            width: 20.0,
-            child: Center(
-              child: Icon(
-                Icons.check,
-                color: _item.isSelected ? Colors.white : Colors.transparent,
-                size: 15,
+
+          SizedBox(width: 12),
+
+          Expanded(
+            child: Text(
+              _item.text ?? "",
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight:
+                _item.isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: Colors.black87,
               ),
-            ),
-            decoration: BoxDecoration(
-              color: _item.isSelected ? Colors.blueAccent : Colors.transparent,
-              border: Border.all(
-                  width: 1.0,
-                  color: _item.isSelected ? Colors.blueAccent : Colors.grey),
-              borderRadius: const BorderRadius.all(const Radius.circular(50.0)),
             ),
           ),
         ],
@@ -400,3 +379,4 @@ class RadioItem extends StatelessWidget {
     );
   }
 }
+

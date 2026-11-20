@@ -13,6 +13,7 @@ import 'package:tkd_app/util/color-resource.dart';
 import 'package:tkd_app/view/base_widget/appbar.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
+import 'package:tkd_app/widgets/base_widgets.dart';
 
 class PostCommentList extends StatefulWidget {
   TruckLoad truckLoad;
@@ -122,7 +123,7 @@ class _PostCommentListState extends State<PostCommentList> {
                                         crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                         children: [
-                                          BaseWidget().getImageclip(
+                                          HomeBaseWidget().getImageclip(
                                               provider
                                                   .commentList[i].profileImage!,
                                               height: 20,
@@ -300,16 +301,16 @@ class _PostCommentListState extends State<PostCommentList> {
           ),
           Container(
               transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: BaseWidget
+              child: HomeBaseWidget
                 ().profile(truckLoad.companyLogo!,
-                  truckLoad.nameOfPerson!, truckLoad.companyName!,
+                  truckLoad.nameOfPerson!, truckLoad.companyName!,' ',truckLoad.ratings??0.0,
                   verify: truckLoad.isPaid!)),
           // SizedBox(
           //   height: 12,
           // ),
           Container(
               transform: Matrix4.translationValues(0.0, -25.0, 00),
-              child: BaseWidget()
+              child: HomeBaseWidget()
                   .heading(truckLoad.topicName!, truckLoad.content!)),
           SizedBox(
             height: 5,
@@ -355,7 +356,7 @@ class _PostCommentListState extends State<PostCommentList> {
               ),
               Container(
                   transform: Matrix4.translationValues(0.0, -10.0, 00),
-                  child: BaseWidget().likeCommentDetails(
+                  child: HomeBaseWidget().likeCommentDetails(
 
                       load,
                       context,(){
@@ -371,13 +372,13 @@ class _PostCommentListState extends State<PostCommentList> {
         builder: (context, provider, child) {
           return Column(
             children: [
-              BaseWidget().image(image: load.postImages!.first),
+              BaseWidget().image(context,image: load.postImages!.first),
               SizedBox(
                 height: 9,
               ),
               Container(
                 //transform: Matrix4.translationValues(0.0, -5.0, 00),
-                  child: BaseWidget().likeCommentDetails(
+                  child: HomeBaseWidget().likeCommentDetails(
 
                       load,
                       context,(){
@@ -396,13 +397,13 @@ class _PostCommentListState extends State<PostCommentList> {
               Container(
                   transform: Matrix4.translationValues(0.0, -25.0, 00),
                   child: BaseWidget()
-                      .carouseImage(new List<String>.from(load.postImages!))),
+                      .carouseImage(context,new List<String>.from(load.postImages!))),
               SizedBox(
                 height: 9,
               ),
               Container(
                   transform: Matrix4.translationValues(0.0, -10.0, 00),
-                  child: BaseWidget().likeCommentDetails(
+                  child: HomeBaseWidget().likeCommentDetails(
                        load, context,(){
 
                     provider.likeIncreamentApi(load.id!, context);

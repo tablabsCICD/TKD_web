@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:tkd_app/locator.dart';
 import 'package:tkd_app/model/truck_load_model.dart';
 import 'package:tkd_app/provider/auth_provider.dart';
@@ -12,16 +14,39 @@ import 'package:tkd_app/provider/delete_interface.dart';
 import 'package:tkd_app/view/base_widget/home_base_widgets.dart';
 import 'package:tkd_app/view/base_widget/utils.dart';
 
+import '../../widgets/base_widgets.dart';
+
 class AllCards {
   final buysellProvider = locator<BuySellProvider>();
+
   final authProvider = locator<AuthProvider>();
+  final CarouselSliderController _controller = CarouselSliderController();
 
   cardSellBuyPost(
       int index, BuildContext context, TruckLoad load, DeletePostInf postDelete,
       {int? userId, bool? isDashBoard}) {
+    print(load.images!.length);
+    final List<String> imageUrls = [
+     /* // Demo fallback URLs
+    "https://images.pexels.com/photos/97075/pexels-photo-97075.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/209251/pexels-photo-209251.jpeg?auto=compress&cs=tinysrgb&w=800",*/
+    ];
+
+    if (load.images != null && load.images!.isNotEmpty) {
+      for (var img in load.images!) {
+        if (img != null && img.trim().isNotEmpty) {
+          imageUrls.add(img.trim());
+        }
+      }
+    }
+
+    debugPrint("✅ Image URLs found: ${imageUrls.length}");
+    print(imageUrls.length);
+
     return Container(
       width: 335,
-      // height: 255.h,
+      // height: 255,
       padding: EdgeInsets.all(12),
       clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
@@ -67,20 +92,104 @@ class AllCards {
             ),
           ),
           SizedBox(height: 8),
-          BaseWidget().profile(
+
+          BaseWidget().profileWithUser(
               load.companyLogo!, load.nameOfPerson!, load.companyName!,
-              verify: load.isverified!),
-          BaseWidget().headingWithDescription(
+              verify: load.isverified!,
+              transporterOrAgent: load.transporterOrAgent!, ratings: load.ratings??0.0,isJob: false,email: ''),
+          SizedBox(height: 8),
+
+          // 🖼️ Image Carousel with Auto Slide
+          if (imageUrls.isNotEmpty)
+    Stack(
+      children: [
+        CarouselSlider(
+          items: imageUrls.map((url) {
+            return GestureDetector(
+              onTap: () => _showImageDialog(
+                context,
+                imageUrls,
+                imageUrls.indexOf(url),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  url,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.broken_image, size: 60),
+                ),
+              ),
+            );
+          }).toList(),
+          carouselController: _controller,          // ← add controller
+          options: CarouselOptions(
+            height: 180,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            viewportFraction: 1.0,
+            enlargeCenterPage: false,
+          ),
+        ),
+
+        /// LEFT ARROW
+        Positioned(
+          left: 10,
+          top: 0,
+          bottom: 0,
+          child: Center(
+            child: InkWell(
+              onTap: () => _controller.previousPage(),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 18),
+              ),
+            ),
+          ),
+        ),
+
+        /// RIGHT ARROW
+        Positioned(
+          right: 10,
+          top: 0,
+          bottom: 0,
+          child: Center(
+            child: InkWell(
+              onTap: () => _controller.nextPage(),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+
+
+    SizedBox(height: 10),
+          HomeBaseWidget().headingWithDescription(
               load.topicName!,
               getDateObject(load.postingTime),
               load.mfgYear!,
               load.modelName!,
               load.estPrice!,
+              load.source!,
+              load.mainTag=="Sell vehicle"?load.vehicleRegistrationNumber!:"Buy",
               false),
           SizedBox(height: 8),
           imageLoad(load),
           load.userId == userId
-              ? BaseWidget().deleteButton((val) {
+              ? HomeBaseWidget().deleteButton((val) {
                   if (val == 10) {
                     if (isDashBoard == true) {
                       buysellProvider.deleteBuySell(load.id!, index,
@@ -92,7 +201,7 @@ class AllCards {
                     Utils().openMenu(val, load, context);
                   }
                 }, false)
-              : BaseWidget().getInTouchButton((val) {
+              : HomeBaseWidget().getInTouchButton((val) {
                   Utils().openMenu(val, load, context);
                 })
         ],
@@ -150,16 +259,23 @@ class AllCards {
             ),
           ),
           SizedBox(height: 8),
-          BaseWidget().profileWithUser(
+         BaseWidget().profileWithUser(
               load.companyLogo!, load.nameOfPerson!, load.companyName!,
               verify: load.isverified!,
-              transporterOrAgent: load.transporterOrAgent!),
-          BaseWidget().headingWithDescription("Job Title",
-              getDateObject(load.postingTime), "-", load.topicName!, '', true),
+              transporterOrAgent: load.transporterOrAgent!, ratings: load.ratings??0.0,isJob: true,email: load.emailId.toString()),
+
+          HomeBaseWidget().headingWithDescription(
+              "Job Title",
+              getDateObject(load.postingTime),
+              load.experience??"-",
+              load.topicName!, '',
+              load.source??"",
+              "",
+              true),
           SizedBox(height: 8),
-          BaseWidget().heading("Job Description", load.content!),
+          HomeBaseWidget().heading("Job Description", load.content!),
           load.userId == userId
-              ? BaseWidget().deleteButton((val) {
+              ? HomeBaseWidget().deleteButton((val) {
                   if (val == 10) {
                   } else {
                     Utils().openMenu(val, load, context);
@@ -213,7 +329,7 @@ class AllCards {
               ),
             ),
           ),
-          //  SizedBox(width: 12.w),
+          //  SizedBox(width: 12),
           // SvgPicture.asset(Images.savejob),
           SizedBox(width: 12),
           InkWell(
@@ -226,6 +342,43 @@ class AllCards {
               child: SvgPicture.asset("assets/svg/message_job.svg")),
         ],
       ),
+    );
+  }
+
+  void _showImageDialog(BuildContext context, List<String> imageUrls, int initialIndex) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.all(8),
+          backgroundColor: Colors.black,
+          child: Stack(
+            children: [
+              PhotoViewGallery.builder(
+                itemCount: imageUrls.length,
+                builder: (context, index) {
+                  return PhotoViewGalleryPageOptions(
+                    imageProvider: NetworkImage(imageUrls[index]),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.covered * 2,
+                  );
+                },
+                pageController: PageController(initialPage: initialIndex),
+                scrollPhysics: const BouncingScrollPhysics(),
+                backgroundDecoration: const BoxDecoration(color: Colors.black),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
